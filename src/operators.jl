@@ -25,7 +25,7 @@ function robin_diffusionoperators(x::AbstractRange, ξ)
     du_2 = ones(P-1)
     L_2 = Tridiagonal(dl_2, d_2, du_2)/(Δ^2)
 
-    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, grid = collect(x))
 end
 
 # Diffusion operators with irregular grids
@@ -58,6 +58,6 @@ function robin_diffusionoperators(x::AbstractArray, ξ)
     d_2[end] = -2 + (1-ξ * Δ_m[end])
     d_2 = d_2./(Δ_p.*Δ_m)
     du_2 = 2*ones(P-1)./(Δ_p[1:end-1].*Δ[1:end-1])
-    L_2 = Tridiagonal(dl_2, d_2, du_2) 
-    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+    L_2 = Tridiagonal(dl_2, d_2, du_2)
+    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, grid = x)
 end
