@@ -7,6 +7,7 @@ using LinearAlgebra
 include("operators.jl")
 
 # Exports
-export rescaled_diffusionoperators # both the irregular and regular method
+export robin_diffusionoperators, # both the irregular and regular method
+       reflecting_diffusionoperators # with ξ = 0
 
 end # module

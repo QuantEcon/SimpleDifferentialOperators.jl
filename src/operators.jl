@@ -1,5 +1,8 @@
+# Main proxy that we use.
+reflecting_diffusionoperators(grid) = robin_diffusionoperators(grid, 0.)
+
 # Diffusion operators with regular grids
-function rescaled_diffusionoperators(x::AbstractRange, ξ)
+function robin_diffusionoperators(x::AbstractRange, ξ)
     Δ = step(x)
     P = length(x)
 
@@ -13,20 +16,20 @@ function rescaled_diffusionoperators(x::AbstractRange, ξ)
     d_m1 = ones(P)
     du_m1 = zeros(P-1)
     d_m1[1] = d_m1[1] + dl_m1[1] * (1+ξ*Δ)
-    L_1_minus = Tridiagonal(dl_m1, d_m1, du_m1)/Δ # (A.15) in appendix
+    L_1_minus = Tridiagonal(dl_m1, d_m1, du_m1)/Δ
 
     dl_2 = ones(P-1)
     d_2 = -2 * ones(P)
     d_2[1] = -2 + (1+ξ*Δ)
     d_2[end] = -2 + (1-ξ*Δ)
     du_2 = ones(P-1)
-    L_2 = Tridiagonal(dl_2, d_2, du_2)/(Δ^2) # (A.16) in appendix
+    L_2 = Tridiagonal(dl_2, d_2, du_2)/(Δ^2)
 
-    return (x, L_1_minus, L_1_plus, L_2)
+    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
 end
 
 # Diffusion operators with irregular grids
-function rescaled_diffusionoperators(x::AbstractArray, ξ)
+function robin_diffusionoperators(x::AbstractArray, ξ)
     d = diff(x) # using the first difference as diff from ghost node
     P = length(x)
     Δ_m = zeros(P)
@@ -46,7 +49,7 @@ function rescaled_diffusionoperators(x::AbstractArray, ξ)
     d_m1 = ones(P)./Δ_m
     d_m1[1] = d_m1[1] + dl_m1[1] * (1+ξ*Δ_p[1])
     du_m1 = zeros(P-1)./Δ_p[1:end-1]
-    L_1_minus = Tridiagonal(dl_m1, d_m1, du_m1) # (A.28) in appendix
+    L_1_minus = Tridiagonal(dl_m1, d_m1, du_m1)
 
     Δ=Δ_p+Δ_m
     dl_2 = 2*ones(P-1)./(Δ_m[2:end].*Δ[2:end])
@@ -55,6 +58,6 @@ function rescaled_diffusionoperators(x::AbstractArray, ξ)
     d_2[end] = -2 + (1-ξ * Δ_m[end])
     d_2 = d_2./(Δ_p.*Δ_m)
     du_2 = 2*ones(P-1)./(Δ_p[1:end-1].*Δ[1:end-1])
-    L_2 = Tridiagonal(dl_2, d_2, du_2) # (A.29) in appendix
-    return (x, L_1_minus, L_1_plus, L_2)
+    L_2 = Tridiagonal(dl_2, d_2, du_2) 
+    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
 end
