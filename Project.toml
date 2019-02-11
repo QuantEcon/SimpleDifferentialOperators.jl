@@ -3,6 +3,9 @@ uuid = "7f42d020-2e2a-11e9-1b48-ef6061254184"
 authors = ["Arnav Sood <soodarnav01@gmail.com>"]
 version = "0.1.0"
 
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
