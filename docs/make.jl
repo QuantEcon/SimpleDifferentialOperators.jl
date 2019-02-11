@@ -8,5 +8,6 @@ deploydocs(
     deps = Deps.pip("mkdocs", "python-markdown-math"),
     repo = "github.com/QuantEcon/SimpleDifferentialOperators.jl.git",
     target = "site",
-    make = () -> run(`mkdocs build`)
+    make = () -> run(`mkdocs build`),
+    sitename = "SimpleDifferentialOperators.jl"
 )
