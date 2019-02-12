@@ -1,7 +1,19 @@
-# Main proxy that we use.
-reflecting_diffusionoperators(grid) = robin_diffusionoperators(grid, 0.)
+"""
+    reflecting_diffusionoperators(x)
+Diffusion operators with (ir)regular grids under reflecting barrier conditions 
+- v'(x[1]) = 0
+- v'(x[end]) = 0
+See https://quantecon.github.io/SimpleDifferentialOperators.jl/latest/ for derivation.
+"""
+reflecting_diffusionoperators(x) = robin_diffusionoperators(x, 0.)
 
-# Diffusion operators with regular grids
+"""
+    robin_diffusionoperators(x::AbstractRange, ξ)
+Diffusion operators with regular grids under reflecting barrier conditions 
+- ξv(x[1]) + v'(x[1]) = 0
+- ξv(x[end]) + v'(x[end]) = 0
+See https://quantecon.github.io/SimpleDifferentialOperators.jl/latest/ for derivation.
+"""
 function robin_diffusionoperators(x::AbstractRange, ξ)
     Δ = step(x)
     P = length(x)
@@ -10,7 +22,7 @@ function robin_diffusionoperators(x::AbstractRange, ξ)
     d_1 = -ones(P)
     du_1 = ones(P-1)
     d_1[end] = d_1[end] + du_1[end] * (1-ξ*Δ)
-    L_1_plus = Tridiagonal(dl_1, d_1, du_1)/Δ
+    L_1_plus = Tridiagonal(dl_1, d_1, du_1)/Δ 
 
     dl_m1 = -ones(P-1)
     d_m1 = ones(P)
@@ -28,7 +40,13 @@ function robin_diffusionoperators(x::AbstractRange, ξ)
     return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, grid = collect(x))
 end
 
-# Diffusion operators with irregular grids
+"""
+    robin_diffusionoperators(x::AbstractArray, ξ)
+Diffusion operators with (ir)regular grids under reflecting barrier conditions 
+- ξv(x[1]) + v'(x[1]) = 0
+- ξv(x[end]) + v'(x[end]) = 0
+See https://quantecon.github.io/SimpleDifferentialOperators.jl/latest/ for derivation.
+"""
 function robin_diffusionoperators(x::AbstractArray, ξ)
     d = diff(x) # using the first difference as diff from ghost node
     P = length(x)
