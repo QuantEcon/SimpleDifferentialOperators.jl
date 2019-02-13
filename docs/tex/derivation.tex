@@ -1,0 +1,266 @@
+\documentclass{amsart}
+
+% Preamble
+\usepackage{amsmath,amsfonts,amsthm,amssymb,geometry,dsfont}
+\usepackage[usenames,dvipsnames,svgnamesable]{xcolor}
+\usepackage[capitalise,noabbrev]{cleveref} %
+\crefname{equation}{}{} %
+\crefname{assumption}{Assumption}{Assumptions}
+\crefname{property}{Property}{Properties}
+\geometry{left=1in,right=1in,top=0.6in,bottom=1in}
+
+% Commands
+\newcommand{\D}[1][]{\ensuremath{\boldsymbol{\partial}_{#1}}}
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\diff}{\ensuremath{\mathrm{d}}}
+\newcommand{\set}[1]{\ensuremath{\left\{{#1}\right\}}}
+\newcommand{\indicator}[1]{\ensuremath{\mathds{1}\left\{{#1}\right\}}}
+\newcommand{\condexpec}[3][]{\ensuremath{\mathbb{E}_{#1}\left[{#2} \; \middle| \; {#3} \right]}}
+\newcommand{\expec}[2][]{\ensuremath{\mathbb{E}_{{#1}}\left[ {#2} \right]}}
+
+\newenvironment{psmallmatrix}
+{\left(\begin{smallmatrix}}
+	{\end{smallmatrix}\right)}
+
+% Title, etc.
+\title{Derivations for Discretized Operators \texttt{QuantEcon/SimpleDifferentialOperators.jl}}
+\author{Jesse Perla (\texttt{@jlperla}), Chiyoung Ahn (\texttt{@chiyahn}), Arnav Sood (\texttt{@arnavs})}
+\date{\today}
+
+% Actual document
+\begin{document}
+\maketitle
+
+
+
+\section{Setup}
+
+\begin{itemize}
+	\item Define an irregular  grid $\set{z_i}_{i=1}^P$ with $z_1 = 0$ and $z_P = \bar{z}$ is a ``large'' number. Denote the grid with the variable name, i.e. $z \equiv \set{z_i}_{i=1}^P$.
+	\item Denote the distance between the grid points as the \textit{backwards} difference
+	\begin{align}
+	\Delta_{i,-} &\equiv z_i - z_{i-1},\, \text{for } i = 2,\ldots, P\\
+	\Delta_{i,+} &\equiv z_{i+1} - z_i,\, \text{for } i = 1,\ldots, P-1
+	\end{align}
+
+	\item Assume $\Delta_{1, -} = \Delta_{1, +}$ and $\Delta_{P, +} = \Delta_{P, -}$, due to ghost points, $z_0$ and $z_{P+1}$ on both boundaries. (i.e.he distance to the ghost nodes are the same as the distance to the closest nodes).  Then define the vector of backwards and forwards first differences as
+	\begin{align}
+	\Delta_{-} &\equiv \begin{bmatrix} z_2 - z_1 \\
+	\text{diff}(z)
+	\end{bmatrix}\\
+	\Delta_{+} &\equiv \begin{bmatrix} \text{diff}(z)\\
+	z_P - z_{P-1}
+	\end{bmatrix}
+	\end{align}
+	\item Reflecting barrier conditions:
+	\begin{align}
+	\xi v(0) + \D[z]v(0 ) &= 0\label{eq:new-BC1}\\
+	\xi v(\bar{z}) + \D[z]v(\bar{z}) &= 0\label{eq:new-BC2}
+	\end{align}
+\end{itemize}
+
+Let $L_1^{-}$ be the discretized backwards first differences and $L_2$ be the discretized central differences subject to the Neumann boundary conditions in \cref{eq:new-BC1,eq:new-BC2} such that $L_1^{-} v(t)$ and $L_2 v(t)$ represent the first and second derivatives of $v(z)$ respectively at $t$. For second derivatives, we use the following numerical scheme from Achdou et al. (2017):
+
+\begin{equation}
+v''(z_i) \approx \dfrac{ \Delta_{i,-} v( z_i + \Delta_{i,+}) - (\Delta_{i,+} + \Delta_{i,-}) v( z_i ) + \Delta_{i,+} v( z_i - \Delta_{i,-})}{\frac{1}{2}(\Delta_{i,+} + \Delta_{i,-}) \Delta_{i,+} \Delta_{i,-} }, \text{for } i = 1, \ldots, P
+\end{equation}
+
+
+
+
+
+\subsection{Regular grids}
+Suppose that the grids are regular, i.e., elements of $\text{diff}(z)$ are all identical with $\Delta$ for some $\Delta > 0$.
+
+Using the backwards first-order difference, \eqref{eq:new-BC1} can be alternatively represented as
+\begin{align}
+\dfrac{v(0) - v(-\Delta)}{\Delta} &= - \xi v(0)
+\end{align}
+Similarly, using discretized central differences of second orders, \eqref{eq:new-BC1} can be shown as
+\begin{align}
+\dfrac{v (\Delta) - 2 v(0) + v(-\Delta)}{\Delta^2} &=   \dfrac{v(\Delta) - v(0)}{\Delta^2} - \dfrac{1}{\Delta}\dfrac{v (0) - v(-\Delta) }{\Delta}  \\
+&= \dfrac{v(\Delta) - v(0)}{\Delta^2} + \dfrac{1}{\Delta} \xi v(0)  \\
+&= \dfrac{1}{\Delta^2}  (- 1 + \Delta \xi) v(0)  + \dfrac{1}{\Delta^2}  v(\Delta)
+\end{align}
+Similarly, for \eqref{eq:new-BC2}, we have
+\begin{align}
+\dfrac{v (\bar{z} + \Delta) - 2 v(\bar{z} ) + v(\bar{z} -\Delta)}{\Delta^2} &=   \dfrac{v(\bar{z} - \Delta) - v(\bar{z})}{\Delta^2} + \dfrac{1}{\Delta}\dfrac{ v(\bar{z}+\Delta) - v (\bar{z}) }{\Delta}  \\
+&= \dfrac{v(\bar{z} - \Delta) - v(\bar{z})}{\Delta^2}  - \dfrac{1}{\Delta} \xi v(\bar{z})  \\
+&= \dfrac{1}{\Delta^2}  (- 1 - \Delta \xi) v(\bar{z})  + \dfrac{1}{\Delta^2}  v(\bar{z} - \Delta)
+\end{align}
+
+Thushe corresponding $L_1^{-}$ and $L_2$ matrices are defined as
+
+\begin{align}
+L_1^{-} &\equiv \frac{1}{\Delta}\begin{pmatrix}
+1 - (1 + \xi \Delta) &0&0&\dots&0&0&0\\
+-1&1&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-1&1&0\\
+0&0&0&\cdots&0&-1&1
+\end{pmatrix}_{P\times P}\label{eq:L-1-regular} \\
+L_2 &\equiv \frac{1}{\Delta^2}\begin{pmatrix}
+-2 + (1 + \xi\Delta) &1&0&\dots&0&0&0\\
+1&-2&1&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&1&-2&1\\
+0&0&0&\cdots&0&1&-2 + (1- \xi\Delta)
+\end{pmatrix}_{P\times P}\label{eq:L-2-regular}
+\end{align}
+
+\subsection{Irregular grids}
+Using the backwards first-order difference, \eqref{eq:new-BC1} can be alternatively represented as
+\begin{align}
+\dfrac{v(0) - v(-\Delta_{1, -})}{\Delta_{1, -}} &= - \xi v(0)
+\end{align}
+
+Note that we have assumed that $\Delta_{1,-} = \Delta_{1,+}$ and $\Delta_{P,+} = \Delta_{P,-}$ for the ghost notes. Using discretized central differences of second orders, \eqref{eq:new-BC1} can be shown as
+\begin{align}
+&\dfrac{\Delta_{1,-} v( \Delta_{1,+}) - (\Delta_{1,+} + \Delta_{1,-}) v( 0 ) + \Delta_{1,+}  v( - \Delta_{1,-})}{\frac{1}{2}(\Delta_{1,+} + \Delta_{1,-}) \Delta_{1,+} \Delta_{1,-} } \\
+&=
+\dfrac{v (\Delta_{1, +}) - 2 v(0) + v(-\Delta_{1, +})}{\Delta_{1, +}^2} \\ &= \dfrac{v(\Delta_{1, +}) - v(0)}{\Delta_{1, +}^2} - \dfrac{1}{\Delta_{1, +}}\dfrac{v (0) - v(-\Delta_{1, +}) }{\Delta_{1, +}}  \\
+&= \dfrac{v(\Delta_{1, +}) - v(0)}{\Delta_{1, +}^2} + \dfrac{1}{\Delta_{i,+}} \xi v(0)  \\
+&= \dfrac{1}{\Delta_{1, +}^2}  (- 1 + \Delta_{1, +} \xi) v(0)  + \dfrac{1}{\Delta_{1, +}^2}  v(\Delta_{1, +})
+\end{align}
+Similarly, for \eqref{eq:new-BC2}, we have
+\begin{align}
+&\dfrac{\Delta_{P,-} v( \bar{z} + \Delta_{P,+}) - (\Delta_{P,+} + \Delta_{P,-}) v(\bar{z} ) + \Delta_{P,+}  v( \bar{z} - \Delta_{P,-})}{\frac{1}{2}(\Delta_{P,+} + \Delta_{P,-}) \Delta_{P,+} \Delta_{P,-} } \\
+&=\dfrac{v (\bar{z} + \Delta_{P,-}) - 2 v(\bar{z} ) + v(\bar{z} -\Delta_{P,-})}{\Delta_{P,-}^2} \\
+&=   \dfrac{v(\bar{z} - \Delta_{P,-}) - v(\bar{z})}{\Delta_{P,-}^2} + \dfrac{1}{\Delta_{P,-}}\dfrac{ v(\bar{z}+\Delta_{P,-}) - v (\bar{z}) }{\Delta_{P,-}}  \\
+&= \dfrac{v(\bar{z} - \Delta_{P,-}) - v(\bar{z})}{\Delta_{P,-}^2}  - \dfrac{1}{\Delta_{P,-}} \xi v(\bar{z})  \\
+&= \dfrac{1}{\Delta_{P,-}^2}  (- 1 - \Delta_{P,-} \xi) v(\bar{z})  + \dfrac{1}{\Delta_{P,-}^2}  v(\bar{z} - \Delta_{P,-})
+\end{align}
+
+Thushe corresponding $L_1^{-}$ and $L_2$ matrices are defined as
+
+\begin{align}
+L_1^{-} &\equiv \begin{pmatrix}
+\Delta^{-1}_{1,-} [1 - (1 + \xi \Delta^{-1}_{1,-})] &0&0&\dots&0&0&0\\
+-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-\Delta_{P-1,-}^{-1}&\Delta_{P-1,-}^{-1}&0\\
+0&0&0&\cdots&0&-\Delta_{P,-}^{-1}&\Delta_{P,-}^{-1}
+\end{pmatrix}_{P\times P}\label{eq:L-1} \\
+L_2 &\equiv \begin{psmallmatrix}
+\Delta_{1,+}^{-2}[-2 + (1+\xi \Delta_{1,+})] &\Delta_{1,+}^{-2}&0&\cdots&0&0&0 \\
+\vdots&\ddots&\ddots&\ddots&\ddots&\vdots&\vdots\\
+0&\cdots&2(\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,-}^{-1} &-2\Delta_{i,-}^{-1} \Delta_{i,+}^{-1}  & 2 (\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,+}^{-1}&\cdots&0 \\
+\vdots&\vdots&\vdots&\ddots&\ddots&\ddots&\vdots\\
+0&0&0&\cdots&0&\Delta_{P,-}^{-2}&\Delta_{P,-}^{-2} [-2 + (1- \xi\Delta_{P,-})]
+\end{psmallmatrix}_{P\times P}\label{eq:L-2}
+\end{align}
+
+\subsection{Differential operators by basis}
+Define the following basis matrices:
+
+\begin{align}
+U_1^{-} &\equiv \begin{pmatrix}
+1  &0&0&\dots&0&0&0\\
+-1&1&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-1&1&0\\
+0&0&0&\cdots&0&-1&1
+\end{pmatrix}_{P\times P}\label{eq:L-1-basis} \\
+U_1^{+} &\equiv \begin{pmatrix}
+-1  &1&0&\dots&0&0&0\\
+0&-1&1&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&0&-1&1\\
+0&0&0&\cdots&0&0&-1
+\end{pmatrix}_{P\times P}\label{eq:L-1+-basis} \\
+U_2 &\equiv \begin{pmatrix}
+-2 &1&0&\dots&0&0&0\\
+1&-2&1&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&1&-2&1\\
+0&0&0&\cdots&0&1&-2
+\end{pmatrix}_{P\times P}\label{eq:L-2-basis}
+\end{align}
+
+and the boundary conditions for the reflecting conditions:
+
+\begin{align}
+B_{1}  &\equiv \begin{pmatrix}
+(1 + \xi \Delta^{-1}_{1,-}) &0&\dots&0&0\\
+0&0&\dots&0&0\\
+\vdots&\vdots&\ddots&\vdots&\vdots\\
+0&0&\cdots&0&0\\
+0&0&\cdots&0&0
+\end{pmatrix}_{P\times P} \\
+B_{P}  &\equiv \begin{pmatrix}
+0 &0&\dots&0&0\\
+0&0&\dots&0&0\\
+\vdots&\vdots&\ddots&\vdots&\vdots\\
+0&0&\cdots&0&0\\
+0&0&\cdots&0&(1 + \xi \Delta^{-1}_{P,+})
+\end{pmatrix}_{P\times P}
+\end{align}
+
+\subsubsection{Regular grids}
+For regular grids with the uniform distance of $\Delta > 0$, \eqref{eq:L-1-regular} and \eqref{eq:L-2-regular} can be represented by
+
+\begin{align}
+L_1^{-} &= \dfrac{1}{\Delta} U_1^{-} - B_1 \\
+L_2 &= \dfrac{1}{\Delta^2} U_2 + B_1 + B_P
+\end{align}
+
+Note that $U_2 = U_1^+ - U_1^-$. Hence, $L_2$ can be also represented as
+\begin{align}
+L_2 &= \dfrac{1}{\Delta^2} (U_1^+ - U_1^-) + B_1 + B_P
+\end{align}
+
+\subsubsection{Irregular grids}
+For irregular grids we need further decomposition of $L_2$. Define $U_2^-, U_2^0, U_2^+$ be the matrices that keep only the lower diagonal, diagonal, upper diagonal elements respectively and are zero on all the other elements, i.e.,
+
+\begin{align}
+U_2^- &\equiv \begin{pmatrix}
+0&0&0&\dots&0&0&0\\
+1&0&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&1&0&0\\
+0&0&0&\cdots&0&1&0
+\end{pmatrix}_{P\times P} \\
+U_2^0 &\equiv \begin{pmatrix}
+-2 &0&0&\dots&0&0&0\\
+0&-2&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&0&-2&0\\
+0&0&0&\cdots&0&0&-2
+\end{pmatrix}_{P\times P} \\
+U_2^+ &\equiv \begin{pmatrix}
+0&1&0&\dots&0&0&0\\
+0&0&1&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&0&0&1\\
+0&0&0&\cdots&0&0&0
+\end{pmatrix}_{P\times P}
+\end{align}
+
+For notational brevity, for vectors with the same size, $x_1, x_2$, define $x_1 x_2$ as the elementwise-multiplied vector. Then, we have
+\begin{align}
+L_1^{-} &= \text{diag}(\Delta_{-} )^{-1} U_1^{-} - B_1 \\
+L_2 &= \text{diag} \left[ \frac{1}{2} ( \Delta_+ + \Delta_- ) \Delta_+ \right]^{-1}  U_2^{+} -
+ \text{diag} \left[ \frac{1}{2} ( \Delta_+ + \Delta_- ) \Delta_- \right]^{-1}  U_2^{-}
++ B_1 + B_P
+\end{align}
+We can simplify this expression further by introducing a new notation. Let $x^{-1}$ be defined as the elementwise inverse of a vector $x$ that contains no zero element. Then, $L_2$ can be represented as
+\begin{align}
+L_2 &=
+2\left[ \text{diag} \left( ( \Delta_+ + \Delta_- )^{-1} \Delta_+^{-1} \right) U_2^{+} -
+\text{diag} \left( ( \Delta_+ + \Delta_- )^{-1} \Delta_-^{-1} \right) U_2^{-}  \right]
++ B_1 + B_P \\ \label{eq:L-2-by-basis}
+&= 2 \text{diag} \left( ( \Delta_+ + \Delta_- )^{-1} \right) \left[ \text{diag} \left(  \Delta_+^{-1} \right) U_2^{+} -
+\text{diag} \left(  \Delta_-^{-1} \right) U_2^{-}  \right]
++ B_1 + B_P
+\end{align}
+
+
+The diagonal elements of \eqref{eq:L-2-by-basis} are also identical with the one provided in \eqref{eq:L-2} -- to see this, note that the diagonal elements of \eqref{eq:L-2-by-basis}, modulo $B_1$ and $B_P$, are
+\begin{align}
+-2 \left[ (\Delta_+ + \Delta_-)^{-1} \Delta_+^{-1} + (\Delta_+ + \Delta_-)^{-1} \Delta_-^{-1} \right] &= -2 (\Delta_+ + \Delta_-)^{-1}  ( \Delta_+^{-1} + \Delta_-^{-1} ) \\
+&= -2(\Delta_+ + \Delta_-)^{-1} (\Delta_+^{-1} \Delta_-^{-1}) (\Delta_+ + \Delta_- )  \\
+&= -2 (\Delta_+^{-1} \Delta_-^{-1})
+\end{align}
+which is identical with $\text{diag} (L_2)$ with $L_2$ from \eqref{eq:L-2} except the first row and last row that are affected by $B_1$ and $B_P$.
+
+\end{document}
