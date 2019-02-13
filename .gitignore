@@ -4,3 +4,5 @@
 *.jl.*.cov
 *.jl.mem
 docs/build
+docs/tex/*.log
+docs/tex/*.aux
