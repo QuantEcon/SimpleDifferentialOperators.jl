@@ -1,18 +1,23 @@
 """
     reflecting_diffusionoperators(x)
-Diffusion operators with (ir)regular grids under reflecting barrier conditions 
-- v'(x[1]) = 0
-- v'(x[end]) = 0
-See https://quantecon.github.io/SimpleDifferentialOperators.jl/latest/ for derivation.
+
+Diffusion operators under reflecting barrier boundary conditions. .
+
+Reflecting barriers require that v'(x[1]) = v'(x[end]) = 0. Returns an operator for
+negative drift, one for positive drift, and one for shock sensitivity.
+
+See also: [`robin_diffusionoperators`](@ref)
 """
 reflecting_diffusionoperators(x) = robin_diffusionoperators(x, 0.)
 
 """
     robin_diffusionoperators(x::AbstractRange, ξ)
-Diffusion operators with regular grids under reflecting barrier conditions 
-- ξv(x[1]) + v'(x[1]) = 0
-- ξv(x[end]) + v'(x[end]) = 0
-See https://quantecon.github.io/SimpleDifferentialOperators.jl/latest/ for derivation.
+
+Diffusion operators with regular grids under linear ("Robin") boundary conditions.
+
+Requires that ξv(x[1]) + v'(x[1]) = ξv(x[end]) + v'(x[end]) = 0.
+
+See also: [`reflecting_diffusionoperators`](@ref)
 """
 function robin_diffusionoperators(x::AbstractRange, ξ)
     Δ = step(x)
@@ -22,7 +27,7 @@ function robin_diffusionoperators(x::AbstractRange, ξ)
     d_1 = -ones(P)
     du_1 = ones(P-1)
     d_1[end] = d_1[end] + du_1[end] * (1-ξ*Δ)
-    L_1_plus = Tridiagonal(dl_1, d_1, du_1)/Δ 
+    L_1_plus = Tridiagonal(dl_1, d_1, du_1)/Δ
 
     dl_m1 = -ones(P-1)
     d_m1 = ones(P)
@@ -42,10 +47,12 @@ end
 
 """
     robin_diffusionoperators(x::AbstractArray, ξ)
-Diffusion operators with (ir)regular grids under reflecting barrier conditions 
-- ξv(x[1]) + v'(x[1]) = 0
-- ξv(x[end]) + v'(x[end]) = 0
-See https://quantecon.github.io/SimpleDifferentialOperators.jl/latest/ for derivation.
+
+Diffusion operators with irregular grids under linear ("Robin") boundary conditions.
+
+Requires that ξv(x[1]) + v'(x[1]) = ξv(x[end]) + v'(x[end]) = 0.
+
+See also: [`reflecting_diffusionoperators`](@ref)
 """
 function robin_diffusionoperators(x::AbstractArray, ξ)
     d = diff(x) # using the first difference as diff from ghost node
@@ -76,6 +83,6 @@ function robin_diffusionoperators(x::AbstractArray, ξ)
     d_2[end] = -2 + (1-ξ * Δ_m[end])
     d_2 = d_2./(Δ_p.*Δ_m)
     du_2 = 2*ones(P-1)./(Δ_p[1:end-1].*Δ[1:end-1])
-    L_2 = Tridiagonal(dl_2, d_2, du_2) 
+    L_2 = Tridiagonal(dl_2, d_2, du_2)
     return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
 end
