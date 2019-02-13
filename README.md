@@ -6,14 +6,15 @@
 [![](https://img.shields.io/badge/docs-blue.svg)](https://QuantEcon.github.io/SimpleDifferentialOperators.jl/latest)
 
 ## Overview
+This is a package to return discretized differential operators of first order and second order with respect to some reflecting boundary conditions.
 
-This is a package to return discretized differential operators to solve the (continuous-time) [diffusion problem](www.princeton.edu/~moll/HACTproject/option_simple.pdf):
+### Example
 
+Consider constructing the corresponding generator for the following Brownian motion:
 ```math
-d x_t = μ(x_t) d_t + σ dW_t  
+d x_t = μ d_t + σ dW_t  
 ```
-
-A simple case might be:
+with some constant `μ` and `σ >= 0`.
 
 ```
 using SimpleDifferentialOperators
@@ -24,7 +25,7 @@ grid = range(0.0, 1.0, length = 200) # uniform grid on [0.0, 1.0]
 # get operators for reflecting/Dirichlet boundary conditions, v'(0) = v'(1) = 0
 L_1_minus, L_1_plus, L_2 = reflecting_diffusionoperators(grid)
 
-# (discretized) stochastic generator
+# discretized generator, using Ito formula
 A = μ*L_1_minus + σ^2 / 2 * L_2 # use L_1_minus because μ < 0  
 ```
 
@@ -34,7 +35,7 @@ To install, run `] add SimpleDifferentialOperators` on Julia 1.0+.
 
 For more usage information, see the docs badge above.
 
-The [derivation.pdf](docs/tex/derivation.pdf) file in this repository defines and justifies the objects we return.
+Derivation can be found [here]](https://github.com/ubcecon/computing_and_datascience/blob/master/continuous_time_methods/notes/differential-operator-on-irregular-grids.tex).
 
 ## Troubleshooting
 
