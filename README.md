@@ -10,7 +10,7 @@ This is a package to return discretized differential operators of first order an
 
 ### Example
 
-Consider constructing the corresponding generator for the following Brownian motion:
+Consider constructing the corresponding generator for the following stochastic process:
 ```math
 d x_t = μ d_t + σ dW_t  
 ```
