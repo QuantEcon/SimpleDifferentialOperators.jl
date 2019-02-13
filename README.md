@@ -24,7 +24,7 @@ grid = range(0.0, 1.0, length = 200) # uniform grid on [0.0, 1.0]
 # get operators for reflecting/Dirichlet boundary conditions, v'(0) = v'(1) = 0
 L_1_plus, L_1_minus, L_2 = reflecting_diffusionoperators(grid)
 
-# (discretized) stochastic generator 
+# (discretized) stochastic generator
 A = μ*L_1_minus + σ^2 / 2 * L_2 # use L_1_minus because μ < 0  # discretized stochastic generator
 ```
 
@@ -37,3 +37,9 @@ For more usage information, see the docs badge above.
 The [derivation.pdf](docs/tex/derivation.pdf) file in this repository defines and justifies the objects we return.
 
 ## Troubleshooting
+
+* As a reminder, the package requires **Julia 1.0 or later.**
+
+* If you discover a bug in the code or math, please file an issue in this repo with the label "bug."
+
+* The same holds for feature requests, with the appropriate label.
