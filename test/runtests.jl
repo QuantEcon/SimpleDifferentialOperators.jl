@@ -49,10 +49,11 @@ end
     σ = 1; μ = -1;
     uniformGrid = 1:1:5
     irregularGrid = collect(uniformGrid)
+    ξ_1, ξ_2 = (1., 2.)
     #=
         Accuracy tests
     =#
-    ξ = 1.0
+    ξ = ξ_1
     L_1_minus, L_1_plus, L_2 = diffusionoperators(uniformGrid, Mixed(ξ), Mixed(ξ))
     @test @inferred(diffusionoperators(uniformGrid, Mixed(ξ), Mixed(ξ))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
     @test μ * L_1_minus + σ^2/2 * L_2 == [-1+(1+ξ)+(-2+1+ξ)/2 0.5 0.0 0.0 0.0; 1.5 -2.0 0.5 0.0 0.0; 0.0 1.5 -2.0 0.5 0.0; 0.0 0.0 1.5 -2.0 0.5; 0.0 0.0 0.0 1.5 -1+(-2+1-ξ)/2]
@@ -60,7 +61,7 @@ end
     @test @inferred(diffusionoperators(irregularGrid    , Mixed(ξ), Mixed(ξ))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
     @test μ * L_1_minus + σ^2/2 * L_2 == [-1+(1+ξ)+(-2+1+ξ)/2 0.5 0.0 0.0 0.0; 1.5 -2.0 0.5 0.0 0.0; 0.0 1.5 -2.0 0.5 0.0; 0.0 0.0 1.5 -2.0 0.5; 0.0 0.0 0.0 1.5 -1+(-2+1-ξ)/2]
 
-    ξ = 2.0
+    ξ = ξ_2
     L_1_minus, L_1_plus, L_2 = diffusionoperators(uniformGrid, Mixed(ξ), Mixed(ξ))
     @test @inferred(diffusionoperators(uniformGrid, Mixed(ξ), Mixed(ξ))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
     @test μ * L_1_minus + σ^2/2 * L_2 == [-1+(1+ξ)+(-2+1+ξ)/2 0.5 0.0 0.0 0.0; 1.5 -2.0 0.5 0.0 0.0; 0.0 1.5 -2.0 0.5 0.0; 0.0 0.0 1.5 -2.0 0.5; 0.0 0.0 0.0 1.5 -1+(-2+1-ξ)/2]
@@ -70,4 +71,11 @@ end
     #=
         Consistency tests
     =#
+    uniformGrid = range(0.0, 1.0, length = 500)
+    irregularGrid = collect(uniformGrid)
+    L_1_minus, L_1_plus, L_2 = diffusionoperators(uniformGrid, Mixed(ξ_1), Mixed(ξ_2))
+    L_1_minus_ir, L_1_plus_ir, L_2_ir = diffusionoperators(irregularGrid, Mixed(ξ_1), Mixed(ξ_2))
+    @test L_1_minus ≈ L_1_minus_ir
+    @test L_1_plus ≈ L_1_plus_ir
+    @test L_2 ≈ L_2_ir
 end
