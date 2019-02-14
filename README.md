@@ -20,7 +20,7 @@ with some constant `μ` and `σ >= 0`.
 using SimpleDifferentialOperators
 μ = -0.1 # constant negative drift
 σ = 0.1
-grid = range(0.0, 1.0, length = 200) # uniform grid on [0.0, 1.0]
+grid = range(0.0, stop = 1.0, length = 200) # uniform grid on [0.0, 1.0]
 
 # get operators for reflecting/Dirichlet boundary conditions, v'(0) = v'(1) = 0
 L_1_minus, L_1_plus, L_2 = reflecting_diffusionoperators(grid)
