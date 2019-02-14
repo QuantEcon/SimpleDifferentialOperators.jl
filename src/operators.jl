@@ -39,7 +39,6 @@ end
 
 # Irregular grid, (Reflecting, Reflecting)
 function _diffusionoperators(x::AbstractArray, BC1::Reflecting, BC2::Reflecting)
-
    # define preliminaries
    T = eltype(x) # get data type of the grid
    d = diff(x) # using the first difference as diff from ghost node
@@ -54,7 +53,7 @@ function _diffusionoperators(x::AbstractArray, BC1::Reflecting, BC2::Reflecting)
    # define L_1_minus
    dl_m1 = -ones(T, P-1)./Δ_m[2:end]
    d_m1 = ones(T, P)./Δ_m
-   d_m1[1] = d_m1[1] + dl_m1[1] * (one(T)+ξ*Δ_p[1])
+   d_m1[1] = d_m1[1] + dl_m1[1]
    du_m1 = zeros(T, P-1)./Δ_p[1:end-1]
    L_1_minus = Tridiagonal(dl_m1, d_m1, du_m1)
 
@@ -62,18 +61,20 @@ function _diffusionoperators(x::AbstractArray, BC1::Reflecting, BC2::Reflecting)
    dl_p1 = zeros(T, P-1)./Δ_m[2:end]
    d_p1 = -ones(T, P)./Δ_p
    du_p1 = ones(T, P-1)./Δ_p[1:end-1]
-   d_p1[end] = d_p1[end] + du_p1[end] * (one(T)-ξ*Δ_m[end])
+   d_p1[end] = d_p1[end] + du_p1[end]
    L_1_plus = Tridiagonal(dl_p1, d_p1, du_p1)
 
    # define L_2
    Δ=Δ_p+Δ_m
    dl_2 = 2*ones(T, P-1)./(Δ_m[2:end].*Δ[2:end])
    d_2 = -2*ones(T, P)
-   d_2[1] = -2*one(T) + (one(T)+ξ * Δ_p[1])
-   d_2[end] = -2*one(T) + (one(T)-ξ * Δ_m[end])
+   d_2[1] = -one(T)
+   d_2[end] = -one(T)
    d_2 = d_2./(Δ_p.*Δ_m)
    du_2 = 2*ones(T, P-1)./(Δ_p[1:end-1].*Δ[1:end-1])
    L_2 = Tridiagonal(dl_2, d_2, du_2)
+
+   # return
    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
 end
 
