@@ -48,8 +48,8 @@
 	\end{align}
 	\item Reflecting barrier conditions:
 	\begin{align}
-	\xi v(\underline{z}) + \D[z]v(\underline{z} ) &= 0\label{eq:new-BC1}\\
-	\xi v(\bar{z}) + \D[z]v(\bar{z}) &= 0\label{eq:new-BC2}
+	\underline{\xi} v(\underline{z}) + \D[z]v(\underline{z} ) &= 0\label{eq:new-BC1}\\
+	\overline{\xi} v(\bar{z}) + \D[z]v(\bar{z}) &= 0\label{eq:new-BC2}
 	\end{align}
 \end{itemize}
 
@@ -68,27 +68,27 @@ Suppose that the grids are regular, i.e., elements of $\text{diff}(z)$ are all i
 
 Using the backwards first-order difference, \eqref{eq:new-BC1} implies
 \begin{align}
-\dfrac{v(\underline{z}) - v(\underline{z}-\Delta)}{\Delta} &= - \xi v(\underline{z})
+\dfrac{v(\underline{z}) - v(\underline{z}-\Delta)}{\Delta} &= - \underline{\xi} v(\underline{z})
 \end{align}
 at the lower bound.
 
 Likewise, \eqref{eq:new-BC2} under the forwards first-order difference yields
 \begin{align}
-\dfrac{v(\overline{z} + \Delta) - v(\overline{z})}{\Delta} &= - \xi v(\overline{z})
+\dfrac{v(\overline{z} + \Delta) - v(\overline{z})}{\Delta} &= - \overline{\xi} v(\overline{z})
 \end{align}
 at the upper bound.
 
 The discretized central difference of second order under \eqref{eq:new-BC1} at the lower bound is
 \begin{align}
 \dfrac{v (\underline{z} + \Delta) - 2 v(\underline{z}) + v(\underline{z}-\Delta)}{\Delta^2} &=   \dfrac{v(\underline{z} + \Delta) - v(\underline{z})}{\Delta^2} - \dfrac{1}{\Delta}\dfrac{v (\underline{z}) - v(\underline{z}-\Delta) }{\Delta}  \\
-&= \dfrac{v(\underline{z} + \Delta) - v(\underline{z})}{\Delta^2} + \dfrac{1}{\Delta} \xi v(\underline{z})  \\ 
-&= \dfrac{1}{\Delta^2}  (- 1 + \Delta \xi) v(\underline{z})  + \dfrac{1}{\Delta^2}  v(\underline{z} + \Delta)  
+&= \dfrac{v(\underline{z} + \Delta) - v(\underline{z})}{\Delta^2} + \dfrac{1}{\Delta} \underline{\xi} v(\underline{z})  \\ 
+&= \dfrac{1}{\Delta^2}  (- 1 + \Delta \underline{\xi}) v(\underline{z})  + \dfrac{1}{\Delta^2}  v(\underline{z} + \Delta)  
 \end{align}
 Similarly, by \eqref{eq:new-BC2}, we have
 \begin{align}
 \dfrac{v (\bar{z} + \Delta) - 2 v(\bar{z} ) + v(\bar{z} -\Delta)}{\Delta^2} &=   \dfrac{v(\bar{z} - \Delta) - v(\bar{z})}{\Delta^2} + \dfrac{1}{\Delta}\dfrac{ v(\bar{z}+\Delta) - v (\bar{z}) }{\Delta}  \\
-&= \dfrac{v(\bar{z} - \Delta) - v(\bar{z})}{\Delta^2}  - \dfrac{1}{\Delta} \xi v(\bar{z})  \\ 
-&= \dfrac{1}{\Delta^2}  (- 1 - \Delta \xi) v(\bar{z})  + \dfrac{1}{\Delta^2}  v(\bar{z} - \Delta)  
+&= \dfrac{v(\bar{z} - \Delta) - v(\bar{z})}{\Delta^2}  - \dfrac{1}{\Delta} \overline{\xi} v(\bar{z})  \\ 
+&= \dfrac{1}{\Delta^2}  (- 1 - \Delta \overline{\xi}) v(\bar{z})  + \dfrac{1}{\Delta^2}  v(\bar{z} - \Delta)  
 \end{align}
 at the upper bound.
 
@@ -96,7 +96,7 @@ Thus, the corresponding discretized differential operator $L_1^{-}$, $L_1^{+}$, 
 
 \begin{align}
 L_1^{-} &\equiv \frac{1}{\Delta}\begin{pmatrix}
-1 - (1 + \xi \Delta) &0&0&\dots&0&0&0\\
+1 - (1 + \underline{\xi} \Delta) &0&0&\dots&0&0&0\\
 -1&1&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-1&1&0\\
@@ -107,26 +107,26 @@ L_1^{+} &\equiv \frac{1}{\Delta}\begin{pmatrix}
 0&-1&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&0&-1&1\\
-0&0&0&\cdots&0&0&-1+(1-\xi \Delta)
+0&0&0&\cdots&0&0&-1+(1-\overline{\xi} \Delta)
 \end{pmatrix}_{P\times P}\label{eq:L-1-plus-regular} \\
 L_2 &\equiv \frac{1}{\Delta^2}\begin{pmatrix}
--2 + (1 + \xi\Delta) &1&0&\dots&0&0&0\\
+-2 + (1 + \underline{\xi}\Delta) &1&0&\dots&0&0&0\\
 1&-2&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&1&-2&1\\
-0&0&0&\cdots&0&1&-2 + (1- \xi\Delta)
+0&0&0&\cdots&0&1&-2 + (1- \overline{\xi}\Delta)
 \end{pmatrix}_{P\times P}\label{eq:L-2-regular}
 \end{align}
 
 \subsection{Irregular grids}
 Using the backwards first-order difference, \eqref{eq:new-BC1} implies
 \begin{align}
-\dfrac{v(\underline{z}) - v(\underline{z}-\Delta_{1, -})}{\Delta_{1, -}} &= - \xi v(\underline{z})
+\dfrac{v(\underline{z}) - v(\underline{z}-\Delta_{1, -})}{\Delta_{1, -}} &= - \underline{\xi} v(\underline{z})
 \end{align}
 
 at the lower bound. Likewise, the forwards first-order difference under \eqref{eq:new-BC2} yields
 \begin{align}
-\dfrac{v(\overline{z} + \Delta_{P, +}) - v( \overline{z})}{\Delta_{P, +}} &= - \xi v(\overline{z})
+\dfrac{v(\overline{z} + \Delta_{P, +}) - v( \overline{z})}{\Delta_{P, +}} &= - \overline{\xi} v(\overline{z})
 \end{align}
 at the upper bound.
 
@@ -136,16 +136,16 @@ Note that we have assumed that $\Delta_{1,-} = \Delta_{1,+}$ and $\Delta_{P,+} =
 &=
 \dfrac{v (\Delta_{1, +}) - 2 v(\underline{z}) + v(-\Delta_{1, +})}{\Delta_{1, +}^2} \\ 
 &= \dfrac{v(\underline{z} + \Delta_{1, +}) - v(\underline{z})}{\Delta_{1, +}^2} - \dfrac{1}{\Delta_{1, +}}\dfrac{v(\underline{z}) - v(\underline{z}-\Delta_{1, +}) }{\Delta_{1, +}}  \\
-&= \dfrac{v(\underline{z} + \Delta_{1, +}) - v(\underline{z})}{\Delta_{1, +}^2} + \dfrac{1}{\Delta_{i,+}} \xi v(\underline{z})  \\ 
-&= \dfrac{1}{\Delta_{1, +}^2}  (- 1 + \Delta_{1, +} \xi) v(\underline{z})  + \dfrac{1}{\Delta_{1, +}^2}  v(\underline{z} + \Delta_{1, +})  
+&= \dfrac{v(\underline{z} + \Delta_{1, +}) - v(\underline{z})}{\Delta_{1, +}^2} + \dfrac{1}{\Delta_{i,+}} \underline{\xi} v(\underline{z})  \\ 
+&= \dfrac{1}{\Delta_{1, +}^2}  (- 1 + \Delta_{1, +} \underline{\xi}) v(\underline{z})  + \dfrac{1}{\Delta_{1, +}^2}  v(\underline{z} + \Delta_{1, +})  
 \end{align}
 Similarly, by \eqref{eq:new-BC2}, we have
 \begin{align}
 &\dfrac{\Delta_{P,-} v( \bar{z} + \Delta_{P,+}) - (\Delta_{P,+} + \Delta_{P,-}) v(\bar{z} ) + \Delta_{P,+}  v( \bar{z} - \Delta_{P,-})}{\frac{1}{2}(\Delta_{P,+} + \Delta_{P,-}) \Delta_{P,+} \Delta_{P,-} } \\
 &=\dfrac{v (\bar{z} + \Delta_{P,-}) - 2 v(\bar{z} ) + v(\bar{z} -\Delta_{P,-})}{\Delta_{P,-}^2} \\
 &=   \dfrac{v(\bar{z} - \Delta_{P,-}) - v(\bar{z})}{\Delta_{P,-}^2} + \dfrac{1}{\Delta_{P,-}}\dfrac{ v(\bar{z}+\Delta_{P,-}) - v (\bar{z}) }{\Delta_{P,-}}  \\
-&= \dfrac{v(\bar{z} - \Delta_{P,-}) - v(\bar{z})}{\Delta_{P,-}^2}  - \dfrac{1}{\Delta_{P,-}} \xi v(\bar{z})  \\ 
-&= \dfrac{1}{\Delta_{P,-}^2}  (- 1 - \Delta_{P,-} \xi) v(\bar{z})  + \dfrac{1}{\Delta_{P,-}^2}  v(\bar{z} - \Delta_{P,-})  
+&= \dfrac{v(\bar{z} - \Delta_{P,-}) - v(\bar{z})}{\Delta_{P,-}^2}  - \dfrac{1}{\Delta_{P,-}} \overline{\xi} v(\bar{z})  \\ 
+&= \dfrac{1}{\Delta_{P,-}^2}  (- 1 - \Delta_{P,-} \overline{\xi}) v(\bar{z})  + \dfrac{1}{\Delta_{P,-}^2}  v(\bar{z} - \Delta_{P,-})  
 \end{align}
 at the upper bound.
 
@@ -153,7 +153,7 @@ Thus, the corresponding discretized differential operator $L_1^{-}$, $L_1^{+}$, 
 
 \begin{align}
 L_1^{-} &\equiv \begin{pmatrix}
-\Delta^{-1}_{1,-} [1 - (1 + \xi \Delta_{1,-})] &0&0&\dots&0&0&0\\
+\Delta^{-1}_{1,-} [1 - (1 + \underline{\xi} \Delta_{1,-})] &0&0&\dots&0&0&0\\
 -\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-\Delta_{P-1,-}^{-1}&\Delta_{P-1,-}^{-1}&0\\
@@ -164,14 +164,14 @@ L_1^{-} &\equiv \begin{pmatrix}
 0&-\Delta_{2,+}^{-1}&\Delta_{2,+}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\cdots&0&-\Delta_{P-1,+}^{-1}&\Delta_{P-1,+}^{-1}\\
-0&0&0&\dots&0&0&\Delta_{P,+}^{-1}  [-1 + (1 - \xi \Delta_{P,+})]  \\
+0&0&0&\dots&0&0&\Delta_{P,+}^{-1}  [-1 + (1 - \overline{\xi} \Delta_{P,+})]  \\
 \end{pmatrix}_{P\times P}\label{eq:L-1-plus} \\
 L_2 &\equiv \begin{psmallmatrix}
-\Delta_{1,+}^{-2}[-2 + (1+\xi \Delta_{1,+})] &\Delta_{1,+}^{-2}&0&\cdots&0&0&0 \\
+\Delta_{1,+}^{-2}[-2 + (1+\underline{\xi} \Delta_{1,+})] &\Delta_{1,+}^{-2}&0&\cdots&0&0&0 \\
 \vdots&\ddots&\ddots&\ddots&\ddots&\vdots&\vdots\\
 0&\cdots&2(\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,-}^{-1} &-2\Delta_{i,-}^{-1} \Delta_{i,+}^{-1}  & 2 (\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,+}^{-1}&\cdots&0 \\
 \vdots&\vdots&\vdots&\ddots&\ddots&\ddots&\vdots\\
-0&0&0&\cdots&0&\Delta_{P,-}^{-2}&\Delta_{P,-}^{-2} [-2 + (1- \xi\Delta_{P,-})]
+0&0&0&\cdots&0&\Delta_{P,-}^{-2}&\Delta_{P,-}^{-2} [-2 + (1- \overline{\xi}\Delta_{P,-})]
 \end{psmallmatrix}_{P\times P}\label{eq:L-2}
 \end{align}
 
@@ -199,7 +199,7 @@ and the boundary conditions for the reflecting conditions:
 
 \begin{align}
 B_{1}  &\equiv \begin{pmatrix}
-(1 + \xi \Delta^{-1}_{1,-}) &0&\dots&0&0\\
+(1 + \underline{\xi} \Delta^{-1}_{1,-}) &0&\dots&0&0\\
 0&0&\dots&0&0\\
 \vdots&\vdots&\ddots&\vdots&\vdots\\
 0&0&\cdots&0&0\\
@@ -210,7 +210,7 @@ B_{P}  &\equiv \begin{pmatrix}
 0&0&\dots&0&0\\
 \vdots&\vdots&\ddots&\vdots&\vdots\\
 0&0&\cdots&0&0\\
-0&0&\cdots&0&(1 - \xi \Delta^{-1}_{P,+})
+0&0&\cdots&0&(1 - \overline{\xi} \Delta^{-1}_{P,+})
 \end{pmatrix}_{P\times P}
 \end{align}
 
