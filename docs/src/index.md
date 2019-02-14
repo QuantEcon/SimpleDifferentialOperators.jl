@@ -10,12 +10,7 @@ Note that this requires Julia 1.0 or later.
 
 For the complete derivations of the objects we return, see the [PDF](../tex/derivation.pdf).
 
-Usage
-==========
-
-This package provides discretized differential operators of first order and second order under reflecting boundary conditions.
-
-Formula
+Formulas
 ==========
 Under ``P``-length of grids on ``v`` with end points ``\underline{z} < \bar{z}`` with reflecting barrier conditions of
 
@@ -61,3 +56,15 @@ L_2 \equiv \frac{1}{\Delta^2}\begin{pmatrix}
 which represent the backward first order, foward first order, and central second order differential operators respectively.
 
 Derivation, including formula for irregular grids, can be found [here](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/blob/master/docs/tex/discretized-differential-operator-derivation.pdf).
+
+
+Usage
+==========
+
+This package provides discretized differential operators of first order and second order under reflecting boundary conditions.
+
+```
+```@autodocs
+Modules = [SimpleDifferentialOperators]
+Order   = [:function, :type]
+```
