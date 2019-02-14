@@ -12,12 +12,12 @@ For the complete derivations of the objects we return, see the [PDF](../tex/deri
 
 Formulas
 ==========
-Under ``P``-length of grids on ``v`` with end points ``\underline{z} < \bar{z}`` with reflecting barrier conditions of
+Under ``P``-length of grids on ``v`` with end points ``\underline{z} < \overline{z}`` with reflecting barrier conditions of
 
 ```math
 \begin{align}
-\xi v(\underline{z}) + \nabla v(\underline{z} ) &= 0\\
-\xi v(\bar{z}) + \nabla v(\bar{z}) &= 0
+\underline{\xi} v(\underline{z}) + \nabla v(\underline{z} ) &= 0\\
+\overline{\xi} v(\overline{z}) + \nabla v(\overline{z}) &= 0
 \end{align}
 ```
 
@@ -25,7 +25,7 @@ We use the following discretization schemes:
 
 ```math
 L_1^{-} \equiv \frac{1}{\Delta}\begin{pmatrix}
-1 - (1 + \xi \Delta) &0&0&\dots&0&0&0\\
+1 - (1 + \underline{\xi} \Delta) &0&0&\dots&0&0&0\\
 -1&1&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-1&1&0\\
@@ -39,17 +39,17 @@ L_1^{+} \equiv \frac{1}{\Delta}\begin{pmatrix}
 0&-1&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&0&-1&1\\
-0&0&0&\cdots&0&0&-1+(1-\xi \Delta)
+0&0&0&\cdots&0&0&-1+(1-\overline{\xi} \Delta)
 \end{pmatrix}_{P\times P}\label{eq:L-1-plus-regular} \\
 ```
 
 ```math
 L_2 \equiv \frac{1}{\Delta^2}\begin{pmatrix}
--2 + (1 + \xi\Delta) &1&0&\dots&0&0&0\\
+-2 + (1 + \underline{\xi} \Delta) &1&0&\dots&0&0&0\\
 1&-2&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&1&-2&1\\
-0&0&0&\cdots&0&1&-2 + (1- \xi\Delta)
+0&0&0&\cdots&0&1&-2 + (1- \overline{\xi} \Delta)
 \end{pmatrix}_{P\times P}\label{eq:L-2-regular}
 ```
 

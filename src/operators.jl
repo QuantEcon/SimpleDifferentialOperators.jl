@@ -44,6 +44,20 @@ end
 
 # Uniform grid, (Mixed, Mixed)
 function _diffusionoperators(x::AbstractRange, BC1::Mixed, BC2::Mixed)
+    Δ = step(x)
+    ξ_lb = BC1.ξ
+    ξ_ub = BC2.ξ
+
+    # extract diffusion operators with reflecting barrier conditions first
+    L_1_minus, L_1_plus, L_2 = diffusionoperators(x, Reflecting(), Reflecting())
+
+    # apply boundary condition constraints
+    L_1_minus[1,1] -= ξ_lb * Δ
+    L_1_plus[end,end] -= ξ_ub * Δ
+    L_2[1,1] += ξ_lb * Δ
+    L_2[end,end] -= ξ_ub * Δ
+
+    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
 end
 
 # Irregular grid, (Reflecting, Reflecting)
@@ -89,4 +103,20 @@ end
 
 # Irregular grid, (Mixed, Mixed)
 function _diffusionoperators(x::AbstractArray, BC1::Mixed, BC2::Mixed)
+    d = diff(x)
+    Δ_1 = d[1]
+    Δ_P = d[end]
+    ξ_lb = BC1.ξ
+    ξ_ub = BC2.ξ
+
+    # extract diffusion operators with reflecting barrier conditions first
+    L_1_minus, L_1_plus, L_2 = diffusionoperators(x, Reflecting(), Reflecting())
+
+    # apply boundary condition constraints
+    L_1_minus[1,1] -= ξ_lb * Δ_1
+    L_1_plus[end,end] -= ξ_ub * Δ_P
+    L_2[1,1] += ξ_lb * Δ_1
+    L_2[end,end] -= ξ_ub * Δ_P
+
+    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
 end
