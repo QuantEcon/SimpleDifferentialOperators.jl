@@ -63,7 +63,6 @@ Usage
 
 This package provides discretized differential operators of first order and second order under reflecting boundary conditions.
 
-```
 ```@autodocs
 Modules = [SimpleDifferentialOperators]
 Order   = [:function, :type]
