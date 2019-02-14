@@ -1,12 +1,12 @@
 # General dispatcher
 """
-   diffusionoperators(x, BC1::BoundaryCondition, BC2::BoundaryCondition)
+   `diffusionoperators(x, BC1::BoundaryCondition, BC2::BoundaryCondition)`
 
-Return the diffusion operators (L_1_minus, L_1_plus, L_2) w.r.t the supplied grid and BCs.
+Return the diffusion operators `(L_1_minus, L_1_plus, L_2)` w.r.t the supplied grid and BCs.
 
-x is a grid (either an `AbstractRange`, in which we use specialized uniform grid code, or an `AbstractArray`). The
-first BC binds at the lower end of the grid (i.e., x[1]), and the latter at the high end. The BCs are either Reflecting(),
-or a "Dirichlet" boundary condition v'(x) = 0, or Mixed(x::T) where {T <: Real}, corresponding to "Robin" boundary conditions.
+`x` is a grid (either an `AbstractRange`, in which we use specialized uniform grid code, or an `AbstractArray`). The
+first BC binds at the lower end of the grid (i.e., `x[1]`), and the latter at the high end. The BCs are either a `Reflecting()`,
+or "Dirichlet" boundary condition `v'(x) = 0`, or `Mixed(x::T) where {T <: Real}`, corresponding to "Robin" boundary conditions.
 """
 diffusionoperators(x, BC1::BoundaryCondition, BC2::BoundaryCondition) = _diffusionoperators(x, BC1, BC2)
 
