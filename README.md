@@ -6,7 +6,7 @@
 [![](https://img.shields.io/badge/docs-blue.svg)](https://QuantEcon.github.io/SimpleDifferentialOperators.jl/latest)
 
 ## Overview
-This is a package to return discretized differential operators of first order and second order with respect to some reflecting boundary conditions.
+This is a package to return discretized differential operators of first order and second order under reflecting boundary conditions.
 
 ### Example
 
