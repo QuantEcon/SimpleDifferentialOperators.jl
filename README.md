@@ -31,7 +31,7 @@ A = μ*L_1_minus + σ^2 / 2 * L_2 # use L_1_minus because μ < 0
 
 ## Documentation
 
-To install, run `] add SimpleDifferentialOperators` on Julia 1.0+.
+To install, run `] add SimpleDifferentialOperators` on Julia 1.1+.
 
 For more usage information, see the docs badge above.
 
@@ -39,7 +39,7 @@ Derivation can be found [here](https://github.com/ubcecon/computing_and_datascie
 
 ## Troubleshooting
 
-* As a reminder, the package requires **Julia 1.0 or later.**
+* As a reminder, the package requires **Julia 1.1 or later.**
 
 * If you discover a bug in the code or math, please file an issue in this repo with the label "bug."
 
