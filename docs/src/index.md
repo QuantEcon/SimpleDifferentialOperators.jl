@@ -17,7 +17,7 @@ This package provides discretized differential operators of first order and seco
 
 Formula
 ==========
-We use the following discretization schemes on ``P``-length of grids on ``v`` with end points ``\underline{z} < \bar{z}`` under reflecting barrier conditions of
+Under ``P``-length of grids on ``v`` with end points ``\underline{z} < \bar{z}`` with reflecting barrier conditions of
 
 ```math
 \begin{align}
@@ -25,6 +25,8 @@ We use the following discretization schemes on ``P``-length of grids on ``v`` wi
 \xi v(\bar{z}) + \nabla v(\bar{z}) &= 0
 \end{align}
 ```
+
+We use the following discretization schemes:
 
 ```math
 L_1^{-} \equiv \frac{1}{\Delta}\begin{pmatrix}
