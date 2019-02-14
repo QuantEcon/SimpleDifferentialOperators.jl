@@ -4,10 +4,19 @@ module SimpleDifferentialOperators
 using LinearAlgebra
 
 # Includes
+include("types.jl")
 include("operators.jl")
 
 # Exports
-export robin_diffusionoperators, # both the irregular and regular method
-       reflecting_diffusionoperators # with ξ = 0
+# Types
+export BoundaryCondition,
+       HomogeneousBoundaryCondition,
+       InhomogeneousBoundaryCondition,
+       Reflecting,
+       Mixed,
+       Absorbing
+
+# Functions
+export diffusionoperators
 
 end # module
