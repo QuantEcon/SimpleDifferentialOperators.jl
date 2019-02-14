@@ -35,7 +35,7 @@ To install, run `] add SimpleDifferentialOperators` on Julia 1.1+.
 
 For more usage information, see the docs badge above.
 
-Derivation can be found [here](https://github.com/ubcecon/computing_and_datascience/blob/master/continuous_time_methods/notes/differential-operator-on-irregular-grids.tex).
+Derivation can be found [here](https://github.com/ubcecon/computing_and_datascience/blob/master/continuous_time_methods/notes/discretized-differential-operator-derivation.tex).
 
 ## Troubleshooting
 
