@@ -46,5 +46,16 @@ end
     # ξ_1, irregular grid.
     L_1_minus, L_1_plus, L_2 = robin_diffusionoperators(z_irregular, ξ_2)
     @test μ * L_1_minus + σ^2/2 * L_2 ≈ cat(row1, row2, row3, row4, row5, dims = 1)
+end
 
+@testset "Tests with Varying Types" begin
+    T = [Float64, BigFloat, Float32, Real] # can add DualNumber, but requires package
+    for type in T
+        ξ = one(type)
+        grid = range(zero(type), one(type), length = 400)
+        L_1_minus, L_1_plus, L_2 = robin_diffusionoperators(grid, ξ)
+        @test 1 == 1  # returns true if the above call returns successfully
+        @inferred robin_diffusionoperators(grid, ξ)
+        @test 1 == 1 # returns true if the above inference passes
+    end
 end
