@@ -18,13 +18,27 @@ using Test, LinearAlgebra
 end
 
 @testset "Reflecting Barrier Tests" begin
+    #=
+        Correctness tests
+    =#
     σ = 1; μ = -1;
     # Uniform grid
     L_1_minus, L_1_plus, L_2 = diffusionoperators(1:5, Reflecting(), Reflecting())
     @test @inferred(diffusionoperators(1:5, Reflecting(), Reflecting())) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
     @test -μ * L_1_plus + σ^2/2 * L_2 == [-1.5 1.5 0.0 0.0 0.0; 0.5 -2.0 1.5 0.0 0.0; 0.0 0.50 -2.0 1.50 0.0; 0.0 0.0 0.50 -2.0 1.50; 0.0 0.0 0.0 0.50 -0.50]
-    # Irregular grid 
+    # Irregular grid
     L_1_minus, L_1_plus, L_2 = diffusionoperators(collect(1:5), Reflecting(), Reflecting()) # irregular grid
     @test @inferred(diffusionoperators(collect(1:5), Reflecting(), Reflecting())) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
     @test -μ * L_1_plus + σ^2/2 * L_2 == [-1.5 1.5 0.0 0.0 0.0; 0.5 -2.0 1.5 0.0 0.0; 0.0 0.50 -2.0 1.50 0.0; 0.0 0.0 0.50 -2.0 1.50; 0.0 0.0 0.0 0.50 -0.50]
+
+    #=
+        Consistency tests
+    =#
+    uniformGrid = range(0.0, 1.0, length = 500)
+    irregularGrid = collect(uniformGrid)
+    L_1_minus, L_1_plus, L_2 = diffusionoperators(uniformGrid, Reflecting(), Reflecting())
+    L_1_minus_ir, L_1_plus_ir, L_2_ir = diffusionoperators(irregularGrid, Reflecting(), Reflecting())
+    @test L_1_minus ≈ L_1_minus_ir
+    @test L_1_plus ≈ L_1_plus_ir
+    @test L_2 ≈ L_2_ir
 end
