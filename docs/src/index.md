@@ -21,8 +21,8 @@ We use the following discretization schemes on ``P``-length of grids on ``v`` wi
 
 ```math
 \begin{align}
-\xi v(\underline{z}) + \D[z]v(\underline{z} ) &= 0\\
-\xi v(\bar{z}) + \D[z]v(\bar{z}) &= 0
+\xi v(\underline{z}) + \nabla v(\underline{z} ) &= 0\\
+\xi v(\bar{z}) + \nabla v(\bar{z}) &= 0
 \end{align}
 ```
 
