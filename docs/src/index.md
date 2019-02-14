@@ -58,4 +58,4 @@ L_2 \equiv \frac{1}{\Delta^2}\begin{pmatrix}
 
 which represent the backward first order, foward first order, and central second order differential operators respectively.
 
-Derivation, including formula for irregular grids, can be found in [../tex/discretized-differential-operator-derivation.pdf](../tex/discretized-differential-operator-derivation.pdf).
+Derivation, including formula for irregular grids, can be found [here](../tex/discretized-differential-operator-derivation.pdf).
