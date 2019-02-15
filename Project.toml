@@ -1,5 +1,5 @@
 name = "SimpleDifferentialOperators"
-uuid = "7f42d020-2e2a-11e9-1b48-ef6061254184"
+uuid = "7ccca996-40d6-5c2f-be7f-4eb2934af9c4"
 version = "0.1.0"
 
 [deps]
