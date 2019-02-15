@@ -8,7 +8,7 @@ To install, run
 
 Note that this requires Julia 1.0 or later.
 
-For the complete derivations of the objects we return, see the [PDF](../tex/derivation.pdf).
+For the complete derivations of the objects we return, see the [PDF](https://github.com/ubcecon/computing_and_datascience/blob/master/continuous_time_methods/notes/discretized-differential-operator-derivation.tex).
 
 Formulas
 ==========
