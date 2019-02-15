@@ -1,5 +1,5 @@
 using SimpleDifferentialOperators
-using Test, LinearAlgebra
+using Test, LinearAlgebra, DualNumbers
 
 @testset "Dispatch Tests" begin
     methodList = collect(methods(SimpleDifferentialOperators._diffusionoperators))
@@ -68,6 +68,7 @@ end
     L_1_minus, L_1_plus, L_2 = diffusionoperators(irregularGrid, Mixed(ξ), Mixed(ξ))
     @test @inferred(diffusionoperators(irregularGrid, Mixed(ξ), Mixed(ξ))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
     @test μ * L_1_minus + σ^2/2 * L_2 == [-1+(1+ξ)+(-2+1+ξ)/2 0.5 0.0 0.0 0.0; 1.5 -2.0 0.5 0.0 0.0; 0.0 1.5 -2.0 0.5 0.0; 0.0 0.0 1.5 -2.0 0.5; 0.0 0.0 0.0 1.5 -1+(-2+1-ξ)/2]
+
     #=
         Consistency tests
     =#
@@ -78,4 +79,42 @@ end
     @test L_1_minus ≈ L_1_minus_ir
     @test L_1_plus ≈ L_1_plus_ir
     @test L_2 ≈ L_2_ir
+end
+
+@testset "Input Type Variance" begin
+    # BigFloat
+    uniformGrid = range(BigFloat(0.0), BigFloat(1.0), length = 100)
+    irregularGrid = collect(uniformGrid)
+    L_1_minus, L_1_plus, L_2 = diffusionoperators(uniformGrid, Reflecting(), Reflecting())
+    @test @inferred(diffusionoperators(uniformGrid, Reflecting(), Reflecting())) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+    L_1_minus, L_1_plus, L_2 = diffusionoperators(irregularGrid, Reflecting(), Reflecting())
+    @test @inferred(diffusionoperators(irregularGrid, Reflecting(), Reflecting())) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+    L_1_minus, L_1_plus, L_2 = diffusionoperators(uniformGrid, Mixed(one(BigFloat)), Mixed(one(BigFloat)))
+    @test @inferred(diffusionoperators(uniformGrid, Mixed(one(BigFloat)), Mixed(one(BigFloat)))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+    L_1_minus, L_1_plus, L_2 = diffusionoperators(irregularGrid, Mixed(one(BigFloat)), Mixed(one(BigFloat)))
+    @test @inferred(diffusionoperators(irregularGrid, Mixed(one(BigFloat)), Mixed(one(BigFloat)))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+
+    # Float32
+    uniformGrid = range(Float32(0.0), Float32(1.0), length = 100)
+    irregularGrid = collect(uniformGrid)
+    L_1_minus, L_1_plus, L_2 = diffusionoperators(uniformGrid, Reflecting(), Reflecting())
+    @test @inferred(diffusionoperators(uniformGrid, Reflecting(), Reflecting())) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+    L_1_minus, L_1_plus, L_2 = diffusionoperators(irregularGrid, Reflecting(), Reflecting())
+    @test @inferred(diffusionoperators(irregularGrid, Reflecting(), Reflecting())) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+    L_1_minus, L_1_plus, L_2 = diffusionoperators(uniformGrid, Mixed(one(Float32)), Mixed(one(Float32)))
+    @test @inferred(diffusionoperators(uniformGrid, Mixed(one(BigFloat)), Mixed(one(BigFloat)))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+    L_1_minus, L_1_plus, L_2 = diffusionoperators(irregularGrid, Mixed(one(Float32)), Mixed(one(Float32)))
+    @test @inferred(diffusionoperators(irregularGrid, Mixed(one(BigFloat)), Mixed(one(BigFloat)))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+
+    # Duals
+    uniformGrid = range(Dual(0.0), Dual(1.0), length = 100)
+    irregularGrid = collect(uniformGrid)
+    L_1_minus, L_1_plus, L_2 = diffusionoperators(uniformGrid, Reflecting(), Reflecting())
+    @test @inferred(diffusionoperators(uniformGrid, Reflecting(), Reflecting())) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+    L_1_minus, L_1_plus, L_2 = diffusionoperators(irregularGrid, Reflecting(), Reflecting())
+    @test @inferred(diffusionoperators(irregularGrid, Reflecting(), Reflecting())) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+    L_1_minus, L_1_plus, L_2 = diffusionoperators(uniformGrid, Mixed(Dual(1.0)), Mixed(Dual(1.0)))
+    @test @inferred(diffusionoperators(uniformGrid, Mixed(Dual(1.0)), Mixed(Dual(1.0)))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+    L_1_minus, L_1_plus, L_2 = diffusionoperators(irregularGrid, Mixed(Dual(1.0)), Mixed(Dual(1.0)))
+    @test @inferred(diffusionoperators(irregularGrid, Mixed(Dual(1.0)), Mixed(Dual(1.0)))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
 end
