@@ -10,11 +10,11 @@ This is a package to return discretized differential operators of first order an
 
 ### Example
 
-Consider constructing the corresponding infinitesimal generator for the following stochastic process:
+Consider constructing the corresponding infinitesimal generator for the following stochastic differential equation:
 ```math
 d x_t = μ d_t + σ dW_t  
 ```
-with some constant `μ` and `σ >= 0`.
+with some constant `μ` and `σ >= 0`, and `W_t` Brownian Motion
 
 ```
 using SimpleDifferentialOperators
