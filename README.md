@@ -10,7 +10,7 @@ This is a package to return discretized differential operators of first order an
 
 ### Example
 
-Consider constructing the corresponding generator for the following stochastic process:
+Consider constructing the corresponding infinitesimal generator for the following stochastic process:
 ```math
 d x_t = μ d_t + σ dW_t  
 ```
@@ -22,10 +22,10 @@ using SimpleDifferentialOperators
 σ = 0.1
 grid = range(0.0, 1.0, length = 200) # uniform grid on [0.0, 1.0]
 
-# get operators for reflecting/Dirichlet boundary conditions, v'(0) = v'(1) = 0
+# uses discretized operators for reflecting/Dirichlet boundary conditions, v'(0) = v'(1) = 0
 L_1_minus, L_1_plus, L_2 = diffusionoperators(grid, Reflecting(), Reflecting())
 
-# discretized generator, using Ito formula
+# discretized generator for the SDE, imposing the boundary conditions
 A = μ*L_1_minus + σ^2 / 2 * L_2 # use L_1_minus because μ < 0  
 ```
 
