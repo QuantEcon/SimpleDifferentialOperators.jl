@@ -6,6 +6,7 @@ using LinearAlgebra
 # Includes
 include("types.jl")
 include("operators.jl")
+include("basis.jl")
 
 # Exports
 # Types
