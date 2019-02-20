@@ -10,7 +10,7 @@ or "Dirichlet" boundary condition `v'(x) = 0`, or `Mixed(x::T) where {T <: Real}
 """
 diffusionoperators(x, BC1::BoundaryCondition, BC2::BoundaryCondition) = _diffusionoperators(x, BC1, BC2)
 
-# Uniform grid, (Reflecting, Reflecting)
+# (Reflecting, Reflecting)
 function _diffusionoperators(x, BC1::Reflecting, BC2::Reflecting)
     T = eltype(x)
     L_1_minus, L_1_plus, L_2 = get_operator_basis(x)
