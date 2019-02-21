@@ -17,7 +17,7 @@ function diffusionoperators(x, BC::NoBoundary)
     # get grid diff to be used for ghost nodes
     Δ_1 = d[1]
     Δ_P = d[end]
-    L_1_minus, L_1_plus, L_2 = get_operator_basis(x)
+    L_1_minus, L_1_plus, L_2, x_bar = get_operator_basis(x)
 
     # get columns for ghost nodes on lower bound and upper bound
     col_zeros = zeros(T, P)
@@ -31,8 +31,5 @@ function diffusionoperators(x, BC::NoBoundary)
     L_1_plus = sparse([col_zeros L_1_plus col_ub/Δ_P])
     L_2 = sparse([col_lb/(Δ_1*Δ_1) L_2 col_ub]/(Δ_P*Δ_P))
 
-    # define extended grid with ghost nodes
-    x_bar = collect([x[1] - Δ_1; x; x[end] + Δ_P])
-    
     return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
 end

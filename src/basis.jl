@@ -24,9 +24,12 @@ function get_operator_basis(x::AbstractRange)
     d_2 = -2 * ones(T, P)
     du_2 = ones(T, P-1)
     L_2 = Tridiagonal(dl_2, d_2, du_2)/(Δ^2)
-
+    
+    # define extended grid with ghost nodes
+    x_bar = collect([x[1] - Δ; x; x[end] + Δ])
+    
     # return
-    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
 end
 
 # basis for irregular grids
@@ -61,7 +64,10 @@ function get_operator_basis(x::AbstractArray)
     d_2 = d_2./(Δ_p.*Δ_m)
     du_2 = 2*ones(T, P-1)./(Δ_p[1:end-1].*Δ[1:end-1])
     L_2 = Tridiagonal(dl_2, d_2, du_2)
+
+    # define extended grid with ghost nodes
+    x_bar = collect([x[1] - d[1]; x; x[end] + d[end]])
  
     # return
-    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
  end

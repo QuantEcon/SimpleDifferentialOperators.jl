@@ -13,7 +13,7 @@ diffusionoperators(x, BC1::BoundaryCondition, BC2::BoundaryCondition) = _diffusi
 # (Reflecting, Reflecting)
 function _diffusionoperators(x, BC1::Reflecting, BC2::Reflecting)
     T = eltype(x)
-    L_1_minus, L_1_plus, L_2 = get_operator_basis(x)
+    L_1_minus, L_1_plus, L_2, x_bar = get_operator_basis(x)
 
     # apply boundary conditions
     L_1_minus[1,1] = zero(T)
@@ -22,7 +22,7 @@ function _diffusionoperators(x, BC1::Reflecting, BC2::Reflecting)
     L_2[end,end] /= 2 
 
     # return
-    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
 end
 
 
@@ -35,7 +35,7 @@ function _diffusionoperators(x, BC1::Mixed, BC2::Mixed)
     ξ_ub = BC2.ξ
 
     # extract diffusion operators with reflecting barrier conditions first
-    L_1_minus, L_1_plus, L_2 = diffusionoperators(x, Reflecting(), Reflecting())
+    L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())
 
     # apply boundary condition constraints
     L_1_minus[1,1] -= ξ_lb
@@ -43,5 +43,5 @@ function _diffusionoperators(x, BC1::Mixed, BC2::Mixed)
     L_2[1,1] += ξ_lb / Δ_1
     L_2[end,end] -= ξ_ub / Δ_P
 
-    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2)
+    return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
 end
