@@ -29,7 +29,7 @@ function diffusionoperators(x, BC::NoBoundary)
     # attach the corresponding columns to operator basis matrices
     L_1_minus = sparse([-col_lb/Δ_1 L_1_minus col_zeros])
     L_1_plus = sparse([col_zeros L_1_plus col_ub/Δ_P])
-    L_2 = sparse([col_lb/(Δ_1*Δ_1) L_2 col_ub]/(Δ_P*Δ_P))
+    L_2 = sparse([col_lb/(Δ_1*Δ_1) L_2 col_ub/(Δ_P*Δ_P)])
 
     return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
 end
