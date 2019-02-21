@@ -1,5 +1,5 @@
 """
-   `diffusionoperators(x, BC::NoBoundary)`
+   `diffusionoperators(x)`
 
 Returns a tuple of diffusion operators and extended grid `(L_1_minus, L_1_plus, L_2, x_bar)` 
 where `L_1_minus`, `L_1_plus`, `L_2` are P by (P+2) matrices that represent 
@@ -7,6 +7,8 @@ L_1 based on BD, L_1 based on FD, and L_2 based on CD respectively, without any 
 where P is `length(x)`. `x_bar` is `(P+2)` array that represents the extended grid whose first element
 and the last element represent the ghost nodes on lower boundary and upper boundary, respectively.
 """
+diffusionoperators(x) = diffusionoperators(x, NoBoundary())
+
 function diffusionoperators(x, BC::NoBoundary)
     T = eltype(x) # get data type of the range
     d = diff(x)
