@@ -12,3 +12,4 @@ struct Absorbing{T1, T2} <: InhomogeneousBoundaryCondition where {T1 <: Real, T2
     x::T1
     y::T2
 end
+struct NoBoundary <: BoundaryCondition end
