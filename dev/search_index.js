@@ -33,6 +33,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#SimpleDifferentialOperators.diffusionoperators-Tuple{Any}",
+    "page": "Installation",
+    "title": "SimpleDifferentialOperators.diffusionoperators",
+    "category": "method",
+    "text": "diffusionoperators(x)\n\nReturns a tuple of diffusion operators and extended grid (L_1_minus, L_1_plus, L_2, x_bar)  where L_1_minus, L_1_plus, L_2 are P by (P+2) matrices that represent  L1 based on BD, L1 based on FD, and L2 based on CD respectively, without any boundary conditions where P is length(x). `xbaris(P+2)` array that represents the extended grid whose first element and the last element represent the ghost nodes on lower boundary and upper boundary, respectively.\n\n\n\n\n\n"
+},
+
+{
     "location": "#Usage-1",
     "page": "Installation",
     "title": "Usage",
