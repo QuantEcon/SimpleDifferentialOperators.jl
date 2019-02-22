@@ -85,28 +85,6 @@ end
     @test x_bar ≈ x_bar_ir
 end
 
-
-@testset "Interior without boundary conditions" begin
-    uniform_grid = 1:1:2
-    irregular_grid = collect(uniform_grid)
-    # test for accuracy
-    ## regular grids
-    L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(uniform_grid, NoBoundary())
-    @test Array(L_1_minus) == [-1. 1. 0. 0.; 0. -1. 1. 0.]
-    @test Array(L_1_plus) == [0. -1. 1. 0.; 0. 0. -1. 1.]
-    @test Array(L_2) == [1. -2. 1. 0.; 0. 1. -2. 1.]
-    @test Array(x_bar) == [0; 1; 2; 3]
-    @test @inferred(diffusionoperators(uniform_grid, NoBoundary())) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
-
-    ## irregular grids
-    L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(irregular_grid, NoBoundary())
-    @test Array(L_1_minus) == [-1. 1. 0. 0.; 0. -1. 1. 0.]
-    @test Array(L_1_plus) == [0. -1. 1. 0.; 0. 0. -1. 1.]
-    @test Array(L_2) == [1. -2. 1. 0.; 0. 1. -2. 1.]
-    @test Array(x_bar) == [0; 1; 2; 3]
-    @test @inferred(diffusionoperators(irregular_grid, NoBoundary())) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
-end
-
 @testset "Input Type Variance" begin
     # BigFloat
     uniformGrid = range(BigFloat(0.0), BigFloat(1.0), length = 100)
