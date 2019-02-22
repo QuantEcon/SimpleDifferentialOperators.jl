@@ -1,11 +1,13 @@
 module SimpleDifferentialOperators
 
 # Pkg Dependencies
-using LinearAlgebra
+using LinearAlgebra, SparseArrays
 
 # Includes
 include("types.jl")
 include("operators.jl")
+include("operators-without-bc.jl")
+include("basis.jl")
 
 # Exports
 # Types
@@ -14,7 +16,8 @@ export BoundaryCondition,
        InhomogeneousBoundaryCondition,
        Reflecting,
        Mixed,
-       Absorbing
+       Absorbing,
+       NoBoundary
 
 # Functions
 export diffusionoperators
