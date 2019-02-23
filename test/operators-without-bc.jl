@@ -1,7 +1,7 @@
 using SimpleDifferentialOperators
 using Test, LinearAlgebra, DualNumbers
 
-@testset "Accuracy" begin
+@testset "Accuracy & regression test" begin
     uniform_grid = 1:1:2
     irregular_grid = collect(uniform_grid)
     ## regular grids
