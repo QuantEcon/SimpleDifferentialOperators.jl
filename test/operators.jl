@@ -18,70 +18,77 @@ using Test, LinearAlgebra, DualNumbers
 end
 
 @testset "Operators under reflecting barrier conditions" begin
-    # Uniform grid
-    x = 1:3
-    L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())
-    @test @inferred(diffusionoperators(x, Reflecting(), Reflecting())) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
-    @test @inferred(diffusionoperators(x, Mixed(0.), Mixed(0.))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar) # test that the mixed case properly nests the reflecting case
-    @test Array(L_1_minus) == [0. 0. 0.; -1. 1. 0.; 0. -1. 1.]
-    @test Array(L_1_plus) == [-1. 1. 0.; 0. -1. 1.; 0. 0. 0.]
-    @test Array(L_2) == [-1. 1. 0.; 1. -2. 1.; 0. 1. -1.]
-    @test x_bar == [0; x; 4]
+    @testset "Accuracy & regression test" begin
+        # Uniform grid
+        x = 1:3
+        L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())
+        @test @inferred(diffusionoperators(x, Reflecting(), Reflecting())) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
+        @test @inferred(diffusionoperators(x, Mixed(0.), Mixed(0.))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar) # test that the mixed case properly nests the reflecting case
+        @test Array(L_1_minus) == [0. 0. 0.; -1. 1. 0.; 0. -1. 1.]
+        @test Array(L_1_plus) == [-1. 1. 0.; 0. -1. 1.; 0. 0. 0.]
+        @test Array(L_2) == [-1. 1. 0.; 1. -2. 1.; 0. 1. -1.]
+        @test x_bar == [0; x; 4]
 
-    # Irregular grid
-    x = collect(x)
-    L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())
-    @test @inferred(diffusionoperators(x, Reflecting(), Reflecting())) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
-    @test @inferred(diffusionoperators(x, Mixed(0.), Mixed(0.))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar) # test that the mixed case properly nests the reflecting case
-    @test Array(L_1_minus) == [0. 0. 0.; -1. 1. 0.; 0. -1. 1.]
-    @test Array(L_1_plus) == [-1. 1. 0.; 0. -1. 1.; 0. 0. 0.]
-    @test Array(L_2) == [-1. 1. 0.; 1. -2. 1.; 0. 1. -1.]
-    @test x_bar == [0; x; 4]
+        # Irregular grid
+        x = collect(x)
+        L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())
+        @test @inferred(diffusionoperators(x, Reflecting(), Reflecting())) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
+        @test @inferred(diffusionoperators(x, Mixed(0.), Mixed(0.))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar) # test that the mixed case properly nests the reflecting case
+        @test Array(L_1_minus) == [0. 0. 0.; -1. 1. 0.; 0. -1. 1.]
+        @test Array(L_1_plus) == [-1. 1. 0.; 0. -1. 1.; 0. 0. 0.]
+        @test Array(L_2) == [-1. 1. 0.; 1. -2. 1.; 0. 1. -1.]
+        @test x_bar == [0; x; 4]
+    end
 
-    # Test for consistency
-    uniformGrid = range(0.0, 1.0, length = 500)
-    irregularGrid = collect(uniformGrid)
-    L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(uniformGrid, Reflecting(), Reflecting())
-    L_1_minus_ir, L_1_plus_ir, L_2_ir, x_bar_ir = diffusionoperators(irregularGrid, Reflecting(), Reflecting())
-    @test L_1_minus ≈ L_1_minus_ir
-    @test L_1_plus ≈ L_1_plus_ir
-    @test L_2 ≈ L_2_ir
-    @test x_bar ≈ x_bar_ir
+    @testset "Consistency" begin
+        # Test for consistency
+        uniformGrid = range(0.0, 1.0, length = 500)
+        irregularGrid = collect(uniformGrid)
+        L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(uniformGrid, Reflecting(), Reflecting())
+        L_1_minus_ir, L_1_plus_ir, L_2_ir, x_bar_ir = diffusionoperators(irregularGrid, Reflecting(), Reflecting())
+        @test L_1_minus ≈ L_1_minus_ir
+        @test L_1_plus ≈ L_1_plus_ir
+        @test L_2 ≈ L_2_ir
+        @test x_bar ≈ x_bar_ir
+    end
 end
 
 @testset "Operators under mixed barrier conditions" begin
-    # Uniform grid
-    x = 1:3
-    ξ_lb, ξ_ub = (1., 2.)
+    @testset "Accuracy & regression test" begin
+        # Uniform grid
+        x = 1:3
+        ξ_lb, ξ_ub = (1., 2.)
 
-    L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Mixed(ξ_lb), Mixed(ξ_ub))
-    @test @inferred(diffusionoperators(x, Mixed(ξ_lb), Mixed(ξ_ub))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
-    @test Array(L_1_minus) == [-ξ_lb 0. 0.; -1. 1. 0.; 0. -1. 1.]
-    @test Array(L_1_plus) == [-1. 1. 0.; 0. -1. 1.; 0. 0. -ξ_ub]
-    @test Array(L_2) == [(-1. + ξ_lb) 1. 0.; 1. -2. 1.; 0. 1. (-1. - ξ_ub)]
-    @test x_bar == [0; x; 4]
+        L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Mixed(ξ_lb), Mixed(ξ_ub))
+        @test @inferred(diffusionoperators(x, Mixed(ξ_lb), Mixed(ξ_ub))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
+        @test Array(L_1_minus) == [-ξ_lb 0. 0.; -1. 1. 0.; 0. -1. 1.]
+        @test Array(L_1_plus) == [-1. 1. 0.; 0. -1. 1.; 0. 0. -ξ_ub]
+        @test Array(L_2) == [(-1. + ξ_lb) 1. 0.; 1. -2. 1.; 0. 1. (-1. - ξ_ub)]
+        @test x_bar == [0; x; 4]
 
-    # Irregular grid
-    x = collect(x)
-    ξ_lb, ξ_ub = (1., 2.)
+        # Irregular grid
+        x = collect(x)
+        ξ_lb, ξ_ub = (1., 2.)
 
-    L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Mixed(ξ_lb), Mixed(ξ_ub))
-    @test @inferred(diffusionoperators(x, Mixed(ξ_lb), Mixed(ξ_ub))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
-    @test Array(L_1_minus) == [-ξ_lb 0. 0.; -1. 1. 0.; 0. -1. 1.]
-    @test Array(L_1_plus) == [-1. 1. 0.; 0. -1. 1.; 0. 0. -ξ_ub]
-    @test Array(L_2) == [(-1. + ξ_lb) 1. 0.; 1. -2. 1.; 0. 1. (-1. - ξ_ub)]
-    @test x_bar == [0; x; 4]
+        L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Mixed(ξ_lb), Mixed(ξ_ub))
+        @test @inferred(diffusionoperators(x, Mixed(ξ_lb), Mixed(ξ_ub))) == (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
+        @test Array(L_1_minus) == [-ξ_lb 0. 0.; -1. 1. 0.; 0. -1. 1.]
+        @test Array(L_1_plus) == [-1. 1. 0.; 0. -1. 1.; 0. 0. -ξ_ub]
+        @test Array(L_2) == [(-1. + ξ_lb) 1. 0.; 1. -2. 1.; 0. 1. (-1. - ξ_ub)]
+        @test x_bar == [0; x; 4]
+    end
 
-    # Test for consistency
-    ξ_lb, ξ_ub = (1., 2.)
-    uniformGrid = range(0.0, 1.0, length = 500)
-    irregularGrid = collect(uniformGrid)
-    L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(uniformGrid, Mixed(ξ_lb), Mixed(ξ_ub))
-    L_1_minus_ir, L_1_plus_ir, L_2_ir, x_bar_ir = diffusionoperators(irregularGrid, Mixed(ξ_lb), Mixed(ξ_ub))
-    @test L_1_minus ≈ L_1_minus_ir
-    @test L_1_plus ≈ L_1_plus_ir
-    @test L_2 ≈ L_2_ir
-    @test x_bar ≈ x_bar_ir
+    @testset "Consistency" begin
+        ξ_lb, ξ_ub = (1., 2.)
+        uniformGrid = range(0.0, 1.0, length = 500)
+        irregularGrid = collect(uniformGrid)
+        L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(uniformGrid, Mixed(ξ_lb), Mixed(ξ_ub))
+        L_1_minus_ir, L_1_plus_ir, L_2_ir, x_bar_ir = diffusionoperators(irregularGrid, Mixed(ξ_lb), Mixed(ξ_ub))
+        @test L_1_minus ≈ L_1_minus_ir
+        @test L_1_plus ≈ L_1_plus_ir
+        @test L_2 ≈ L_2_ir
+        @test x_bar ≈ x_bar_ir
+    end
 end
 
 @testset "Input Type Variance" begin
