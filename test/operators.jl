@@ -18,7 +18,6 @@ using Test, LinearAlgebra, DualNumbers
 end
 
 @testset "Operators under reflecting barrier conditions" begin
-    σ = 1; μ = -1;
     # Uniform grid
     x = 1:3
     L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())
@@ -51,7 +50,6 @@ end
 end
 
 @testset "Operators under mixed barrier conditions" begin
-    σ = 1; μ = -1;
     # Uniform grid
     x = 1:3
     ξ_lb, ξ_ub = (1., 2.)
