@@ -4,9 +4,45 @@
 
 Return the diffusion operators `(L_1_minus, L_1_plus, L_2)` w.r.t the supplied grid and BCs.
 
-`x` is a grid (either an `AbstractRange`, in which we use specialized uniform grid code, or an `AbstractArray`). The
-first BC binds at the lower end of the grid (i.e., `x[1]`), and the latter at the high end. The BCs are either a `Reflecting()`,
-or "Dirichlet" boundary condition `v'(x) = 0`, or `Mixed(x::T) where {T <: Real}`, corresponding to "Robin" boundary conditions.
+Given a grid `x` of length `M`, return `L_1_minus`, `L_1_plus`, `L_2` that are M by M matrices representing 
+L_1 based on BD, L_1 based on FD, and L_2 based on CD respectively, 
+where a lower boundary condition `BC1` and upper boundary condition `BC2` are applied.
+`x_bar` is a `(M+2)` array that represents the extended grid whose first element
+and the last element represent the ghost nodes on lower boundary and upper boundary.
+
+# Examples
+```jldoctest
+julia> x = 1:3
+1:3
+
+julia> L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x)
+(L_1_minus =
+  [1, 1]  =  -1.0
+  [1, 2]  =  1.0
+  [2, 2]  =  -1.0
+  [1, 3]  =  0.0
+  [2, 3]  =  1.0
+  [3, 3]  =  -1.0
+  [2, 4]  =  0.0
+  [3, 4]  =  1.0, L_1_plus =
+  [1, 2]  =  -1.0
+  [2, 2]  =  0.0
+  [1, 3]  =  1.0
+  [2, 3]  =  -1.0
+  [3, 3]  =  0.0
+  [2, 4]  =  1.0
+  [3, 4]  =  -1.0
+  [3, 5]  =  1.0, L_2 =
+  [1, 1]  =  1.0
+  [1, 2]  =  -2.0
+  [2, 2]  =  1.0
+  [1, 3]  =  1.0
+  [2, 3]  =  -2.0
+  [3, 3]  =  1.0
+  [2, 4]  =  1.0
+  [3, 4]  =  -2.0
+  [3, 5]  =  1.0, x_bar = [0, 1, 2, 3, 4])
+```
 """
 diffusionoperators(x, BC1::BoundaryCondition, BC2::BoundaryCondition) = _diffusionoperators(x, BC1, BC2)
 
