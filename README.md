@@ -26,7 +26,7 @@ grid = range(0.0, 1.0, length = 200) # uniform grid on [0.0, 1.0]
 L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(grid, Reflecting(), Reflecting())
 
 # discretized generator for the SDE, imposing the boundary conditions
-A = μ*L_1_minus + σ^2 / 2 * L_2 # use L_1_minus because μ < 0  
+L = μ*L_1_minus + σ^2 / 2 * L_2 # use L_1_minus because μ < 0  
 ```
 
 ## Documentation
