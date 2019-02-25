@@ -30,33 +30,33 @@
 \section{Setup}
 
 \begin{itemize}
-	\item Define an irregular grid $\set{z_i}_{i=1}^M$ with $z_1 = {z_{\min}}$ and $z_{M} = {z_{\max}}$. Denote the grid with the variable name, i.e. $z \equiv \set{z_i}_{i=1}^M$.
+	\item Define an irregular grid $\set{x_i}_{i=1}^M$ with $x_1 = {x_{\min}}$ and $x_{M} = {x_{\max}}$. Denote the grid with the variable name, i.e. $x \equiv \set{x_i}_{i=1}^M$.
 	\item Denote the distance between the grid points as the \textit{backwards} difference
 	\begin{align}
-	\Delta_{i,-} &\equiv z_i - z_{i-1},\, \text{for } i = 2,\ldots, M\\
-	\Delta_{i,+} &\equiv z_{i+1} - z_i,\, \text{for } i = 1,\ldots, M-1
+	\Delta_{i,-} &\equiv x_i - x_{i-1},\, \text{for } i = 2,\ldots, M\\
+	\Delta_{i,+} &\equiv x_{i+1} - x_i,\, \text{for } i = 1,\ldots, M-1
 	\end{align}
 	
-	\item Assume $\Delta_{1, -} = \Delta_{1, +}$ and $\Delta_{M, +} = \Delta_{M, -}$, due to ghost points, $z_0$ and $z_{M+1}$ on both boundaries. (i.e.he distance to the ghost nodes are the same as the distance to the closest nodes).  Then define the vector of backwards and forwards first differences as
+	\item Assume $\Delta_{1, -} = \Delta_{1, +}$ and $\Delta_{M, +} = \Delta_{M, -}$, due to ghost points, $x_0$ and $x_{M+1}$ on both boundaries. (i.e.he distance to the ghost nodes are the same as the distance to the closest nodes).  Then define the vector of backwards and forwards first differences as
 	\begin{align}
-	\Delta_{-} &\equiv \begin{bmatrix} z_2 - z_1 \\
-	\text{diff}(z)
+	\Delta_{-} &\equiv \begin{bmatrix} x_2 - x_1 \\
+	\text{diff}(x)
 	\end{bmatrix}\\
-	\Delta_{+} &\equiv \begin{bmatrix} \text{diff}(z)\\
-	z_{M} - z_{M-1}
+	\Delta_{+} &\equiv \begin{bmatrix} \text{diff}(x)\\
+	x_{M} - x_{M-1}
 	\end{bmatrix}
 	\end{align}
 	\item Reflecting barrier conditions:
 	\begin{align}
-	\underline{\xi} v({z_{\min}}) + \D[z]v({z_{\min}} ) &= 0\label{eq:new-BC1}\\
-	\overline{\xi} v({z_{\max}}) + \D[z]v({z_{\max}}) &= 0\label{eq:new-BC2}
+	\underline{\xi} v({x_{\min}}) + \D[x]v({x_{\min}} ) &= 0\label{eq:new-BC1}\\
+	\overline{\xi} v({x_{\max}}) + \D[x]v({x_{\max}}) &= 0\label{eq:new-BC2}
 	\end{align}
 \end{itemize}
 
-Let $L_1^{-}$ be the discretized backwards first differences and $L_2$ be the discretized central differences subject to the Neumann boundary conditions in \cref{eq:new-BC1,eq:new-BC2} such that $L_1^{-} v(z)$ and $L_2 v(z)$ represent the first and second derivatives of $v(z)$ respectively at $z$. For second derivatives, we use the following numerical scheme from \cite{achdou17}:
+Let $L_1^{-}$ be the discretized backwards first differences and $L_2$ be the discretized central differences subject to the Neumann boundary conditions in \cref{eq:new-BC1,eq:new-BC2} such that $L_1^{-} v(x)$ and $L_2 v(x)$ represent the first and second derivatives of $v(x)$ respectively at $x$. For second derivatives, we use the following numerical scheme from \cite{achdou17}:
 
 \begin{equation}
-v''(z_i) \approx \dfrac{ \Delta_{i,-} v( z_i + \Delta_{i,+}) - (\Delta_{i,+} + \Delta_{i,-}) v( z_i ) + \Delta_{i,+} v( z_i - \Delta_{i,-})}{\frac{1}{2}(\Delta_{i,+} + \Delta_{i,-}) \Delta_{i,+} \Delta_{i,-} }, \text{for } i = 1, \ldots, M
+v''(x_i) \approx \dfrac{ \Delta_{i,-} v( x_i + \Delta_{i,+}) - (\Delta_{i,+} + \Delta_{i,-}) v( x_i ) + \Delta_{i,+} v( x_i - \Delta_{i,-})}{\frac{1}{2}(\Delta_{i,+} + \Delta_{i,-}) \Delta_{i,+} \Delta_{i,-} }, \text{for } i = 1, \ldots, M
 \end{equation}
 
 
@@ -64,31 +64,31 @@ v''(z_i) \approx \dfrac{ \Delta_{i,-} v( z_i + \Delta_{i,+}) - (\Delta_{i,+} + \
 
 
 \subsection{Regular grids}
-Suppose that the grids are regular, i.e., elements of $\text{diff}(z)$ are all identical with $\Delta$ for some $\Delta > 0$.
+Suppose that the grids are regular, i.e., elements of $\text{diff}(x)$ are all identical with $\Delta$ for some $\Delta > 0$.
 
 Using the backwards first-order difference, \eqref{eq:new-BC1} implies
 \begin{align}
-\dfrac{v({z_{\min}}) - v({z_{\min}}-\Delta)}{\Delta} &= - \underline{\xi} v({z_{\min}})
+\dfrac{v({x_{\min}}) - v({x_{\min}}-\Delta)}{\Delta} &= - \underline{\xi} v({x_{\min}})
 \end{align}
 at the lower bound.
 
 Likewise, \eqref{eq:new-BC2} under the forwards first-order difference yields
 \begin{align}
-\dfrac{v({z_{\max}} + \Delta) - v({z_{\max}})}{\Delta} &= - \overline{\xi} v({z_{\max}})
+\dfrac{v({x_{\max}} + \Delta) - v({x_{\max}})}{\Delta} &= - \overline{\xi} v({x_{\max}})
 \end{align}
 at the upper bound.
 
 The discretized central difference of second order under \eqref{eq:new-BC1} at the lower bound is
 \begin{align}
-\dfrac{v ({z_{\min}} + \Delta) - 2 v({z_{\min}}) + v({z_{\min}}-\Delta)}{\Delta^2} &=   \dfrac{v({z_{\min}} + \Delta) - v({z_{\min}})}{\Delta^2} - \dfrac{1}{\Delta}\dfrac{v ({z_{\min}}) - v({z_{\min}}-\Delta) }{\Delta}  \\
-&= \dfrac{v({z_{\min}} + \Delta) - v({z_{\min}})}{\Delta^2} + \dfrac{1}{\Delta} \underline{\xi} v({z_{\min}})  \\ 
-&= \dfrac{1}{\Delta^2}  (- 1 + \Delta \underline{\xi}) v({z_{\min}})  + \dfrac{1}{\Delta^2}  v({z_{\min}} + \Delta)  
+\dfrac{v ({x_{\min}} + \Delta) - 2 v({x_{\min}}) + v({x_{\min}}-\Delta)}{\Delta^2} &=   \dfrac{v({x_{\min}} + \Delta) - v({x_{\min}})}{\Delta^2} - \dfrac{1}{\Delta}\dfrac{v ({x_{\min}}) - v({x_{\min}}-\Delta) }{\Delta}  \\
+&= \dfrac{v({x_{\min}} + \Delta) - v({x_{\min}})}{\Delta^2} + \dfrac{1}{\Delta} \underline{\xi} v({x_{\min}})  \\ 
+&= \dfrac{1}{\Delta^2}  (- 1 + \Delta \underline{\xi}) v({x_{\min}})  + \dfrac{1}{\Delta^2}  v({x_{\min}} + \Delta)  
 \end{align}
 Similarly, by \eqref{eq:new-BC2}, we have
 \begin{align}
-\dfrac{v ({z_{\max}} + \Delta) - 2 v({z_{\max}} ) + v({z_{\max}} -\Delta)}{\Delta^2} &=   \dfrac{v({z_{\max}} - \Delta) - v({z_{\max}})}{\Delta^2} + \dfrac{1}{\Delta}\dfrac{ v({z_{\max}}+\Delta) - v ({z_{\max}}) }{\Delta}  \\
-&= \dfrac{v({z_{\max}} - \Delta) - v({z_{\max}})}{\Delta^2}  - \dfrac{1}{\Delta} \overline{\xi} v({z_{\max}})  \\ 
-&= \dfrac{1}{\Delta^2}  (- 1 - \Delta \overline{\xi}) v({z_{\max}})  + \dfrac{1}{\Delta^2}  v({z_{\max}} - \Delta)  
+\dfrac{v ({x_{\max}} + \Delta) - 2 v({x_{\max}} ) + v({x_{\max}} -\Delta)}{\Delta^2} &=   \dfrac{v({x_{\max}} - \Delta) - v({x_{\max}})}{\Delta^2} + \dfrac{1}{\Delta}\dfrac{ v({x_{\max}}+\Delta) - v ({x_{\max}}) }{\Delta}  \\
+&= \dfrac{v({x_{\max}} - \Delta) - v({x_{\max}})}{\Delta^2}  - \dfrac{1}{\Delta} \overline{\xi} v({x_{\max}})  \\ 
+&= \dfrac{1}{\Delta^2}  (- 1 - \Delta \overline{\xi}) v({x_{\max}})  + \dfrac{1}{\Delta^2}  v({x_{\max}} - \Delta)  
 \end{align}
 at the upper bound.
 
@@ -121,31 +121,31 @@ L_2 &\equiv \frac{1}{\Delta^2}\begin{pmatrix}
 \subsection{Irregular grids}
 Using the backwards first-order difference, \eqref{eq:new-BC1} implies
 \begin{align}
-\dfrac{v({z_{\min}}) - v({z_{\min}}-\Delta_{1, -})}{\Delta_{1, -}} &= - \underline{\xi} v({z_{\min}})
+\dfrac{v({x_{\min}}) - v({x_{\min}}-\Delta_{1, -})}{\Delta_{1, -}} &= - \underline{\xi} v({x_{\min}})
 \end{align}
 
 at the lower bound. Likewise, the forwards first-order difference under \eqref{eq:new-BC2} yields
 \begin{align}
-\dfrac{v({z_{\max}} + \Delta_{M, +}) - v( {z_{\max}})}{\Delta_{M, +}} &= - \overline{\xi} v({z_{\max}})
+\dfrac{v({x_{\max}} + \Delta_{M, +}) - v( {x_{\max}})}{\Delta_{M, +}} &= - \overline{\xi} v({x_{\max}})
 \end{align}
 at the upper bound.
 
 Note that we have assumed that $\Delta_{1,-} = \Delta_{1,+}$ and $\Delta_{M,+} = \Delta_{M,-}$ for the ghost notes. The discretized central difference of second order scheme at the lower bound under \eqref{eq:new-BC1} is 
 \begin{align}
-&\dfrac{\Delta_{1,-} v( {z_{\min}} + \Delta_{1,+}) - (\Delta_{1,+} + \Delta_{1,-}) v({z_{\min}}) + \Delta_{1,+}  v( {z_{\min}} - \Delta_{1,-})}{\frac{1}{2}(\Delta_{1,+} + \Delta_{1,-}) \Delta_{1,+} \Delta_{1,-} } \\
+&\dfrac{\Delta_{1,-} v( {x_{\min}} + \Delta_{1,+}) - (\Delta_{1,+} + \Delta_{1,-}) v({x_{\min}}) + \Delta_{1,+}  v( {x_{\min}} - \Delta_{1,-})}{\frac{1}{2}(\Delta_{1,+} + \Delta_{1,-}) \Delta_{1,+} \Delta_{1,-} } \\
 &=
-\dfrac{v ({z_{\min}}+\Delta_{1, +}) - 2 v({z_{\min}}) + v({z_{\min}}-\Delta_{1, +})}{\Delta_{1, +}^2} \\ 
-&= \dfrac{v({z_{\min}} + \Delta_{1, +}) - v({z_{\min}})}{\Delta_{1, +}^2} - \dfrac{1}{\Delta_{1, +}}\dfrac{v({z_{\min}}) - v({z_{\min}}-\Delta_{1, +}) }{\Delta_{1, +}}  \\
-&= \dfrac{v({z_{\min}} + \Delta_{1, +}) - v({z_{\min}})}{\Delta_{1, +}^2} + \dfrac{1}{\Delta_{i,+}} \underline{\xi} v({z_{\min}})  \\ 
-&= \dfrac{1}{\Delta_{1, +}^2}  (- 1 + \Delta_{1, +} \underline{\xi}) v({z_{\min}})  + \dfrac{1}{\Delta_{1, +}^2}  v({z_{\min}} + \Delta_{1, +})  
+\dfrac{v ({x_{\min}}+\Delta_{1, +}) - 2 v({x_{\min}}) + v({x_{\min}}-\Delta_{1, +})}{\Delta_{1, +}^2} \\ 
+&= \dfrac{v({x_{\min}} + \Delta_{1, +}) - v({x_{\min}})}{\Delta_{1, +}^2} - \dfrac{1}{\Delta_{1, +}}\dfrac{v({x_{\min}}) - v({x_{\min}}-\Delta_{1, +}) }{\Delta_{1, +}}  \\
+&= \dfrac{v({x_{\min}} + \Delta_{1, +}) - v({x_{\min}})}{\Delta_{1, +}^2} + \dfrac{1}{\Delta_{i,+}} \underline{\xi} v({x_{\min}})  \\ 
+&= \dfrac{1}{\Delta_{1, +}^2}  (- 1 + \Delta_{1, +} \underline{\xi}) v({x_{\min}})  + \dfrac{1}{\Delta_{1, +}^2}  v({x_{\min}} + \Delta_{1, +})  
 \end{align}
 Similarly, by \eqref{eq:new-BC2}, we have
 \begin{align}
-&\dfrac{\Delta_{M,-} v( {z_{\max}} + \Delta_{M,+}) - (\Delta_{M,+} + \Delta_{M,-}) v({z_{\max}} ) + \Delta_{M,+}  v( {z_{\max}} - \Delta_{M,-})}{\frac{1}{2}(\Delta_{M,+} + \Delta_{M,-}) \Delta_{M,+} \Delta_{M,-} } \\
-&=\dfrac{v ({z_{\max}} + \Delta_{M,-}) - 2 v({z_{\max}} ) + v({z_{\max}} -\Delta_{M,-})}{\Delta_{M,-}^2} \\
-&=   \dfrac{v({z_{\max}} - \Delta_{M,-}) - v({z_{\max}})}{\Delta_{M,-}^2} + \dfrac{1}{\Delta_{M,-}}\dfrac{ v({z_{\max}}+\Delta_{M,-}) - v ({z_{\max}}) }{\Delta_{M,-}}  \\
-&= \dfrac{v({z_{\max}} - \Delta_{M,-}) - v({z_{\max}})}{\Delta_{M,-}^2}  - \dfrac{1}{\Delta_{M,-}} \overline{\xi} v({z_{\max}})  \\ 
-&= \dfrac{1}{\Delta_{M,-}^2}  (- 1 - \Delta_{M,-} \overline{\xi}) v({z_{\max}})  + \dfrac{1}{\Delta_{M,-}^2}  v({z_{\max}} - \Delta_{M,-})  
+&\dfrac{\Delta_{M,-} v( {x_{\max}} + \Delta_{M,+}) - (\Delta_{M,+} + \Delta_{M,-}) v({x_{\max}} ) + \Delta_{M,+}  v( {x_{\max}} - \Delta_{M,-})}{\frac{1}{2}(\Delta_{M,+} + \Delta_{M,-}) \Delta_{M,+} \Delta_{M,-} } \\
+&=\dfrac{v ({x_{\max}} + \Delta_{M,-}) - 2 v({x_{\max}} ) + v({x_{\max}} -\Delta_{M,-})}{\Delta_{M,-}^2} \\
+&=   \dfrac{v({x_{\max}} - \Delta_{M,-}) - v({x_{\max}})}{\Delta_{M,-}^2} + \dfrac{1}{\Delta_{M,-}}\dfrac{ v({x_{\max}}+\Delta_{M,-}) - v ({x_{\max}}) }{\Delta_{M,-}}  \\
+&= \dfrac{v({x_{\max}} - \Delta_{M,-}) - v({x_{\max}})}{\Delta_{M,-}^2}  - \dfrac{1}{\Delta_{M,-}} \overline{\xi} v({x_{\max}})  \\ 
+&= \dfrac{1}{\Delta_{M,-}^2}  (- 1 - \Delta_{M,-} \overline{\xi}) v({x_{\max}})  + \dfrac{1}{\Delta_{M,-}^2}  v({x_{\max}} - \Delta_{M,-})  
 \end{align}
 at the upper bound.
 
