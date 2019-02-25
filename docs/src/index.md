@@ -12,12 +12,12 @@ For the complete derivations of the objects we return, see the [PDF](https://git
 
 Formulas
 ==========
-Under ``M``-length of grids on ``v`` with end points ``\underline{z} < \overline{z}`` with reflecting barrier conditions of
+Under ``M``-length of grids on ``v`` with end points ``z_{\min} < z_{\max}`` with reflecting barrier conditions of
 
 ```math
 \begin{align}
-\underline{\xi} v(\underline{z}) + \nabla v(\underline{z} ) &= 0\\
-\overline{\xi} v(\overline{z}) + \nabla v(\overline{z}) &= 0
+\underline{\xi} v(z_{\min}) + \nabla v(z_{\min}) &= 0\\
+\overline{\xi} v(z_{\max}) + \nabla v(z_{\max}) &= 0
 \end{align}
 ```
 
