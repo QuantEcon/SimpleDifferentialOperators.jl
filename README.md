@@ -20,10 +20,10 @@ with some constant `μ` and `σ >= 0`, and `W_t` Brownian Motion
 using SimpleDifferentialOperators
 μ = -0.1 # constant negative drift
 σ = 0.1
-grid = range(0.0, 1.0, length = 200) # uniform grid on [0.0, 1.0]
+x = range(0.0, 1.0, length = 200) # uniform grid on [0.0, 1.0]
 
 # uses discretized operators for reflecting/Dirichlet boundary conditions, v'(0) = v'(1) = 0
-L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(grid, Reflecting(), Reflecting())
+L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())
 
 # discretized generator for the SDE, imposing the boundary conditions
 L = μ*L_1_minus + σ^2 / 2 * L_2 # use L_1_minus because μ < 0  
