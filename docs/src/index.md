@@ -12,10 +12,10 @@ Usage
 ==========
 Consider solving for `v` from the following equation:
 ```math
-\rho v = f(x) + \partial_x v(x) \mu + \frac{\sigma^2}{2} \partial_{xx} v(x)
+\rho v(x) = f(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
 ```
 
-To solve `v` on `M`-size discretized grids, one can run the following code:
+for some constant $\rho, \sigma > 0$ and $\mu \leq 0$. To solve `v` on `M`-size discretized grids, one can run the following code:
 ```julia
 # setup 
 f(x) = x^2 
