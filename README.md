@@ -37,6 +37,8 @@ For more usage information, see the docs badge above.
 
 Derivation can be found [here](https://github.com/ubcecon/computing_and_datascience/blob/master/continuous_time_methods/notes/discretized-differential-operator-derivation.tex).
 
+If you want to build the docs locally (say, for contributions), you can just run `julia ~/docs/make.jl` and it will create/populate the `docs/build` directory.
+
 ## Troubleshooting
 
 * As a reminder, the package requires **Julia 1.1 or later.**
