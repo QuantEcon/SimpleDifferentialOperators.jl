@@ -1,4 +1,4 @@
-Installation
+﻿Installation
 ==============
 
 To install, run
@@ -12,12 +12,12 @@ For the complete derivations of the objects we return, see the [PDF](https://git
 
 Formulas
 ==========
-Under ``P``-length of grids on ``v`` with end points ``\underline{z} < \overline{z}`` with reflecting barrier conditions of
+Under ``M``-length of grids on ``v`` with end points ``x_{\min} < x_{\max}`` with reflecting barrier conditions of
 
 ```math
 \begin{align}
-\underline{\xi} v(\underline{z}) + \nabla v(\underline{z} ) &= 0\\
-\overline{\xi} v(\overline{z}) + \nabla v(\overline{z}) &= 0
+\underline{\xi} v(x_{\min}) + \nabla v(x_{\min}) &= 0\\
+\overline{\xi} v(x_{\max}) + \nabla v(x_{\max}) &= 0
 \end{align}
 ```
 
