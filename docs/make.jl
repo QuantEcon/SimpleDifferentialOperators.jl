@@ -5,6 +5,7 @@ makedocs(sitename = "SimpleDifferentialOperators.jl",
 	pages = [
         "index.md",
         "formula.md",
+        "api.md",
     ])
 
 # Deploy to git

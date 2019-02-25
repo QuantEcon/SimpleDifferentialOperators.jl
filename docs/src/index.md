@@ -41,8 +41,3 @@ A = [([zeros(M) Diagonal(ones(M,M)) zeros(M)] * 0.05 - L); B] # stack them
 v_bar = A \ [f.(x); 0.0; 0.0] # solve the value function with reflecting barrier bc
 v_interior = v_bar[2:end-1] # extract the interior (is identical with `v_bc`)
 ```
-
-```@autodocs
-Modules = [SimpleDifferentialOperators]
-Order   = [:function, :type]
-```
