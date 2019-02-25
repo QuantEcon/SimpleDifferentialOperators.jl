@@ -1,4 +1,4 @@
-Installation
+﻿Installation
 ==============
 
 To install, run
@@ -12,7 +12,7 @@ For the complete derivations of the objects we return, see the [PDF](https://git
 
 Formulas
 ==========
-Under ``P``-length of grids on ``v`` with end points ``\underline{z} < \overline{z}`` with reflecting barrier conditions of
+Under ``M``-length of grids on ``v`` with end points ``\underline{z} < \overline{z}`` with reflecting barrier conditions of
 
 ```math
 \begin{align}

@@ -12,24 +12,24 @@ diffusionoperators(x) = diffusionoperators(x, NoBoundary())
 function diffusionoperators(x, BC::NoBoundary)
     T = eltype(x) # get data type of the range
     d = diff(x)
-    P = length(x)
+    M = length(x)
 
     # get grid diff to be used for ghost nodes
     Δ_1 = d[1]
-    Δ_P = d[end]
+    Δ_M = d[end]
     L_1_minus, L_1_plus, L_2, x_bar = get_operator_basis(x)
 
     # get columns for ghost nodes on lower bound and upper bound
-    col_zeros = zeros(T, P)
-    col_lb = zeros(T, P)
-    col_ub = zeros(T, P)
+    col_zeros = zeros(T, M)
+    col_lb = zeros(T, M)
+    col_ub = zeros(T, M)
     col_lb[1] = one(T)
     col_ub[end] = one(T)
 
     # attach the corresponding columns to operator basis matrices
     L_1_minus = sparse([-col_lb/Δ_1 L_1_minus col_zeros])
-    L_1_plus = sparse([col_zeros L_1_plus col_ub/Δ_P])
-    L_2 = sparse([col_lb/(Δ_1*Δ_1) L_2 col_ub/(Δ_P*Δ_P)])
+    L_1_plus = sparse([col_zeros L_1_plus col_ub/Δ_M])
+    L_2 = sparse([col_lb/(Δ_1*Δ_1) L_2 col_ub/(Δ_M*Δ_M)])
 
     return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
 end
