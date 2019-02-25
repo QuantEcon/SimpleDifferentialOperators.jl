@@ -2,13 +2,13 @@
 """
    `diffusionoperators(x, BC1::BoundaryCondition, BC2::BoundaryCondition)`
 
-Return the diffusion operators `(L_1_minus, L_1_plus, L_2)` w.r.t the supplied grid and BCs.
+Returns a tuple of diffusion operators (with boundary conditions applied) and extended grid `(L_1_minus, L_1_plus, L_2, x_bar)` 
 
 Given a grid `x` of length `M`, return `L_1_minus`, `L_1_plus`, `L_2` that are M by M matrices representing 
 L_1 based on BD, L_1 based on FD, and L_2 based on CD respectively, 
 where a lower boundary condition `BC1` and upper boundary condition `BC2` are applied.
-`x_bar` is a `(M+2)` array that represents the extended grid whose first element
-and the last element represent the ghost nodes on lower boundary and upper boundary.
+`x_bar` is a `(M+2)` array that represents the extended grid whose first and last elements represent 
+the ghost nodes just before `x[1]` and `x[end]`.
 
 # Examples
 ```jldoctest
