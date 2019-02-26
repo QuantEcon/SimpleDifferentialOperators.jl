@@ -8,62 +8,36 @@ To install, run
 
 Note that this requires Julia 1.0 or later.
 
-For the complete derivations of the objects we return, see the [PDF](https://github.com/ubcecon/computing_and_datascience/blob/master/continuous_time_methods/notes/discretized-differential-operator-derivation.tex).
-
-Formulas
-==========
-Under ``M``-length of grids on ``v`` with end points ``x_{\min} < x_{\max}`` with reflecting barrier conditions of
-
-```math
-\begin{align}
-\underline{\xi} v(x_{\min}) + \nabla v(x_{\min}) &= 0\\
-\overline{\xi} v(x_{\max}) + \nabla v(x_{\max}) &= 0
-\end{align}
-```
-
-We use the following discretization schemes:
-
-```math
-L_1^{-} \equiv \frac{1}{\Delta}\begin{pmatrix}
-1 - (1 + \underline{\xi} \Delta) &0&0&\dots&0&0&0\\
--1&1&0&\dots&0&0&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
-0&0&0&\dots&-1&1&0\\
-0&0&0&\cdots&0&-1&1
-\end{pmatrix}_{P\times P}
-```
-
-```math
-L_1^{+} \equiv \frac{1}{\Delta}\begin{pmatrix}
--1&1&0&\dots&0&0&0\\
-0&-1&1&\dots&0&0&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
-0&0&0&\dots&0&-1&1\\
-0&0&0&\cdots&0&0&-1+(1-\overline{\xi} \Delta)
-\end{pmatrix}_{P\times P}\label{eq:L-1-plus-regular} \\
-```
-
-```math
-L_2 \equiv \frac{1}{\Delta^2}\begin{pmatrix}
--2 + (1 + \underline{\xi} \Delta) &1&0&\dots&0&0&0\\
-1&-2&1&\dots&0&0&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
-0&0&0&\dots&1&-2&1\\
-0&0&0&\cdots&0&1&-2 + (1- \overline{\xi} \Delta)
-\end{pmatrix}_{P\times P}\label{eq:L-2-regular}
-```
-
-which represent the backward first order, foward first order, and central second order differential operators respectively.
-
-Derivation, including formula for irregular grids, can be found [here](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/blob/master/docs/tex/discretized-differential-operator-derivation.pdf).
-
-
 Usage
 ==========
+Consider solving for `v` from the following equation:
+```math
+\rho v(x) = f(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
+```
 
-This package provides discretized differential operators of first order and second order under reflecting boundary conditions.
+for some constant $\rho, \sigma > 0$ and $\mu \leq 0$. To solve `v` on `M`-size discretized grids, one can run the following code:
+```julia
+# setup 
+f(x) = x^2 
+μ = -0.1 # constant negative drift
+σ = 0.1
+M = 100 # size of grid
+x = range(0.0, 1.0, length = M) # grid
 
-```@autodocs
-Modules = [SimpleDifferentialOperators]
-Order   = [:function, :type]
+# operators with reflecting boundary conditions
+L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())
+A = μ*L_1_minus + σ^2 / 2 * L_2 
+v_bc = (I * 0.05 - A) \ f.(x) # solve the value function
+```
+
+Note that the code above uses differential operators with reflecting boundary conditions applied. 
+One can alternatively use differential operators on interior nodes and stack them with matrices for boundary conditions to compute `v`:
+```julia
+# operators without boundary conditions, adding extra two rows for boundary conditions
+L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x) # operators on interior nodes
+L = μ*L_1_minus + σ^2 / 2 * L_2 # differential operators on interior nodes
+B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]]) # matrix for boundary conditions
+A = [([zeros(M) Diagonal(ones(M,M)) zeros(M)] * 0.05 - L); B] # stack them
+v_bar = A \ [f.(x); 0.0; 0.0] # solve the value function with reflecting barrier bc
+v_interior = v_bar[2:end-1] # extract the interior (is identical with `v_bc`)
 ```

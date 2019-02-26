@@ -2,11 +2,47 @@
 """
    `diffusionoperators(x, BC1::BoundaryCondition, BC2::BoundaryCondition)`
 
-Return the diffusion operators `(L_1_minus, L_1_plus, L_2)` w.r.t the supplied grid and BCs.
+Returns a tuple of diffusion operators and extended grid `(L_1_minus, L_1_plus, L_2, x_bar)`
+with specified boundary conditions.
 
-`x` is a grid (either an `AbstractRange`, in which we use specialized uniform grid code, or an `AbstractArray`). The
-first BC binds at the lower end of the grid (i.e., `x[1]`), and the latter at the high end. The BCs are either a `Reflecting()`,
-or "Dirichlet" boundary condition `v'(x) = 0`, or `Mixed(x::T) where {T <: Real}`, corresponding to "Robin" boundary conditions.
+Given a grid `x` of length `M`, return diffusion operators for negative drift, positive drift,
+and central differences. BC1 is applied to the lower bound, and BC2 to the upper. `x_bar` is a `(M+2)` array that
+represents the extended grid whose first and last elements represent the ghost nodes
+just before `x[1]` and `x[end]`.
+
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x = 1:3
+1:3
+
+julia> L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x)
+(L_1_minus =
+  [1, 1]  =  -1.0
+  [1, 2]  =  1.0
+  [2, 2]  =  -1.0
+  [1, 3]  =  0.0
+  [2, 3]  =  1.0
+  [3, 3]  =  -1.0
+  [2, 4]  =  0.0
+  [3, 4]  =  1.0, L_1_plus =
+  [1, 2]  =  -1.0
+  [2, 2]  =  0.0
+  [1, 3]  =  1.0
+  [2, 3]  =  -1.0
+  [3, 3]  =  0.0
+  [2, 4]  =  1.0
+  [3, 4]  =  -1.0
+  [3, 5]  =  1.0, L_2 =
+  [1, 1]  =  1.0
+  [1, 2]  =  -2.0
+  [2, 2]  =  1.0
+  [1, 3]  =  1.0
+  [2, 3]  =  -2.0
+  [3, 3]  =  1.0
+  [2, 4]  =  1.0
+  [3, 4]  =  -2.0
+  [3, 5]  =  1.0, x_bar = [0, 1, 2, 3, 4])
+```
 """
 diffusionoperators(x, BC1::BoundaryCondition, BC2::BoundaryCondition) = _diffusionoperators(x, BC1, BC2)
 
@@ -19,7 +55,7 @@ function _diffusionoperators(x, BC1::Reflecting, BC2::Reflecting)
     L_1_minus[1,1] = zero(T)
     L_1_plus[end,end] = zero(T)
     L_2[1,1] /= 2
-    L_2[end,end] /= 2 
+    L_2[end,end] /= 2
 
     # return
     return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)

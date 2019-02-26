@@ -1,7 +1,12 @@
 using Documenter, SimpleDifferentialOperators
 
 # Compile the raw documentation.
-makedocs(sitename = "SimpleDifferentialOperators.jl")
+makedocs(sitename = "SimpleDifferentialOperators.jl",
+	pages = [
+        "index.md",
+        "formula.md",
+        "api.md",
+    ])
 
 # Deploy to git
 deploydocs(

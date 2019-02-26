@@ -1,11 +1,22 @@
 """
    `diffusionoperators(x)`
 
-Returns a tuple of diffusion operators and extended grid `(L_1_minus, L_1_plus, L_2, x_bar)` 
-where `L_1_minus`, `L_1_plus`, `L_2` are P by (P+2) matrices that represent 
-L_1 based on BD, L_1 based on FD, and L_2 based on CD respectively, without any boundary conditions
-where P is `length(x)`. `x_bar` is `(P+2)` array that represents the extended grid whose first element
-and the last element represent the ghost nodes on lower boundary and upper boundary, respectively.
+Returns a tuple of diffusion operators and extended grid `(L_1_minus, L_1_plus, L_2, x_bar)`
+without applying any boundary conditions.
+
+Given a grid `x` of length `M`, return diffusion operators for negative drift, positive drift,
+and central differences. No boundary conditions are applied. `x_bar` is a `(M+2)` array that
+represents the extended grid whose first and last elements represent the ghost nodes
+just before `x[1]` and `x[end]`.
+
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x = 1:3
+1:3
+
+julia> L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())
+(L_1_minus = [0.0 0.0 0.0; -1.0 1.0 0.0; 0.0 -1.0 1.0], L_1_plus = [-1.0 1.0 0.0; 0.0 -1.0 1.0; 0.0 0.0 0.0], L_2 = [-1.0 1.0 0.0; 1.0 -2.0 1.0; 0.0 1.0 -1.0], x_bar = [0, 1, 2, 3, 4])
+```
 """
 diffusionoperators(x) = diffusionoperators(x, NoBoundary())
 
