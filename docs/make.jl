@@ -1,6 +1,11 @@
-using Documenter, SimpleDifferentialOperators
+using Documenter, SimpleDifferentialOperators, Weave
 
-# Compile the raw documentation.
+# Generate stuff from Weave
+srcfile = "../examples/example.jmd" # example script from weave docs
+weave(srcfile, doctype = "md2pdf", out_path = "../examples/") # turn it into PDF
+convert_doc(srcfile, "../examples/example.ipynb") # try it as notebook?
+
+# Compile the online documentation.
 makedocs(sitename = "SimpleDifferentialOperators.jl",
 	pages = [
         "index.md",
