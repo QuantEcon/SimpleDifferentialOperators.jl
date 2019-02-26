@@ -9,10 +9,17 @@ x = range(0.0, 1.0, length = M) # grid
 # operators with reflecting boundary conditions
 L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())
 A = μ*L_1_minus + σ^2 / 2 * L_2 
-v_bc = (I * 0.05 - A) \ f.(x) # solve the value function</code></pre><p>Note that the code above uses differential operators with reflecting boundary conditions applied.  One can alternatively use differential operators on interior nodes and stack them with matrices for boundary conditions to compute <code>v</code>:</p><pre><code class="language-julia"># operators without boundary conditions, adding extra two rows for boundary conditions
-L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x) # operators on interior nodes
-L = μ*L_1_minus + σ^2 / 2 * L_2 # differential operators on interior nodes
-B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]]) # matrix for boundary conditions
-A = [([zeros(M) Diagonal(ones(M,M)) zeros(M)] * 0.05 - L); B] # stack them
-v_bar = A \ [f.(x); 0.0; 0.0] # solve the value function with reflecting barrier bc
-v_interior = v_bar[2:end-1] # extract the interior (is identical with `v_bc`)</code></pre><footer><hr/><a class="next" href="formula/"><span class="direction">Next</span><span class="title">Formula</span></a></footer></article></body></html>
+## solve the value function
+v_bc = (I * 0.05 - A) \ f.(x) </code></pre><p>Note that the code above uses differential operators with reflecting boundary conditions applied.  One can alternatively use differential operators on interior nodes and stack them with matrices for boundary conditions to compute <code>v</code>:</p><pre><code class="language-julia"># operators without boundary conditions, adding extra two rows for boundary conditions
+## operators on interior nodes
+L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x) 
+## differential operators on interior nodes
+L = μ*L_1_minus + σ^2 / 2 * L_2 
+## matrix for boundary conditions
+B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]]) 
+## stack them together
+A = [([zeros(M) Diagonal(ones(M,M)) zeros(M)] * 0.05 - L); B] 
+## solve the value function with reflecting barrier bc (last two elements)
+v_bar = A \ [f.(x); 0.0; 0.0] 
+## extract the interior (is identical with `v_bc` above)
+v_interior = v_bar[2:end-1] </code></pre><footer><hr/><a class="next" href="formula/"><span class="direction">Next</span><span class="title">Formula</span></a></footer></article></body></html>

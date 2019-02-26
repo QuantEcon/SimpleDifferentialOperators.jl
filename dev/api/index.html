@@ -2,34 +2,63 @@
 <html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>API · SimpleDifferentialOperators.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>SimpleDifferentialOperators.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../">﻿Installation</a></li><li><a class="toctext" href="../formula/">Formula</a></li><li class="current"><a class="toctext" href>API</a><ul class="internal"></ul></li></ul></nav><article id="docs"><header><nav><ul><li><a href>API</a></li></ul><a class="edit-page" href="https://github.com/QuantEcon/SimpleDifferentialOperators.jl/blob/master/docs/src/api.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>API</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="API-1" href="#API-1">API</a></h1><ul><li><a href="#SimpleDifferentialOperators.diffusionoperators-Tuple{Any,BoundaryCondition,BoundaryCondition}"><code>SimpleDifferentialOperators.diffusionoperators</code></a></li><li><a href="#SimpleDifferentialOperators.diffusionoperators-Tuple{Any}"><code>SimpleDifferentialOperators.diffusionoperators</code></a></li></ul><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="SimpleDifferentialOperators.diffusionoperators-Tuple{Any,BoundaryCondition,BoundaryCondition}" href="#SimpleDifferentialOperators.diffusionoperators-Tuple{Any,BoundaryCondition,BoundaryCondition}"><code>SimpleDifferentialOperators.diffusionoperators</code></a> — <span class="docstring-category">Method</span>.</div><div><div><p><code>diffusionoperators(x, BC1::BoundaryCondition, BC2::BoundaryCondition)</code></p><p>Returns a tuple of diffusion operators and extended grid <code>(L_1_minus, L_1_plus, L_2, x_bar)</code> with specified boundary conditions.</p><p>Given a grid <code>x</code> of length <code>M</code>, return diffusion operators for negative drift, positive drift, and central differences. BC1 is applied to the lower bound, and BC2 to the upper. <code>x_bar</code> is a <code>(M+2)</code> array that represents the extended grid whose first and last elements represent the ghost nodes just before <code>x[1]</code> and <code>x[end]</code>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; x = 1:3
 1:3
 
-julia&gt; L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x)
-(L_1_minus =
-  [1, 1]  =  -1.0
-  [1, 2]  =  1.0
-  [2, 2]  =  -1.0
-  [1, 3]  =  0.0
-  [2, 3]  =  1.0
-  [3, 3]  =  -1.0
-  [2, 4]  =  0.0
-  [3, 4]  =  1.0, L_1_plus =
-  [1, 2]  =  -1.0
-  [2, 2]  =  0.0
-  [1, 3]  =  1.0
-  [2, 3]  =  -1.0
-  [3, 3]  =  0.0
-  [2, 4]  =  1.0
-  [3, 4]  =  -1.0
-  [3, 5]  =  1.0, L_2 =
-  [1, 1]  =  1.0
-  [1, 2]  =  -2.0
-  [2, 2]  =  1.0
-  [1, 3]  =  1.0
-  [2, 3]  =  -2.0
-  [3, 3]  =  1.0
-  [2, 4]  =  1.0
-  [3, 4]  =  -2.0
-  [3, 5]  =  1.0, x_bar = [0, 1, 2, 3, 4])</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/QuantEcon/SimpleDifferentialOperators.jl/blob/aa76195e7a04df0779d8e9028b969214341e49a7/src/operators.jl#L2-L46">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="SimpleDifferentialOperators.diffusionoperators-Tuple{Any}" href="#SimpleDifferentialOperators.diffusionoperators-Tuple{Any}"><code>SimpleDifferentialOperators.diffusionoperators</code></a> — <span class="docstring-category">Method</span>.</div><div><div><p><code>diffusionoperators(x)</code></p><p>Returns a tuple of diffusion operators and extended grid <code>(L_1_minus, L_1_plus, L_2, x_bar)</code> without applying any boundary conditions.</p><p>Given a grid <code>x</code> of length <code>M</code>, return diffusion operators for negative drift, positive drift, and central differences. No boundary conditions are applied. <code>x_bar</code> is a <code>(M+2)</code> array that represents the extended grid whose first and last elements represent the ghost nodes just before <code>x[1]</code> and <code>x[end]</code>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; x = 1:3
+julia&gt; L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting());
+
+julia&gt; Array(L_1_minus)
+3×3 Array{Float64,2}:
+  0.0   0.0  0.0
+ -1.0   1.0  0.0
+  0.0  -1.0  1.0
+
+julia&gt; Array(L_1_plus)
+3×3 Array{Float64,2}:
+ -1.0   1.0  0.0
+  0.0  -1.0  1.0
+  0.0   0.0  0.0
+
+julia&gt; Array(L_2)
+3×3 Array{Float64,2}:
+ -1.0   1.0   0.0
+  1.0  -2.0   1.0
+  0.0   1.0  -1.0
+
+julia&gt; x_bar
+5-element Array{Int64,1}:
+ 0
+ 1
+ 2
+ 3
+ 4</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/QuantEcon/SimpleDifferentialOperators.jl/blob/f912b1143a38673fc58d93d0e1bf49e8b6ff02b8/src/operators.jl#L2-L46">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="SimpleDifferentialOperators.diffusionoperators-Tuple{Any}" href="#SimpleDifferentialOperators.diffusionoperators-Tuple{Any}"><code>SimpleDifferentialOperators.diffusionoperators</code></a> — <span class="docstring-category">Method</span>.</div><div><div><p><code>diffusionoperators(x)</code></p><p>Returns a tuple of diffusion operators and extended grid <code>(L_1_minus, L_1_plus, L_2, x_bar)</code> without applying any boundary conditions.</p><p>Given a grid <code>x</code> of length <code>M</code>, return diffusion operators for negative drift, positive drift, and central differences. No boundary conditions are applied. <code>x_bar</code> is a <code>(M+2)</code> array that represents the extended grid whose first and last elements represent the ghost nodes just before <code>x[1]</code> and <code>x[end]</code>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; x = 1:3
 1:3
 
-julia&gt; L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())
-(L_1_minus = [0.0 0.0 0.0; -1.0 1.0 0.0; 0.0 -1.0 1.0], L_1_plus = [-1.0 1.0 0.0; 0.0 -1.0 1.0; 0.0 0.0 0.0], L_2 = [-1.0 1.0 0.0; 1.0 -2.0 1.0; 0.0 1.0 -1.0], x_bar = [0, 1, 2, 3, 4])</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/QuantEcon/SimpleDifferentialOperators.jl/blob/aa76195e7a04df0779d8e9028b969214341e49a7/src/operators-without-bc.jl#L1-L20">source</a></section><footer><hr/><a class="previous" href="../formula/"><span class="direction">Previous</span><span class="title">Formula</span></a></footer></article></body></html>
+julia&gt; L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x);
+
+julia&gt; @show Array(L_1_minus)
+Array(L_1_minus) = [-1.0 1.0 0.0 0.0 0.0; 0.0 -1.0 1.0 0.0 0.0; 0.0 0.0 -1.0 1.0 0.0]
+3×5 Array{Float64,2}:
+ -1.0   1.0   0.0  0.0  0.0
+  0.0  -1.0   1.0  0.0  0.0
+  0.0   0.0  -1.0  1.0  0.0
+
+julia&gt; @show Array(L_1_plus)
+Array(L_1_plus) = [0.0 -1.0 1.0 0.0 0.0; 0.0 0.0 -1.0 1.0 0.0; 0.0 0.0 0.0 -1.0 1.0]
+3×5 Array{Float64,2}:
+ 0.0  -1.0   1.0   0.0  0.0
+ 0.0   0.0  -1.0   1.0  0.0
+ 0.0   0.0   0.0  -1.0  1.0
+
+julia&gt; @show Array(L_2)
+Array(L_2) = [1.0 -2.0 1.0 0.0 0.0; 0.0 1.0 -2.0 1.0 0.0; 0.0 0.0 1.0 -2.0 1.0]
+3×5 Array{Float64,2}:
+ 1.0  -2.0   1.0   0.0  0.0
+ 0.0   1.0  -2.0   1.0  0.0
+ 0.0   0.0   1.0  -2.0  1.0
+
+julia&gt; @show x_bar
+x_bar = [0, 1, 2, 3, 4]
+5-element Array{Int64,1}:
+ 0
+ 1
+ 2
+ 3
+ 4</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/QuantEcon/SimpleDifferentialOperators.jl/blob/f912b1143a38673fc58d93d0e1bf49e8b6ff02b8/src/operators-without-bc.jl#L1-L49">source</a></section><footer><hr/><a class="previous" href="../formula/"><span class="direction">Previous</span><span class="title">Formula</span></a></footer></article></body></html>
