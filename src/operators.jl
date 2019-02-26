@@ -2,16 +2,16 @@
 """
    `diffusionoperators(x, BC1::BoundaryCondition, BC2::BoundaryCondition)`
 
-Returns a tuple of diffusion operators (with boundary conditions applied) and extended grid `(L_1_minus, L_1_plus, L_2, x_bar)` 
+Returns a tuple of diffusion operators and extended grid `(L_1_minus, L_1_plus, L_2, x_bar)`
+with specified boundary conditions.
 
-Given a grid `x` of length `M`, return `L_1_minus`, `L_1_plus`, `L_2` that are M by M matrices representing 
-L_1 based on BD, L_1 based on FD, and L_2 based on CD respectively, 
-where a lower boundary condition `BC1` and upper boundary condition `BC2` are applied.
-`x_bar` is a `(M+2)` array that represents the extended grid whose first and last elements represent 
-the ghost nodes just before `x[1]` and `x[end]`.
+Given a grid `x` of length `M`, return diffusion operators for negative drift, positive drift,
+and central differences. BC1 is applied to the lower bound, and BC2 to the upper. `x_bar` is a `(M+2)` array that
+represents the extended grid whose first and last elements represent the ghost nodes
+just before `x[1]` and `x[end]`.
 
 # Examples
-```jldoctest
+```jldoctest; setup = :(using SimpleDifferentialOperators)
 julia> x = 1:3
 1:3
 
@@ -55,7 +55,7 @@ function _diffusionoperators(x, BC1::Reflecting, BC2::Reflecting)
     L_1_minus[1,1] = zero(T)
     L_1_plus[end,end] = zero(T)
     L_2[1,1] /= 2
-    L_2[end,end] /= 2 
+    L_2[end,end] /= 2
 
     # return
     return (L_1_minus = L_1_minus, L_1_plus = L_1_plus, L_2 = L_2, x_bar = x_bar)
