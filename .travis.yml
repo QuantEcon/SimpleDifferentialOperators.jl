@@ -25,6 +25,9 @@ jobs:
                                                Pkg.instantiate()'
         - julia --project=docs/ docs/make.jl
       after_success:
+        - git config --global user.email "travis@travis-ci.org"
+        - git config --global user.name "Travis CI"
+        - git remote set-url origin https://arnavs:6de9d251418a58a8c44c6d88ca0ca17d6931a332@github.com/quantecon/SimpleDifferentialOperators.jl.git
         - git add docs/example.html
         - git add docs/example.ipynb
         - git commit -m "add Travis-built documentation"
