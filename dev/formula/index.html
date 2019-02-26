@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Formula · SimpleDifferentialOperators.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>SimpleDifferentialOperators.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../">﻿Installation</a></li><li class="current"><a class="toctext" href>Formula</a><ul class="internal"></ul></li><li><a class="toctext" href="../api/">API</a></li></ul></nav><article id="docs"><header><nav><ul><li><a href>Formula</a></li></ul><a class="edit-page" href="https://github.com/QuantEcon/SimpleDifferentialOperators.jl/blob/master/docs/src/formula.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Formula</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Formula-1" href="#Formula-1">Formula</a></h1><p>Under <span>$M$</span>-length of grids on <span>$v$</span> with end points <span>$x_{\min} &lt; x_{\max}$</span> with reflecting barrier conditions of</p><div>\[\begin{align}
+\underline{\xi} v(x_{\min}) + \nabla v(x_{\min}) &amp;= 0\\
+\overline{\xi} v(x_{\max}) + \nabla v(x_{\max}) &amp;= 0
+\end{align}\]</div><p>We use the following discretization schemes:</p><div>\[L_1^{-} \equiv \frac{1}{\Delta}\begin{pmatrix}
+1 - (1 + \underline{\xi} \Delta) &amp;0&amp;0&amp;\dots&amp;0&amp;0&amp;0\\
+-1&amp;1&amp;0&amp;\dots&amp;0&amp;0&amp;0\\
+\vdots&amp;\vdots&amp;\vdots&amp;\ddots&amp;\vdots&amp;\vdots&amp;\vdots\\
+0&amp;0&amp;0&amp;\dots&amp;-1&amp;1&amp;0\\
+0&amp;0&amp;0&amp;\cdots&amp;0&amp;-1&amp;1
+\end{pmatrix}_{P\times P}\]</div><div>\[L_1^{+} \equiv \frac{1}{\Delta}\begin{pmatrix}
+-1&amp;1&amp;0&amp;\dots&amp;0&amp;0&amp;0\\
+0&amp;-1&amp;1&amp;\dots&amp;0&amp;0&amp;0\\
+\vdots&amp;\vdots&amp;\vdots&amp;\ddots&amp;\vdots&amp;\vdots&amp;\vdots\\
+0&amp;0&amp;0&amp;\dots&amp;0&amp;-1&amp;1\\
+0&amp;0&amp;0&amp;\cdots&amp;0&amp;0&amp;-1+(1-\overline{\xi} \Delta)
+\end{pmatrix}_{P\times P}\label{eq:L-1-plus-regular} \\\]</div><div>\[L_2 \equiv \frac{1}{\Delta^2}\begin{pmatrix}
+-2 + (1 + \underline{\xi} \Delta) &amp;1&amp;0&amp;\dots&amp;0&amp;0&amp;0\\
+1&amp;-2&amp;1&amp;\dots&amp;0&amp;0&amp;0\\
+\vdots&amp;\vdots&amp;\vdots&amp;\ddots&amp;\vdots&amp;\vdots&amp;\vdots\\
+0&amp;0&amp;0&amp;\dots&amp;1&amp;-2&amp;1\\
+0&amp;0&amp;0&amp;\cdots&amp;0&amp;1&amp;-2 + (1- \overline{\xi} \Delta)
+\end{pmatrix}_{P\times P}\label{eq:L-2-regular}\]</div><p>which represent the backward first order, foward first order, and central second order differential operators respectively.</p><p>Derivation, including formula for irregular grids, can be found <a href="https://github.com/QuantEcon/SimpleDifferentialOperators.jl/blob/master/docs/tex/discretized-differential-operator-derivation.pdf">here</a>.</p><footer><hr/><a class="previous" href="../"><span class="direction">Previous</span><span class="title">﻿Installation</span></a><a class="next" href="../api/"><span class="direction">Next</span><span class="title">API</span></a></footer></article></body></html>
