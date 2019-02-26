@@ -91,6 +91,29 @@ end
     end
 end
 
+@testset "Operators under upwind schemes" begin
+    f(x) = x^2 
+    μ(x) = -x # drift depends on state
+    σ = 0.1
+    ρ = 0.05
+    M = 100 # size of grid
+    x = range(-1.0, 1.0, length = M) # grid
+    ## M-vector of drifts stacked according to the states
+    μs = μ.(x)
+
+    # operators with reflecting boundary conditions
+    L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())
+
+    # Define first order differential operator using upwind scheme
+    L_1_upwind = (μs .<= 0) .* L_1_minus + (μs .> 0) .* L_1_plus
+
+    indices_m = findall(μs .<= 0)
+    indices_p = findall(μs .> 0)
+
+    @test L_1_upwind[indices_m, indices_m] == Array(L_1_minus[indices_m, indices_m])
+    @test L_1_upwind[indices_p, indices_p] == Array(L_1_plus[indices_p, indices_p])
+end
+
 @testset "Input Type Variance" begin
     # BigFloat
     uniformGrid = range(BigFloat(0.0), BigFloat(1.0), length = 100)
