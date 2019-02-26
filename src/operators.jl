@@ -15,8 +15,33 @@ just before `x[1]` and `x[end]`.
 julia> x = 1:3
 1:3
 
-julia> L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())
-(L_1_minus = [0.0 0.0 0.0; -1.0 1.0 0.0; 0.0 -1.0 1.0], L_1_plus = [-1.0 1.0 0.0; 0.0 -1.0 1.0; 0.0 0.0 0.0], L_2 = [-1.0 1.0 0.0; 1.0 -2.0 1.0; 0.0 1.0 -1.0], x_bar = [0, 1, 2, 3, 4])
+julia> L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting());
+
+julia> Array(L_1_minus)
+3×3 Array{Float64,2}:
+  0.0   0.0  0.0
+ -1.0   1.0  0.0
+  0.0  -1.0  1.0
+
+julia> Array(L_1_plus)
+3×3 Array{Float64,2}:
+ -1.0   1.0  0.0
+  0.0  -1.0  1.0
+  0.0   0.0  0.0
+
+julia> Array(L_2)
+3×3 Array{Float64,2}:
+ -1.0   1.0   0.0
+  1.0  -2.0   1.0
+  0.0   1.0  -1.0
+
+julia> x_bar
+5-element Array{Int64,1}:
+ 0
+ 1
+ 2
+ 3
+ 4
 ```
 """
 diffusionoperators(x, BC1::BoundaryCondition, BC2::BoundaryCondition) = _diffusionoperators(x, BC1, BC2)
