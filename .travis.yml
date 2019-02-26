@@ -27,8 +27,9 @@ jobs:
         - git config --global user.email "travis@travis-ci.org"
         - git config --global user.name "Travis CI"
         - git remote set-url origin https://arnavs:$GIT_KEY@github.com/quantecon/SimpleDifferentialOperators.jl.git
-        - git checkout -b gh-pages
+        - git checkout -b examples
+        - git pull
         - git add docs/example.html
         - git add docs/example.ipynb
         - git commit -m "add Travis-built documentation"
-        - git push origin gh-pages
+        - git push origin examples
