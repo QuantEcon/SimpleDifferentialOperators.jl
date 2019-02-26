@@ -1,9 +1,9 @@
 using Documenter, SimpleDifferentialOperators, Weave
 
 # Generate stuff from Weave
-srcfile = "example.jmd" # example script from weave docs
-weave(srcfile, doctype = "md2pdf", out_path = :pwd) # turn it into PDF
-convert_doc(srcfile, "example.ipynb") # try it as notebook?
+srcfile = joinpath(pwd(), "docs", "example.jmd") # example script from weave docs
+weave(srcfile, doctype = "md2pdf", out_path = joinpath(pwd(), "docs")) # turn it into PDF
+convert_doc(srcfile, "docs/example.ipynb") # try it as notebook?
 
 # Compile the online documentation.
 makedocs(sitename = "SimpleDifferentialOperators.jl",
