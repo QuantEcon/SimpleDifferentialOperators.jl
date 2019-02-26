@@ -28,6 +28,7 @@ end
         f(x) = x^2
         μ = -0.1 # constant negative drift
         σ = 0.1
+        ρ = 0.05
         N = 3
         x = range(0.0, 1.0, length = N)
 
@@ -35,7 +36,7 @@ end
         L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())
         A = μ*L_1_minus + σ^2 / 2 * L_2 
         ## solve the value function
-        v_bc = (I * 0.05 - A) \ f.(x) 
+        v_bc = (I * ρ - A) \ f.(x) 
 
         # operators without boundary conditions, adding extra two rows for boundary conditions
         L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x)
