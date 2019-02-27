@@ -29,6 +29,9 @@ export DifferentialOperator,
         L₁₊,
         L₂,
         x̄,
-        diffusionoperators
+        diffusionoperators,
+        L̄₁₊,
+        L̄₁₋,
+        L̄₂
 
 end # module
