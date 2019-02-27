@@ -1,244 +1,40 @@
 # Concrete "under the hood" methods.
 # (NoBoundary, NoBoundary)
-function DifferentialOperator(x::AbstractRange, bc::Tuple{NoBoundary, NoBoundary}, method::ForwardFirstDifference)
+function DifferentialOperator(x, bc::Tuple{NoBoundary, NoBoundary}, method::DifferenceMethod)
     T = eltype(x)
     d = diff(x)
-    Δ = step(x)
-    M = length(x)
-
-    dl_1 = zeros(T, M-1)
-    d_1 = -ones(T, M)
-    du_1 = ones(T, M-1)
-    L₁₊ = Tridiagonal(dl_1, d_1, du_1)/Δ
-
-    col_zeros = zeros(T, M)
-    col_lb = zeros(T, M)
-    col_ub = zeros(T, M)
-    col_lb[1] = one(T)
-    col_ub[end] = one(T)
-    L₁₊ = sparse([col_zeros L₁₊ col_ub/Δ])
-end
-
-function DifferentialOperator(x::AbstractRange, bc::Tuple{NoBoundary, NoBoundary}, method::BackwardFirstDifference)
-    T = eltype(x)
-    d = diff(x)
-    Δ = step(x)
-    M = length(x)
-
-    dl_m1 = -ones(T, M-1)
-    d_m1 = ones(T, M)
-    du_m1 = zeros(T, M-1)
-    L₁₋ = Tridiagonal(dl_m1, d_m1, du_m1)/Δ
-
-    col_zeros = zeros(T, M)
-    col_lb = zeros(T, M)
-    col_ub = zeros(T, M)
-    col_lb[1] = one(T)
-    col_ub[end] = one(T)
-    L₁₋ = sparse([-col_lb/Δ L₁₋ col_zeros])
-end
-
-function DifferentialOperator(x::AbstractRange, bc::Tuple{NoBoundary, NoBoundary}, method::CentralSecondDifference)
-    T = eltype(x)
-    d = diff(x)
-    Δ = step(x)
-    M = length(x)
-
-    dl_2 = ones(T, M-1)
-    d_2 = -2 * ones(T, M)
-    du_2 = ones(T, M-1)
-    L₂ = Tridiagonal(dl_2, d_2, du_2)/(Δ^2)
-
-    col_zeros = zeros(T, M)
-    col_lb = zeros(T, M)
-    col_ub = zeros(T, M)
-    col_lb[1] = one(T)
-    col_ub[end] = one(T)
-    L₂ = sparse([col_lb/(Δ*Δ) L₂ col_ub/(Δ*Δ)])
-end
-
-function DifferentialOperator(x, bc::Tuple{NoBoundary, NoBoundary}, method::ForwardFirstDifference)
-    T = eltype(x) # get data type of the grid
-    d = diff(x) # using the first difference as diff from ghost node
-    M = length(x)
-    Δ_1 = d[1]
-    Δ_M = d[end]
-    Δ_m = zeros(T, M)
-    Δ_m[1] = d[1]
-    Δ_m[2:end] = d
-    Δ_p = zeros(T, M)
-    Δ_p[end] = d[end]
-    Δ_p[1:end-1] = d
-
-    # define L_1_minus
-    dl_p1 = zeros(T, M-1)./Δ_m[2:end]
-    d_p1 = -ones(T, M)./Δ_p
-    du_p1 = ones(T, M-1)./Δ_p[1:end-1]
-    L₁₊ = Tridiagonal(dl_p1, d_p1, du_p1)
-
-    col_zeros = zeros(T, M)
-    col_lb = zeros(T, M)
-    col_ub = zeros(T, M)
-    col_lb[1] = one(T)
-    col_ub[end] = one(T)
-    L₁₊ = sparse([col_zeros L₁₊ col_ub/Δ_M])
-end
-
-function DifferentialOperator(x, bc::Tuple{NoBoundary, NoBoundary}, method::BackwardFirstDifference)
-    T = eltype(x) # get data type of the grid
-    d = diff(x) # using the first difference as diff from ghost node
-    M = length(x)
-    Δ_1 = d[1]
-    Δ_M = d[end]
-    Δ_m = zeros(T, M)
-    Δ_m[1] = d[1]
-    Δ_m[2:end] = d
-    Δ_p = zeros(T, M)
-    Δ_p[end] = d[end]
-    Δ_p[1:end-1] = d
-
-    # define L_1_minus
-    dl_m1 = -ones(T, M-1)./Δ_m[2:end]
-    d_m1 = ones(T, M)./Δ_m
-    du_m1 = zeros(T, M-1)./Δ_p[1:end-1]
-    L₁₋ = Tridiagonal(dl_m1, d_m1, du_m1)
-
-    col_zeros = zeros(T, M)
-    col_lb = zeros(T, M)
-    col_ub = zeros(T, M)
-    col_lb[1] = one(T)
-    col_ub[end] = one(T)
-    L₁₋ = sparse([-col_lb/Δ_1 L₁₋ col_zeros])
-end
-
-function DifferentialOperator(x, bc::Tuple{NoBoundary, NoBoundary}, method::CentralSecondDifference)
-    T = eltype(x) # get data type of the grid
-    d = diff(x) # using the first difference as diff from ghost node
     Δ_1 = d[1]
     Δ_M = d[end]
     M = length(x)
-    Δ_m = zeros(T, M)
-    Δ_m[1] = d[1]
-    Δ_m[2:end] = d
-    Δ_p = zeros(T, M)
-    Δ_p[end] = d[end]
-    Δ_p[1:end-1] = d
 
-    Δ=Δ_p+Δ_m
-    dl_2 = 2*ones(T, M-1)./(Δ_m[2:end].*Δ[2:end])
-    d_2 = -2*ones(T, M)
-    d_2 = d_2./(Δ_p.*Δ_m)
-    du_2 = 2*ones(T, M-1)./(Δ_p[1:end-1].*Δ[1:end-1])
-    L₂ = Tridiagonal(dl_2, d_2, du_2)
+    # get basis operator on interior nodes
+    L_basis = get_basis_operator(x, method)
 
-    col_zeros = zeros(T, M)
+    # add columns for ghost nodes next to boundaries
     col_lb = zeros(T, M)
     col_ub = zeros(T, M)
-    col_lb[1] = one(T)
-    col_ub[end] = one(T)
-    L₂ = sparse([col_lb/(Δ_1*Δ_1) L₂ col_ub/(Δ_M*Δ_M)])
-end
+    col_lb[1] = typeof(method) <: BackwardFirstDifference ? -(one(T) / Δ_1) : zero(T)
+    col_lb[1] = typeof(method) <: CentralSecondDifference ? (one(T) / (Δ_1*Δ_1)) : col_lb[1]
+    col_ub[end] = typeof(method) <: ForwardFirstDifference ? (one(T) / Δ_M) : zero(T)
+    col_ub[end] = typeof(method) <: CentralSecondDifference ? (one(T) / (Δ_M*Δ_M)) : col_ub[end]
 
+    L = sparse([col_lb L_basis col_ub])
+end
 
 # (Reflecting, Reflecting)
-function DifferentialOperator(x::AbstractRange, bc::Tuple{Reflecting, Reflecting}, method::ForwardFirstDifference)
+function DifferentialOperator(x, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)
     T = eltype(x)
-    Δ = step(x)
-    M = length(x)
 
-    dl_1 = zeros(T, M-1)
-    d_1 = -ones(T, M)
-    du_1 = ones(T, M-1)
-    L₁₊ = Tridiagonal(dl_1, d_1, du_1)/Δ
-    L₁₊[end, end] = zero(T)
-    return L₁₊
-end
+    # get basis operator on interior nodes
+    L = get_basis_operator(x, method)
 
-function DifferentialOperator(x, bc::Tuple{Reflecting, Reflecting}, method::ForwardFirstDifference)
-    T = eltype(x)
-    d = diff(x)
-    M = length(x)
-    Δ_m = zeros(T, M)
-    Δ_m[1] = d[1]
-    Δ_m[2:end] = d
-    Δ_p = zeros(T, M)
-    Δ_p[end] = d[end]
-    Δ_p[1:end-1] = d
+    # apply boundary conditions
+    L[1,1] = typeof(method) <: BackwardFirstDifference ? zero(T) : L[1,1]
+    L[1,1] = typeof(method) <: CentralSecondDifference ? (L[1,1] / 2) : L[1,1]
+    L[end,end] = typeof(method) <: ForwardFirstDifference ? zero(T) : L[end,end]
+    L[end,end] = typeof(method) <: CentralSecondDifference ? (L[end,end] / 2) : L[end,end] 
 
-    dl_p1 = zeros(T, M-1)./Δ_m[2:end]
-    d_p1 = -ones(T, M)./Δ_p
-    du_p1 = ones(T, M-1)./Δ_p[1:end-1]
-    L₁₊ = Tridiagonal(dl_p1, d_p1, du_p1)
-    L₁₊[end, end] = zero(T)
-    return L₁₊
-end
-
-function DifferentialOperator(x::AbstractRange, bc::Tuple{Reflecting, Reflecting}, method::BackwardFirstDifference)
-    T = eltype(x)
-    Δ = step(x)
-    M = length(x)
-
-    dl_m1 = -ones(T, M-1)
-    d_m1 = ones(T, M)
-    du_m1 = zeros(T, M-1)
-    L₁₋ = Tridiagonal(dl_m1, d_m1, du_m1)/Δ
-    L₁₋[1, 1] = zero(T)
-    return L₁₋
-end
-
-function DifferentialOperator(x, bc::Tuple{Reflecting, Reflecting}, method::BackwardFirstDifference)
-    T = eltype(x)
-    d = diff(x)
-    M = length(x)
-    Δ_m = zeros(T, M)
-    Δ_m[1] = d[1]
-    Δ_m[2:end] = d
-    Δ_p = zeros(T, M)
-    Δ_p[end] = d[end]
-    Δ_p[1:end-1] = d
-
-    dl_m1 = -ones(T, M-1)./Δ_m[2:end]
-    d_m1 = ones(T, M)./Δ_m
-    du_m1 = zeros(T, M-1)./Δ_p[1:end-1]
-    L₁₋ = Tridiagonal(dl_m1, d_m1, du_m1)
-    L₁₋[1, 1] = zero(T)
-    return L₁₋
-end
-
-function DifferentialOperator(x::AbstractRange, bc::Tuple{Reflecting, Reflecting}, method::CentralSecondDifference)
-    T = eltype(x)
-    Δ = step(x)
-    M = length(x)
-
-    dl_2 = ones(T, M-1)
-    d_2 = -2 * ones(T, M)
-    du_2 = ones(T, M-1)
-    L₂ = Tridiagonal(dl_2, d_2, du_2)/(Δ^2)
-    L₂[1,1] /= 2
-    L₂[end,end] /= 2
-    return L₂
-end
-
-function DifferentialOperator(x, bc::Tuple{Reflecting, Reflecting}, method::CentralSecondDifference)
-    T = eltype(x)
-    d = diff(x)
-    M = length(x)
-    Δ_m = zeros(T, M)
-    Δ_m[1] = d[1]
-    Δ_m[2:end] = d
-    Δ_p = zeros(T, M)
-    Δ_p[end] = d[end]
-    Δ_p[1:end-1] = d
-
-    Δ=Δ_p+Δ_m
-    dl_2 = 2*ones(T, M-1)./(Δ_m[2:end].*Δ[2:end])
-    d_2 = -2*ones(T, M)
-    d_2 = d_2./(Δ_p.*Δ_m)
-    du_2 = 2*ones(T, M-1)./(Δ_p[1:end-1].*Δ[1:end-1])
-    L₂ = Tridiagonal(dl_2, d_2, du_2)
-    L₂[1,1] /= 2
-    L₂[end,end] /= 2
-    return L₂
+    return L
 end
 
 # (Mixed, Mixed)
