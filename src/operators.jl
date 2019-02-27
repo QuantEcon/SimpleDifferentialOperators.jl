@@ -281,8 +281,8 @@ end
     L₁₊(x, bc) = DifferentialOperator(x, bc, ForwardFirstDifference())
     L₂(x, bc) = DifferentialOperator(x, bc, CentralSecondDifference())
 
+    L̄₁₋(x) = DifferentialOperator(x, (NoBoundary(), NoBoundary()), BackwardFirstDifference())
     L̄₁₊(x) = DifferentialOperator(x, (NoBoundary(), NoBoundary()), ForwardFirstDifference())
-    L̄₁₋(x) = DifferentialOperator(x, (NoBoundary(), NoBoundary()), ForwardFirstDifference())
     L̄₂(x)  = DifferentialOperator(x, (NoBoundary(), NoBoundary()), CentralSecondDifference())
 
     function x̄(x)
