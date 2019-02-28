@@ -13,8 +13,5 @@ x + y == 3
 
 ```julia
 using Pkg
-pkg"activate ."
 using SimpleDifferentialOperators
-diffusionoperators(1:1:10, Mixed(1.0), Mixed(2.0))
-diffusionoperators(1:1:10)
 ```

@@ -6,3 +6,4 @@
 docs/build
 docs/tex/*.log
 docs/tex/*.aux
+docs/src/generated/*.ipynb
