@@ -100,7 +100,7 @@ L₁₊(x, bc) = DifferentialOperator(x, bc, ForwardFirstDifference())
 """
     `L₂(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`
 Returns a discretized second-order differential operator of `length(x)` by `length(x)` matrix
-using backward difference under boundary conditions specified by `bc`
+using central difference under boundary conditions specified by `bc`
 The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper. 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
