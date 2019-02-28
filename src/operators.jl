@@ -2,7 +2,7 @@
     `ExtensionDifferentialOperator(x, method::DifferenceMethod)`
 Returns a discretized differential operator of `length(x)` by `length(x) + 2` matrix
 whose first and last columns are applied to the ghost nodes just before `x[1]` and `x[end]` respectively
-under no boundary condition using finite difference method specified by `method` 
+under no boundary condition using finite difference method specified by `method`.
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
 julia> x = 1:3
@@ -143,7 +143,8 @@ end
 """
     `L₁₋(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`
 Returns a discretized first-order differential operator of `length(x)` by `length(x)` matrix
-using backward difference under boundary conditions specified by `bc`
+using backward difference under boundary conditions specified by `bc`.
+
 The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper. 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
@@ -162,7 +163,8 @@ L₁₋(x, bc) = DifferentialOperator(x, bc, BackwardFirstDifference())
 """
     `L₁₊(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`
 Returns a discretized first-order differential operator of `length(x)` by `length(x)` matrix
-using forward difference under boundary conditions specified by `bc`
+using forward difference under boundary conditions specified by `bc`.
+
 The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper. 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
@@ -181,7 +183,8 @@ L₁₊(x, bc) = DifferentialOperator(x, bc, ForwardFirstDifference())
 """
     `L₂(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`
 Returns a discretized second-order differential operator of `length(x)` by `length(x)` matrix
-using central difference under boundary conditions specified by `bc`
+using central difference under boundary conditions specified by `bc`.
+
 The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper. 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
@@ -200,8 +203,9 @@ L₂(x, bc) = DifferentialOperator(x, bc, CentralSecondDifference())
 """
     `L̄₁₋(x)`
 Returns a discretized first-order differential operator of `length(x)` by `length(x) + 2` matrix
-whose first and last columns are applied to the ghost nodes just before `x[1]` and `x[end]` respectively
-using backward difference under no boundary condition 
+using backward difference under no boundary condition.
+
+The first and last columns are applied to the ghost nodes just before `x[1]` and `x[end]` respectively.
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
 julia> x = 1:3
@@ -218,9 +222,10 @@ L̄₁₋(x) = ExtensionDifferentialOperator(x, BackwardFirstDifference())
 
 """
     `L̄₁₊(x)`
-Returns a discretized first-order differential operator of `length(x)` by `length(x) + 2` matrix
-whose first and last columns are applied to the ghost nodes just before `x[1]` and `x[end]` respectively
-using forward difference under no boundary condition 
+Returns a discretized first-order differential operator of `length(x)` by `length(x) + 2` matrix using 
+forward difference under no boundary condition.
+
+The first and last columns are applied to the ghost nodes just before `x[1]` and `x[end]` respectively.
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
 julia> x = 1:3
@@ -238,8 +243,9 @@ L̄₁₊(x) = ExtensionDifferentialOperator(x, ForwardFirstDifference())
 """
     `L̄₂(x)`
 Returns a discretized second-order differential operator of `length(x)` by `length(x) + 2` matrix
-whose first and last columns are applied to the ghost nodes just before `x[1]` and `x[end]` respectively
-using central difference under no boundary condition 
+using central difference under no boundary condition.
+
+The first and last columns are applied to the ghost nodes just before `x[1]` and `x[end]` respectively.
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
 julia> x = 1:3
@@ -296,12 +302,10 @@ end
     `diffusionoperators(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`
 Returns a tuple of differential operators and extended grid `(L₁₋, L₁₊, L₂, x̄)`
 with specified boundary conditions.
-Given a grid `x` of length `M`, return diffusion operators for negative drift, positive drift,
-and central differences. 
+
 The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper. 
-`x̄` is a `(M+2)` array that
-represents the extended grid whose first and last elements represent the ghost nodes
-just before `x[1]` and after `x[end]`.
+`x̄` is a `(M+2)` array that represents the extended grid whose 
+first and last elements represent the ghost nodes just before `x[1]` and after `x[end]`.
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
 julia> x = 1:3
@@ -340,13 +344,14 @@ diffusionoperators(x, bc) = (L₁₋ = L₁₋(x, bc), L₁₊ = L₁₊(x, bc),
 
 """
     `diffusionoperators(x)`
-Returns a tuple of differential operators on extended grid and the grid itself `(L̄₁₋, L̄₁₊, L̄₂, x̄)`
+Returns a tuple of differential operators on extended grid and the extended grid itself `(L̄₁₋, L̄₁₊, L̄₂, x̄)`
+without boundary conditions.
 
 Given a grid `x` of length `M`, return diffusion operators for negative drift, positive drift,
 and central differences of `M+2` by `M` matrices without boundary conditions. The first column is applied
 for the ghost node just before `x[1]` and the last column for the one after `x[end]`.
-`x̄` is a `(M+2)` array that represents the extended grid whose first and last elements represent the ghost nodes
-just before `x[1]` and after `x[end]`.
+`x̄` is a `(M+2)` array that represents the extended grid whose 
+first and last elements represent the ghost nodes just before `x[1]` and after `x[end]`.
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
 julia> x = 1:3
