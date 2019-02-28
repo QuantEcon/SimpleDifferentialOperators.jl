@@ -1,8 +1,5 @@
 # Documentation: http://docs.travis-ci.com/user/languages/julia/
 language: julia
-install:
-  - pip install --upgrade jupyter
-  - pip install nbconvert
 os:
   - linux
   - osx
