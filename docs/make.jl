@@ -1,7 +1,7 @@
 using Documenter, SimpleDifferentialOperators, Literate
 
 # Generated files
-EXAMPLE = joinpath(@__DIR__, "..", "examples", "example.jmd")
+EXAMPLE = joinpath(@__DIR__, "..", "examples", "example.jl")
 OUTPUT = joinpath(@__DIR__, "src", "generated")
 Literate.notebook(EXAMPLE, OUTPUT)
 
