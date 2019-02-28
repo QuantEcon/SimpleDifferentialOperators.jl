@@ -72,4 +72,79 @@ end
         x̄ = collect([x[1] - d[1]; x; x[end] + d[end]])
     end
 
+    # L̄₁₋, L̄₁₊, L̄₂, x̄ = diffusionoperators(x, (NoBoundary(), NoBoundary()));
+
+"""
+    `diffusionoperators(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`
+Returns a tuple of diffusion operators and extended grid `(L₁₋, L₁₊, L₂, x̄)`
+with specified boundary conditions.
+Given a grid `x` of length `M`, return diffusion operators for negative drift, positive drift,
+and central differences. 
+The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper. 
+`x̄` is a `(M+2)` array that
+represents the extended grid whose first and last elements represent the ghost nodes
+just before `x[1]` and `x[end]`.
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x = 1:3
+1:3
+julia> L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, (Reflecting(), Reflecting()));
+
+julia> Array(L₁₋)
+3×3 Array{Float64,2}:
+  0.0   0.0  0.0
+ -1.0   1.0  0.0
+  0.0  -1.0  1.0
+
+julia> Array(L₁₊)
+3×3 Array{Float64,2}:
+ -1.0   1.0  0.0
+  0.0  -1.0  1.0
+  0.0   0.0  0.0
+
+julia> Array(L₂)
+3×3 Array{Float64,2}:
+ -1.0   1.0   0.0
+  1.0  -2.0   1.0
+  0.0   1.0  -1.0
+
+julia> 
+
+julia> x̄
+5-element Array{Int64,1}:
+ 0
+ 1
+ 2
+ 3
+ 4
+
+julia> L̄₁₋, L̄₁₊, L̄₂, x̄ = diffusionoperators(x, (NoBoundary(), NoBoundary()));
+    
+julia> Array(L̄₁₋)
+3×5 Array{Float64,2}:
+    -1.0   1.0   0.0  0.0  0.0
+    0.0  -1.0   1.0  0.0  0.0
+    0.0   0.0  -1.0  1.0  0.0
+
+julia> Array(L̄₁₊)
+3×5 Array{Float64,2}:
+    0.0  -1.0   1.0   0.0  0.0
+    0.0   0.0  -1.0   1.0  0.0
+    0.0   0.0   0.0  -1.0  1.0
+
+julia> Array(L̄₂)
+3×5 Array{Float64,2}:
+    1.0  -2.0   1.0   0.0  0.0
+    0.0   1.0  -2.0   1.0  0.0
+    0.0   0.0   1.0  -2.0  1.0
+
+julia> Array(x̄)
+5-element Array{Int64,1}:
+    0
+    1
+    2
+    3
+    4
+ ```
+ """
     diffusionoperators(x, bc) = (L₁₋ = L₁₋(x, bc), L₁₊ = L₁₊(x, bc), L₂ = L₂(x, bc), x̄ = x̄(x))
