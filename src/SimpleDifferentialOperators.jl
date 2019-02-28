@@ -15,8 +15,7 @@ export BoundaryCondition,
        InhomogeneousBoundaryCondition,
        Reflecting,
        Mixed,
-       Absorbing,
-       NoBoundary
+       Absorbing
 
 # Differential Types
 export DifferenceMethod,
@@ -26,6 +25,7 @@ export DifferenceMethod,
 
 # Functions
 export DifferentialOperator,
+        ExtensionDifferentialOperator,
         L₁₋,
         L₁₊,
         L₂,
