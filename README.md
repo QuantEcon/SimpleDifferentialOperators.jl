@@ -21,12 +21,10 @@ using SimpleDifferentialOperators
 μ = -0.1 # constant negative drift
 σ = 0.1
 x = range(0.0, 1.0, length = 200) # uniform grid on [0.0, 1.0]
-
-# uses discretized operators for reflecting/Dirichlet boundary conditions, v'(0) = v'(1) = 0
-operators = diffusionoperators(x, (Reflecting(), Reflecting()))
+bc = (Reflecting(), Reflecting()) # reflecting barrier boundary conditions
 
 # discretized generator for the SDE, imposing the boundary conditions
-L = μ*operators.L₁₋ + σ^2 / 2 * operators.L₂ # use L₁₋ because μ < 0  
+L = μ*L₁₋(x, bc) + σ^2 / 2 * L₂(x, bc) # use L₁₋ because μ < 0  
 ```
 
 ## Documentation
