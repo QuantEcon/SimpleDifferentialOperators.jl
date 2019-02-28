@@ -23,7 +23,7 @@ using SimpleDifferentialOperators
 x = range(0.0, 1.0, length = 200) # uniform grid on [0.0, 1.0]
 
 # uses discretized operators for reflecting/Dirichlet boundary conditions, v'(0) = v'(1) = 0
-L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, Reflecting(), Reflecting())
+L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, (Reflecting(), Reflecting()))
 
 # discretized generator for the SDE, imposing the boundary conditions
 L = μ*L₁₋ + σ^2 / 2 * L₁₊ # use L₁₋ because μ < 0  
