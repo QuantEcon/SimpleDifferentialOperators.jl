@@ -2,16 +2,12 @@
 
 ## Subsection
 
-```julia
 x = 1
 y = 2
 @show x + y
 x + y == 3
-```
 
 ## Package Usage
 
-```julia
 using Pkg
 using SimpleDifferentialOperators
-```

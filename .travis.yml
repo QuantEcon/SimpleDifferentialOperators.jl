@@ -1,14 +1,29 @@
 # Documentation: http://docs.travis-ci.com/user/languages/julia/
+language: julia
+install:
+  - pip install --upgrade jupyter
+  - pip install nbconvert
 os:
-   linux
+  - linux
+  - osx
+julia:
+  - 1.1
+  - nightly
+matrix:
+  allow_failures:
+    - julia: nightly
+  fast_finish: true
 notifications:
-email: false
-sudo: required
-services:
-  - docker
-before_install:
-  - docker pull quantecon/notebook:latest
-script:
-  - docker run -it --rm -v "$PWD":/usr/myapp -w /usr/myapp julia julia --project=Project.toml --check-bounds=yes --color=yes -e "using Pkg; Pkg.build(); Pkg.instantiate(); Pkg.test(coverage=true)"
+  email: false
 after_success:
-  - docker run -it --rm -v "$PWD":/usr/myapp -w /usr/myapp julia julia --project=docs/ --check-bounds=yes --color=yes docs/make.jl
+  - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
+# Docs stuff
+jobs:
+  include:
+    - stage: "Documentation"
+      julia: 1.1
+      os: linux
+      script:
+        - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+        - julia --project=docs/ docs/make.jl
+      after_success: skip

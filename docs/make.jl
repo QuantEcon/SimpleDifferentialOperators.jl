@@ -1,11 +1,9 @@
-using Pkg
-pkg"instantiate"
-using Documenter, SimpleDifferentialOperators, Weave
+using Documenter, SimpleDifferentialOperators, Literate
 
 # Generated files
 EXAMPLE = joinpath(@__DIR__, "..", "examples", "example.jmd")
-OUTPUT = joinpath(@__DIR__, "src", "generated", "example.ipynb")
-Weave.notebook(EXAMPLE, OUTPUT)
+OUTPUT = joinpath(@__DIR__, "src", "generated")
+Literate.notebook(EXAMPLE, OUTPUT)
 
 # Compile the online documentation.
 makedocs(sitename = "SimpleDifferentialOperators.jl",
