@@ -1,9 +1,4 @@
-using Documenter, SimpleDifferentialOperators, Literate
-
-# Generated files
-EXAMPLE = joinpath(@__DIR__, "..", "examples", "example.jl")
-OUTPUT = joinpath(@__DIR__, "src", "generated")
-Literate.notebook(EXAMPLE, OUTPUT)
+using Documenter, SimpleDifferentialOperators
 
 # Compile the online documentation.
 makedocs(sitename = "SimpleDifferentialOperators.jl",
