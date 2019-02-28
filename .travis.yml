@@ -10,7 +10,11 @@ matrix:
     - julia: nightly
   fast_finish: true
 notifications:
-  email: false
+  email:
+    recipients:
+      - soodarnav01@gmail.com
+    on_success: never # default: change
+    on_failure: always # default: always
 after_success:
   - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
 # Docs stuff
