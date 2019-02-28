@@ -21,7 +21,34 @@ function ExtensionDifferentialOperator(x, method::DifferenceMethod)
     L = sparse([col_lb L_basis col_ub])
 end
 
-# (Reflecting, Reflecting)
+"""
+    `DifferentialOperator(x, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)`
+Returns a discretized differential operator of `length(x)` by `length(x)` matrix
+under reflecting boundary conditions from `bc` using finite difference method specified by `method`. 
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x = 1:3
+1:3
+
+julia> DifferentialOperator(x, (Reflecting(), Reflecting()), BackwardFirstDifference())
+3×3 Tridiagonal{Float64,Array{Float64,1}}:
+  0.0   0.0   ⋅
+ -1.0   1.0  0.0
+   ⋅   -1.0  1.0
+
+julia> DifferentialOperator(x, (Reflecting(), Reflecting()), ForwardFirstDifference())
+3×3 Tridiagonal{Float64,Array{Float64,1}}:
+ -1.0   1.0   ⋅
+  0.0  -1.0  1.0
+   ⋅    0.0  0.0
+
+julia> DifferentialOperator(x, (Reflecting(), Reflecting()), CentralSecondDifference())
+3×3 Tridiagonal{Float64,Array{Float64,1}}:
+ -1.0   1.0    ⋅
+  1.0  -2.0   1.0
+   ⋅    1.0  -1.0
+```
+"""
 function DifferentialOperator(x, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)
     T = eltype(x)
 
@@ -37,7 +64,34 @@ function DifferentialOperator(x, bc::Tuple{Reflecting, Reflecting}, method::Diff
     return L
 end
 
-# (Mixed, Mixed)
+"""
+    `DifferentialOperator(x, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)`
+Returns a discretized differential operator of `length(x)` by `length(x)` matrix
+under mixed boundary conditions from `bc` using finite difference method specified by `method`. 
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x = 1:3
+1:3
+
+julia> DifferentialOperator(x, (Mixed(1.0), Mixed(1.0)), BackwardFirstDifference())
+3×3 Tridiagonal{Float64,Array{Float64,1}}:
+ -1.0   0.0   ⋅
+ -1.0   1.0  0.0
+   ⋅   -1.0  1.0
+
+julia> DifferentialOperator(x, (Mixed(1.0), Mixed(1.0)), ForwardFirstDifference())
+3×3 Tridiagonal{Float64,Array{Float64,1}}:
+ -1.0   1.0    ⋅
+  0.0  -1.0   1.0
+   ⋅    0.0  -1.0
+
+julia> DifferentialOperator(x, (Mixed(1.0), Mixed(1.0)), CentralSecondDifference())
+3×3 Tridiagonal{Float64,Array{Float64,1}}:
+ 0.0   1.0    ⋅
+ 1.0  -2.0   1.0
+  ⋅    1.0  -2.0
+```
+"""
 function DifferentialOperator(x, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)
     T = eltype(x)
     d = diff(x)
