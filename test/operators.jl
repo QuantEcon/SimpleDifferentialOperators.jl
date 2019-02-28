@@ -82,20 +82,18 @@ end
     ρ = 0.05
     M = 100 # size of grid
     x = range(-1.0, 1.0, length = M) # grid
+    bc = (Reflecting(), Reflecting()) # specify BC (reflecting barrier)
     ## M-vector of drifts stacked according to the states
     μs = μ.(x)
 
-    # operators with reflecting boundary conditions
-    L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, (Reflecting(), Reflecting()))
-
     # Define first order differential operator using upwind scheme
-    L_1_upwind = (μs .<= 0) .* L₁₋ + (μs .> 0) .* L₁₊
+    L_1_upwind = (μs .<= 0) .* L₁₋(x, bc) + (μs .> 0) .* L₁₊(x, bc)
 
     indices_m = findall(μs .<= 0)
     indices_p = findall(μs .> 0)
 
-    @test L_1_upwind[indices_m, indices_m] == Array(L₁₋[indices_m, indices_m])
-    @test L_1_upwind[indices_p, indices_p] == Array(L₁₊[indices_p, indices_p])
+    @test L_1_upwind[indices_m, indices_m] == Array(L₁₋(x, bc)[indices_m, indices_m])
+    @test L_1_upwind[indices_p, indices_p] == Array(L₁₊(x, bc)[indices_p, indices_p])
 end
 
 @testset "Input Type Variance" begin
