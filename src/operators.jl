@@ -38,38 +38,24 @@ function DifferentialOperator(x, bc::Tuple{Reflecting, Reflecting}, method::Diff
 end
 
 # (Mixed, Mixed)
-function DifferentialOperator(x, bc::Tuple{Mixed, Mixed}, method::ForwardFirstDifference)
+function DifferentialOperator(x, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)
+    T = eltype(x)
     d = diff(x)
     Δ_1 = d[1]
     Δ_M = d[end]
     ξ_lb = bc[1].ξ
     ξ_ub = bc[2].ξ
-    L₁₊ = DifferentialOperator(x, (Reflecting(), Reflecting()), method)
-    L₁₊[end, end] -= ξ_ub
-    return L₁₊
-end
 
-function DifferentialOperator(x, bc::Tuple{Mixed, Mixed}, method::BackwardFirstDifference)
-    d = diff(x)
-    Δ_1 = d[1]
-    Δ_M = d[end]
-    ξ_lb = bc[1].ξ
-    ξ_ub = bc[2].ξ
-    L₁₋ = DifferentialOperator(x, (Reflecting(), Reflecting()), method)
-    L₁₋[1, 1] -= ξ_lb
-    return L₁₋
-end
+    # get basis operator on interior nodes
+    L = DifferentialOperator(x, (Reflecting(), Reflecting()), method)
 
-function DifferentialOperator(x, bc::Tuple{Mixed, Mixed}, method::CentralSecondDifference)
-    d = diff(x)
-    Δ_1 = d[1]
-    Δ_M = d[end]
-    ξ_lb = bc[1].ξ
-    ξ_ub = bc[2].ξ
-    L₂ = DifferentialOperator(x, (Reflecting(), Reflecting()), method)
-    L₂[1, 1] += ξ_lb / Δ_1
-    L₂[end, end] -= ξ_ub / Δ_M
-    return L₂
+    # apply boundary conditions
+    L[1,1] -= typeof(method) <: BackwardFirstDifference ? ξ_lb : zero(T)
+    L[1,1] += typeof(method) <: CentralSecondDifference ? (ξ_lb / Δ_1) : zero(T)
+    L[end,end] -= typeof(method) <: ForwardFirstDifference ? ξ_ub : zero(T)
+    L[end,end] -= typeof(method) <: CentralSecondDifference ? (ξ_ub / Δ_M) : zero(T) 
+
+    return L
 end
 
 # Convenience calls
