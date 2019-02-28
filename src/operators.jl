@@ -1,5 +1,32 @@
-# Concrete "under the hood" methods.
-# (NoBoundary, NoBoundary)
+"""
+    `ExtensionDifferentialOperator(x, method::DifferenceMethod)`
+Returns a discretized differential operator of `length(x)` by `length(x) + 2` matrix
+whose first and last columns are applied to the ghost nodes just before `x[1]` and `x[end]` respectively
+under no boundary condition using finite difference method specified by `method` 
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x = 1:3
+1:3
+
+julia> ExtensionDifferentialOperator(x, BackwardFirstDifference())
+3×3 Tridiagonal{Float64,Array{Float64,1}}:
+  0.0   0.0   ⋅
+ -1.0   1.0  0.0
+   ⋅   -1.0  1.0
+
+julia> ExtensionDifferentialOperator(x, ForwardFirstDifference())
+3×3 Tridiagonal{Float64,Array{Float64,1}}:
+ -1.0   1.0   ⋅
+  0.0  -1.0  1.0
+   ⋅    0.0  0.0
+
+julia> ExtensionDifferentialOperator(x, CentralSecondDifference())
+3×3 Tridiagonal{Float64,Array{Float64,1}}:
+ -1.0   1.0    ⋅
+  1.0  -2.0   1.0
+   ⋅    1.0  -1.0
+```
+"""
 function ExtensionDifferentialOperator(x, method::DifferenceMethod)
     T = eltype(x)
     d = diff(x)
