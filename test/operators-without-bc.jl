@@ -5,20 +5,20 @@ using Test, LinearAlgebra, DualNumbers
     uniform_grid = 1:1:2
     irregular_grid = collect(uniform_grid)
     ## regular grids
-    L₁₋, L₁₊, L₂, x̄ = diffusionoperators(uniform_grid, (NoBoundary(), NoBoundary()))
-    @test Array(L₁₋) == [-1. 1. 0. 0.; 0. -1. 1. 0.]
-    @test Array(L₁₊) == [0. -1. 1. 0.; 0. 0. -1. 1.]
-    @test Array(L₂) == [1. -2. 1. 0.; 0. 1. -2. 1.]
+    L̄₁₋, L̄₁₊, L̄₂, x̄ = diffusionoperators(uniform_grid)
+    @test Array(L̄₁₋) == [-1. 1. 0. 0.; 0. -1. 1. 0.]
+    @test Array(L̄₁₊) == [0. -1. 1. 0.; 0. 0. -1. 1.]
+    @test Array(L̄₂) == [1. -2. 1. 0.; 0. 1. -2. 1.]
     @test Array(x̄) == [0; 1; 2; 3]
-    @test @inferred(diffusionoperators(uniform_grid, (NoBoundary(), NoBoundary()))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
+    @test @inferred(diffusionoperators(uniform_grid)) == (L̄₁₋ = L̄₁₋, L̄₁₊ = L̄₁₊, L̄₂ = L̄₂, x̄ = x̄)
 
     ## irregular grids
-    L₁₋, L₁₊, L₂, x̄ = diffusionoperators(irregular_grid, (NoBoundary(), NoBoundary()))
-    @test Array(L₁₋) == [-1. 1. 0. 0.; 0. -1. 1. 0.]
-    @test Array(L₁₊) == [0. -1. 1. 0.; 0. 0. -1. 1.]
-    @test Array(L₂) == [1. -2. 1. 0.; 0. 1. -2. 1.]
+    L̄₁₋, L̄₁₊, L̄₂, x̄ = diffusionoperators(irregular_grid)
+    @test Array(L̄₁₋) == [-1. 1. 0. 0.; 0. -1. 1. 0.]
+    @test Array(L̄₁₊) == [0. -1. 1. 0.; 0. 0. -1. 1.]
+    @test Array(L̄₂) == [1. -2. 1. 0.; 0. 1. -2. 1.]
     @test Array(x̄) == [0; 1; 2; 3]
-    @test @inferred(diffusionoperators(irregular_grid, (NoBoundary(), NoBoundary()))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
+    @test @inferred(diffusionoperators(irregular_grid)) == (L̄₁₋ = L̄₁₋, L̄₁₊ = L̄₁₊, L̄₂ = L̄₂, x̄ = x̄)
 end
 
 @testset "Consistency" begin
@@ -39,8 +39,8 @@ end
         v_bc = (I * ρ - A) \ f.(x)
 
         # operators without boundary conditions, adding extra two rows for boundary conditions
-        L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, (NoBoundary(), NoBoundary()))
-        L = μ*L₁₋ + σ^2 / 2 * L₂
+        L̄₁₋, L̄₁₊, L̄₂, x̄ = diffusionoperators(x)
+        L = μ*L̄₁₋ + σ^2 / 2 * L̄₂
         B = transpose([[-1; 1; zeros(N)] [zeros(N); -1; 1]])
         A = [([zeros(N) Diagonal(ones(N,N)) zeros(N)] * 0.05 - L); B]
 
