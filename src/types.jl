@@ -8,7 +8,6 @@
     struct Mixed{T} <: HomogeneousBoundaryCondition where {T <: Real}
         ξ::T
     end
-    struct NoBoundary <: BoundaryCondition end
 
 # Types for Differences
     abstract type DifferenceMethod{N} end
