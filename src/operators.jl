@@ -59,20 +59,18 @@ function DifferentialOperator(x, bc::Tuple{Mixed, Mixed}, method::DifferenceMeth
 end
 
 # Convenience calls
-    L₁₋(x, bc) = DifferentialOperator(x, bc, BackwardFirstDifference())
-    L₁₊(x, bc) = DifferentialOperator(x, bc, ForwardFirstDifference())
-    L₂(x, bc) = DifferentialOperator(x, bc, CentralSecondDifference())
+L₁₋(x, bc) = DifferentialOperator(x, bc, BackwardFirstDifference())
+L₁₊(x, bc) = DifferentialOperator(x, bc, ForwardFirstDifference())
+L₂(x, bc) = DifferentialOperator(x, bc, CentralSecondDifference())
 
 L̄₁₋(x) = ExtensionDifferentialOperator(x, BackwardFirstDifference())
 L̄₁₊(x) = ExtensionDifferentialOperator(x, ForwardFirstDifference())
 L̄₂(x)  = ExtensionDifferentialOperator(x, CentralSecondDifference())
 
-    function x̄(x)
-        d = diff(x) # dispatches based on AbstractArray or not
-        x̄ = collect([x[1] - d[1]; x; x[end] + d[end]])
-    end
-
-    # L̄₁₋, L̄₁₊, L̄₂, x̄ = diffusionoperators(x, (NoBoundary(), NoBoundary()));
+function x̄(x)
+    d = diff(x) # dispatches based on AbstractArray or not
+    x̄ = collect([x[1] - d[1]; x; x[end] + d[end]])
+end
 
 """
     `diffusionoperators(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`
