@@ -26,7 +26,7 @@ M = 100 # size of grid
 x = range(0.0, 1.0, length = M) # grid
 
 # operators with reflecting boundary conditions
-L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())
+L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, (Reflecting(), Reflecting()))
 A = μ*L_1_minus + σ^2 / 2 * L_2 
 ## solve the value function
 v_bc = (I * ρ - A) \ f.(x) 
@@ -70,7 +70,7 @@ x = range(-1.0, 1.0, length = M) # grid
 μs = μ.(x)
 
 # operators with reflecting boundary conditions
-L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())
+L_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, (Reflecting(), Reflecting()))
 
 # Define first order differential operator using upwind scheme
 L_1_upwind = (μs .<= 0) .* L_1_minus + (μs .> 0) .* L_1_plus
