@@ -88,6 +88,7 @@ just before `x[1]` and `x[end]`.
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
 julia> x = 1:3
 1:3
+
 julia> L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, (Reflecting(), Reflecting()));
 
 julia> Array(L₁₋)
