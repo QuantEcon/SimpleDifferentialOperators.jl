@@ -61,7 +61,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "SimpleDifferentialOperators.DifferentialOperator",
     "category": "method",
-    "text": "`DifferentialOperator(x, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)`\n\nReturns a discretized differential operator of length(x) by length(x) matrix under mixed boundary conditions from bc using finite difference method specified by method. \n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> DifferentialOperator(x, (Mixed(1.0), Mixed(1.0)), BackwardFirstDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   0.0   ⋅\n -1.0   1.0  0.0\n   ⋅   -1.0  1.0\n\njulia> DifferentialOperator(x, (Mixed(1.0), Mixed(1.0)), ForwardFirstDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅\n  0.0  -1.0   1.0\n   ⋅    0.0  -1.0\n\njulia> DifferentialOperator(x, (Mixed(1.0), Mixed(1.0)), CentralSecondDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n 0.0   1.0    ⋅\n 1.0  -2.0   1.0\n  ⋅    1.0  -2.0\n\n\n\n\n\n"
+    "text": "`DifferentialOperator(x, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)`\n\nReturns a discretized differential operator of length(x) by length(x) matrix under mixed boundary conditions from bc using finite difference method specified by method. \n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> DifferentialOperator(x, (Mixed(1.0), Mixed(1.0)), BackwardFirstDifference())\n3×3 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   0.0   ⋅\n -1.0   1.0  0.0\n   ⋅   -1.0  1.0\n\njulia> DifferentialOperator(x, (Mixed(1.0), Mixed(1.0)), ForwardFirstDifference())\n3×3 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅\n  0.0  -1.0   1.0\n   ⋅    0.0  -1.0\n\njulia> DifferentialOperator(x, (Mixed(1.0), Mixed(1.0)), CentralSecondDifference())\n3×3 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n 0.0   1.0    ⋅\n 1.0  -2.0   1.0\n  ⋅    1.0  -2.0\n\n\n\n\n\n"
 },
 
 {
@@ -69,7 +69,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "SimpleDifferentialOperators.DifferentialOperator",
     "category": "method",
-    "text": "`DifferentialOperator(x, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)`\n\nReturns a discretized differential operator of length(x) by length(x) matrix under reflecting boundary conditions from bc using finite difference method specified by method. \n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> DifferentialOperator(x, (Reflecting(), Reflecting()), BackwardFirstDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n  0.0   0.0   ⋅\n -1.0   1.0  0.0\n   ⋅   -1.0  1.0\n\njulia> DifferentialOperator(x, (Reflecting(), Reflecting()), ForwardFirstDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0   ⋅\n  0.0  -1.0  1.0\n   ⋅    0.0  0.0\n\njulia> DifferentialOperator(x, (Reflecting(), Reflecting()), CentralSecondDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅\n  1.0  -2.0   1.0\n   ⋅    1.0  -1.0\n\n\n\n\n\n"
+    "text": "`DifferentialOperator(x, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)`\n\nReturns a discretized differential operator of length(x) by length(x) matrix under reflecting boundary conditions from bc using finite difference method specified by method. \n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> DifferentialOperator(x, (Reflecting(), Reflecting()), BackwardFirstDifference())\n3×3 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n  0.0   0.0   ⋅\n -1.0   1.0  0.0\n   ⋅   -1.0  1.0\n\njulia> DifferentialOperator(x, (Reflecting(), Reflecting()), ForwardFirstDifference())\n3×3 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0   ⋅\n  0.0  -1.0  1.0\n   ⋅    0.0  0.0\n\njulia> DifferentialOperator(x, (Reflecting(), Reflecting()), CentralSecondDifference())\n3×3 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅\n  1.0  -2.0   1.0\n   ⋅    1.0  -1.0\n\n\n\n\n\n"
 },
 
 {
@@ -77,7 +77,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "SimpleDifferentialOperators.ExtensionDifferentialOperator",
     "category": "method",
-    "text": "`ExtensionDifferentialOperator(x, method::DifferenceMethod)`\n\nReturns a discretized differential operator of length(x) by length(x) + 2 matrix whose first and last columns are applied to the ghost nodes just before x[1] and x[end] respectively under no boundary condition using finite difference method specified by method.\n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> ExtensionDifferentialOperator(x, BackwardFirstDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n  0.0   0.0   ⋅\n -1.0   1.0  0.0\n   ⋅   -1.0  1.0\n\njulia> ExtensionDifferentialOperator(x, ForwardFirstDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0   ⋅\n  0.0  -1.0  1.0\n   ⋅    0.0  0.0\n\njulia> ExtensionDifferentialOperator(x, CentralSecondDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅\n  1.0  -2.0   1.0\n   ⋅    1.0  -1.0\n\n\n\n\n\n"
+    "text": "`ExtensionDifferentialOperator(x, method::DifferenceMethod)`\n\nReturns a discretized differential operator of length(x) by length(x) + 2 matrix whose first and last columns are applied to the ghost nodes just before x[1] and x[end] respectively under no boundary condition using finite difference method specified by method.\n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> ExtensionDifferentialOperator(x, BackwardFirstDifference())\n3×5 SparseArrays.SparseMatrixCSC{Float64,Int64} with 8 stored entries:\n  [1, 1]  =  -1.0\n  [1, 2]  =  1.0\n  [2, 2]  =  -1.0\n  [1, 3]  =  0.0\n  [2, 3]  =  1.0\n  [3, 3]  =  -1.0\n  [2, 4]  =  0.0\n  [3, 4]  =  1.0\n\njulia> ExtensionDifferentialOperator(x, ForwardFirstDifference())\n3×5 SparseArrays.SparseMatrixCSC{Float64,Int64} with 8 stored entries:\n  [1, 2]  =  -1.0\n  [2, 2]  =  0.0\n  [1, 3]  =  1.0\n  [2, 3]  =  -1.0\n  [3, 3]  =  0.0\n  [2, 4]  =  1.0\n  [3, 4]  =  -1.0\n  [3, 5]  =  1.0\n\njulia> ExtensionDifferentialOperator(x, CentralSecondDifference())\n3×5 SparseArrays.SparseMatrixCSC{Float64,Int64} with 9 stored entries:\n  [1, 1]  =  1.0\n  [1, 2]  =  -2.0\n  [2, 2]  =  1.0\n  [1, 3]  =  1.0\n  [2, 3]  =  -2.0\n  [3, 3]  =  1.0\n  [2, 4]  =  1.0\n  [3, 4]  =  -2.0\n  [3, 5]  =  1.0\n\n\n\n\n\n"
 },
 
 {
@@ -109,7 +109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "SimpleDifferentialOperators.L₁₊",
     "category": "method",
-    "text": "`L₁₊(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`\n\nReturns a discretized first-order differential operator of length(x) by length(x) matrix using forward difference under boundary conditions specified by bc.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper. \n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> L₁₊(x, (Reflecting(), Reflecting()))\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0   ⋅\n  0.0  -1.0  1.0\n   ⋅    0.0  0.0\n\n\n\n\n\n"
+    "text": "`L₁₊(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`\n\nReturns a discretized first-order differential operator of length(x) by length(x) matrix using forward difference under boundary conditions specified by bc.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper. \n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> L₁₊(x, (Reflecting(), Reflecting()))\n3×3 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0   ⋅\n  0.0  -1.0  1.0\n   ⋅    0.0  0.0\n\n\n\n\n\n"
 },
 
 {
@@ -117,7 +117,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "SimpleDifferentialOperators.L₁₋",
     "category": "method",
-    "text": "`L₁₋(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`\n\nReturns a discretized first-order differential operator of length(x) by length(x) matrix using backward difference under boundary conditions specified by bc.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper. \n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> L₁₋(x, (Reflecting(), Reflecting()))\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n  0.0   0.0   ⋅\n -1.0   1.0  0.0\n   ⋅   -1.0  1.0\n\n\n\n\n\n"
+    "text": "`L₁₋(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`\n\nReturns a discretized first-order differential operator of length(x) by length(x) matrix using backward difference under boundary conditions specified by bc.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper. \n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> L₁₋(x, (Reflecting(), Reflecting()))\n3×3 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n  0.0   0.0   ⋅\n -1.0   1.0  0.0\n   ⋅   -1.0  1.0\n\n\n\n\n\n"
 },
 
 {
@@ -125,7 +125,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "SimpleDifferentialOperators.L₂",
     "category": "method",
-    "text": "`L₂(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`\n\nReturns a discretized second-order differential operator of length(x) by length(x) matrix using central difference under boundary conditions specified by bc.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper. \n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> L₂(x, (Reflecting(), Reflecting()))\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅\n  1.0  -2.0   1.0\n   ⋅    1.0  -1.0\n\n\n\n\n\n"
+    "text": "`L₂(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`\n\nReturns a discretized second-order differential operator of length(x) by length(x) matrix using central difference under boundary conditions specified by bc.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper. \n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> L₂(x, (Reflecting(), Reflecting()))\n3×3 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅\n  1.0  -2.0   1.0\n   ⋅    1.0  -1.0\n\n\n\n\n\n"
 },
 
 {
