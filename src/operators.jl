@@ -1,6 +1,6 @@
 # Concrete "under the hood" methods.
 # (NoBoundary, NoBoundary)
-function DifferentialOperator(x, bc::Tuple{NoBoundary, NoBoundary}, method::DifferenceMethod)
+function ExtensionDifferentialOperator(x, method::DifferenceMethod)
     T = eltype(x)
     d = diff(x)
     Δ_1 = d[1]
@@ -59,7 +59,6 @@ function DifferentialOperator(x, bc::Tuple{Mixed, Mixed}, method::DifferenceMeth
 end
 
 # Convenience calls
-
 """
     `L₁₋(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`
 Returns a discretized first-order differential operator of `length(x)` by `length(x)` matrix
@@ -77,7 +76,7 @@ julia> L₁₋(x, (Reflecting(), Reflecting()))
    ⋅   -1.0  1.0
 ```
 """
-L₁₊(x, bc) = DifferentialOperator(x, bc, BackwardFirstDifference())
+L₁₋(x, bc) = DifferentialOperator(x, bc, BackwardFirstDifference())
 
 """
     `L₁₊(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`
@@ -117,9 +116,9 @@ julia> L₂(x, (Reflecting(), Reflecting()))
 """
 L₂(x, bc) = DifferentialOperator(x, bc, CentralSecondDifference())
 
-L̄₁₋(x) = DifferentialOperator(x, (NoBoundary(), NoBoundary()), BackwardFirstDifference())
-L̄₁₊(x) = DifferentialOperator(x, (NoBoundary(), NoBoundary()), ForwardFirstDifference())
-L̄₂(x)  = DifferentialOperator(x, (NoBoundary(), NoBoundary()), CentralSecondDifference())
+L̄₁₋(x) = ExtensionDifferentialOperator(x, BackwardFirstDifference())
+L̄₁₊(x) = ExtensionDifferentialOperator(x, ForwardFirstDifference())
+L̄₂(x)  = ExtensionDifferentialOperator(x, CentralSecondDifference())
 
 """
     `x̄(x)`
@@ -154,6 +153,7 @@ julia> x̄(x)
  1.9
 ```
 """
+
 function x̄(x)
     d = diff(x) # dispatches based on AbstractArray or not
     x̄ = collect([x[1] - d[1]; x; x[end] + d[end]])
@@ -161,76 +161,91 @@ end
 
 """
     `diffusionoperators(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`
-Returns a tuple of diffusion operators and extended grid `(L₁₋, L₁₊, L₂, x̄)`
+Returns a tuple of differential operators and extended grid `(L₁₋, L₁₊, L₂, x̄)`
 with specified boundary conditions.
 Given a grid `x` of length `M`, return diffusion operators for negative drift, positive drift,
 and central differences. 
 The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper. 
 `x̄` is a `(M+2)` array that
 represents the extended grid whose first and last elements represent the ghost nodes
-just before `x[1]` and `x[end]`.
+just before `x[1]` and after `x[end]`.
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
 julia> x = 1:3
 1:3
 
-julia> L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, (Reflecting(), Reflecting()));
+julia> operators = diffusionoperators(x, (Reflecting(), Reflecting()));
 
-julia> Array(L₁₋)
+julia> Array(operators.L₁₋)
 3×3 Array{Float64,2}:
   0.0   0.0  0.0
  -1.0   1.0  0.0
   0.0  -1.0  1.0
 
-julia> Array(L₁₊)
+julia> Array(operators.L₁₊)
 3×3 Array{Float64,2}:
  -1.0   1.0  0.0
   0.0  -1.0  1.0
   0.0   0.0  0.0
 
-julia> Array(L₂)
+julia> Array(operators.L₂)
 3×3 Array{Float64,2}:
  -1.0   1.0   0.0
   1.0  -2.0   1.0
   0.0   1.0  -1.0
 
-julia> 
-
-julia> x̄
+julia> operators.x̄
 5-element Array{Int64,1}:
  0
  1
  2
  3
  4
-
-julia> L̄₁₋, L̄₁₊, L̄₂, x̄ = diffusionoperators(x, (NoBoundary(), NoBoundary()));
-    
-julia> Array(L̄₁₋)
-3×5 Array{Float64,2}:
-    -1.0   1.0   0.0  0.0  0.0
-    0.0  -1.0   1.0  0.0  0.0
-    0.0   0.0  -1.0  1.0  0.0
-
-julia> Array(L̄₁₊)
-3×5 Array{Float64,2}:
-    0.0  -1.0   1.0   0.0  0.0
-    0.0   0.0  -1.0   1.0  0.0
-    0.0   0.0   0.0  -1.0  1.0
-
-julia> Array(L̄₂)
-3×5 Array{Float64,2}:
-    1.0  -2.0   1.0   0.0  0.0
-    0.0   1.0  -2.0   1.0  0.0
-    0.0   0.0   1.0  -2.0  1.0
-
-julia> Array(x̄)
-5-element Array{Int64,1}:
-    0
-    1
-    2
-    3
-    4
 ```
 """
 diffusionoperators(x, bc) = (L₁₋ = L₁₋(x, bc), L₁₊ = L₁₊(x, bc), L₂ = L₂(x, bc), x̄ = x̄(x))
+
+"""
+    `diffusionoperators(x)`
+Returns a tuple of differential operators on extended grid and the grid itself `(L̄₁₋, L̄₁₊, L̄₂, x̄)`
+
+Given a grid `x` of length `M`, return diffusion operators for negative drift, positive drift,
+and central differences of `M+2` by `M` matrices without boundary conditions. The first column is applied
+for the ghost node just before `x[1]` and the last column for the one after `x[end]`.
+`x̄` is a `(M+2)` array that represents the extended grid whose first and last elements represent the ghost nodes
+just before `x[1]` and after `x[end]`.
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x = 1:3
+1:3
+
+julia> operators = diffusionoperators(x);
+
+julia> Array(operators.L̄₁₋)
+3×5 Array{Float64,2}:
+ -1.0   1.0   0.0  0.0  0.0
+  0.0  -1.0   1.0  0.0  0.0
+  0.0   0.0  -1.0  1.0  0.0
+
+julia> Array(operators.L̄₁₊)
+3×5 Array{Float64,2}:
+ 0.0  -1.0   1.0   0.0  0.0
+ 0.0   0.0  -1.0   1.0  0.0
+ 0.0   0.0   0.0  -1.0  1.0
+
+julia> Array(operators.L̄₂)
+3×5 Array{Float64,2}:
+ 1.0  -2.0   1.0   0.0  0.0
+ 0.0   1.0  -2.0   1.0  0.0
+ 0.0   0.0   1.0  -2.0  1.0
+
+julia> operators.x̄
+5-element Array{Int64,1}:
+ 0
+ 1
+ 2
+ 3
+ 4
+```
+"""
+diffusionoperators(x) = (L̄₁₋ = L̄₁₋(x), L̄₁₊ = L̄₁₊(x), L̄₂ = L̄₂(x), x̄ = x̄(x))

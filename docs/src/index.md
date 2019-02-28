@@ -28,8 +28,8 @@ M = 100 # size of grid
 x = range(0.0, 1.0, length = M) # grid
 
 # operators with reflecting boundary conditions
-L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, (Reflecting(), Reflecting()))
-A = μ*L₁₋ + σ^2 / 2 * L₂ 
+operators = diffusionoperators(x, (Reflecting(), Reflecting()))
+A = μ*operators.L₁₋ + σ^2 / 2 * operators.L₂ 
 ## solve the value function
 v_bc = (I * ρ - A) \ f.(x) 
 ```
@@ -39,9 +39,9 @@ One can alternatively use differential operators on interior nodes and stack the
 ```julia
 # operators without boundary conditions, adding extra two rows for boundary conditions
 ## operators on interior nodes
-L̄₁₋, L̄₁₊, L̄₂, x̄ = diffusionoperators(x, (NoBoundary(), NoBoundary())) 
+operators = diffusionoperators(x) 
 ## differential operators on interior nodes
-L = μ*L̄₁₋ + σ^2 / 2 * L̄₂ 
+L = μ*operators.L̄₁₋ + σ^2 / 2 * operators.L̄₂ 
 ## matrix for boundary conditions
 B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]]) 
 ## stack them together
@@ -72,12 +72,12 @@ x = range(-1.0, 1.0, length = M) # grid
 μs = μ_by_x.(x)
 
 # operators with reflecting boundary conditions
-L₁₋, L₁₊, L₂, x̄ =  diffusionoperators(x, (Reflecting(), Reflecting()))
+operators = diffusionoperators(x, (Reflecting(), Reflecting()))
 
 # Define first order differential operator using upwind scheme
-L₁_upwind = (μs .<= 0) .* L₁₋ + (μs .> 0) .* L₁₊
+L₁_upwind = (μs .<= 0) .* operators.L₁₋ + (μs .> 0) .* operators.L₁₊
 # Define linear operator using upwind schemes
-A = μs .* L₁_upwind + σ^2 / 2 * L₂ 
+A = μs .* L₁_upwind + σ^2 / 2 * operators.L₂ 
 # solve the value function
 v_bc = (I * ρ - A) \ f.(x) 
 ```
