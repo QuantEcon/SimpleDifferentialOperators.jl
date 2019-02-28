@@ -11,4 +11,4 @@ before_install:
 script:
   - docker run -it --rm -v "$PWD":/usr/myapp -w /usr/myapp julia julia --project=Project.toml --check-bounds=yes --color=yes -e "using Pkg; Pkg.build(); Pkg.test(coverage=true)"
 after_success:
-  - docker run -it --rm -v "$PWD":/usr/myapp -w /usr/myapp julia julia --project=docs/ --check-bounds=yes --color=yes docs/make.jl"
+  - docker run -it --rm -v "$PWD":/usr/myapp -w /usr/myapp julia julia --project=docs/ --check-bounds=yes --color=yes docs/make.jl
