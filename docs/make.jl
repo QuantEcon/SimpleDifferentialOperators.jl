@@ -6,7 +6,8 @@ makedocs(sitename = "SimpleDifferentialOperators.jl",
         "index.md",
         "formula.md",
         "api.md",
-    ])
+    ],
+	doctest = :fix)
 
 # Deploy to git
 deploydocs(
