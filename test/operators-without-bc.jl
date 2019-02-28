@@ -2,23 +2,37 @@ using SimpleDifferentialOperators
 using Test, LinearAlgebra, DualNumbers
 
 @testset "Accuracy & regression test" begin
-    uniform_grid = 1:1:2
-    irregular_grid = collect(uniform_grid)
+    regular_grid = 1:1:2
+    irregular_grid = collect(regular_grid)
     ## regular grids
-    L̄₁₋, L̄₁₊, L̄₂, x̄ = diffusionoperators(uniform_grid)
-    @test Array(L̄₁₋) == [-1. 1. 0. 0.; 0. -1. 1. 0.]
-    @test Array(L̄₁₊) == [0. -1. 1. 0.; 0. 0. -1. 1.]
-    @test Array(L̄₂) == [1. -2. 1. 0.; 0. 1. -2. 1.]
-    @test Array(x̄) == [0; 1; 2; 3]
-    @test @inferred(diffusionoperators(uniform_grid)) == (L̄₁₋ = L̄₁₋, L̄₁₊ = L̄₁₊, L̄₂ = L̄₂, x̄ = x̄)
+    L̄₁₋_regular = L̄₁₋(regular_grid)
+    L̄₁₊_regular = L̄₁₊(regular_grid)
+    L̄₂_regular = L̄₂(regular_grid)
+    x̄_regular = x̄(regular_grid)
+    @test Array(L̄₁₋_regular) == [-1. 1. 0. 0.; 0. -1. 1. 0.]
+    @test Array(L̄₁₊_regular) == [0. -1. 1. 0.; 0. 0. -1. 1.]
+    @test Array(L̄₂_regular) == [1. -2. 1. 0.; 0. 1. -2. 1.]
+    @test Array(x̄_regular) == [0; 1; 2; 3]
+
+    @test @inferred(L̄₁₋(regular_grid)) == L̄₁₋_regular
+    @test @inferred(L̄₁₊(regular_grid)) == L̄₁₊_regular
+    @test @inferred(L̄₂(regular_grid)) == L̄₂_regular
+    @test @inferred(x̄(regular_grid)) == x̄_regular
 
     ## irregular grids
-    L̄₁₋, L̄₁₊, L̄₂, x̄ = diffusionoperators(irregular_grid)
-    @test Array(L̄₁₋) == [-1. 1. 0. 0.; 0. -1. 1. 0.]
-    @test Array(L̄₁₊) == [0. -1. 1. 0.; 0. 0. -1. 1.]
-    @test Array(L̄₂) == [1. -2. 1. 0.; 0. 1. -2. 1.]
-    @test Array(x̄) == [0; 1; 2; 3]
-    @test @inferred(diffusionoperators(irregular_grid)) == (L̄₁₋ = L̄₁₋, L̄₁₊ = L̄₁₊, L̄₂ = L̄₂, x̄ = x̄)
+    L̄₁₋_irregular = L̄₁₋(irregular_grid)
+    L̄₁₊_irregular = L̄₁₊(irregular_grid)
+    L̄₂_irregular = L̄₂(irregular_grid)
+    x̄_irregular = x̄(irregular_grid)
+    @test Array(L̄₁₋_irregular) == [-1. 1. 0. 0.; 0. -1. 1. 0.]
+    @test Array(L̄₁₊_irregular) == [0. -1. 1. 0.; 0. 0. -1. 1.]
+    @test Array(L̄₂_irregular) == [1. -2. 1. 0.; 0. 1. -2. 1.]
+    @test Array(x̄_irregular) == [0; 1; 2; 3]
+
+    @test @inferred(L̄₁₋(irregular_grid)) == L̄₁₋_irregular
+    @test @inferred(L̄₁₊(irregular_grid)) == L̄₁₊_irregular
+    @test @inferred(L̄₂(irregular_grid)) == L̄₂_irregular
+    @test @inferred(x̄(irregular_grid)) == x̄_irregular
 end
 
 @testset "Consistency" begin
@@ -31,16 +45,15 @@ end
         ρ = 0.05
         N = 3
         x = range(0.0, 1.0, length = N)
+        bc = (Reflecting(), Reflecting()) # specify BC (reflecting barrier)
 
         # operators with reflecting boundary conditions
-        L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, (Reflecting(), Reflecting()))
-        A = μ*L₁₋ + σ^2 / 2 * L₂
+        A = μ*L₁₋(x, bc) + σ^2 / 2 * L₂(x, bc)
         ## solve the value function
         v_bc = (I * ρ - A) \ f.(x)
 
         # operators without boundary conditions, adding extra two rows for boundary conditions
-        L̄₁₋, L̄₁₊, L̄₂, x̄ = diffusionoperators(x)
-        L = μ*L̄₁₋ + σ^2 / 2 * L̄₂
+        L = μ*L̄₁₋(x) + σ^2 / 2 * L̄₂(x)
         B = transpose([[-1; 1; zeros(N)] [zeros(N); -1; 1]])
         A = [([zeros(N) Diagonal(ones(N,N)) zeros(N)] * 0.05 - L); B]
 
