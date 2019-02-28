@@ -59,8 +59,60 @@ function DifferentialOperator(x, bc::Tuple{Mixed, Mixed}, method::DifferenceMeth
 end
 
 # Convenience calls
-L₁₋(x, bc) = DifferentialOperator(x, bc, BackwardFirstDifference())
+
+"""
+    `L₁₋(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`
+Returns a discretized first-order differential operator of `length(x)` by `length(x)` matrix
+using backward difference under boundary conditions specified by `bc`
+The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper. 
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x = 1:3
+1:3
+
+julia> L₁₋(x, (Reflecting(), Reflecting()))
+3×3 Tridiagonal{Float64,Array{Float64,1}}:
+  0.0   0.0   ⋅
+ -1.0   1.0  0.0
+   ⋅   -1.0  1.0
+```
+"""
+L₁₊(x, bc) = DifferentialOperator(x, bc, BackwardFirstDifference())
+"""
+    `L₁₊(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`
+Returns a discretized first-order differential operator of `length(x)` by `length(x)` matrix
+using forward difference under boundary conditions specified by `bc`
+The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper. 
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x = 1:3
+1:3
+
+julia> L₁₊(x, (Reflecting(), Reflecting()))
+3×3 Tridiagonal{Float64,Array{Float64,1}}:
+ -1.0   1.0   ⋅
+  0.0  -1.0  1.0
+   ⋅    0.0  0.0
+```
+"""
 L₁₊(x, bc) = DifferentialOperator(x, bc, ForwardFirstDifference())
+"""
+    `L₂(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`
+Returns a discretized second-order differential operator of `length(x)` by `length(x)` matrix
+using backward difference under boundary conditions specified by `bc`
+The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper. 
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x = 1:3
+1:3
+
+julia> L₂(x, (Reflecting(), Reflecting()))
+3×3 Tridiagonal{Float64,Array{Float64,1}}:
+ -1.0   1.0    ⋅
+  1.0  -2.0   1.0
+   ⋅    1.0  -1.0
+```
+"""
 L₂(x, bc) = DifferentialOperator(x, bc, CentralSecondDifference())
 
 L̄₁₋(x) = DifferentialOperator(x, (NoBoundary(), NoBoundary()), BackwardFirstDifference())
