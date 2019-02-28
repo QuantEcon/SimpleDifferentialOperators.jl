@@ -116,8 +116,61 @@ julia> L₂(x, (Reflecting(), Reflecting()))
 """
 L₂(x, bc) = DifferentialOperator(x, bc, CentralSecondDifference())
 
+"""
+    `L̄₁₋(x)`
+Returns a discretized first-order differential operator of `length(x)` by `length(x) + 2` matrix
+whose first and last columns are applied to the ghost nodes just before `x[1]` and `x[end]` respectively
+using backward difference under no boundary condition 
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x = 1:3
+1:3
+
+julia> Array(L̄₁₋(x))
+3×5 Array{Float64,2}:
+ -1.0   1.0   0.0  0.0  0.0
+  0.0  -1.0   1.0  0.0  0.0
+  0.0   0.0  -1.0  1.0  0.0
+```
+"""
 L̄₁₋(x) = ExtensionDifferentialOperator(x, BackwardFirstDifference())
+
+"""
+    `L̄₁₊(x)`
+Returns a discretized first-order differential operator of `length(x)` by `length(x) + 2` matrix
+whose first and last columns are applied to the ghost nodes just before `x[1]` and `x[end]` respectively
+using forward difference under no boundary condition 
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x = 1:3
+1:3
+
+julia> Array(L̄₁₊(x))
+3×5 Array{Float64,2}:
+ 0.0  -1.0   1.0   0.0  0.0
+ 0.0   0.0  -1.0   1.0  0.0
+ 0.0   0.0   0.0  -1.0  1.0
+```
+"""
 L̄₁₊(x) = ExtensionDifferentialOperator(x, ForwardFirstDifference())
+
+"""
+    `L̄₂(x)`
+Returns a discretized second-order differential operator of `length(x)` by `length(x) + 2` matrix
+whose first and last columns are applied to the ghost nodes just before `x[1]` and `x[end]` respectively
+using central difference under no boundary condition 
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x = 1:3
+1:3
+
+julia> Array(L̄₂(x))
+3×5 Array{Float64,2}:
+ 1.0  -2.0   1.0   0.0  0.0
+ 0.0   1.0  -2.0   1.0  0.0
+ 0.0   0.0   1.0  -2.0  1.0
+```
+"""
 L̄₂(x)  = ExtensionDifferentialOperator(x, CentralSecondDifference())
 
 """
@@ -153,7 +206,6 @@ julia> x̄(x)
  1.9
 ```
 """
-
 function x̄(x)
     d = diff(x) # dispatches based on AbstractArray or not
     x̄ = collect([x[1] - d[1]; x; x[end] + d[end]])
