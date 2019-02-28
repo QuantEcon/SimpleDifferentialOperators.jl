@@ -21,7 +21,7 @@ var documenterSearchIndex = {"docs": [
     "page": "﻿Installation",
     "title": "Usage",
     "category": "section",
-    "text": "Consider solving for v from the following equation:rho v(x) = f(x) + mu partial_x v(x) + fracsigma^22 partial_xx v(x)for some constant rho sigma  0 and mu leq 0. To solve v on M-size discretized grids, one can run the following code:# setup \nf(x) = x^2 \nμ = -0.1 # constant negative drift\nσ = 0.1\nρ = 0.05\nM = 100 # size of grid\nx = range(0.0, 1.0, length = M) # grid\n\n# operators with reflecting boundary conditions\nL_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())\nA = μ*L_1_minus + σ^2 / 2 * L_2 \n## solve the value function\nv_bc = (I * ρ - A) \\ f.(x) Note that the code above uses differential operators with reflecting boundary conditions applied.  One can alternatively use differential operators on interior nodes and stack them with matrices for boundary conditions to compute v:# operators without boundary conditions, adding extra two rows for boundary conditions\n## operators on interior nodes\nL_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x) \n## differential operators on interior nodes\nL = μ*L_1_minus + σ^2 / 2 * L_2 \n## matrix for boundary conditions\nB = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]]) \n## stack them together\nA = [([zeros(M) Diagonal(ones(M,M)) zeros(M)] * 0.05 - L); B] \n## solve the value function with reflecting barrier bc (last two elements)\nv_bar = A \\ [f.(x); 0.0; 0.0] \n## extract the interior (is identical with `v_bc` above)\nv_interior = v_bar[2:end-1] "
+    "text": "Consider solving for v from the following equation:rho v(x) = f(x) + mu partial_x v(x) + fracsigma^22 partial_xx v(x)for some constant rho sigma  0 and mu leq 0. To solve v on M-size discretized grids, one can run the following code:# import LinearAlgebra package (for identity matrices)\nusing LinearAlgebra \n# setup \nf(x) = x^2 \nμ = -0.1 # constant negative drift\nσ = 0.1\nρ = 0.05\nM = 100 # size of grid\nx = range(0.0, 1.0, length = M) # grid\n\n# operators with reflecting boundary conditions\noperators = diffusionoperators(x, (Reflecting(), Reflecting()))\nA = μ*operators.L₁₋ + σ^2 / 2 * operators.L₂ \n## solve the value function\nv_bc = (I * ρ - A) \\ f.(x) Note that the code above uses differential operators with reflecting boundary conditions applied.  One can alternatively use differential operators on interior nodes and stack them with matrices for boundary conditions to compute v:# operators without boundary conditions, adding extra two rows for boundary conditions\n## operators on interior nodes\noperators = diffusionoperators(x) \n## differential operators on interior nodes\nL = μ*operators.L̄₁₋ + σ^2 / 2 * operators.L̄₂ \n## matrix for boundary conditions\nB = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]]) \n## stack them together\nA = [([zeros(M) Diagonal(ones(M,M)) zeros(M)] * 0.05 - L); B] \n## solve the value function with reflecting barrier bc (last two elements)\nv_bar = A \\ [f.(x); 0.0; 0.0] \n## extract the interior (is identical with `v_bc` above)\nv_interior = v_bar[2:end-1] "
 },
 
 {
@@ -29,7 +29,7 @@ var documenterSearchIndex = {"docs": [
     "page": "﻿Installation",
     "title": "Examples",
     "category": "section",
-    "text": "One can also deploy upwind schemes when drift variable is not constant. Consider solving for v from the following equation:rho v(x) = f(x) + mu(x) partial_x v(x) + fracsigma^22 partial_xx v(x)for some constant rho sigma  0 and mu(x) = -x. Note that mu(x) depends on states. The following code will solve v using upwind schemes:# setup \nf(x) = x^2 \nμ(x) = -x # drift depends on state\nσ = 0.1\nρ = 0.05\nM = 100 # size of grid\nx = range(-1.0, 1.0, length = M) # grid\n## M-vector of drifts stacked according to the states\nμs = μ.(x)\n\n# operators with reflecting boundary conditions\nL_1_minus, L_1_plus, L_2, x_bar = diffusionoperators(x, Reflecting(), Reflecting())\n\n# Define first order differential operator using upwind scheme\nL_1_upwind = (μs .<= 0) .* L_1_minus + (μs .> 0) .* L_1_plus\n# Define linear operator using upwind schemes\nA = μ.(x) .* L_1_upwind + σ^2 / 2 * L_2 \n# solve the value function\nv_bc = (I * ρ - A) \\ f.(x) "
+    "text": "One can also deploy upwind schemes when drift variable is not constant. Consider solving for v from the following equation:rho v(x) = f(x) + mu(x) partial_x v(x) + fracsigma^22 partial_xx v(x)for some constant rho sigma  0 and mu(x) = -x. Note that mu(x) depends on states. The following code will solve v using upwind schemes:# setup \nf(x) = x^2 \nμ_by_x(x) = -x # drift depends on state\nσ = 0.1\nρ = 0.05\nM = 100 # size of grid\nx = range(-1.0, 1.0, length = M) # grid\n## M-vector of drifts stacked according to the states\nμs = μ_by_x.(x)\n\n# operators with reflecting boundary conditions\noperators = diffusionoperators(x, (Reflecting(), Reflecting()))\n\n# Define first order differential operator using upwind scheme\nL₁_upwind = (μs .<= 0) .* operators.L₁₋ + (μs .> 0) .* operators.L₁₊\n# Define linear operator using upwind schemes\nA = μs .* L₁_upwind + σ^2 / 2 * operators.L₂ \n# solve the value function\nv_bc = (I * ρ - A) \\ f.(x) "
 },
 
 {
@@ -57,11 +57,99 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "api/#SimpleDifferentialOperators.DifferentialOperator-Tuple{Any,Tuple{Mixed,Mixed},DifferenceMethod}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.DifferentialOperator",
+    "category": "method",
+    "text": "`DifferentialOperator(x, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)`\n\nReturns a discretized differential operator of length(x) by length(x) matrix under mixed boundary conditions from bc using finite difference method specified by method. \n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> DifferentialOperator(x, (Mixed(1.0), Mixed(1.0)), BackwardFirstDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   0.0   ⋅\n -1.0   1.0  0.0\n   ⋅   -1.0  1.0\n\njulia> DifferentialOperator(x, (Mixed(1.0), Mixed(1.0)), ForwardFirstDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅\n  0.0  -1.0   1.0\n   ⋅    0.0  -1.0\n\njulia> DifferentialOperator(x, (Mixed(1.0), Mixed(1.0)), CentralSecondDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n 0.0   1.0    ⋅\n 1.0  -2.0   1.0\n  ⋅    1.0  -2.0\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#SimpleDifferentialOperators.DifferentialOperator-Tuple{Any,Tuple{Reflecting,Reflecting},DifferenceMethod}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.DifferentialOperator",
+    "category": "method",
+    "text": "`DifferentialOperator(x, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)`\n\nReturns a discretized differential operator of length(x) by length(x) matrix under reflecting boundary conditions from bc using finite difference method specified by method. \n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> DifferentialOperator(x, (Reflecting(), Reflecting()), BackwardFirstDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n  0.0   0.0   ⋅\n -1.0   1.0  0.0\n   ⋅   -1.0  1.0\n\njulia> DifferentialOperator(x, (Reflecting(), Reflecting()), ForwardFirstDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0   ⋅\n  0.0  -1.0  1.0\n   ⋅    0.0  0.0\n\njulia> DifferentialOperator(x, (Reflecting(), Reflecting()), CentralSecondDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅\n  1.0  -2.0   1.0\n   ⋅    1.0  -1.0\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#SimpleDifferentialOperators.ExtensionDifferentialOperator-Tuple{Any,DifferenceMethod}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.ExtensionDifferentialOperator",
+    "category": "method",
+    "text": "`ExtensionDifferentialOperator(x, method::DifferenceMethod)`\n\nReturns a discretized differential operator of length(x) by length(x) + 2 matrix whose first and last columns are applied to the ghost nodes just before x[1] and x[end] respectively under no boundary condition using finite difference method specified by method.\n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> ExtensionDifferentialOperator(x, BackwardFirstDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n  0.0   0.0   ⋅\n -1.0   1.0  0.0\n   ⋅   -1.0  1.0\n\njulia> ExtensionDifferentialOperator(x, ForwardFirstDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0   ⋅\n  0.0  -1.0  1.0\n   ⋅    0.0  0.0\n\njulia> ExtensionDifferentialOperator(x, CentralSecondDifference())\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅\n  1.0  -2.0   1.0\n   ⋅    1.0  -1.0\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#SimpleDifferentialOperators.L̄₁₊-Tuple{Any}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.L̄₁₊",
+    "category": "method",
+    "text": "`L̄₁₊(x)`\n\nReturns a discretized first-order differential operator of length(x) by length(x) + 2 matrix using  forward difference under no boundary condition.\n\nThe first and last columns are applied to the ghost nodes just before x[1] and x[end] respectively.\n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> Array(L̄₁₊(x))\n3×5 Array{Float64,2}:\n 0.0  -1.0   1.0   0.0  0.0\n 0.0   0.0  -1.0   1.0  0.0\n 0.0   0.0   0.0  -1.0  1.0\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#SimpleDifferentialOperators.L̄₁₋-Tuple{Any}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.L̄₁₋",
+    "category": "method",
+    "text": "`L̄₁₋(x)`\n\nReturns a discretized first-order differential operator of length(x) by length(x) + 2 matrix using backward difference under no boundary condition.\n\nThe first and last columns are applied to the ghost nodes just before x[1] and x[end] respectively.\n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> Array(L̄₁₋(x))\n3×5 Array{Float64,2}:\n -1.0   1.0   0.0  0.0  0.0\n  0.0  -1.0   1.0  0.0  0.0\n  0.0   0.0  -1.0  1.0  0.0\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#SimpleDifferentialOperators.L̄₂-Tuple{Any}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.L̄₂",
+    "category": "method",
+    "text": "`L̄₂(x)`\n\nReturns a discretized second-order differential operator of length(x) by length(x) + 2 matrix using central difference under no boundary condition.\n\nThe first and last columns are applied to the ghost nodes just before x[1] and x[end] respectively.\n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> Array(L̄₂(x))\n3×5 Array{Float64,2}:\n 1.0  -2.0   1.0   0.0  0.0\n 0.0   1.0  -2.0   1.0  0.0\n 0.0   0.0   1.0  -2.0  1.0\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#SimpleDifferentialOperators.L₁₊-Tuple{Any,Any}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.L₁₊",
+    "category": "method",
+    "text": "`L₁₊(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`\n\nReturns a discretized first-order differential operator of length(x) by length(x) matrix using forward difference under boundary conditions specified by bc.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper. \n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> L₁₊(x, (Reflecting(), Reflecting()))\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0   ⋅\n  0.0  -1.0  1.0\n   ⋅    0.0  0.0\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#SimpleDifferentialOperators.L₁₋-Tuple{Any,Any}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.L₁₋",
+    "category": "method",
+    "text": "`L₁₋(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`\n\nReturns a discretized first-order differential operator of length(x) by length(x) matrix using backward difference under boundary conditions specified by bc.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper. \n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> L₁₋(x, (Reflecting(), Reflecting()))\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n  0.0   0.0   ⋅\n -1.0   1.0  0.0\n   ⋅   -1.0  1.0\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#SimpleDifferentialOperators.L₂-Tuple{Any,Any}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.L₂",
+    "category": "method",
+    "text": "`L₂(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`\n\nReturns a discretized second-order differential operator of length(x) by length(x) matrix using central difference under boundary conditions specified by bc.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper. \n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> L₂(x, (Reflecting(), Reflecting()))\n3×3 Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅\n  1.0  -2.0   1.0\n   ⋅    1.0  -1.0\n\n\n\n\n\n"
+},
+
+{
     "location": "api/#SimpleDifferentialOperators.diffusionoperators-Tuple{Any,Any}",
     "page": "API",
     "title": "SimpleDifferentialOperators.diffusionoperators",
     "category": "method",
-    "text": "`diffusionoperators(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`\n\nReturns a tuple of diffusion operators and extended grid (L₁₋, L₁₊, L₂, x̄) with specified boundary conditions. Given a grid x of length M, return diffusion operators for negative drift, positive drift, and central differences.  The first element of bc is applied to the lower bound, and second element of bc to the upper.  x̄ is a (M+2) array that represents the extended grid whose first and last elements represent the ghost nodes just before x[1] and x[end].\n\nExamples\n\n```jldoctest; setup = :(using SimpleDifferentialOperators) julia> x = 1:3 1:3 julia> L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, (Reflecting(), Reflecting()));\n\njulia> Array(L₁₋) 3×3 Array{Float64,2}:   0.0   0.0  0.0  -1.0   1.0  0.0   0.0  -1.0  1.0\n\njulia> Array(L₁₊) 3×3 Array{Float64,2}:  -1.0   1.0  0.0   0.0  -1.0  1.0   0.0   0.0  0.0\n\njulia> Array(L₂) 3×3 Array{Float64,2}:  -1.0   1.0   0.0   1.0  -2.0   1.0   0.0   1.0  -1.0\n\njulia> \n\njulia> x̄ 5-element Array{Int64,1}:  0  1  2  3  4\n\njulia> L̄₁₋, L̄₁₊, L̄₂, x̄ = diffusionoperators(x, (NoBoundary(), NoBoundary()));\n\njulia> Array(L̄₁₋) 3×5 Array{Float64,2}:     -1.0   1.0   0.0  0.0  0.0     0.0  -1.0   1.0  0.0  0.0     0.0   0.0  -1.0  1.0  0.0\n\njulia> Array(L̄₁₊) 3×5 Array{Float64,2}:     0.0  -1.0   1.0   0.0  0.0     0.0   0.0  -1.0   1.0  0.0     0.0   0.0   0.0  -1.0  1.0\n\njulia> Array(L̄₂) 3×5 Array{Float64,2}:     1.0  -2.0   1.0   0.0  0.0     0.0   1.0  -2.0   1.0  0.0     0.0   0.0   1.0  -2.0  1.0\n\njulia> Array(x̄) 5-element Array{Int64,1}:     0     1     2     3     4  ```\n\n\n\n\n\n"
+    "text": "`diffusionoperators(x, bc::Tuple{BoundaryCondition, BoundaryCondition})`\n\nReturns a tuple of differential operators and extended grid (L₁₋, L₁₊, L₂, x̄) with specified boundary conditions.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper.  x̄ is a (M+2) array that represents the extended grid whose  first and last elements represent the ghost nodes just before x[1] and after x[end].\n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> operators = diffusionoperators(x, (Reflecting(), Reflecting()));\n\njulia> Array(operators.L₁₋)\n3×3 Array{Float64,2}:\n  0.0   0.0  0.0\n -1.0   1.0  0.0\n  0.0  -1.0  1.0\n\njulia> Array(operators.L₁₊)\n3×3 Array{Float64,2}:\n -1.0   1.0  0.0\n  0.0  -1.0  1.0\n  0.0   0.0  0.0\n\njulia> Array(operators.L₂)\n3×3 Array{Float64,2}:\n -1.0   1.0   0.0\n  1.0  -2.0   1.0\n  0.0   1.0  -1.0\n\njulia> operators.x̄\n5-element Array{Int64,1}:\n 0\n 1\n 2\n 3\n 4\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#SimpleDifferentialOperators.diffusionoperators-Tuple{Any}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.diffusionoperators",
+    "category": "method",
+    "text": "`diffusionoperators(x)`\n\nReturns a tuple of differential operators on extended grid and the extended grid itself (L̄₁₋, L̄₁₊, L̄₂, x̄) without boundary conditions.\n\nGiven a grid x of length M, return diffusion operators for negative drift, positive drift, and central differences of M+2 by M matrices without boundary conditions. The first column is applied for the ghost node just before x[1] and the last column for the one after x[end]. x̄ is a (M+2) array that represents the extended grid whose  first and last elements represent the ghost nodes just before x[1] and after x[end].\n\nExamples\n\njulia> x = 1:3\n1:3\n\njulia> operators = diffusionoperators(x);\n\njulia> Array(operators.L̄₁₋)\n3×5 Array{Float64,2}:\n -1.0   1.0   0.0  0.0  0.0\n  0.0  -1.0   1.0  0.0  0.0\n  0.0   0.0  -1.0  1.0  0.0\n\njulia> Array(operators.L̄₁₊)\n3×5 Array{Float64,2}:\n 0.0  -1.0   1.0   0.0  0.0\n 0.0   0.0  -1.0   1.0  0.0\n 0.0   0.0   0.0  -1.0  1.0\n\njulia> Array(operators.L̄₂)\n3×5 Array{Float64,2}:\n 1.0  -2.0   1.0   0.0  0.0\n 0.0   1.0  -2.0   1.0  0.0\n 0.0   0.0   1.0  -2.0  1.0\n\njulia> operators.x̄\n5-element Array{Int64,1}:\n 0\n 1\n 2\n 3\n 4\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#SimpleDifferentialOperators.x̄-Tuple{Any}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.x̄",
+    "category": "method",
+    "text": "`x̄(x)`\n\nReturns an extended grid of length length(x)+2 given grid x.\n\nThe first and last elements of the returned extended grid represent the ghost nodes just before x[1] and x[end] respectively.\n\njulia> x = 1:3\n1:3\n\njulia> x̄(x)\n5-element Array{Int64,1}:\n 0\n 1\n 2\n 3\n 4\n\njulia> x = [1.0; 1.5; 1.7]\n3-element Array{Float64,1}:\n 1.0\n 1.5\n 1.7\n\njulia> x̄(x)\n5-element Array{Float64,1}:\n 0.5\n 1.0\n 1.5\n 1.7\n 1.9\n\n\n\n\n\n"
 },
 
 {
