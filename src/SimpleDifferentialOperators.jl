@@ -5,12 +5,11 @@ using LinearAlgebra, SparseArrays
 
 # Includes
 include("types.jl")
-include("operators.jl")
-include("operators-without-bc.jl")
 include("basis.jl")
+include("operators.jl")
 
 # Exports
-# Types
+# Boundary Conditions
 export BoundaryCondition,
        HomogeneousBoundaryCondition,
        InhomogeneousBoundaryCondition,
@@ -19,7 +18,21 @@ export BoundaryCondition,
        Absorbing,
        NoBoundary
 
+# Differential Types
+export DifferenceMethod,
+        ForwardFirstDifference,
+        BackwardFirstDifference,
+        CentralSecondDifference
+
 # Functions
-export diffusionoperators
+export DifferentialOperator,
+        L₁₋,
+        L₁₊,
+        L₂,
+        x̄,
+        diffusionoperators,
+        L̄₁₊,
+        L̄₁₋,
+        L̄₂
 
 end # module
