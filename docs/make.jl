@@ -1,4 +1,6 @@
-using Documenter, SimpleDifferentialOperators, Weave, IJulia
+using Pkg
+pkg"instantiate"
+using Documenter, SimpleDifferentialOperators, Weave
 
 # Generated files
 EXAMPLE = joinpath(@__DIR__, "..", "examples", "example.jmd")
