@@ -1,9 +1,9 @@
-using Documenter, SimpleDifferentialOperators, Weave
+using Documenter, SimpleDifferentialOperators, Weave, IJulia
 
-# Generate stuff from Weave
-srcfile = joinpath(pwd(), "docs", "examples", "example.jmd") # example script from weave docs
-Weave.weave(srcfile, doctype = "md2html", out_path = joinpath(pwd(), "docs", "build", "examples")) # turn it into PDF
-convert_doc(srcfile, "docs/build/examples/example.ipynb") # try it as notebook?
+# Generated files
+EXAMPLE = joinpath(@__DIR__, "examples", "example.jmd")
+OUTPUT = joinpath(@__DIR__, "src", "generated")
+Weave.notebook(EXAMPLE, OUTPUT)
 
 # Compile the online documentation.
 makedocs(sitename = "SimpleDifferentialOperators.jl",
