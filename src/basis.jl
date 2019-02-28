@@ -71,7 +71,6 @@ function get_basis_L₁₊(x::AbstractArray)
     d_p1 = -ones(T, M)./Δ_p
     du_p1 = ones(T, M-1)./Δ_p[1:end-1]
     L₁₊ = Tridiagonal(dl_p1, d_p1, du_p1)
- 
 end
 
 function get_basis_L₂(x::AbstractArray)
@@ -93,7 +92,7 @@ function get_basis_L₂(x::AbstractArray)
     L₂ = Tridiagonal(dl_2, d_2, du_2)
 end
 
-# convenient functions that returns basis corresponding to discretization method given by `method`
+# convenience functions that returns basis corresponding to discretization method given by `method`
 get_basis_operator(x, method::BackwardFirstDifference) = get_basis_L₁₋(x)
 get_basis_operator(x, method::ForwardFirstDifference) = get_basis_L₁₊(x)
 get_basis_operator(x, method::CentralSecondDifference) = get_basis_L₂(x)
