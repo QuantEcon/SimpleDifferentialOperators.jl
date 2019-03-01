@@ -1,0 +1,7 @@
+Here's another bit of code
+
+```julia
+foo(x) = x + one(x)
+foo(2)
+foo(2.3)
+```
