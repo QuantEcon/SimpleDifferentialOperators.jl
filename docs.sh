@@ -37,7 +37,7 @@ mv docs/examples/*.ipynb SimpleDifferentialOperators.jl/$1/generated/ # move not
 echo "Copied example notebooks"
 
 # Git operations
-(cd SimpleDifferentialOperators.jl; git add -A; git commit -m "Add generated objects to $1 docs --- $date"; git push)
+(cd SimpleDifferentialOperators.jl; git add -A; git commit -m "Add generated objects to $1 docs"; git push)
 echo "Carried out git operations."
 
 # Clean
