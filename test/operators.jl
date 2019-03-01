@@ -2,6 +2,10 @@ using SimpleDifferentialOperators
 using Test, LinearAlgebra, DualNumbers
 
 @testset "Operators under reflecting barrier conditions" begin
+
+    # helper function to get differential operators in a more efficient way
+    diffusionoperators(x, bc) = (L₁₋ = L₁₋(x, bc), L₁₊ = L₁₊(x, bc), L₂ = L₂(x, bc), x̄ = x̄(x))
+
     @testset "Accuracy & regression test" begin
         # Uniform grid
         x = 1:3
@@ -38,6 +42,10 @@ using Test, LinearAlgebra, DualNumbers
 end
 
 @testset "Operators under mixed barrier conditions" begin
+
+    # helper function to get differential operators in a more efficient way
+    diffusionoperators(x, bc) = (L₁₋ = L₁₋(x, bc), L₁₊ = L₁₊(x, bc), L₂ = L₂(x, bc), x̄ = x̄(x))
+
     @testset "Accuracy & regression test" begin
         # Uniform grid
         x = 1:3
@@ -82,56 +90,57 @@ end
     ρ = 0.05
     M = 100 # size of grid
     x = range(-1.0, 1.0, length = M) # grid
+    bc = (Reflecting(), Reflecting()) # specify BC (reflecting barrier)
     ## M-vector of drifts stacked according to the states
     μs = μ.(x)
 
-    # operators with reflecting boundary conditions
-    L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, (Reflecting(), Reflecting()))
-
     # Define first order differential operator using upwind scheme
-    L_1_upwind = (μs .<= 0) .* L₁₋ + (μs .> 0) .* L₁₊
+    L_1_upwind = (μs .<= 0) .* L₁₋(x, bc) + (μs .> 0) .* L₁₊(x, bc)
 
     indices_m = findall(μs .<= 0)
     indices_p = findall(μs .> 0)
 
-    @test L_1_upwind[indices_m, indices_m] == Array(L₁₋[indices_m, indices_m])
-    @test L_1_upwind[indices_p, indices_p] == Array(L₁₊[indices_p, indices_p])
+    @test L_1_upwind[indices_m, indices_m] == Array(L₁₋(x, bc)[indices_m, indices_m])
+    @test L_1_upwind[indices_p, indices_p] == Array(L₁₊(x, bc)[indices_p, indices_p])
 end
 
 @testset "Input Type Variance" begin
+    # helper function to get differential operators in a more efficient way
+    diffusionoperators(x, bc) = (L₁₋ = L₁₋(x, bc), L₁₊ = L₁₊(x, bc), L₂ = L₂(x, bc), x̄ = x̄(x))
+
     # BigFloat
     uniformGrid = range(BigFloat(0.0), BigFloat(1.0), length = 100)
     irregularGrid = collect(uniformGrid)
-    L₁₋, L₁₊, L₂, x̄ = diffusionoperators(uniformGrid, (Reflecting(), Reflecting()))
-    @test @inferred(diffusionoperators(uniformGrid, (Reflecting(), Reflecting()))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
-    L₁₋, L₁₊, L₂, x̄ = diffusionoperators(irregularGrid, (Reflecting(), Reflecting()))
-    @test @inferred(diffusionoperators(irregularGrid, (Reflecting(), Reflecting()))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
-    L₁₋, L₁₊, L₂, x̄ = diffusionoperators(uniformGrid, (Mixed(one(BigFloat)), Mixed(one(BigFloat))))
-    @test @inferred(diffusionoperators(uniformGrid, (Mixed(one(BigFloat)), Mixed(one(BigFloat))))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
-    L₁₋, L₁₊, L₂, x̄ = diffusionoperators(irregularGrid, (Mixed(one(BigFloat)), Mixed(one(BigFloat))))
-    @test @inferred(diffusionoperators(irregularGrid, (Mixed(one(BigFloat)), Mixed(one(BigFloat))))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
+    L₁₋_cache, L₁₊_cache, L₂_cache, x̄_cache = diffusionoperators(uniformGrid, (Reflecting(), Reflecting()))
+    @test @inferred(diffusionoperators(uniformGrid, (Reflecting(), Reflecting()))) == (L₁₋ = L₁₋_cache, L₁₊ =  L₁₊_cache, L₂ = L₂_cache, x̄ = x̄_cache)
+    L₁₋_cache, L₁₊_cache, L₂_cache, x̄_cache = diffusionoperators(irregularGrid, (Reflecting(), Reflecting()))
+    @test @inferred(diffusionoperators(irregularGrid, (Reflecting(), Reflecting()))) == (L₁₋ = L₁₋_cache, L₁₊ =  L₁₊_cache, L₂ = L₂_cache, x̄ = x̄_cache)
+    L₁₋_cache, L₁₊_cache, L₂_cache, x̄_cache = diffusionoperators(uniformGrid, (Mixed(one(BigFloat)), Mixed(one(BigFloat))))
+    @test @inferred(diffusionoperators(uniformGrid, (Mixed(one(BigFloat)), Mixed(one(BigFloat))))) == (L₁₋ = L₁₋_cache, L₁₊ =  L₁₊_cache, L₂ = L₂_cache, x̄ = x̄_cache)
+    L₁₋_cache, L₁₊_cache, L₂_cache, x̄_cache = diffusionoperators(irregularGrid, (Mixed(one(BigFloat)), Mixed(one(BigFloat))))
+    @test @inferred(diffusionoperators(irregularGrid, (Mixed(one(BigFloat)), Mixed(one(BigFloat))))) == (L₁₋ = L₁₋_cache, L₁₊ =  L₁₊_cache, L₂ = L₂_cache, x̄ = x̄_cache)
 
     # Float32
     uniformGrid = range(Float32(0.0), Float32(1.0), length = 100)
     irregularGrid = collect(uniformGrid)
-    L₁₋, L₁₊, L₂, x̄ = diffusionoperators(uniformGrid, (Reflecting(), Reflecting()))
-    @test @inferred(diffusionoperators(uniformGrid, (Reflecting(), Reflecting()))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
-    L₁₋, L₁₊, L₂, x̄ = diffusionoperators(irregularGrid, (Reflecting(), Reflecting()))
-    @test @inferred(diffusionoperators(irregularGrid, (Reflecting(), Reflecting()))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
-    L₁₋, L₁₊, L₂, x̄ = diffusionoperators(uniformGrid, (Mixed(one(Float32)), Mixed(one(Float32))))
-    @test @inferred(diffusionoperators(uniformGrid, (Mixed(one(BigFloat)), Mixed(one(BigFloat))))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
-    L₁₋, L₁₊, L₂, x̄ = diffusionoperators(irregularGrid, (Mixed(one(Float32)), Mixed(one(Float32))))
-    @test @inferred(diffusionoperators(irregularGrid, (Mixed(one(BigFloat)), Mixed(one(BigFloat))))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
+    L₁₋_cache, L₁₊_cache, L₂_cache, x̄_cache = diffusionoperators(uniformGrid, (Reflecting(), Reflecting()))
+    @test @inferred(diffusionoperators(uniformGrid, (Reflecting(), Reflecting()))) == (L₁₋ = L₁₋_cache, L₁₊ =  L₁₊_cache, L₂ = L₂_cache, x̄ = x̄_cache)
+    L₁₋_cache, L₁₊_cache, L₂_cache, x̄_cache = diffusionoperators(irregularGrid, (Reflecting(), Reflecting()))
+    @test @inferred(diffusionoperators(irregularGrid, (Reflecting(), Reflecting()))) == (L₁₋ = L₁₋_cache, L₁₊ =  L₁₊_cache, L₂ = L₂_cache, x̄ = x̄_cache)
+    L₁₋_cache, L₁₊_cache, L₂_cache, x̄_cache = diffusionoperators(uniformGrid, (Mixed(one(Float32)), Mixed(one(Float32))))
+    @test @inferred(diffusionoperators(uniformGrid, (Mixed(one(BigFloat)), Mixed(one(BigFloat))))) == (L₁₋ = L₁₋_cache, L₁₊ = L₁₊_cache, L₂ = L₂_cache, x̄ = x̄_cache)
+    L₁₋_cache, L₁₊_cache, L₂_cache, x̄_cache = diffusionoperators(irregularGrid, (Mixed(one(Float32)), Mixed(one(Float32))))
+    @test @inferred(diffusionoperators(irregularGrid, (Mixed(one(BigFloat)), Mixed(one(BigFloat))))) == (L₁₋ = L₁₋_cache, L₁₊ = L₁₊_cache, L₂ = L₂_cache, x̄ = x̄_cache)
 
     # Duals
     uniformGrid = range(Dual(0.0), Dual(1.0), length = 100)
     irregularGrid = collect(uniformGrid)
-    L₁₋, L₁₊, L₂, x̄ = diffusionoperators(uniformGrid, (Reflecting(), Reflecting()))
-    @test @inferred(diffusionoperators(uniformGrid, (Reflecting(), Reflecting()))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
-    L₁₋, L₁₊, L₂, x̄ = diffusionoperators(irregularGrid, (Reflecting(), Reflecting()))
-    @test @inferred(diffusionoperators(irregularGrid, (Reflecting(), Reflecting()))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
-    L₁₋, L₁₊, L₂, x̄ = diffusionoperators(uniformGrid, (Mixed(Dual(1.0)), Mixed(Dual(1.0))))
-    @test @inferred(diffusionoperators(uniformGrid, (Mixed(Dual(1.0)), Mixed(Dual(1.0))))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
-    L₁₋, L₁₊, L₂, x̄ = diffusionoperators(irregularGrid, (Mixed(Dual(1.0)), Mixed(Dual(1.0))))
-    @test @inferred(diffusionoperators(irregularGrid, (Mixed(Dual(1.0)), Mixed(Dual(1.0))))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
+    L₁₋_cache, L₁₊_cache, L₂_cache, x̄_cache = diffusionoperators(uniformGrid, (Reflecting(), Reflecting()))
+    @test @inferred(diffusionoperators(uniformGrid, (Reflecting(), Reflecting()))) == (L₁₋ = L₁₋_cache, L₁₊ =  L₁₊_cache, L₂ = L₂_cache, x̄ = x̄_cache)
+    L₁₋_cache, L₁₊_cache, L₂_cache, x̄_cache = diffusionoperators(irregularGrid, (Reflecting(), Reflecting()))
+    @test @inferred(diffusionoperators(irregularGrid, (Reflecting(), Reflecting()))) == (L₁₋ = L₁₋_cache, L₁₊ =  L₁₊_cache, L₂ = L₂_cache, x̄ = x̄_cache)
+    L₁₋_cache, L₁₊_cache, L₂_cache, x̄_cache = diffusionoperators(uniformGrid, (Mixed(Dual(1.0)), Mixed(Dual(1.0))))
+    @test @inferred(diffusionoperators(uniformGrid, (Mixed(Dual(1.0)), Mixed(Dual(1.0))))) == (L₁₋ = L₁₋_cache, L₁₊ =  L₁₊_cache, L₂ = L₂_cache, x̄ = x̄_cache)
+    L₁₋_cache, L₁₊_cache, L₂_cache, x̄_cache = diffusionoperators(irregularGrid, (Mixed(Dual(1.0)), Mixed(Dual(1.0))))
+    @test @inferred(diffusionoperators(irregularGrid, (Mixed(Dual(1.0)), Mixed(Dual(1.0))))) == (L₁₋ = L₁₋_cache, L₁₊ =  L₁₊_cache, L₂ = L₂_cache, x̄ = x̄_cache)
 end

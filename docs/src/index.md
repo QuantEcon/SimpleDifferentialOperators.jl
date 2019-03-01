@@ -27,27 +27,26 @@ f(x) = x^2
 M = 100 # size of grid
 x = range(0.0, 1.0, length = M) # grid
 
-# operators with reflecting boundary conditions
-operators = diffusionoperators(x, (Reflecting(), Reflecting()))
-A = μ*operators.L₁₋ + σ^2 / 2 * operators.L₂ 
+# discretize L = ρ - μ D_x - σ^2 / 2 D_xx
+# subject to reflecting barriers at 0 and 1
+bc = (Reflecting(), Reflecting())
+L = I * ρ - μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)
 ## solve the value function
-v_bc = (I * ρ - A) \ f.(x) 
+v_bc = L \ f.(x) 
 ```
 
 Note that the code above uses differential operators with reflecting boundary conditions applied. 
 One can alternatively use differential operators on interior nodes and stack them with matrices for boundary conditions to compute `v`:
 ```julia
 # operators without boundary conditions, adding extra two rows for boundary conditions
-## operators on interior nodes
-operators = diffusionoperators(x) 
-## differential operators on interior nodes
-L = μ*operators.L̄₁₋ + σ^2 / 2 * operators.L̄₂ 
+## differential operators on extended nodes
+A = μ*L̄₁₋(x) + σ^2 / 2 * L̄₂(x)
 ## matrix for boundary conditions
 B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]]) 
 ## stack them together
-A = [([zeros(M) Diagonal(ones(M,M)) zeros(M)] * 0.05 - L); B] 
+L = [([zeros(M) Diagonal(ones(M,M)) zeros(M)] * 0.05 - A); B] 
 ## solve the value function with reflecting barrier bc (last two elements)
-v_bar = A \ [f.(x); 0.0; 0.0] 
+v_bar = L \ [f.(x); 0.0; 0.0] 
 ## extract the interior (is identical with `v_bc` above)
 v_interior = v_bar[2:end-1] 
 ```
@@ -63,21 +62,20 @@ for some constant $\rho, \sigma > 0$ and $\mu(x) = -x$. Note that $\mu(x)$ depen
 ```julia
 # setup 
 f(x) = x^2 
-μ_by_x(x) = -x # drift depends on state
+μ(x) = -x # drift depends on state
 σ = 0.1
 ρ = 0.05
 M = 100 # size of grid
-x = range(-1.0, 1.0, length = M) # grid
-## M-vector of drifts stacked according to the states
-μs = μ_by_x.(x)
+x = range(-1.0, 1.0, length = 100)
 
-# operators with reflecting boundary conditions
-operators = diffusionoperators(x, (Reflecting(), Reflecting()))
+bc = (Reflecting(), Reflecting())
 
 # Define first order differential operator using upwind scheme
-L₁_upwind = (μs .<= 0) .* operators.L₁₋ + (μs .> 0) .* operators.L₁₊
+L₁ = min.(μ.(x), 0.0) .* L₁₋(x, bc) + max.(μ.(x), 0.0) .* L₁₊(x, bc)
+
 # Define linear operator using upwind schemes
-A = μs .* L₁_upwind + σ^2 / 2 * operators.L₂ 
+L = I * ρ - L₁ - σ^2 / 2 * L₂(x,bc)
+
 # solve the value function
-v_bc = (I * ρ - A) \ f.(x) 
+v_bc = L \ f.(x) 
 ```

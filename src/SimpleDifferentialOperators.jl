@@ -30,7 +30,6 @@ export DifferentialOperator,
         L₁₊,
         L₂,
         x̄,
-        diffusionoperators,
         L̄₁₊,
         L̄₁₋,
         L̄₂
