@@ -1,21 +1,23 @@
 # Exit if any command fails (since these only make sense in sequence, we'd get unpredictable behavior otherwise)
 set -e
 
+# Stash any current changes.
+git stash
+
 # Validate tag
 if git tag | grep -q $1; then
   echo "You passed in a valid tag."
+  # Checkout that tag (ensures that the right docs directory corresponds to the right tag)
+  git fetch
+  git checkout tags/$1
+  echo "Checked out tag $1."
+elif [ "$1" = "master" ]; then
+  echo "You selected the master branch."
+  git checkout master
 else
   echo "Sorry, you didn't pass in a valid tag."
   exit 1
 fi
-
-# Stash any current changes.
-git stash
-
-# Checkout that tag (ensures that the right docs directory corresponds to the right tag)
-git fetch
-git checkout tags/$1
-echo "Checked out tag $1."
 
 # Weave examples
 (cd docs/examples && julia generate.jl) # weaves notebooks to docs/examples. requires weave to be installed
