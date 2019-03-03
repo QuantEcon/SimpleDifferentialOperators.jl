@@ -11,9 +11,11 @@ if git tag | grep -q $1; then
   git fetch
   git checkout tags/$1
   echo "Checked out tag $1."
+  target=$1
 elif [ "$1" = "master" ]; then
   echo "You selected the master branch."
   git checkout master
+  target="dev"
 else
   echo "Sorry, you didn't pass in a valid tag."
   exit 1
@@ -32,14 +34,14 @@ git clone -b gh-pages --single-branch https://github.com/QuantEcon/SimpleDiffere
 echo "Cloned docs branch."
 
 # Pass files to docs repo
-mkdir -p SimpleDifferentialOperators.jl/$1/generated/
-mv docs/tex/discretized-differential-operator-derivation.pdf SimpleDifferentialOperators.jl/$1/generated/ # move PDF
+mkdir -p SimpleDifferentialOperators.jl/$target/generated/
+mv docs/tex/discretized-differential-operator-derivation.pdf SimpleDifferentialOperators.jl/$target/generated/ # move PDF
 echo "Copied PDF."
-mv docs/examples/*.ipynb SimpleDifferentialOperators.jl/$1/generated/ # move notebooks
+mv docs/examples/*.ipynb SimpleDifferentialOperators.jl/$target/generated/ # move notebooks
 echo "Copied example notebooks"
 
 # Git operations
-(cd SimpleDifferentialOperators.jl; git add -A; git commit -m "Add generated objects to $1 docs"; git push)
+(cd SimpleDifferentialOperators.jl; git add -A; git commit -m "Add generated objects to $target docs"; git push)
 echo "Carried out git operations."
 
 # Clean
