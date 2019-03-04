@@ -1,4 +1,4 @@
 Notebooks
 ==============
 
-See [here](../generated/) for a gallery of example notebooks using this package to solve economic problems. 
+See [here](../generated/README.md) for a gallery of example notebooks using this package to solve economic problems. 
