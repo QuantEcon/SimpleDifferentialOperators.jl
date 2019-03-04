@@ -39,6 +39,8 @@ mv docs/tex/discretized-differential-operator-derivation.pdf SimpleDifferentialO
 echo "Copied PDF."
 mv docs/examples/*.ipynb SimpleDifferentialOperators.jl/$target/generated/ # move notebooks
 echo "Copied example notebooks."
+mv docs/examples/*.html SimpleDifferentialOperators.jl/$target/generated/ # move notebooks
+echo "Copied example HTML."
 
 # Git operations
 (cd SimpleDifferentialOperators.jl; git add -A; git commit -m "Add generated objects to $target docs"; git push)
