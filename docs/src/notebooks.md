@@ -5,7 +5,9 @@ We prepared a gallery of notebooks to showcase the applicability of the package 
 
 ## nbviewer
 
-Click [here](https://nbviewer.jupyter.org/github/QuantEcon/SimpleDifferentialOperators.jl/tree/gh-pages/), and then select the appropriate version (`v0.2.1`, `dev`, etc.)
+Here's [one](../generated/example1.html).
+
+Here's [another one](../generated/example2.html).
 
 ## Downloads
 
