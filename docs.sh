@@ -38,7 +38,9 @@ mkdir -p SimpleDifferentialOperators.jl/$target/generated/
 mv docs/tex/discretized-differential-operator-derivation.pdf SimpleDifferentialOperators.jl/$target/generated/ # move PDF
 echo "Copied PDF."
 mv docs/examples/*.ipynb SimpleDifferentialOperators.jl/$target/generated/ # move notebooks
-echo "Copied example notebooks"
+echo "Copied example notebooks."
+(cd SimpleDifferentialOperators.jl/$target/generated/b && touch README.md)
+echo "Set up a README."
 
 # Git operations
 (cd SimpleDifferentialOperators.jl; git add -A; git commit -m "Add generated objects to $target docs"; git push)
