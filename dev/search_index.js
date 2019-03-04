@@ -165,7 +165,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Notebooks",
     "title": "nbviewer",
     "category": "section",
-    "text": "Click here, and then select the appropriate version (v0.2.1, dev, etc.)"
+    "text": "Here\'s one.Here\'s another one."
 },
 
 {
