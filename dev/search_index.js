@@ -144,4 +144,20 @@ var documenterSearchIndex = {"docs": [
     "text": "Modules = [SimpleDifferentialOperators]\nOrder   = [:function, :type]"
 },
 
+{
+    "location": "notebooks/#",
+    "page": "Notebooks",
+    "title": "Notebooks",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "notebooks/#Notebooks-1",
+    "page": "Notebooks",
+    "title": "Notebooks",
+    "category": "section",
+    "text": "See here for a gallery of example notebooks using this package to solve economic problems. "
+},
+
 ]}
