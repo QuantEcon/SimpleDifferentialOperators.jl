@@ -1,0 +1,138 @@
+Optimal Stopping Problems
+===============================
+
+## Introduction
+
+An optimal stopping problem is a problem that requires an agent to choose an optimal stopping time in order to maximize (or minimize) some value.
+
+An example of a simple optimal stopping problem is choosing the optimal shut-down time of a plant. Given a state variable ``x_t``, continuing the plant's operations at time ``t`` one obtains profit ``u(x_t)`` discounted by ``e^{-\rho t}``, where ``\rho`` is the discount factor. While choosing to shut down the plant at time ``t=\tau`` one no longer ooptains any profits from the plant, however, one obtains a one time profit of ``S(x_{\tau})`` discounted by ``e^{-\rho \tau}``. We can think of this value ``S(x_{\tau})`` as the profit from liquidating the assets of the plant.
+
+We could for instance consider the case where ``x_t`` follows a Brownian diffusion
+
+```math
+  x_t = \mu(x_t)dt + \sigma(x_t)dW_t
+```
+
+To ensure that the plant will eventually shut down, we consider the case where ``\mu(x) < 0`` for all ``x``.
+
+Thus, we can formulate the optimal stopping problem as:
+
+```math
+  v(x) = \max_{\tau}\mathbb{E}_0\int_{0}^{\tau}e^{-\rho t} u(x_t)dt + e^{-\rho \tau}S(x_{\tau}),\hspace{1cm} dx_t = \mu(x_t)dt+\sigma(x_t)dt
+```
+
+## Hamilton-Jacobi-Bellman (HJB) Variational Inequality
+
+For values of ``x`` such that the plant does not exit, the following HJB equation holds
+
+````\rho v(x) = u(x) + \mu(x)v'(x) + \frac{\sigma^2(x)}{2}v''(x)````
+Define ``X`` to be the set of ``x`` for which there is no exit. Then
+
+``x\in X: v(x)\geq S(x)\hspace{1cm} `` (i.e the value of not exiting, ``v(x)``, is at least as great as the value of exiting ``S(x)``)
+
+``x\notin X: v(x) = S(x)\hspace{1cm}`` (i.e. the maximum possible value, ``v(x)``, is the value of choosing to exit, ``S(x)``
+
+Which then leads to:
+
+``x\in X: v(x)\geq S(x), \rho v(x) = u(x)+\mu(x)v'(x) +\frac{\sigma^2(x)}{2}v''(x)``
+
+``x\notin X: v(x) = S(x), \rho v(x) \geq u(x)+\mu(x)v'(x) +\frac{\sigma^2(x)}{2}v''(x)``
+
+This can be written compactly as a HJB variational inequality:
+
+```math
+  \min\{\rho v(x) - u(x)-\mu(x)v'(x) -\frac{\sigma^2(x)}{2}v''(x), v(x) - S(x)\} = 0
+```
+
+## Solving the HJBVI as a Linear Complementarity Problem
+
+
+```math
+  \rho v_i^n = u_i + \mu_i(v_i^n)' + \frac{\sigma^2_i}{2}(v_i^n)''
+```
+
+Denoting the differential operator on ``v`` by ``A``, we can equivalently write the above as
+
+```math
+ \rho v = u + Av
+```
+Hence we can rewrite the earlier HJBVI in discretized form:
+
+```math
+  \min\{\rho v - u - Av, v- S\} = 0
+```
+
+Furthermore, this the above HJBVI can be equivalently written as:
+
+```math
+  (v-S)^T(\rho v - u - Av) = 0 \\
+  v\geq S \\
+  \rho v - u - Av\geq 0 \\
+```
+
+Noting the form of an LCP in the appendix, we can rewrite the above problem as follows.
+
+Denote the "excess value" ``z =  v - S``, ``B = \rho I - A``, and ``q = -u + BS``.
+
+Then problem can be written as:
+
+```math
+  z^T(Bz + q) = 0 \\
+  z \geq 0 \\
+  Bz+q \geq  0 \\
+```
+
+This is the standard form for LCPs (as denoted in the appendix). We can thus proceed to solve this problem, obtaining a solution ```z``, using a LCP solver. From there, we can obtain a solution to our original problem ``v = z + S``.
+
+Reference: Ben Moll's notes "Exercising an Option: Numerical Solution"
+
+## Implementation
+
+### Setup
+
+We are given an optimal stopping problem:
+
+```math
+  v(x) = \max_{\tau}\mathbb{E}_0\int_{0}^{\tau}e^{-\rho t} u(x_t)dt + e^{-\rho \tau}S(x_{\tau}),\hspace{1cm} dx_t = \mu(x_t)dt+\sigma(x_t)dt
+```
+
+where the parameters of the stochastic process, discount factor, utility, and stopping-value are:
+
+```math
+ \mu(x) = -0.01x \\
+ \sigma^2(x) = (0.01x)^2 \\
+ S(x)= 10 \\
+ \gamma = 0.5, u(x)  = x^\gamma \\
+ \rho = 0.05 \\
+```
+
+We will also discretize the problem on the interval $[0.01, 1.0]$ utilizing $1000$ grid points.
+
+We create the stopping problem below. This is solver we choose is [`PATHSolver.jl`](https://github.com/chkwon/PATHSolver.jl), which is the least-headache option for small (``n < 300``) problems.
+
+To install it (along with the other dependencies), simply run
+
+```julia
+  ] add PATHSolver Parameters Plots
+```
+
+on your macOS or Windows machine. To load them, use
+
+```julia
+  using PATHSolver, Parameters, Plots
+```
+
+Let's codify the model's parameters
+
+```julia
+StoppingProblem = @with_kw (μ_bar = -0.01,
+                          σ_bar = 0.01,
+                          S_bar = 10.0,
+                          γ = 0.5, # u(x) = x^γ
+                          ρ = 0.05, # discount rate
+                          x_min = 0.01,
+                          x_max = 1.0,
+                          M = 1000) # num of grid points
+```
+
+### Solution 
