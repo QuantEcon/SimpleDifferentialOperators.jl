@@ -157,7 +157,23 @@ var documenterSearchIndex = {"docs": [
     "page": "Notebooks",
     "title": "Notebooks",
     "category": "section",
-    "text": "See here for a gallery of example notebooks using this package to solve economic problems. "
+    "text": "We prepared a gallery of notebooks to showcase the applicability of the package to different economic problems."
+},
+
+{
+    "location": "notebooks/#nbviewer-1",
+    "page": "Notebooks",
+    "title": "nbviewer",
+    "category": "section",
+    "text": "Click here, and then select the appropriate version (v0.2.1, dev, etc.)"
+},
+
+{
+    "location": "notebooks/#Downloads-1",
+    "page": "Notebooks",
+    "title": "Downloads",
+    "category": "section",
+    "text": "Here\'s one.Here\'s another one"
 },
 
 ]}
