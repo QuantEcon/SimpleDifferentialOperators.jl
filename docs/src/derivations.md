@@ -1,6 +1,10 @@
 Derivations
 ==========
-Under ``M``-length of grids on ``v`` with end points ``x_{\min} < x_{\max}`` with reflecting barrier conditions of
+Detailed derivation, including formula for irregular grids, can be found [here](../generated/discretized-differential-operator-derivation.pdf).
+
+Mixed Boundary Values
+----------
+Under ``M``-length of grids on ``v`` with end points ``x_{\min} < x_{\max}`` with mixed boundary value conditions of
 
 ```math
 \begin{align}
@@ -9,7 +13,7 @@ Under ``M``-length of grids on ``v`` with end points ``x_{\min} < x_{\max}`` wit
 \end{align}
 ```
 
-We use the following discretization schemes:
+Note that this can be extended to reflecting boundary conditions by assigning $\underline{\xi} = 0$ and $\overline{\xi} = 0$. We use the following discretization schemes:
 
 ```math
 L_1^{-} \equiv \frac{1}{\Delta}\begin{pmatrix}
@@ -43,4 +47,3 @@ L_2 \equiv \frac{1}{\Delta^2}\begin{pmatrix}
 
 which represent the backward first order, foward first order, and central second order differential operators respectively.
 
-Derivation, including formula for irregular grids, can be found [here](../generated/discretized-differential-operator-derivation.pdf).
