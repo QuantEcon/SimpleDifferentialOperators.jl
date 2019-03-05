@@ -5,12 +5,8 @@ We prepared a gallery of notebooks to showcase the applicability of the package 
 
 ## nbviewer
 
-Here's [one](../generated/example.html).
-
-Here's [another one](../generated/example2.html).
+Here's an example on [optimal stopping problems](../generated/LCP_simple.html).
 
 ## Downloads
 
-Here's [one](../generated/example.ipynb).
-
-Here's [another one](../generated/example2.ipynb)
+[Optimal stopping](../generated/LCP_simple.ipynb).
