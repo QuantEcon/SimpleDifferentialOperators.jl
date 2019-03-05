@@ -9,7 +9,7 @@ We are given:
 
 * A stochastic process ``x``, with [infinitesimal generator](https://en.wikipedia.org/wiki/Infinitesimal_generator_(stochastic_processes)) ``\mathscr{A}``.
 
-* Flow utility ``u(x)`` and a discount rate ``\rho > 1``.
+* Flow utility ``u(x)`` and a discount rate ``\rho > 0``.
 
 * A function ``S(x)`` which gives the value of stopping at state ``x``. The goal is to choose an optional stopping point ``\hat{x}``.
 
@@ -144,4 +144,4 @@ Define LCP objects, solve the problem, and inspect the solution:
 
 * Huang, J. and J.-S. Pang (1998): "Option Pricing and Linear Complementarity," Journal of Computational Finance. Citeseer.
 
-* Ben Moll's [excellent notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf). 
+* Ben Moll's [excellent notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf).
