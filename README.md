@@ -12,9 +12,9 @@ This is a package to return discretized differential operators subject to variou
 ### Example
 
 Consider constructing the corresponding infinitesimal generator for the following stochastic differential equation:
-```math
-d x_t = μ d_t + σ dW_t
-```
+<!-- d x_t = \mu d_t + \sigma d W_t -->
+![SDE](https://quicklatex.com/cache3/ea/ql_cff23b548c368d3e69b54d42c1f626ea_l3.png)
+
 with some constant `μ` and `σ >= 0`, and `W_t` Brownian Motion subject, with reflecting barriers at `x=0` and `x=1`.
 
 If the payoff is in state `x` is `f(x)` and `ρ` is the discount rate, then the bellman equation for the expected present discounted value of payoffs fulfills
