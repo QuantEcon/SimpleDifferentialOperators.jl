@@ -4,7 +4,7 @@ Detailed derivation, including formula for irregular grids, can be found [here](
 
 Mixed Boundary Values
 ----------
-Under ``M``-length of grids on ``v`` with end points ``x_{\min} < x_{\max}`` with mixed boundary value conditions of
+Under $M$-length of grids on $v$ with end points $x_{\min} < x_{\max}$ with mixed boundary value conditions of
 
 ```math
 \begin{align}
