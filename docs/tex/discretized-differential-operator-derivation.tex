@@ -350,13 +350,13 @@ Let $\alpha^*(t)$ be the optimal solution. Suppose that $r$ under $\alpha^*(t)$ 
 
 In terms of differential operators, one can rewrite the equation as
 \begin{equation}\label{eq:hjbe-system-function}
-(\rho - L) v(x) = r^*(x)
+(\rho -  \tilde{L} ) v(x) = r^*(x)
 \end{equation}
 
 where 
 
 \begin{equation}\label{eq:L-defn}
-L = \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
+\tilde{L} = \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
 \end{equation}
 
 
@@ -389,13 +389,13 @@ The stationary distribution $g^*(x)$ satisfies
 which can be rewritten as 
 
 \begin{equation}
-L^* g(x) = 0
+\tilde{L}^* g(x) = 0
 \end{equation}
 
 where 
 
 \begin{equation}\label{eq:L_star-defn}
-L^* =  - \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
+\tilde{L}^* =  - \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
 \end{equation}
 
 By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $L$. Note that the operator for the KFE in \eqref{eq:L_star-defn} is the adjoint operator of the operator for the HJBE in \eqref{eq:L-defn}, and the correct discretization scheme for \eqref{eq:L_star-defn} can be, analogously, done by taking the transpose of the discretized operator for HJBE in \eqref{eq:L-descritized-defn} \cite{gabaix16}. Hence, one can find the stationary distribution by solving the following discretized system of equations:
