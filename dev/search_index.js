@@ -101,7 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Derivations",
     "title": "Hamilton–Jacobi–Bellman equations (HJBE)",
     "category": "section",
-    "text": "Consider solving for v from the following optimal control problemv(x_0) = max_ alpha(t)  _t geq 0  int_0^infty e^-rho t r( x(t) alpha(t )) dtwith the law of motion for the state dx = mu dt + sigma dW for some constant mu geq 0 and sigma geq 0 with x(0) = x_0.Let alpha^*(t) be the optimal solution. Suppose that r under alpha^*(t) can be expressed in terms of state variables, r^* (x). Then, the HJBE yields\\rho v(x) = r^*(x) +  \\mu  \\partial_{x} v(x) + \\dfrac{\\sigma^2}{2} \\partial_{xx} v(x)In terms of differential operators, one can rewrite the equation as(\\rho - L) v(x) = r^*(x)where L = \\mu \\partial_{x} + (\\sigma^2/2) \\partial_{xx}By descretizing the space of x, one can solve the corresponding system by using discretized operators for partial_x (L_1+), partial_xx (L_2) on some grids of length M, x_i_i=1^M:mathbfL = mu L_1+ + dfracsigma^22 L_2so that v under the optimal plan can be computed by solving the following discretized system of equations:(rho mathbfI - mathbfL) mathbfv = mathbfr^* where mathbfv and mathbfr^* are M-vectors whose ith elements are v(x_i) and r^*(x_i), respectively."
+    "text": "Consider solving for v from the following optimal control problemv(x_0) = max_ alpha(t)  _t geq 0  int_0^infty e^-rho t r( x(t) alpha(t )) dtwith the law of motion for the state dx = mu dt + sigma dW for some constant mu geq 0 and sigma geq 0 with x(0) = x_0.Let alpha^*(t) be the optimal solution. Suppose that r under alpha^*(t) can be expressed in terms of state variables, r^* (x). Then, the HJBE yields\\rho v(x) = r^*(x) +  \\mu  \\partial_{x} v(x) + \\dfrac{\\sigma^2}{2} \\partial_{xx} v(x)In terms of differential operators, one can rewrite the equation as(\\rho - \\tilde{L}) v(x) = r^*(x)where \\tilde{L} = \\mu \\partial_{x} + (\\sigma^2/2) \\partial_{xx}By descretizing the space of x, one can solve the corresponding system by using discretized operators for partial_x (L_1+), partial_xx (L_2) on some grids of length M, x_i_i=1^M:L = mu L_1+ + dfracsigma^22 L_2so that v under the optimal plan can be computed by solving the following discretized system of equations:(rho I - L) v = r^*where v and r^* are M-vectors whose ith elements are v(x_i) and r^*(x_i), respectively."
 },
 
 {
@@ -117,7 +117,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Derivations",
     "title": "Stationary distributions",
     "category": "section",
-    "text": "The stationary distribution g^*(x) satisfies0 = - mu partial_x g^*(x) + dfracsigma^22 partial_xx g^*(x)which can be rewritten as L^* g(x) = 0where L^* =  - mu partial_x + (sigma^22) partial_xxBy descretizing the space of x, one can solve the corresponding system by using discretized operators for L. Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, L, and the correct discretization scheme for L^* is, analogously, done by taking the transpose of the discretized operator for HJBE, mathbfL (See Gabaix et al., 2016). Hence, one can find the stationary distribution by solving the following discretized system of equations:mathbfL^T mathbfg = 0 where mathbfL^T is the transpose of mathbfL and mathbfg is an M-vector whose element is g(x_i) such that sum_i=1^M g(x_i) = 1."
+    "text": "The stationary distribution g^*(x) satisfies0 = - mu partial_x g^*(x) + dfracsigma^22 partial_xx g^*(x)which can be rewritten as tildeL^* g(x) = 0where tildeL^* =  - mu partial_x + (sigma^22) partial_xxBy descretizing the space of x, one can solve the corresponding system by using discretized operators for tildeL^*. Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, tildeL, and the correct discretization scheme for L^* is, analogously, done by taking the transpose of the discretized operator for HJBE, L (See Gabaix et al., 2016). Hence, one can find the stationary distribution by solving the following discretized system of equations:L^T g = 0 where L^T is the transpose of L and g is an M-vector whose element is g(x_i) such that sum_i=1^M g(x_i) = 1."
 },
 
 {
@@ -125,7 +125,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Derivations",
     "title": "Full dynamics of distributions",
     "category": "section",
-    "text": "One can also solve the full PDE in KFE equation, given an initial distribution g(x 0). After discretization, note that \\eqref{eq:kfe} can be rewritten asdotmathbfg(t) = mathbfL^T mathbfg(t)where dotmathbfg(t) is an M-vector whose ith element is partial_t g(x_i t), which can be efficently solved by a number of differential equation solvers available in public, including DifferentialEquations.jl."
+    "text": "One can also solve the full PDE in KFE equation, given an initial distribution g(x 0). After discretization, note that \\eqref{eq:kfe} can be rewritten asdotg(t) = L^T g(t)where dotg(t) is an M-vector whose ith element is partial_t g(x_i t), which can be efficently solved by a number of differential equation solvers available in public, including DifferentialEquations.jl."
 },
 
 {
