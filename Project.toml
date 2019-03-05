@@ -10,8 +10,9 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 DualNumbers = "fa6b7ba4-c1ee-5f82-b5fc-ecf0adba8f74"
 PATHSolver = "f5f7c340-0bb3-5c69-969a-41884d311d1b"
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 Suppressor = "fd094767-a336-5f1f-9728-57cf17d0bbfb"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Parameters = "d96e819e-fc66-5662-9728-84c9c7592b0a"
 
 [targets]
-test = ["Test", "DualNumbers", "BenchmarkTools", "PATHSolver", "Suppressor"]
+test = ["Test", "DualNumbers", "BenchmarkTools", "PATHSolver", "Suppressor", "Parameters"]

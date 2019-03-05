@@ -1,5 +1,5 @@
 using SimpleDifferentialOperators
-using Test, LinearAlgebra, DualNumbers, PATHSolver, Suppressor
+using Test, LinearAlgebra, DualNumbers, PATHSolver, Suppressor, Parameters
 
 @elapsed begin
     @time @testset "Operators with boundary conditions" begin include("operators.jl") end
