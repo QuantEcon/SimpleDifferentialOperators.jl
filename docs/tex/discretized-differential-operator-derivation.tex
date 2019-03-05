@@ -22,28 +22,29 @@
 \newenvironment{psmallmatrix}
 {\left(\begin{smallmatrix}}
 	{\end{smallmatrix}\right)}
-
+\bibliographystyle{ecta}
 \begin{document}
-\title{Derivation on discretized differential operators on (ir)regular grids with boundary conditions}
+\title{Derivations, extensions, and applications for \texttt{SimpleDifferentialOperators.jl}}
+\author{Chiyoung Ahn (@chiyahn)}
 \maketitle
 
 \section{Setup}
 
 \begin{itemize}
 	\item Define an irregular grid $\set{x_i}_{i=1}^M$ with $x_1 = {x_{\min}}$ and $x_{M} = {x_{\max}}$. Denote the grid with the variable name, i.e. $x \equiv \set{x_i}_{i=1}^M$.
-	\item Denote the distance between the grid points as the \textit{backwards} difference
+	\item Denote the distance between the grid points as
 	\begin{align}
 	\Delta_{i,-} &\equiv x_i - x_{i-1},\, \text{for } i = 2,\ldots, M\\
 	\Delta_{i,+} &\equiv x_{i+1} - x_i,\, \text{for } i = 1,\ldots, M-1
 	\end{align}
 	
-	\item Assume $\Delta_{1, -} = \Delta_{1, +}$ and $\Delta_{M, +} = \Delta_{M, -}$, due to ghost points, $x_0$ and $x_{M+1}$ on both boundaries. (i.e.he distance to the ghost nodes are the same as the distance to the closest nodes).  Then define the vector of backwards and forwards first differences as
+	\item Assume $\Delta_{1, -} = \Delta_{1, +}$ and $\Delta_{M, +} = \Delta_{M, -}$, due to ghost points, $x_0$ and $x_{M+1}$ on both boundaries. (i.e. the distance to the ghost nodes are the same as the distance to the closest nodes).  Then define the vector of backwards and forwards first differences as
 	\begin{align}
-	\Delta_{-} &\equiv \begin{bmatrix} x_2 - x_1 \\
+	\Delta_{-} &\equiv \begin{bmatrix} \Delta_{1,-} \\
 	\text{diff}(x)
 	\end{bmatrix}\\
 	\Delta_{+} &\equiv \begin{bmatrix} \text{diff}(x)\\
-	x_{M} - x_{M-1}
+	\Delta_{M,+}
 	\end{bmatrix}
 	\end{align}
 	\item Reflecting barrier conditions:
@@ -53,7 +54,7 @@
 	\end{align}
 \end{itemize}
 
-Let $L_{1-}$ be the discretized backwards first differences and $L_2$ be the discretized central differences subject to the Neumann boundary conditions in \cref{eq:new-BC1,eq:new-BC2} such that $L_{1-} v(x)$ and $L_2 v(x)$ represent the first and second derivatives of $v(x)$ respectively at $x$. For second derivatives, we use the following numerical scheme from \cite{achdou17}:
+Let $L_{1-}$, $L_{1+}$ be the discretized backward and forward first order differential operators and $L_2$ be the discretized central difference  second order differential operator, all subject to the Neumann boundary conditions in \cref{eq:new-BC1,eq:new-BC2}, such that $L_{1-} v(x), L_{1+} v(x)$ and $L_2 v(x)$ represent the first-order (backward and forward) and second-order derivatives of $v(x)$ respectively at $x$. For second derivatives, we use the following numerical scheme from \cite{achdou17}:
 
 \begin{equation}
 v''(x_i) \approx \dfrac{ \Delta_{i,-} v( x_i + \Delta_{i,+}) - (\Delta_{i,+} + \Delta_{i,-}) v( x_i ) + \Delta_{i,+} v( x_i - \Delta_{i,-})}{\frac{1}{2}(\Delta_{i,+} + \Delta_{i,-}) \Delta_{i,+} \Delta_{i,-} }, \text{for } i = 1, \ldots, M
@@ -325,7 +326,93 @@ b = \begin{bmatrix}
 \end{bmatrix}
 \end{equation}
 
-\bibliographystyle{mnras}
+\section{Applications}
+
+\subsection{Hamilton–Jacobi–Bellman equations (HJBE)}
+Consider solving for $v$ from the following optimal control problem
+\begin{align}
+v(x_0) = \max_{ {\{\alpha(t) \} }_{t \geq 0} } \int_{0}^\infty e^{-\rho t} r( x(t), \alpha(t )) dt
+\end{align}
+
+with the law of motion for the state 
+\begin{align}
+dx = \mu dt + \sigma dW 
+\end{align}
+
+
+for some constant $\mu \geq 0$ and $\sigma \geq 0$ with $x(0) = x_0$.
+
+Let $\alpha^*(t)$ be the optimal solution. Suppose that $r$ under $\alpha^*(t)$ can be expressed in terms of state variables, $r^* (x)$. Then, the HJBE yields
+
+\begin{equation}\label{eq:hamilton-jacobi-bellman}
+\rho v(x) = r^*(x) +  \mu  \partial_{x} v(x) + \dfrac{\sigma^2}{2} \partial_{xx} v(x)
+\end{equation}
+
+In terms of differential operators, one can rewrite the equation as
+\begin{equation}\label{eq:hjbe-system-function}
+(\rho - L) v(x) = r^*(x)
+\end{equation}
+
+where 
+
+\begin{equation}\label{eq:L-defn}
+L = \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
+\end{equation}
+
+
+By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\partial_{x}$ ($L_{1+}$), $\partial_{xx}$ ($L_2$) on some grids of length $M$, $\{x_i\}_{i=1}^M$:
+\begin{align}\label{eq:L-descritized-defn}
+\mathbf{L} = \mu L_{1+} + \dfrac{\sigma^2}{2} L_{2}
+\end{align}
+so that $v$ from \eqref{eq:hjbe-system-function} can be computed by solving the following discretized system of equations:
+\begin{align}
+(\rho \mathbf{I} - \mathbf{L}) \mathbf{v} &= \mathbf{r^*} 
+\end{align}
+where $\mathbf{v}$ and $\mathbf{r^*}$ are $M$-vectors whose $i$th elements are $v(x_i)$ and $r^*(x_i)$, respectively.
+
+
+
+\subsection{Kolmogorov forward equations (KFE) under diffusion process}
+Let $g(x, t)$ be the distribution of $x$ at time $t$ from the example above. By the Kolmogorov forward equation, the following PDE holds:
+
+\begin{equation}\label{eq:kfe}
+\partial_{t} g(x, t) = - \mu \partial_{x}  g(x,t) + \dfrac{\sigma^2}{2} \partial_{xx} g(x,t)
+\end{equation}
+
+\subsubsection{Stationary distributions}
+The stationary distribution $g^*(x)$ satisfies
+
+\begin{equation}\label{eq:kfe-stationary}
+0 = - \mu \partial_{x} g^*(x) + \dfrac{\sigma^2}{2} \partial_{xx} g^*(x)
+\end{equation}
+
+which can be rewritten as 
+
+\begin{equation}
+L^* g(x) = 0
+\end{equation}
+
+where 
+
+\begin{equation}\label{eq:L_star-defn}
+L^* =  - \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
+\end{equation}
+
+By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $L$. Note that the operator for the KFE in \eqref{eq:L_star-defn} is the adjoint operator of the operator for the HJBE in \eqref{eq:L-defn}, and the correct discretization scheme for \eqref{eq:L_star-defn} can be, analogously, done by taking the transpose of the discretized operator for HJBE in \eqref{eq:L-descritized-defn} \cite{gabaix16}. Hence, one can find the stationary distribution by solving the following discretized system of equations:
+
+\begin{equation}
+\mathbf{L}^T \mathbf{g} = 0 
+\end{equation}
+where $\mathbf{L}^T$ is the transpose of $\mathbf{L}$ from \eqref{eq:L-descritized-defn} and $\mathbf{g}$ is an $M$-vector whose element is $g(x_i)$ such that $\sum_{i=1}^M g(x_i) = 1$.
+
+\subsubsection{Full dynamics of distributions}
+One can also solve the full PDE in \eqref{eq:kfe}, given an initial distribution $g(x, 0)$. After discretization, note that \eqref{eq:kfe} can be rewritten as
+\begin{equation}\label{eq:kfe-discretized}
+\dot{\mathbf{g}}(t) = \mathbf{L}^T \mathbf{g}(t)
+\end{equation}
+where $\dot{\mathbf{g}}(t)$ is an $M$-vector whose $i$th element is $\partial_{t} g(x_i, t)$, which can be efficently solved by a number of differential equation solvers available in public, including \cite{rackauckas17}.
+
+\newpage
 \bibliography{hact}
 % The notebook is based on my previous version that can be found at https://github.com/ubcecon/computing_and_datascience/blob/a33d14191afba2d13598b331b3623a9512dccc90/continuous_time_methods/notes/discretized-differential-operator-derivation.tex by @chiyahn
 \end{document}
