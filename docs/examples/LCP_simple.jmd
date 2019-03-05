@@ -200,7 +200,7 @@ Handing it to the solver
 f = z -> B*z + q
 n = sp.M
 lb = zeros(n)
-ub = 1000*ones(n) # a reasonable guess?
+ub = 300*ones(n) # a reasonable guess?
 options(convergence_tolerance = 1e-12, output = :no, time_limit = 600) # 10 minute budget
 @time exit_code, sol_z, sol_f = solveLCP(f, lb, ub) # this is slower than in practice, because of choices to prioritize clarity over speed
 ```
