@@ -135,13 +135,13 @@ To install it (along with the other dependencies), simply run
 
 ```julia
   using Pkg
-  pkg"add PATHSolver Parameters Plots"
+  pkg"add PATHSolver Parameters Plots Suppressor"
 ```
 
 on your macOS or Windows machine. To load them, use
 
 ```julia
-  using PATHSolver, Parameters, Plots, LinearAlgebra
+  using PATHSolver, Parameters, Plots, LinearAlgebra, Suppressor
 ```
 
 We also need to use the actual package
@@ -202,7 +202,7 @@ n = sp.M
 lb = zeros(n)
 ub = 300*ones(n) # a reasonable guess?
 options(convergence_tolerance = 1e-12, output = :no, time_limit = 600) # 10 minute budget
-@time exit_code, sol_z, sol_f = solveLCP(f, lb, ub) # this is slower than in practice, because of choices to prioritize clarity over speed
+@time exit_code, sol_z, sol_f = @suppress solveLCP(f, lb, ub) # this is slower than in practice, because of choices to prioritize clarity over speed
 ```
 
 All that's left is to inspect the solution
