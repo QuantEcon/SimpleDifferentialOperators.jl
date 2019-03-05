@@ -46,4 +46,3 @@ L_2 \equiv \frac{1}{\Delta^2}\begin{pmatrix}
 ```
 
 which represent the backward first order, foward first order, and central second order differential operators respectively.
-
