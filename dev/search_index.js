@@ -157,23 +157,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Notebooks",
     "title": "Notebooks",
     "category": "section",
-    "text": "We prepared a gallery of notebooks to showcase the applicability of the package to different economic problems."
-},
-
-{
-    "location": "notebooks/#nbviewer-1",
-    "page": "Notebooks",
-    "title": "nbviewer",
-    "category": "section",
-    "text": "Here\'s an example on optimal stopping problems."
-},
-
-{
-    "location": "notebooks/#Downloads-1",
-    "page": "Notebooks",
-    "title": "Downloads",
-    "category": "section",
-    "text": "Optimal stopping."
+    "text": "We prepared a gallery of notebooks to showcase the applicability of the package to different economic problems.Optimal Stopping Problems. You can also download the notebook."
 },
 
 ]}
