@@ -150,29 +150,29 @@ Let $\alpha^*(t)$ be the optimal solution. Suppose that $r$ under $\alpha^*(t)$ 
 
 In terms of differential operators, one can rewrite the equation as
 ```math\label{eq:hjbe-system-function}
-(\rho - L) v(x) = r^*(x)
+(\rho - \tilde{L}) v(x) = r^*(x)
 ```
 
 where 
 
 ```math\label{eq:L-defn}
-L = \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
+\tilde{L} = \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
 ```
 
 
 By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\partial_{x}$ ($L_{1+}$), $\partial_{xx}$ ($L_2$) on some grids of length $M$, $\{x_i\}_{i=1}^M$:
 
 ```math
-\mathbf{L} = \mu L_{1+} + \dfrac{\sigma^2}{2} L_{2}
+L = \mu L_{1+} + \dfrac{\sigma^2}{2} L_{2}
 ```
 
 so that $v$ under the optimal plan can be computed by solving the following discretized system of equations:
 
 ```math
-(\rho \mathbf{I} - \mathbf{L}) \mathbf{v} &= \mathbf{r^*} 
+(\rho I - L) v &= r^*
 ```
 
-where $\mathbf{v}$ and $\mathbf{r^*}$ are $M$-vectors whose $i$th elements are $v(x_i)$ and $r^*(x_i)$, respectively.
+where $v$ and $r^*$ are $M$-vectors whose $i$th elements are $v(x_i)$ and $r^*(x_i)$, respectively.
 
 
 
@@ -193,26 +193,26 @@ The stationary distribution $g^*(x)$ satisfies
 which can be rewritten as 
 
 ```math
-L^* g(x) = 0
+\tilde{L}^* g(x) = 0
 ```
 
 where 
 
 ```math
-L^* =  - \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
+\tilde{L}^* =  - \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
 ```
 
-By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $L$. Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, $L$, and the correct discretization scheme for $L^*$ is, analogously, done by taking the transpose of the discretized operator for HJBE, $\mathbf{L}$ (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569)). Hence, one can find the stationary distribution by solving the following discretized system of equations:
+By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\tilde{L}^*$. Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, $\tilde{L}$, and the correct discretization scheme for $L^*$ is, analogously, done by taking the transpose of the discretized operator for HJBE, $L$ (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569)). Hence, one can find the stationary distribution by solving the following discretized system of equations:
 
 ```math
-\mathbf{L}^T \mathbf{g} = 0 
+L^T g = 0 
 ```
-where $\mathbf{L}^T$ is the transpose of $\mathbf{L}$ and $\mathbf{g}$ is an $M$-vector whose element is $g(x_i)$ such that $\sum_{i=1}^M g(x_i) = 1$.
+where $L^T$ is the transpose of $L$ and $g$ is an $M$-vector whose element is $g(x_i)$ such that $\sum_{i=1}^M g(x_i) = 1$.
 
 #### Full dynamics of distributions
 One can also solve the full PDE in KFE equation, given an initial distribution $g(x, 0)$. After discretization, note that \eqref{eq:kfe} can be rewritten as
 
 ```math
-\dot{\mathbf{g}}(t) = \mathbf{L}^T \mathbf{g}(t)
+\dot{g}(t) = L^T g(t)
 ```
-where $\dot{\mathbf{g}}(t)$ is an $M$-vector whose $i$th element is $\partial_{t} g(x_i, t)$, which can be efficently solved by a number of differential equation solvers available in public, including [DifferentialEquations.jl](http://doi.org/10.5334/jors.151).
+where $\dot{g}(t)$ is an $M$-vector whose $i$th element is $\partial_{t} g(x_i, t)$, which can be efficently solved by a number of differential equation solvers available in public, including [DifferentialEquations.jl](http://doi.org/10.5334/jors.151).
