@@ -2,6 +2,10 @@ Derivations
 ==========
 Detailed derivation, including formula for irregular grids, can be found [here](../generated/discretized-differential-operator-derivation.pdf).
 
+Setup
+----------
+Let $\{x_i\}_{i=1}^M$ be a collection of discretized $M$-length of grids on $x$ with end points $x_1 = x_{\min}$ and $x_M = x_{\max}$. Also, throughout the section, we consider regular grids, i.e., $x_{i+1} - x_i = \Delta$ for some constant $\Delta > 0$ for all $i = 1, ..., M-1$. Also, given a real-valued function $v$, let $v(x)$ be the $M$-length vector whose $i$th element is $v(x_i)$. The goal is to construct a matrix $L$ such that $L v(x)$ represents the first-order or second-order derivative of $v$ on $x$ under some boundary conditions.
+
 Mixed Boundary Values
 ----------
 Under $M$-length of grids on $v$ with end points $x_{\min} < x_{\max}$ with mixed boundary value conditions of
