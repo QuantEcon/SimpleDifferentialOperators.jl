@@ -165,7 +165,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Notebooks",
     "title": "nbviewer",
     "category": "section",
-    "text": "Here\'s one.Here\'s another one."
+    "text": "Here\'s an example on optimal stopping problems."
 },
 
 {
@@ -173,7 +173,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Notebooks",
     "title": "Downloads",
     "category": "section",
-    "text": "Here\'s one.Here\'s another one"
+    "text": "Optimal stopping."
 },
 
 ]}
