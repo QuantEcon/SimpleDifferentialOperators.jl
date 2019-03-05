@@ -210,7 +210,7 @@ All that's left is to inspect the solution
 ```julia
 using Plots
 v = sol_z + S
-plot(grid, v, title = "Value Function for Vanilla Model", legend = false, xlabel = "x", ylabel = "v(x)")
+plot(v, title = "Value Function for Vanilla Model", legend = false, xlabel = "x", ylabel = "v(x)")
 ```
 
 which passes a sanity check (i.e., monotone with a threshold).
