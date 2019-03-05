@@ -53,7 +53,7 @@
 	\end{align}
 \end{itemize}
 
-Let $L_1^{-}$ be the discretized backwards first differences and $L_2$ be the discretized central differences subject to the Neumann boundary conditions in \cref{eq:new-BC1,eq:new-BC2} such that $L_1^{-} v(x)$ and $L_2 v(x)$ represent the first and second derivatives of $v(x)$ respectively at $x$. For second derivatives, we use the following numerical scheme from \cite{achdou17}:
+Let $L_{1-}$ be the discretized backwards first differences and $L_2$ be the discretized central differences subject to the Neumann boundary conditions in \cref{eq:new-BC1,eq:new-BC2} such that $L_{1-} v(x)$ and $L_2 v(x)$ represent the first and second derivatives of $v(x)$ respectively at $x$. For second derivatives, we use the following numerical scheme from \cite{achdou17}:
 
 \begin{equation}
 v''(x_i) \approx \dfrac{ \Delta_{i,-} v( x_i + \Delta_{i,+}) - (\Delta_{i,+} + \Delta_{i,-}) v( x_i ) + \Delta_{i,+} v( x_i - \Delta_{i,-})}{\frac{1}{2}(\Delta_{i,+} + \Delta_{i,-}) \Delta_{i,+} \Delta_{i,-} }, \text{for } i = 1, \ldots, M
@@ -92,17 +92,17 @@ Similarly, by \eqref{eq:new-BC2}, we have
 \end{align}
 at the upper bound.
 
-Thus, the corresponding discretized differential operator $L_1^{-}$, $L_1^{+}$, and $L_2$ are defined as 
+Thus, the corresponding discretized differential operator $L_{1-}$, $L_{1+}$, and $L_2$ are defined as 
 
 \begin{align}
-L_1^{-} &\equiv \frac{1}{\Delta}\begin{pmatrix}
+L_{1-} &\equiv \frac{1}{\Delta}\begin{pmatrix}
 1 - (1 + \underline{\xi} \Delta) &0&0&\dots&0&0&0\\
 -1&1&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-1&1&0\\
 0&0&0&\cdots&0&-1&1
 \end{pmatrix}_{M\times M}\label{eq:L-1-regular} \\
-L_1^{+} &\equiv \frac{1}{\Delta}\begin{pmatrix}
+L_{1+} &\equiv \frac{1}{\Delta}\begin{pmatrix}
 -1&1&0&\dots&0&0&0\\
 0&-1&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
@@ -149,17 +149,17 @@ Similarly, by \eqref{eq:new-BC2}, we have
 \end{align}
 at the upper bound.
 
-Thus, the corresponding discretized differential operator $L_1^{-}$, $L_1^{+}$, and $L_2$ are defined as 
+Thus, the corresponding discretized differential operator $L_{1-}$, $L_{1+}$, and $L_2$ are defined as 
 
 \begin{align}
-L_1^{-} &\equiv \begin{pmatrix}
+L_{1-} &\equiv \begin{pmatrix}
 \Delta^{-1}_{1,-} [1 - (1 + \underline{\xi} \Delta_{1,-})] &0&0&\dots&0&0&0\\
 -\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-\Delta_{M-1,-}^{-1}&\Delta_{M-1,-}^{-1}&0\\
 0&0&0&\cdots&0&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}
 \end{pmatrix}_{M\times M}\label{eq:L-1} \\
-L_1^{-} &\equiv \begin{pmatrix}
+L_{1-} &\equiv \begin{pmatrix}
 -\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&0&\dots&0&0&0\\
 0&-\Delta_{2,+}^{-1}&\Delta_{2,+}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
@@ -218,16 +218,16 @@ B_{M}  &\equiv \begin{pmatrix}
 For regular grids with the uniform distance of $\Delta > 0$, \eqref{eq:L-1-regular} and \eqref{eq:L-2-regular} can be represented by
 
 \begin{align}
-L_1^{-} &= \dfrac{1}{\Delta} U_1^{-} - B_1 \\
-L_1^{+} &= \dfrac{1}{\Delta} U_1^{+} + B_{M} \\
+L_{1-} &= \dfrac{1}{\Delta} U_1^{-} - B_1 \\
+L_{1+} &= \dfrac{1}{\Delta} U_1^{+} + B_{M} \\
 L_2 &= \dfrac{1}{\Delta^2} (U_1^+ - U_1^-) + B_1 + B_{M}
 \end{align}
 
 \subsubsection{Irregular grids}
 For notational brevity, for vectors with the same size, $x_1, x_2$, define $x_1 x_2$ as the elementwise-multiplied vector. Then, we have
 \begin{align}
-L_1^{-} &= \text{diag}(\Delta_{-} )^{-1} U_1^{-} - B_1 \\
-L_1^{+} &= \text{diag}(\Delta_{+} )^{-1} U_1^{+} + B_{M} \\
+L_{1-} &= \text{diag}(\Delta_{-} )^{-1} U_1^{-} - B_1 \\
+L_{1+} &= \text{diag}(\Delta_{+} )^{-1} U_1^{+} + B_{M} \\
 L_2 &= \text{diag} \left[ \frac{1}{2} ( \Delta_+ + \Delta_- ) \Delta_+ \right]^{-1}  U_1^{+} - 
  \text{diag} \left[ \frac{1}{2} ( \Delta_+ + \Delta_- ) \Delta_- \right]^{-1}  U_1^{-} 
 + B_1 + B_{M} 
