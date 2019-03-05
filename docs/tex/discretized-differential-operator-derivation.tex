@@ -362,13 +362,13 @@ where
 
 By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\partial_{x}$ ($L_{1+}$), $\partial_{xx}$ ($L_2$) on some grids of length $M$, $\{x_i\}_{i=1}^M$:
 \begin{align}\label{eq:L-descritized-defn}
-\mathbf{L} = \mu L_{1+} + \dfrac{\sigma^2}{2} L_{2}
+L = \mu L_{1+} + \dfrac{\sigma^2}{2} L_{2}
 \end{align}
 so that $v$ from \eqref{eq:hjbe-system-function} can be computed by solving the following discretized system of equations:
 \begin{align}
-(\rho \mathbf{I} - \mathbf{L}) \mathbf{v} &= \mathbf{r^*} 
+(\rho I - L) v &= r^*
 \end{align}
-where $\mathbf{v}$ and $\mathbf{r^*}$ are $M$-vectors whose $i$th elements are $v(x_i)$ and $r^*(x_i)$, respectively.
+where $v$ and $r^*$ are $M$-vectors whose $i$th elements are $v(x_i)$ and $r^*(x_i)$, respectively.
 
 
 
@@ -401,16 +401,16 @@ where
 By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $L$. Note that the operator for the KFE in \eqref{eq:L_star-defn} is the adjoint operator of the operator for the HJBE in \eqref{eq:L-defn}, and the correct discretization scheme for \eqref{eq:L_star-defn} can be, analogously, done by taking the transpose of the discretized operator for HJBE in \eqref{eq:L-descritized-defn} \cite{gabaix16}. Hence, one can find the stationary distribution by solving the following discretized system of equations:
 
 \begin{equation}
-\mathbf{L}^T \mathbf{g} = 0 
+L^T g = 0 
 \end{equation}
-where $\mathbf{L}^T$ is the transpose of $\mathbf{L}$ from \eqref{eq:L-descritized-defn} and $\mathbf{g}$ is an $M$-vector whose element is $g(x_i)$ such that $\sum_{i=1}^M g(x_i) = 1$.
+where $L^T$ is the transpose of $L$ from \eqref{eq:L-descritized-defn} and $g$ is an $M$-vector whose element is $g(x_i)$ such that $\sum_{i=1}^M g(x_i) = 1$.
 
 \subsubsection{Full dynamics of distributions}
 One can also solve the full PDE in \eqref{eq:kfe}, given an initial distribution $g(x, 0)$. After discretization, note that \eqref{eq:kfe} can be rewritten as
 \begin{equation}\label{eq:kfe-discretized}
-\dot{\mathbf{g}}(t) = \mathbf{L}^T \mathbf{g}(t)
+\dot{g}(t) = L^T g(t)
 \end{equation}
-where $\dot{\mathbf{g}}(t)$ is an $M$-vector whose $i$th element is $\partial_{t} g(x_i, t)$, which can be efficently solved by a number of differential equation solvers available in public, including \cite{rackauckas17}.
+where $\dot{g}(t)$ is an $M$-vector whose $i$th element is $\partial_{t} g(x_i, t)$, which can be efficently solved by a number of differential equation solvers available in public, including \cite{rackauckas17}.
 
 \newpage
 \bibliography{hact}
