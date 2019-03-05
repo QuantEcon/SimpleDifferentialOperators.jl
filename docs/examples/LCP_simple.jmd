@@ -1,216 +1,147 @@
 Optimal Stopping Problems
 ===============================
 
-> Arnav Sood (`arnav.sood@ubc.ca`). We borrow heavily from [Ben Moll's notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf) on this subject, as well as [Jesse Perla's](https://github.com/econtoolkit/continuous_time_methods/blob/master/optimal_stopping.pdf).
+> Presented by Arnav Sood (`arnav.sood@ubc.ca`).
 
-## Introduction
+### Introduction
 
-An optimal stopping problem is a problem that requires an agent to choose an optimal stopping time in order to maximize (or minimize) some value.
+We are given:
 
-An simple example is choosing the optimal shut-down time of a factory. Given a state variable ``x_t``, continuing the plant's operations at time ``t`` gives profit ``u(x_t)`` (discounted by ``e^{-\rho t}``, with discount factor ``\rho``). Shutting down the plant (at time ``t = \tau``) stops the profit stream, but yields a one-time payoff of ``S(x_{\tau})``. We can interpret this as the value of liquidating the plant's assets and equipment.
+* A stochastic process ``x``, with [infinitesimal generator](https://en.wikipedia.org/wiki/Infinitesimal_generator_(stochastic_processes)) ``\mathscr{A}``.
 
-A standard case is where ``x_t`` follows a Brownian diffusion
+* Flow utility ``u(x)`` and a discount rate ``\rho > 1``.
 
-```math
-  x_t = \mu(x_t)dt + \sigma(x_t)dW_t
-```
+* A function ``S(x)`` which gives the value of stopping at state ``x``. The goal is to choose an optional stopping point ``\hat{x}``.
 
-To ensure that the plant will eventually shut down, we consider the case where ``\mu(x) < 0`` for all ``x`` (assuming that profits ``u(\cdot)`` are monotone in the state ``x_t``.)
+For more detail, see [here](https://github.com/econtoolkit/continuous_time_methods/blob/master/optimal_stopping.pdf).
 
-We can consolidate the above into the following optimization problem over the stopping time ``\tau``
+### Classical Formulation
 
-```math
-  v(x) = \max_{\tau}\mathbb{E}_0\int_{0}^{\tau}e^{-\rho t} u(x_t)dt + e^{-\rho \tau}S(x_{\tau}),\hspace{1cm} dx_t = \mu(x_t)dt+\sigma(x_t)dt
-```
-
-## Hamilton-Jacobi-Bellman (HJB) Variational Inequality
-
-For values of ``x`` such that the plant does not exit, we can recursively formulate the problem as
+The "classical" formulation (see, e.g., [Stokey's book](https://press.princeton.edu/titles/8766.html)) of this problem is as a free-boundary problem:
 
 ```math
-  \rho v(x) = u(x) + \mu(x)v'(x) + \frac{\sigma^2(x)}{2}v''(x)
+\rho v(x) &= u(x) + \mathscr{A} v(x) \\
+v(\hat{x}) &= S(\hat{x}) \hspace{5 em} \\
+v'(\hat{x}) &= 0
 ```
 
-If the HJB equation above is unfamiliar, [Stokey and Lucas](http://www.hup.harvard.edu/catalog.php?isbn=9780674750968) is a good reference.
+Crucially, equations (2) and (3) are _imposed conditions_ required for a valid solution.
 
-Define ``X`` to be the set of ``x`` for which there is no exit. Then
+These are commonly called the "value matching" and "smooth pasting" conditions, respectively.
 
-``x \in X: v(x)\geq S(x)\hspace{1cm} `` (i.e the value of not exiting, ``v(x)``, is at least as great as the value of exiting ``S(x)``)
+## HJB Variational Inequality
 
-``x \notin X: v(x) = S(x)\hspace{1cm}`` (i.e. the maximum possible value, ``v(x)``, is the value of choosing to exit, ``S(x)``)
+Another approach is to write the problem as a [variational inequality](https://en.wikipedia.org/wiki/Variational_inequality).
 
-That is, the partition of ``\mathbb{R}`` into ``X`` and its complement is basically a [Dedekind cut](https://en.wikipedia.org/wiki/Dedekind_cut).
+The advantage is that the VM and SP conditions are baked into the problem.
 
-This then leads to:
-
-``x\in X: v(x)\geq S(x), \rho v(x) = u(x)+\mu(x)v'(x) +\frac{\sigma^2(x)}{2}v''(x)``
-
-``x\notin X: v(x) = S(x), \rho v(x) \geq u(x)+\mu(x)v'(x) +\frac{\sigma^2(x)}{2}v''(x)``
-
-This can be written compactly as a HJB variational inequality:
+That is:
 
 ```math
-  \min\{\rho v(x) - u(x)-\mu(x)v'(x) -\frac{\sigma^2(x)}{2}v''(x), v(x) - S(x)\} = 0
+0 = \min\{\rho v(x) - u(x) - \mathscr{A} v(x), v(x) - S(x)\}
 ```
 
-## Solving the HJBVI as a Linear Complementarity Problem
+### Discretization
 
-We can discretize the VI above as
+The next step is to discretize the problem to make it practicable for a computer.
+
+The results of this process are below; for the details, see the [document](https://quantecon.github.io/SimpleDifferentialOperators.jl/dev/generated/discretized-differential-operator-derivation.pdf) in this repository.
 
 ```math
-  \rho v_i^n = u_i + \mu_i(v_i^n)' + \frac{\sigma^2_i}{2}(v_i^n)''
+0 = \min\{\rho v - u - A v, v - S\}
 ```
 
-Following the math at [the PDF](discretized-differential-operator-derivation.pdf), we can write this as
+where these quantities are now vectors of size ``n``.
+
+### LCP Formulation
+
+It happens that the inequality above can be written as a [linear complementarity problem](https://en.wikipedia.org/wiki/Linear_complementarity_problem).
+
+Define:
 
 ```math
-  \rho v = u + \mu L_{1-}v + \frac{\sigma^2_i}{2}L_{2}v
+B &\equiv \rho I - A \\
+z &\equiv v - S \\
+q &\equiv -u + BS \\
+w &\equiv Bz + q
 ```
 
-where we've dropped the explicit vector sub/superscripts for simplicity.
+where ``I`` is the ``n \times n`` identity matrix.
 
-Note that the move to the discrete setup requires decisions about boundary conditions. These are addressed in the package's documentation.
-
-Combining terms, we can equivalently write the above as
+Substituting into (5) yields:
 
 ```math
- \rho v = u + Av
+0 = \min \{Bz + q, z\}
 ```
 
-where ``A`` is now simply the "differential operator," or the problem's "stochastic generator."
-
-Hence we can rewrite the earlier HJBVI in discretized form:
+We can represent these as complementary slackness conditions:
 
 ```math
-  \min\{\rho v - u - Av, v- S\} = 0
+z^T (Bz + q) &= 0 \\
+z &\geq 0 \\
+Bz + q &\geq 0
 ```
 
-It can be shown that this problem is synonymous with
+Note that the first condition requires that at most one of ``z[i]`` or ``(Bz + q)[i]`` is nonzero ``\forall i \in \{1, 2, ... n\}``.
+
+We can also express these succinctly using the complementarity constraints:
 
 ```math
-  (v-S)^T(\rho v - u - Av) &= 0 \\
-  v &\geq S \\
-  \rho v - u - Av &\geq 0 \\
+0 \leq (Bz + q) \perp z \geq 0
 ```
 
-Noting the form of a linear complementarity problem (LCP) in the appendix, we can rewrite the above problem as follows
-
-Denote the "excess value" ``z =  v - S``, ``B = \rho I - A``, and ``q = -u + BS``.
-
-Then problem can be written as:
+If the choice of solver requires a slack variable, we can use the ``w`` defined earlier:
 
 ```math
-  z^T(Bz + q) &= 0 \\
-  z &\geq 0 \\
-  Bz+q &\geq  0 \\
+0 \leq w \perp z \geq 0
 ```
 
-This is the standard form for LCPs (as denoted in the appendix). We can thus proceed to solve this problem, obtaining a solution ```z``, using a LCP solver. From there, we can obtain a solution to our original problem ``v = z + S``.
+### Implementation
 
-## Implementation
-
-### Setup
-
-We are given an optimal stopping problem:
-
-```math
-  v(x) = \max_{\tau}\mathbb{E}_0\int_{0}^{\tau}e^{-\rho t} u(x_t)dt + e^{-\rho \tau}S(x_{\tau}),\hspace{1cm} dx_t = \mu(x_t)dt+\sigma(x_t)dt
-```
-
-where the parameters of the stochastic process, discount factor, utility, and stopping-value are:
-
-```math
- \mu(x) &= -0.01x \\
- \sigma^2(x) &= (0.01x)^2 \\
- S(x) &= 10 \\
- u(x) &= x^0.5 \\
- \rho &= 0.05 \\
-```
-
-We will also discretize the problem on the interval ``[0.01, 5.0]`` utilizing 300 grid points, with reflecting boundaries.
-
-The solver we choose is [`PATHSolver.jl`](https://github.com/chkwon/PATHSolver.jl), which is the least-headache option for small (``n < 300``) problems.
-
-To install it (along with the other dependencies), simply run
+First, we install and load necessary packages. The key one is the [`PATHSolver.jl`](https://github.com/chkwon/PATHSolver.jl) package for complementarity problems.
 
 ```julia
-  using Pkg
-  pkg"add PATHSolver Parameters Plots Suppressor"
+using Pkg
+
+# uncomment line below to add dependencies for local use
+# pkg"add PATHSolver Plots Suppressor"
+pkg"activate ../.." # activates the package
+
+using SimpleDifferentialOperators
+using PATHSolver, Plots, LinearAlgebra, Suppressor
 ```
 
-on your macOS or Windows machine. To load them, use
+Next, define the problem and set up our grid:
 
 ```julia
-  using PATHSolver, Parameters, Plots, LinearAlgebra, Suppressor
+u(x) = x^(0.5) # flow utility
+S(x) = 10. # stopping value
+ρ = 0.05 # discount factor
+
+M = 300
+x = range(0., 5., length = M) # grid
 ```
 
-We also need to use the actual package
+Define LCP objects, solve the problem, and inspect the solution:
 
 ```julia
-  pkg"activate ../.."
-  using SimpleDifferentialOperators
+  bc = (Reflecting(), Reflecting())
+  L = -0.01*L₁₋(x, bc) + (0.01^2 / 2)*L₂(x, bc) # for μ = -0.01, σ = 0.01 in the discretization PDF.
+
+  B = ρ*I - L # (eq:6)
+  q = -u.(x) + B*S.(x) # (eq:8)
+  f(z) = B*z + q # (eq:9)
+
+  lb = zeros(M)
+  ub = 300*ones(M)
+  @time code, sol, sol_f = @suppress solveLCP(f, lb, ub);
+
+  v = sol + S.(x)
+  plot(v, title = "Value Function for Optimal Stopping", legend = false, ylabel = "v(x)")
 ```
 
-Let's codify the model's parameters
+### References
 
-```julia
-StoppingProblem = @with_kw (μ_bar = -0.01,
-                          σ_bar = 0.01,
-                          S_bar = 10.0,
-                          γ = 0.5, # u(x) = x^γ
-                          ρ = 0.05, # discount rate
-                          x_min = 0.01,
-                          x_max = 5.0,
-                          M = 300) # num of grid points
-```
+* Huang, J. and J.-S. Pang (1998): "Option Pricing and Linear Complementarity," Journal of Computational Finance. Citeseer.
 
-### Solution
-
-Let's turn this into an LCP
-
-```julia
-function LCP_objects(sp)
-  # setup
-    @unpack μ_bar, σ_bar, S_bar, γ, ρ, x_min, x_max, M = sp
-    grid = range(x_min, x_max, length = M)
-    μ = μ_bar
-    S(x) = S_bar
-    u(x) = x^γ
-    σ = σ_bar
-  # construct operator
-    A = μ * L₁₋(grid, (Reflecting(), Reflecting())) + σ^2/2 * L₂(grid, (Reflecting(), Reflecting()))
-  # construct/return LCP objects
-    B = ρ*I - A
-    S_vec = S.(grid)
-    q_vec = -u.(grid) + B*S_vec
-    return (A = A, B = B, S = S_vec, q = q_vec)
-end
-```
-
-For the default case, we have
-
-```julia
-sp = StoppingProblem();
-@unpack A, B, S, q = LCP_objects(sp);
-```
-
-Handing it to the solver
-
-```julia
-f = z -> B*z + q
-n = sp.M
-lb = zeros(n)
-ub = 300*ones(n) # a reasonable guess?
-options(convergence_tolerance = 1e-12, output = :no, time_limit = 600) # 10 minute budget
-@time exit_code, sol_z, sol_f = @suppress solveLCP(f, lb, ub) # this is slower than in practice, because of choices to prioritize clarity over speed
-```
-
-All that's left is to inspect the solution
-
-```julia
-using Plots
-v = sol_z + S
-plot(v, title = "Value Function for Vanilla Model", legend = false, xlabel = "x", ylabel = "v(x)")
-```
-
-which passes a sanity check (i.e., monotone with a threshold).
+* Ben Moll's [excellent notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf). 
