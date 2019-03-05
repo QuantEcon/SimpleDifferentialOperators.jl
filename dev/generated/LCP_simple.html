@@ -788,7 +788,7 @@ div.title {text-align: center;}
 
 <pre class='hljl'>
 <span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>Pkg</span><span class='hljl-t'>
-  </span><span class='hljl-so'>pkg&quot;add PATHSolver Parameters Plots&quot;</span>
+  </span><span class='hljl-so'>pkg&quot;add PATHSolver Parameters Plots Suppressor&quot;</span>
 </pre>
 
 
@@ -807,7 +807,7 @@ Updating registry at &#96;C:\Users\Arnav Sood\.julia\registries\General&#96;
 
 
 <pre class='hljl'>
-<span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>PATHSolver</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>Parameters</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>Plots</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>LinearAlgebra</span>
+<span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>PATHSolver</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>Parameters</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>Plots</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>LinearAlgebra</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>Suppressor</span>
 </pre>
 
 
@@ -886,138 +886,12 @@ LCP_objects &#40;generic function with 1 method&#41;
 </span><span class='hljl-n'>lb</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>zeros</span><span class='hljl-p'>(</span><span class='hljl-n'>n</span><span class='hljl-p'>)</span><span class='hljl-t'>
 </span><span class='hljl-n'>ub</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>300</span><span class='hljl-oB'>*</span><span class='hljl-nf'>ones</span><span class='hljl-p'>(</span><span class='hljl-n'>n</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-cs'># a reasonable guess?</span><span class='hljl-t'>
 </span><span class='hljl-nf'>options</span><span class='hljl-p'>(</span><span class='hljl-n'>convergence_tolerance</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>1e-12</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>output</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-sc'>:no</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>time_limit</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>600</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-cs'># 10 minute budget</span><span class='hljl-t'>
-</span><span class='hljl-nd'>@time</span><span class='hljl-t'> </span><span class='hljl-n'>exit_code</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>sol_z</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>sol_f</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>solveLCP</span><span class='hljl-p'>(</span><span class='hljl-n'>f</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>lb</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>ub</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-cs'># this is slower than in practice, because of choices to prioritize clarity over speed</span>
+</span><span class='hljl-nd'>@time</span><span class='hljl-t'> </span><span class='hljl-n'>exit_code</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>sol_z</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>sol_f</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nd'>@suppress</span><span class='hljl-t'> </span><span class='hljl-nf'>solveLCP</span><span class='hljl-p'>(</span><span class='hljl-n'>f</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>lb</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>ub</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-cs'># this is slower than in practice, because of choices to prioritize clarity over speed</span>
 </pre>
 
 
 <pre class="output">
-Reading options file path.opt
- &gt; convergence_tolerance 1.0e-12
-Read of options file complete.
-
-convergence_tolerance 1e-012
-major_iteration_limit 500
-minor_iteration_limit 1000
-crash_iteration_limit 50
-cumulative_iteration_limit 10000
-time_limit 600
-interrupt_limit 5
-chen_lambda 0.8
-output no
-output_errors no
-output_warnings no
-output_major_iterations no
-output_major_iterations_frequency 1
-output_minor_iterations no
-output_minor_iterations_frequency 500
-output_crash_iterations no
-output_crash_iterations_frequency 1
-output_initial_point no
-output_initial_statistics no
-output_initial_point_statistics no
-output_initial_scaling_statistics no
-output_final_point no
-output_final_statistics no
-output_final_point_statistics no
-output_final_scaling_statistics no
-output_final_degeneracy_statistics no
-output_final_summary no
-output_maximum_zero_log 10
-output_maximum_zero_listing 1000
-output_restart_log no
-output_options no
-presolve yes
-output_presolve_level 0
-gradient_step_limit 5
-gradient_searchtype arc
-crash_method pnewton
-crash_perturb yes
-crash_searchtype line
-crash_minimum_dimension 1
-crash_nbchange_limit 1
-nms yes
-nms_memory_size 10
-nms_mstep_frequency 10
-nms_initial_reference_factor 20
-nms_searchtype line
-nms_maximum_watchdogs 5
-proximal_perturbation 0
-merit_function fischer
-crash_merit_function fischer
-lemke_start automatic
-lemke_start_type slack
-lemke_rank_deficiency_iterations 10
-output_linear_model no
-300 row/cols, 898 non-zeros, 1.00&#37; dense.
-
-Path 4.7.03 &#40;Fri May 30 15:09:14 2014&#41;
-Written by Todd Munson, Steven Dirkse, and Michael Ferris
-  ** WARNING **
-Basis modifications: 300
-
-INITIAL STATISTICS
-Inf-Norm of Complementarity . .  1.7303e&#43;000 eqn: &#40;f&#91;  300&#93;&#41;
-Inf-Norm of Normal Map. . . . .  1.7361e&#43;000 eqn: &#40;f&#91;  300&#93;&#41;
-Inf-Norm of Minimum Map . . . .  1.7361e&#43;000 eqn: &#40;f&#91;  300&#93;&#41;
-Inf-Norm of Fischer Function. .  3.4621e&#43;000 eqn: &#40;f&#91;  300&#93;&#41;
-Inf-Norm of Grad Fischer Fcn. .  7.9340e&#43;000 eqn: &#40;f&#91;  300&#93;&#41;
-Two-Norm of Grad Fischer Fcn. .  4.3052e&#43;001
-
-INITIAL POINT STATISTICS
-Maximum of X. . . . . . . . . .  0.0000e&#43;000 var: &#40;x&#91;    1&#93;&#41;
-Maximum of F. . . . . . . . . .  1.7361e&#43;000 eqn: &#40;f&#91;  300&#93;&#41;
-Maximum of Grad F . . . . . . .  1.0082e&#43;000 eqn: &#40;f&#91;    2&#93;&#41;
-                                            var: &#40;x&#91;    2&#93;&#41;
-
-INITIAL JACOBIAN NORM STATISTICS
-Maximum Row Norm. . . . . . . .  1.9665e&#43;000 eqn: &#40;f&#91;    2&#93;&#41;
-Minimum Row Norm. . . . . . . .  4.0904e-001 eqn: &#40;f&#91;    1&#93;&#41;
-Maximum Column Norm . . . . . .  1.9665e&#43;000 var: &#40;x&#91;    2&#93;&#41;
-Minimum Column Norm . . . . . .  1.0082e&#43;000 var: &#40;x&#91;    1&#93;&#41;
-
-Crash Log
-major  func  diff  size  residual    step       prox   &#40;label&#41;
-    0     0             3.8804e&#43;001             0.0e&#43;000 &#40;f&#91;  300&#93;&#41;
-    1     1   285   285 4.1585e-014  1.0e&#43;000    0.0e&#43;000 &#40;f&#91;  299&#93;&#41;
-
-Major Iteration Log
-major minor  func  grad  residual    step  type prox    inorm  &#40;label&#41;
-    0     0     2     2 4.1585e-014           I 0.0e&#43;000 9.3e-015 &#40;f&#91;  299&#93;
-&#41;
-
-FINAL STATISTICS
-Inf-Norm of Complementarity . .  2.8366e-013 eqn: &#40;f&#91;  276&#93;&#41;
-Inf-Norm of Normal Map. . . . .  9.3259e-015 eqn: &#40;f&#91;  299&#93;&#41;
-Inf-Norm of Minimum Map . . . .  7.1054e-015 eqn: &#40;f&#91;  153&#93;&#41;
-Inf-Norm of Fischer Function. .  9.3259e-015 eqn: &#40;f&#91;  299&#93;&#41;
-Inf-Norm of Grad Fischer Fcn. .  1.0069e-014 eqn: &#40;f&#91;  275&#93;&#41;
-Two-Norm of Grad Fischer Fcn. .  5.9907e-014
-
-FINAL POINT STATISTICS
-Maximum of X. . . . . . . . . .  3.3786e&#43;001 var: &#40;x&#91;  300&#93;&#41;
-Maximum of F. . . . . . . . . .  4.0000e-001 eqn: &#40;f&#91;    1&#93;&#41;
-Maximum of Grad F . . . . . . .  1.0082e&#43;000 eqn: &#40;f&#91;    2&#93;&#41;
-                                            var: &#40;x&#91;    2&#93;&#41;
-
-FINAL JACOBIAN NORM STATISTICS
-Maximum Row Norm. . . . . . . .  1.9665e&#43;000 eqn: &#40;f&#91;    2&#93;&#41;
-Minimum Row Norm. . . . . . . .  4.0904e-001 eqn: &#40;f&#91;    1&#93;&#41;
-Maximum Column Norm . . . . . .  1.9665e&#43;000 var: &#40;x&#91;    2&#93;&#41;
-Minimum Column Norm . . . . . .  1.0082e&#43;000 var: &#40;x&#91;    1&#93;&#41;
-
-FINAL DEGENERACY STATISTICS
-Total Degenerates . . . . . . .  0
-
- ** EXIT - solution found.
-
-Major Iterations. . . . 0
-Minor Iterations. . . . 0
-Restarts. . . . . . . . 0
-Crash Iterations. . . . 1
-Gradient Steps. . . . . 0
-Function Evaluations. . 2
-Gradient Evaluations. . 2
-Basis Ti  1.605028 seconds &#40;3.35 M allocations: 170.129 MiB, 6.07&#37; gc time&#41;
+1.331489 seconds &#40;3.39 M allocations: 172.194 MiB, 5.85&#37; gc time&#41;
 &#40;:Solved, &#91;0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0  …  33.1149, 33
 .1923, 33.2695, 33.3466, 33.4236, 33.5004, 33.577, 33.6528, 33.7258, 33.785
 8&#93;, &#91;0.4, 0.336632, 0.291726, 0.254915, 0.222952, 0.194313, 0.168136, 0.143
