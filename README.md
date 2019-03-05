@@ -35,7 +35,7 @@ and the Bellman equation can then be written as
 ![Bellman with Operator](https://quicklatex.com/cache3/96/ql_1df64101bb60cb16eb8b0c759b0de496_l3.png)
 
 
-This package provides components to discretize these sorts of `L` operators.  Solving
+This package provides components to discretize differential operators.  To implement directly,
 
 ```
 using SimpleDifferentialOperators, LinearAlgebra
@@ -43,15 +43,14 @@ f(x) = x^2
 μ = -0.1 # constant negative drift
 σ = 0.1
 ρ = 0.05
-M = 100 # size of grid
-x = range(0.0, 1.0, length = M) # grid
+x = range(0.0, 1.0, length = 100)
 
 # discretize L = ρ - μ D_x - σ^2 / 2 D_xx
 # subject to reflecting barriers at 0 and 1
 bc = (Reflecting(), Reflecting())
 L = I * ρ - μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)
 ## solve the value function
-v_bc = L \ f.(x) 
+v = L \ f.(x) 
 ```
 
 ## Documentation
