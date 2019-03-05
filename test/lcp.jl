@@ -1,3 +1,6 @@
+# Seed
+Random.seed!(42) # in case solvers use stochastic algorithms
+
 # Setup
 StoppingProblem = @with_kw (μ_bar = -0.01,
                           σ_bar = 0.01,
@@ -60,7 +63,7 @@ function LCP_split(S)
     M = 300
     x = range(-5., 5., length = M)
     bc = (Reflecting(), Reflecting())
-    L₁ = Diagonal(min.(μ.(x), 0.0) .* L₁₋(x, bc) + max.(μ.(x), 0.0) .* L₁₊(x, bc))
+    L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋(x, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊(x, bc)
   # operator construction
     A = L₁+ σ^2/2 * L₂(x, bc)
   # LCP stuff
@@ -82,10 +85,11 @@ end
   exit_code, sol_z, sol_f = @suppress solveLCP(f, lb, ub);
 
   # tests
-  @test exit_code == :Solved
-  @test sol_z[3] ≈ 0.03915227011427162
-  @test sol_z[270] ≈ 0.007833724207485097
-  @test sol_f[end-1] ≈ 8.881784197001252e-16
+  @test exit_code == :StationaryPointFound
+  @test sol_z[3] ≈ 8.774937148286833
+  @test sol_z[120] ≈ 0.3021168981772892
+  @test sol_z[270] ≈ 5.729541001488482
+  @test sol_f[end-1] ≈ 3.197442310920451e-14
 end
 
 @testset "Split Case, Zero S" begin
@@ -100,9 +104,9 @@ end
 
   # tests
   @test exit_code == :Solved
-  @test sol_z[3] ≈ 0.1641522701142716
-  @test sol_z[76] ≈ 0.08250184588533759
-  @test sol_z[150] ≈ 0.0014406183462467139
-  @test sol_z[269] ≈ 0.13171521236451783
-  @test sol_f[123] ≈ -2.220446049250313e-16
+  @test sol_z[3] ≈ 8.888461348456772
+  @test sol_z[76] ≈ 2.279767804635279
+  @test sol_z[150] ≈ 0.005770703117189083
+  @test sol_z[269] ≈ 5.744079221450249
+  @test sol_f[123] ≈ 1.7763568394002505e-15
 end
