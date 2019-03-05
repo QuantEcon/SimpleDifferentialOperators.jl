@@ -11,10 +11,10 @@ Mixed Boundary Values
 Under $M$-length of grids on $v$ with end points $x_{\min} < x_{\max}$ with mixed boundary value conditions of
 
 ```math
-\begin{align}
+```math
 \underline{\xi} v(x_{\min}) + \nabla v(x_{\min}) &= 0\\
 \overline{\xi} v(x_{\max}) + \nabla v(x_{\max}) &= 0
-\end{align}
+```
 ```
 
 Note that this can be extended to reflecting boundary conditions by assigning $\underline{\xi} = 0$ and $\overline{\xi} = 0$. We use the following discretization schemes:
