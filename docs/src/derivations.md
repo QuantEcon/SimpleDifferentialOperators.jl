@@ -16,7 +16,7 @@ Under ``M``-length of grids on ``v`` with end points ``x_{\min} < x_{\max}`` wit
 Note that this can be extended to reflecting boundary conditions by assigning $\underline{\xi} = 0$ and $\overline{\xi} = 0$. We use the following discretization schemes:
 
 ```math
-L_1^{-} \equiv \frac{1}{\Delta}\begin{pmatrix}
+L_{1-} \equiv \frac{1}{\Delta}\begin{pmatrix}
 1 - (1 + \underline{\xi} \Delta) &0&0&\dots&0&0&0\\
 -1&1&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
@@ -26,7 +26,7 @@ L_1^{-} \equiv \frac{1}{\Delta}\begin{pmatrix}
 ```
 
 ```math
-L_1^{+} \equiv \frac{1}{\Delta}\begin{pmatrix}
+L_{1+} \equiv \frac{1}{\Delta}\begin{pmatrix}
 -1&1&0&\dots&0&0&0\\
 0&-1&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
