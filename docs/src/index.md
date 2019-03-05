@@ -17,7 +17,7 @@ Consider solving for `v` from the following equation:
 
 for some constant $\rho, \sigma > 0$ and $\mu \leq 0$. To solve `v` on `M`-size discretized grids, one can run the following code:
 ```julia
-# import LinearAlgebra package (for identity matrices)
+# import LinearAlgebra package (for diagonal and identity matrices)
 using LinearAlgebra 
 # setup 
 f(x) = x^2 
@@ -71,7 +71,7 @@ x = range(-1.0, 1.0, length = 100)
 bc = (Reflecting(), Reflecting())
 
 # Define first order differential operator using upwind scheme
-L₁ = min.(μ.(x), 0.0) .* L₁₋(x, bc) + max.(μ.(x), 0.0) .* L₁₊(x, bc)
+L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋(x, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊(x, bc)
 
 # Define linear operator using upwind schemes
 L = I * ρ - L₁ - σ^2 / 2 * L₂(x,bc)
