@@ -1,4 +1,4 @@
-Formula
+Derivations
 ==========
 Under ``M``-length of grids on ``v`` with end points ``x_{\min} < x_{\max}`` with reflecting barrier conditions of
 

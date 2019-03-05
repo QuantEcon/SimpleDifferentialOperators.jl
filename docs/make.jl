@@ -4,9 +4,9 @@ using Documenter, SimpleDifferentialOperators
 makedocs(sitename = "SimpleDifferentialOperators.jl",
 	pages = [
         "index.md",
-        "formula.md",
-        "api.md",
-		"notebooks.md"
+        "notebooks.md",
+        "derivations.md",
+        "api.md"
     ],
 	doctest = :fix)
 
