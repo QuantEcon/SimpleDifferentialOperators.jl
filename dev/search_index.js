@@ -21,7 +21,7 @@ var documenterSearchIndex = {"docs": [
     "page": "﻿Installation",
     "title": "Usage",
     "category": "section",
-    "text": "Consider solving for v from the following equation:rho v(x) = f(x) + mu partial_x v(x) + fracsigma^22 partial_xx v(x)for some constant rho sigma  0 and mu leq 0. To solve v on M-size discretized grids, one can run the following code:# import LinearAlgebra package (for diagonal and identity matrices)\nusing LinearAlgebra \n# setup \nf(x) = x^2 \nμ = -0.1 # constant negative drift\nσ = 0.1\nρ = 0.05\nM = 100 # size of grid\nx = range(0.0, 1.0, length = M) # grid\n\n# discretize L = ρ - μ D_x - σ^2 / 2 D_xx\n# subject to reflecting barriers at 0 and 1\nbc = (Reflecting(), Reflecting())\nL = I * ρ - μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)\n## solve the value function\nv_bc = L \\ f.(x) Note that the code above uses differential operators with reflecting boundary conditions applied.  One can alternatively use differential operators on interior nodes and stack them with matrices for boundary conditions to compute v:# operators without boundary conditions, adding extra two rows for boundary conditions\n## differential operators on extended nodes\nA = μ*L̄₁₋(x) + σ^2 / 2 * L̄₂(x)\n## matrix for boundary conditions\nB = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]]) \n## stack them together\nL = [([zeros(M) Diagonal(ones(M,M)) zeros(M)] * 0.05 - A); B] \n## solve the value function with reflecting barrier bc (last two elements)\nv_bar = L \\ [f.(x); 0.0; 0.0] \n## extract the interior (is identical with `v_bc` above)\nv_interior = v_bar[2:end-1] "
+    "text": "Consider solving for v from the following equation by the Hamilton-Jacobi-Bellman equation (HJBE):rho v(x) = f(x) + mu partial_x v(x) + fracsigma^22 partial_xx v(x)for some constant rho sigma  0 and mu leq 0. To solve v on M-size discretized grids, one can run the following code:# import LinearAlgebra package (for diagonal and identity matrices)\nusing LinearAlgebra \n# setup \nf(x) = x^2 \nμ = -0.1 # constant negative drift\nσ = 0.1\nρ = 0.05\nM = 100 # size of grid\nx = range(0.0, 1.0, length = M) # grid\n\n# discretize L = ρ - μ D_x - σ^2 / 2 D_xx\n# subject to reflecting barriers at 0 and 1\nbc = (Reflecting(), Reflecting())\nL = I * ρ - μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)\n## solve the value function\nv_bc = L \\ f.(x) Note that the code above uses differential operators with reflecting boundary conditions applied.  One can alternatively use differential operators on interior nodes and stack them with matrices for boundary conditions to compute v:# operators without boundary conditions, adding extra two rows for boundary conditions\n## differential operators on extended nodes\nA = μ*L̄₁₋(x) + σ^2 / 2 * L̄₂(x)\n## matrix for boundary conditions\nB = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]]) \n## stack them together\nL = [([zeros(M) Diagonal(ones(M,M)) zeros(M)] * 0.05 - A); B] \n## solve the value function with reflecting barrier bc (last two elements)\nv_bar = L \\ [f.(x); 0.0; 0.0] \n## extract the interior (is identical with `v_bc` above)\nv_interior = v_bar[2:end-1] "
 },
 
 {
@@ -29,7 +29,23 @@ var documenterSearchIndex = {"docs": [
     "page": "﻿Installation",
     "title": "Examples",
     "category": "section",
-    "text": "One can also deploy upwind schemes when drift variable is not constant. Consider solving for v from the following equation:rho v(x) = f(x) + mu(x) partial_x v(x) + fracsigma^22 partial_xx v(x)for some constant rho sigma  0 and mu(x) = -x. Note that mu(x) depends on states. The following code will solve v using upwind schemes:# setup \nf(x) = x^2 \nμ(x) = -x # drift depends on state\nσ = 0.1\nρ = 0.05\nM = 100 # size of grid\nx = range(-1.0, 1.0, length = 100)\n\nbc = (Reflecting(), Reflecting())\n\n# Define first order differential operator using upwind scheme\nL₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋(x, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊(x, bc)\n\n# Define linear operator using upwind schemes\nL = I * ρ - L₁ - σ^2 / 2 * L₂(x,bc)\n\n# solve the value function\nv_bc = L \\ f.(x) "
+    "text": ""
+},
+
+{
+    "location": "#Solving-HJBE-with-state-dependent-drift-variables-1",
+    "page": "﻿Installation",
+    "title": "Solving HJBE with state-dependent drift variables",
+    "category": "section",
+    "text": "One can also deploy upwind schemes when drift variable is not constant. Consider solving for v from the following Bellman equation:rho v(x) = f(x) + mu(x) partial_x v(x) + fracsigma^22 partial_xx v(x)associated with the diffusion processdx = mu(x) dt + sigma dWfor some constant rho sigma  0 and mu(x) = -x. Note that mu(x) depends on states. The following code will solve v using upwind schemes:# setup \nf(x) = x^2 \nμ(x) = -x # drift depends on state\nσ = 1.0\nρ = 0.05\nM = 100 # size of grid\nx = range(-1.0, 1.0, length = 100)\n\nbc = (Reflecting(), Reflecting())\n\n# Define first order differential operator using upwind scheme\nL₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋(x, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊(x, bc)\n\n# Define linear operator using upwind schemes\nL = L₁ - σ^2 / 2 * L₂(x,bc)\n\n# solve the value function\nv_bc = (I * ρ - L) \\ f.(x) "
+},
+
+{
+    "location": "#Finding-stationary-distribution-from-the-Kolmogorov-forward-equation-(KFE)-1",
+    "page": "﻿Installation",
+    "title": "Finding stationary distribution from the Kolmogorov forward equation (KFE)",
+    "category": "section",
+    "text": "One can also compute the stationary distribution of the state x above from the corresponding KFE:partial_t g(xt) = - mu(x) partial_x g(x t) + fracsigma^22 partial_xx g(xt)by taking partial_t g(xt) = 0, i.e., solving g from the L^* g(x) = 0 whereL^* = - mu(x) partial_x + fracsigma^22 partial_xxBy descretizing the space of x, one can solve the corresponding system by using discretized operators for L^*. Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, L, and the correct discretization scheme for L^* is, analogously, done by taking the transpose of the discretized operator for HJBE, L (See Gabaix et al., 2016). Hence, one can find the stationary distribution by solving the following discretized system of equations:L^T g = 0such that the sum of g is one. This can be found by finding a non-trivial eigenvector for L^T  associated with the eigenvalue of zero:using Arpack # library for extracting eigenvalues and eigenvectors\n\n# extract eigenvalues and eigenvectors, smallest eigenval in magintute first\nλ, ϕ = eigs(transpose(L), which = :SM); \n# extract the very first eigenvector (associated with the smallest eigenvalue)\ng_ss = real.(ϕ[:,1]);\n# normalize it\ng_ss = g_ss / sum(g_ss)"
 },
 
 {
