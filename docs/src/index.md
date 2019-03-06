@@ -74,8 +74,8 @@ bc = (Reflecting(), Reflecting())
 L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋(x, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊(x, bc)
 
 # Define linear operator using upwind schemes
-L = I * ρ - L₁ - σ^2 / 2 * L₂(x,bc)
+L = L₁ - σ^2 / 2 * L₂(x,bc)
 
 # solve the value function
-v_bc = L \ f.(x) 
+v_bc = (I * ρ - L) \ f.(x) 
 ```
