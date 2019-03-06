@@ -15,6 +15,7 @@ if git tag | grep -q $1; then
 elif [ "$1" = "master" ]; then
   echo "You selected the master branch."
   git checkout master
+  git pull
   target="dev"
 else
   echo "Sorry, you didn't pass in a valid tag."
