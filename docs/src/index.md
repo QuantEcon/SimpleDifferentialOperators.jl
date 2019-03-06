@@ -10,7 +10,7 @@ Note that this requires Julia 1.0 or later.
 
 Usage
 ==========
-Consider solving for `v` from the following equation:
+Consider solving for `v` from the following equation by the Hamilton-Jacobi-Bellman equation (HJBE):
 ```math
 \rho v(x) = f(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
 ```
@@ -53,12 +53,14 @@ v_interior = v_bar[2:end-1]
 
 Examples
 ==========
-One can also deploy upwind schemes when drift variable is not constant. Consider solving for `v` from the following equation:
+Solving HJBE with state-dependent drift variables
+-------------
+One can also deploy upwind schemes when drift variable is not constant. Consider solving for `v` from the following Bellman equation:
 ```math
 \rho v(x) = f(x) + \mu(x) \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
 ```
 
-for the diffusion process
+associated with the diffusion process
 ```math
 dx = \mu(x) dt + \sigma dW
 ```
