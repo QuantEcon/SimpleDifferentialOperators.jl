@@ -542,7 +542,8 @@ ol ol,
 ol ul {
   margin: 1.5rem 0 1.5rem 3rem;
   font-size: 90%; }
-li > p {margin : 0;}
+li {
+  margin-bottom: 1rem; }
 th,
 td {
   padding: 12px 15px;
@@ -571,7 +572,7 @@ p,
 ul,
 ol,
 form {
-  margin-bottom: 1.0rem; }
+  margin-bottom: 2.5rem; }
 .u-full-width {
   width: 100%;
   box-sizing: border-box; }
@@ -600,26 +601,34 @@ pre {
   margin: 0 0 10px;
   font-size: 13px;
   line-height: 1.42857143;
+  color: #333;
   word-break: break-all;
   word-wrap: break-word;
+  background-color: #ffffff;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
-pre.hljl {
-  margin: 0 0 10px;
+pre.sourceCode.julia {
   display: block;
-  background: #f5f5f5;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.42857143;
+  color: #333;
+  word-break: break-all;
+  word-wrap: break-word;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  padding : 5px;
 }
 
 pre.output {
-  background: #ffffff;
-}
-
-pre.code {
-  background: #ffffff;
+  filter : brightness(90%);
+  border : none;
+  /* matching hard-coded values in Highlights.jl */
+  margin : 5px;  
+  padding : 5px;
 }
 
 pre.julia-error {
@@ -631,9 +640,14 @@ kbd,
 pre,
 samp {
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-  font-size: 13px;
 }
+code {
+  padding: 2px 4px;
+  font-size: 90%;
 
+  background-color: #ffffff;
+  border-radius: 4px;
+}
 
 @media (min-width: 400px) {}
 @media (min-width: 550px) {}
@@ -670,7 +684,7 @@ div.title {text-align: center;}
 <ul>
 <li><p>A stochastic process <span class="math">$x$</span>, with <a href="https://en.wikipedia.org/wiki/Infinitesimal_generator_&#40;stochastic_processes&#41;">infinitesimal generator</a> <span class="math">$\mathscr{A}$</span>.</p>
 </li>
-<li><p>Flow utility <span class="math">$u(x)$</span> and a discount rate <span class="math">$\rho > 1$</span>.</p>
+<li><p>Flow utility <span class="math">$u(x)$</span> and a discount rate <span class="math">$\rho > 0$</span>.</p>
 </li>
 <li><p>A function <span class="math">$S(x)$</span> which gives the value of stopping at state <span class="math">$x$</span>. The goal is to choose an optional stopping point <span class="math">$\hat{x}$</span>.</p>
 </li>
@@ -679,9 +693,11 @@ div.title {text-align: center;}
 <h3>Classical Formulation</h3>
 <p>The &quot;classical&quot; formulation &#40;see, e.g., <a href="https://press.princeton.edu/titles/8766.html">Stokey&#39;s book</a>&#41; of this problem is as a free-boundary problem:</p>
 <p class="math">\[
+\begin{align}
 \rho v(x) &= u(x) + \mathscr{A} v(x) \\
 v(\hat{x}) &= S(\hat{x}) \hspace{5 em} \\
 v'(\hat{x}) &= 0
+\end{align}
 \]</p>
 <p>Crucially, equations &#40;2&#41; and &#40;3&#41; are <em>imposed conditions</em> required for a valid solution.</p>
 <p>These are commonly called the &quot;value matching&quot; and &quot;smooth pasting&quot; conditions, respectively.</p>
@@ -690,43 +706,57 @@ v'(\hat{x}) &= 0
 <p>The advantage is that the VM and SP conditions are baked into the problem.</p>
 <p>That is:</p>
 <p class="math">\[
+\begin{align}
 0 = \min\{\rho v(x) - u(x) - \mathscr{A} v(x), v(x) - S(x)\}
+\end{align}
 \]</p>
 <h3>Discretization</h3>
 <p>The next step is to discretize the problem to make it practicable for a computer.</p>
 <p>The results of this process are below; for the details, see the <a href="https://quantecon.github.io/SimpleDifferentialOperators.jl/dev/generated/discretized-differential-operator-derivation.pdf">document</a> in this repository.</p>
 <p class="math">\[
+\begin{align}
 0 = \min\{\rho v - u - A v, v - S\}
+\end{align}
 \]</p>
 <p>where these quantities are now vectors of size <span class="math">$n$</span>.</p>
 <h3>LCP Formulation</h3>
 <p>It happens that the inequality above can be written as a <a href="https://en.wikipedia.org/wiki/Linear_complementarity_problem">linear complementarity problem</a>.</p>
 <p>Define:</p>
 <p class="math">\[
+\begin{align}
 B &\equiv \rho I - A \\
 z &\equiv v - S \\
 q &\equiv -u + BS \\
 w &\equiv Bz + q
+\end{align}
 \]</p>
 <p>where <span class="math">$I$</span> is the <span class="math">$n \times n$</span> identity matrix.</p>
 <p>Substituting into &#40;5&#41; yields:</p>
 <p class="math">\[
+\begin{align}
 0 = \min \{Bz + q, z\}
+\end{align}
 \]</p>
 <p>We can represent these as complementary slackness conditions:</p>
 <p class="math">\[
+\begin{align}
 z^T (Bz + q) &= 0 \\
 z &\geq 0 \\
 Bz + q &\geq 0
+\end{align}
 \]</p>
 <p>Note that the first condition requires that at most one of <span class="math">$z[i]$</span> or <span class="math">$(Bz + q)[i]$</span> is nonzero <span class="math">$\forall i \in \{1, 2, ... n\}$</span>.</p>
 <p>We can also express these succinctly using the complementarity constraints:</p>
 <p class="math">\[
+\begin{align}
 0 \leq (Bz + q) \perp z \geq 0
+\end{align}
 \]</p>
 <p>If the choice of solver requires a slack variable, we can use the <span class="math">$w$</span> defined earlier:</p>
 <p class="math">\[
+\begin{align}
 0 \leq w \perp z \geq 0
+\end{align}
 \]</p>
 <h3>Implementation</h3>
 <p>First, we install and load necessary packages.</p>
@@ -760,37 +790,33 @@ Bz + q &\geq 0
 </pre>
 
 
-<pre class="output">
-0.0:0.016722408026755852:5.0
-</pre>
-
 
 <p>Define LCP objects, solve the problem, and inspect the solution:</p>
 
 
 <pre class='hljl'>
 <span class='hljl-n'>bc</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-nf'>Reflecting</span><span class='hljl-p'>(),</span><span class='hljl-t'> </span><span class='hljl-nf'>Reflecting</span><span class='hljl-p'>())</span><span class='hljl-t'>
-  </span><span class='hljl-n'>L</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-nfB'>0.01</span><span class='hljl-oB'>*</span><span class='hljl-nf'>L₁₋</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>bc</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-nfB'>0.01</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-t'> </span><span class='hljl-oB'>/</span><span class='hljl-t'> </span><span class='hljl-ni'>2</span><span class='hljl-p'>)</span><span class='hljl-oB'>*</span><span class='hljl-nf'>L₂</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>bc</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-cs'># for μ = -0.01, σ = 0.01 in the discretization PDF.</span><span class='hljl-t'>
+</span><span class='hljl-n'>L</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-nfB'>0.01</span><span class='hljl-oB'>*</span><span class='hljl-nf'>L₁₋</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>bc</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-nfB'>0.01</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-t'> </span><span class='hljl-oB'>/</span><span class='hljl-t'> </span><span class='hljl-ni'>2</span><span class='hljl-p'>)</span><span class='hljl-oB'>*</span><span class='hljl-nf'>L₂</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>bc</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-cs'># for μ = -0.01, σ = 0.01 in the discretization PDF.</span><span class='hljl-t'>
 
-  </span><span class='hljl-n'>B</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>ρ</span><span class='hljl-oB'>*</span><span class='hljl-n'>I</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-t'> </span><span class='hljl-n'>L</span><span class='hljl-t'> </span><span class='hljl-cs'># (eq:6)</span><span class='hljl-t'>
-  </span><span class='hljl-n'>q</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-n'>u</span><span class='hljl-oB'>.</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-n'>B</span><span class='hljl-oB'>*</span><span class='hljl-n'>S</span><span class='hljl-oB'>.</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-cs'># (eq:8)</span><span class='hljl-t'>
-  </span><span class='hljl-nf'>f</span><span class='hljl-p'>(</span><span class='hljl-n'>z</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>B</span><span class='hljl-oB'>*</span><span class='hljl-n'>z</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-n'>q</span><span class='hljl-t'> </span><span class='hljl-cs'># (eq:9)</span><span class='hljl-t'>
+</span><span class='hljl-n'>B</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>ρ</span><span class='hljl-oB'>*</span><span class='hljl-n'>I</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-t'> </span><span class='hljl-n'>L</span><span class='hljl-t'> </span><span class='hljl-cs'># (eq:6)</span><span class='hljl-t'>
+</span><span class='hljl-n'>q</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-n'>u</span><span class='hljl-oB'>.</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-n'>B</span><span class='hljl-oB'>*</span><span class='hljl-n'>S</span><span class='hljl-oB'>.</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-cs'># (eq:8)</span><span class='hljl-t'>
+</span><span class='hljl-nf'>f</span><span class='hljl-p'>(</span><span class='hljl-n'>z</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>B</span><span class='hljl-oB'>*</span><span class='hljl-n'>z</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-n'>q</span><span class='hljl-t'> </span><span class='hljl-cs'># (eq:9)</span><span class='hljl-t'>
 
-  </span><span class='hljl-n'>lb</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>zeros</span><span class='hljl-p'>(</span><span class='hljl-n'>M</span><span class='hljl-p'>)</span><span class='hljl-t'>
-  </span><span class='hljl-n'>ub</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>300</span><span class='hljl-oB'>*</span><span class='hljl-nf'>ones</span><span class='hljl-p'>(</span><span class='hljl-n'>M</span><span class='hljl-p'>)</span><span class='hljl-t'>
-  </span><span class='hljl-nd'>@time</span><span class='hljl-t'> </span><span class='hljl-n'>code</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>sol</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>sol_f</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nd'>@suppress</span><span class='hljl-t'> </span><span class='hljl-nf'>solveLCP</span><span class='hljl-p'>(</span><span class='hljl-n'>f</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>lb</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>ub</span><span class='hljl-p'>);</span>
+</span><span class='hljl-n'>lb</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>zeros</span><span class='hljl-p'>(</span><span class='hljl-n'>M</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-n'>ub</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>300</span><span class='hljl-oB'>*</span><span class='hljl-nf'>ones</span><span class='hljl-p'>(</span><span class='hljl-n'>M</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@time</span><span class='hljl-t'> </span><span class='hljl-n'>code</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>sol</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>sol_f</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nd'>@suppress</span><span class='hljl-t'> </span><span class='hljl-nf'>solveLCP</span><span class='hljl-p'>(</span><span class='hljl-n'>f</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>lb</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>ub</span><span class='hljl-p'>);</span>
 </pre>
 
 
 <pre class="output">
-1.072428 seconds &#40;3.40 M allocations: 173.786 MiB, 5.47&#37; gc time&#41;
+1.209197 seconds &#40;3.41 M allocations: 173.835 MiB, 4.48&#37; gc time&#41;
 </pre>
 
 
 
 <pre class='hljl'>
 <span class='hljl-n'>v</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>sol</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-n'>S</span><span class='hljl-oB'>.</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>)</span><span class='hljl-t'>
-  </span><span class='hljl-nf'>plot</span><span class='hljl-p'>(</span><span class='hljl-n'>v</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;Value Function for Optimal Stopping&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>legend</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-kc'>false</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;v(x)&quot;</span><span class='hljl-p'>)</span>
+</span><span class='hljl-nf'>plot</span><span class='hljl-p'>(</span><span class='hljl-n'>v</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;Value Function for Optimal Stopping&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>legend</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-kc'>false</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;v(x)&quot;</span><span class='hljl-p'>)</span>
 </pre>
 
 
