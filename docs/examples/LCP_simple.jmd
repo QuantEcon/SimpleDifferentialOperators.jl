@@ -125,19 +125,19 @@ x = range(0., 5., length = M) # grid
 Define LCP objects, solve the problem, and inspect the solution:
 
 ```julia
-  bc = (Reflecting(), Reflecting())
-  L = -0.01*L₁₋(x, bc) + (0.01^2 / 2)*L₂(x, bc) # for μ = -0.01, σ = 0.01 in the discretization PDF.
+bc = (Reflecting(), Reflecting())
+L = -0.01*L₁₋(x, bc) + (0.01^2 / 2)*L₂(x, bc) # for μ = -0.01, σ = 0.01 in the discretization PDF.
 
-  B = ρ*I - L # (eq:6)
-  q = -u.(x) + B*S.(x) # (eq:8)
-  f(z) = B*z + q # (eq:9)
+B = ρ*I - L # (eq:6)
+q = -u.(x) + B*S.(x) # (eq:8)
+f(z) = B*z + q # (eq:9)
 
-  lb = zeros(M)
-  ub = 300*ones(M)
-  @time code, sol, sol_f = @suppress solveLCP(f, lb, ub);
+lb = zeros(M)
+ub = 300*ones(M)
+@time code, sol, sol_f = @suppress solveLCP(f, lb, ub);
 
-  v = sol + S.(x)
-  plot(v, title = "Value Function for Optimal Stopping", legend = false, ylabel = "v(x)")
+v = sol + S.(x)
+plot(v, title = "Value Function for Optimal Stopping", legend = false, ylabel = "v(x)")
 ```
 
 ### References
