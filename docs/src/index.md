@@ -58,6 +58,11 @@ One can also deploy upwind schemes when drift variable is not constant. Consider
 \rho v(x) = f(x) + \mu(x) \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
 ```
 
+for the diffusion process
+```math
+dx = \mu(x) dt + \sigma dW
+```
+
 for some constant $\rho, \sigma > 0$ and $\mu(x) = -x$. Note that $\mu(x)$ depends on states. The following code will solve `v` using upwind schemes:
 ```julia
 # setup 
