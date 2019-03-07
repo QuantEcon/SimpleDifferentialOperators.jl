@@ -10,6 +10,7 @@
 This is a package to return discretized differential operators subject to various boundary conditions.  It is intended to be a "simple" stopgap as more advanced implementations (e.g. [DiffEqOperators.jl](https://github.com/JuliaDiffEq/DiffEqOperators.jl/) ) mature.  This package is also not intended to provide a "higher-level" interface for constructing the equations.  See [EconPDEs.jl](https://github.com/matthieugomez/EconPDEs.jl/) for a package intended to make translation of the sorts of equations used in economics more direct.
 
 ### Example
+#### Bellman equation
 
 Consider constructing the corresponding infinitesimal generator for the following stochastic differential equation:
 <!-- d x_t = \mu d_t + \sigma d W_t -->
@@ -28,16 +29,16 @@ subject to ![BC](https://quicklatex.com/cache3/8e/ql_1183a672e909e5a76851d18016a
 Written in operator form, define the differential operator
 <!-- \mathcal{L} \equiv \rho - \mu \partial_x - \frac{\sigma^2}{2}\partial_{xx} -->
 
-![Operator](https://quicklatex.com/cache3/6a/ql_1cf7400708d6f645fbf18917daf5296a_l3.png)
+![Operator](https://quicklatex.com/cache3/c4/ql_ed4d9566511e4900e75fcad5f5a733c4_l3.png)
 
 and the Bellman equation can then be written as
 
-![Bellman with Operator](https://quicklatex.com/cache3/96/ql_1df64101bb60cb16eb8b0c759b0de496_l3.png)
+![Bellman with Operator](https://quicklatex.com/cache3/18/ql_79d760116d413d809588f1937f403c18_l3.png)
 
 
 This package provides components to discretize differential operators.  To implement directly,
 
-```
+```julia
 using SimpleDifferentialOperators, LinearAlgebra
 f(x) = x^2 
 μ = -0.1 # constant negative drift
@@ -48,9 +49,35 @@ x = range(0.0, 1.0, length = 100)
 # discretize L = ρ - μ D_x - σ^2 / 2 D_xx
 # subject to reflecting barriers at 0 and 1
 bc = (Reflecting(), Reflecting())
-L = I * ρ - μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)
+L = μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)
 ## solve the value function
-v = L \ f.(x) 
+v = (I * ρ - L) \ f.(x) 
+```
+
+#### Kolmogorov forward equation
+Likewise, one can also compute the corresponding stationary distribution of `x` above by the Kolmogorov forward equation (KFE), i.e., finding `g(x)` that satisfies
+
+![Stationary distribution from KFE](https://quicklatex.com/cache3/b1/ql_4bcbeb92f8a76079935d5276637c69b1_l3.png)
+
+Written in operator form, define the differential operator
+
+![Operator for KFE](https://quicklatex.com/cache3/54/ql_cc18a8dc369251d704d9563e99ef4d54_l3.png)
+
+and the KFE for the stationary distribution can then be written as
+
+![KFE with Operator](https://quicklatex.com/cache3/82/ql_5d14ec70e1ad4330d50bea9433d41b82_l3.png)
+
+Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, ${L}$, and the correct discretization scheme for $L^*$ is, analogously, done by taking the transpose of the discretized operator for HJBE, $L$ (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569)). Hence, one can find the stationary distribution as follows:
+
+```julia
+using Arpack # library for extracting eigenvalues and eigenvectors
+
+# extract eigenvalues and eigenvectors, smallest eigenval in magintute first
+λ, ϕ = eigs(transpose(L), which = :SM); 
+# extract the very first eigenvector (associated with the smallest eigenvalue)
+g_ss = real.(ϕ[:,1]);
+# normalize it
+g_ss = g_ss / sum(g_ss)
 ```
 
 ## Documentation
