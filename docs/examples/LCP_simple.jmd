@@ -12,14 +12,14 @@ problems numerically as a [Differential Variational Inequality](https://en.wikip
 
 Assume the following
 
-* A stochastic process ``x``, with [infinitesimal generator](https://en.wikipedia.org/wiki/Infinitesimal_generator_(stochastic_processes)) ``\mathcal{L}_x``
-  and boundary conditions.  (e.g. the infinitesimal generator for Brownian motion with drift ``\mu`` and variance ``\sigma`` is
-  ``\mathcal{L}_x \equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}``.)
-* Boundary conditions for the ``x`` stochastic process (e.g., reflecting barriers at some minimum and maximum.)
-* Flow payoffs ``u(x)`` discounted at rate ``\rho > 0``.
-* Stopping payoff ``S(x)`` which gives the value of stopping at state ``x``.
+* A stochastic process $x$, with [infinitesimal generator](https://en.wikipedia.org/wiki/Infinitesimal_generator_(stochastic_processes)) $\mathcal{L}_x$
+  and boundary conditions.  (e.g. the infinitesimal generator for Brownian motion with drift $\mu$ and variance $\sigma$ is
+  $\mathcal{L}_x \equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}$.)
+* Boundary conditions for the $x$ stochastic process (e.g., reflecting barriers at some minimum and maximum.)
+* Flow payoffs $u(x)$ discounted at rate $\rho > 0$.
+* Stopping payoff $S(x)$ which gives the value of stopping at state $x$.
 
-The control problem is: choose when to stop the process and gain the payoff ``S(x)``.  If there are only two regions, then this becomes the choice of a stopping threshold ``\hat{x}``.
+The control problem is: choose when to stop the process and gain the payoff $S(x)$.  If there are only two regions, then this becomes the choice of a stopping threshold $\hat{x}$.
 
 #### Classical Formulation
 
@@ -27,40 +27,42 @@ The "classical" formulation (e.g., [Stokey's "The Economics of Inaction"](https:
 
 First, in a stationary environment, the Bellman equation within the interior (continuation) region is
 
-```math
+$$
 \begin{equation}
   \rho v(x) = u(x) + \mathcal{L}_x v(x)
 \end{equation}
-```
+$$
 
 Define a new operator and rewrite,
 
-```math
+$$
 \begin{align}
   \mathcal{L} v(x) &= u(x)\label{eq:bellman}\\
   \mathcal{L} &\equiv \rho - \mathcal{L}_x\label{eq:L-op}
 \end{align}
-```
-Along with boundary conditions from the stochastic process (e.g., a reflecting barrier at an ``x_{\min}`` and another at some ``x_{\max}``, or a transversality condition.)
+$$
 
-In special cases with sufficient monotonicity, there is a single stopping region, defined by a threshold at ``\hat{x}``.
+Along with boundary conditions from the stochastic process (e.g., a reflecting barrier at an $x_{\min}$ and another at some $x_{\max}$, or a transversality condition.)
+
+In special cases with sufficient monotonicity, there is a single stopping region, defined by a threshold at $\hat{x}$.
 
 With this, the necessary conditions for optimality are the value matching condition
 
-```math
+$$
 \begin{equation}
   v(\hat{x}) = S(\hat{x})\label{eq:vm}
 \end{equation}
-```
+$$
 
 and the smooth pasting condition
 
-```math
+$$
 \begin{equation}
   \partial_x v(\hat{x}) = 0\label{eq:sp}
 \end{equation}
-```
-These conditions are necessary for optimality for any free-boundary problem.  Typically, you would solve ``\eqref{eq:bellman}, \eqref{eq:vm},\eqref{eq:sp},`` to find a value function ``v(x)`` and a stopping threshold ``\hat{x}``.
+$$
+
+These conditions are necessary for optimality for any free-boundary problem.  Typically, you would solve $\eqref{eq:bellman}, \eqref{eq:vm},\eqref{eq:sp},$ to find a value function $v(x)$ and a stopping threshold $\hat{x}$.
 
 While this approach can be analytically tractable, it is inconvenient for numerical solutions if: (1) the equations cannot be solved in closed form; (2) there are multiple stopping regions; or (3) the dimension increases, leading to complicated stopping regions separated by non-linear manifolds.
 
@@ -68,77 +70,78 @@ While this approach can be analytically tractable, it is inconvenient for numeri
 
 As discussed in [Ben Moll's notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf), the [DVI](https://en.wikipedia.org/wiki/Differential_variational_inequality) form of the above problem is to solve
 
-```math
+$$
 \begin{equation}
   0 = \min\{\mathcal{L} v(x) - u(x), v(x) - S(x)\}\label{eq:DVI}
 \end{equation}
-```
+$$
 
-for ``v(x)``.  A few important notes:
+for $v(x)$.  A few important notes:
 
-* The ``\mathcal{L} v(x) - u(x)`` term is just the Bellman equation ``\eqref{eq:bellman}`` if it is binding and ``=0``.
-* The ``v(x) - S(x)`` term is the value matching condition in ``\eqref{eq:vm}`` if it is binding and ``=0``.
-* You are **not directly solving for the boundaries** of the stopping regions (i.e., there is no ``\hat{x}`` in the system.)
+* The $\mathcal{L} v(x) - u(x)$ term is just the Bellman equation $\eqref{eq:bellman}$ if it is binding and $=0$.
+* The $v(x) - S(x)$ term is the value matching condition in $\eqref{eq:vm}$ if it is binding and $=0$.
+* You are **not directly solving for the boundaries** of the stopping regions (i.e., there is no $\hat{x}$ in the system.)
 
-Given a solution for ``v(x)``, ``\eqref{eq:DVI}`` determines which regime a particular ``x`` is in.  Those boundaries can be used to determine where an ``\hat{x}`` occurs.
+Given a solution for $v(x)$, $\eqref{eq:DVI}$ determines which regime a particular $x$ is in.  Those boundaries can be used to determine where an $\hat{x}$ occurs.
 
-Furthermore, you can prove that at any of those points, a solution to ``\eqref{eq:DVI}`` implies the smooth-pasting condition ``\eqref{eq:sp}``.
+Furthermore, you can prove that at any of those points, a solution to $\eqref{eq:DVI}$ implies the smooth-pasting condition $\eqref{eq:sp}$.
 
 ## Numerical Solution
 
 To solve the equation numerically, we first discretize the state-space, value function, and operators with  upwind finite difference methods.
 
 Abusing notation, define
-* The grid of ``M`` values in the domain, ``x \equiv \{x_1, x_2, \ldots x_M\}``.
-* Vectors for the values of functions at grid points: ``v \equiv \{v(x_m)\}_{m=1}^M`` and ``S \equiv \{S(x_m)\}_{m=1}^M``.
-* The matrix ``L \in \mathbb{R}^{M \times M}`` as the discretization of the ``\mathcal{L}`` in ``\eqref{eq:L-op}``, such that any boundary conditions on the stochastic process are fulfilled (i.e. properties of the ``x`` such as reflecting barriers.)
+* The grid of $M$ values in the domain, $x \equiv \{x_1, x_2, \ldots x_M\}$.
+* Vectors for the values of functions at grid points: $v \equiv \{v(x_m)\}_{m=1}^M$ and $S \equiv \{S(x_m)\}_{m=1}^M$.
+* The matrix $L \in \mathbb{R}^{M \times M}$ as the discretization of the $\mathcal{L}$ in $\eqref{eq:L-op}$, such that any boundary conditions on the stochastic process are fulfilled (i.e. properties of the $x$ such as reflecting barriers.)
 
-Note: See the [document](https://quantecon.github.io/SimpleDifferentialOperators.jl/dev/generated/discretized-differential-operator-derivation.pdf) in this repository for notes on the discretization of the ``\mathcal{L}`` to form the ``L`` operator - subject to various boundary conditions.
+Note: See the [document](https://quantecon.github.io/SimpleDifferentialOperators.jl/dev/generated/discretized-differential-operator-derivation.pdf) in this repository for notes on the discretization of the $\mathcal{L}$ to form the $L$ operator - subject to various boundary conditions.
 
-Given these definitions, the DVI in ``\eqref{eq:DVI}`` becomes the variational inequality
+Given these definitions, the DVI in $\eqref{eq:DVI}$ becomes the variational inequality
 
-```math
+$$
 \begin{equation}
   0 = \min\{L v - u, v - S\}\label{eq:VI}
 \end{equation}
-```
-To solve ``\eqref{eq:VI}`` for the ``v\in\mathbb{R}^M`` vector, we can express it as a [linear complementarity problem](https://en.wikipedia.org/wiki/Linear_complementarity_problem) (or LCP).
+$$
+
+To solve $\eqref{eq:VI}$ for the $v\in\mathbb{R}^M$ vector, we can express it as a [linear complementarity problem](https://en.wikipedia.org/wiki/Linear_complementarity_problem) (or LCP).
 
 First, do a change of variables
 
-```math
+$`math
 \begin{align}
   z &\equiv v - S \\
   q &\equiv -u + L S \\
   w &\equiv L z + q
 \end{align}
-```
-Substituting into ``\eqref{eq:VI}`` yields
+$`
+Substituting into $\eqref{eq:VI}$ yields
 
-```math
+$`math
 \begin{equation}
   0 = \min \{L z + q, z\}
 \end{equation}
-```
+$`
 Or, in the typical notation of a complementarity problem
 
-```math
+$`math
 \begin{equation}
   0 \leq (L z + q) \perp z \geq 0
 \end{equation}
-```
+$`
 
 ## Implementation
 
 We will solve an instance of this model where
 
-```math
+$`math
 \begin{align}
   u(x) &\equiv x^{\gamma}\\
   \mathcal{L}_x &\equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}\\
   S(x) &\equiv S_0
 \end{align}
-```
+$`
 
 First, we install and load necessary packages.
 
@@ -146,16 +149,16 @@ The key one is the [`PATHSolver.jl`](https://github.com/chkwon/PATHSolver.jl) pa
 
 This is a commercial solver due to Dirkse, Ferris, and Munson, who have generously made it [available](http://pages.cs.wisc.edu/~ferris/path.html) for non-commercial academic use.
 
-```julia
+$`julia
 # install if required,
 # ] add SimpleDifferentialOperators PATHSolver Plots Suppressor
 
 using SimpleDifferentialOperators, PATHSolver, Plots, LinearAlgebra, Suppressor
-```
+$`
 
 Next, define the necessary parameters and equations
 
-```julia
+$`julia
 μ = -0.1
 σ = 0.1
 ρ = 0.05
@@ -165,11 +168,11 @@ S₀ = 20.0
 u(x) = x^γ  # (13)
 S(x) = S₀  # (15)
 @assert μ <= 0 # otherwise we need to swap the L₁₋ operator
-```
+$`
 
 Next, discretize the grid, operators, and change of variables
 
-```julia
+$`julia
 M = 300
 x = range(0.0, 5.0, length = M)
 bc = (Reflecting(), Reflecting())  # assume x_t reflects at 0.0 and 5.0
@@ -177,11 +180,11 @@ L = I * ρ - μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)  # (2) and (14)
 
 q = -u.(x) + L*S.(x)  # (9)
 w(z) = L*z + q; # (10)
-```
+$`
 
 Finally, solve the model by passing to the PATH solver
 
-```julia
+$`julia
 lb = zeros(M)
 ub = 300*ones(M) # Need to have upper bounds for the z.
 code, z, w_val = @suppress solveLCP(w, lb, ub)  # Solves (12)
@@ -199,7 +202,7 @@ end
 plot(x, v, title = "Value Function for Optimal Stopping",
      legend = false, ylabel = "v(x)", xlabel = "x")
 vline!([x̂])
-```
+$`
 
 **Performance Note** As always in Julia, only test performance of code within functions (i.e. the global variables here are only for simplicity)
 
