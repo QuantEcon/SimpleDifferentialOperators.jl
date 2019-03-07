@@ -11,10 +11,10 @@ Mixed Boundary Values
 Under $M$-length of grids on $v$ with end points $x_{\min} < x_{\max}$ with mixed boundary value conditions of
 
 ```math
-```math
-\underline{\xi} v(x_{\min}) + \nabla v(x_{\min}) &= 0\\
+\begin{align}
+\underline{\xi} v(x_{\min}) + \nabla v(x_{\min}) &= 0 \\
 \overline{\xi} v(x_{\max}) + \nabla v(x_{\max}) &= 0
-```
+\end{align}
 ```
 
 Note that this can be extended to reflecting boundary conditions by assigning $\underline{\xi} = 0$ and $\overline{\xi} = 0$. We use the following discretization schemes:
@@ -169,7 +169,7 @@ L = \mu L_{1+} + \dfrac{\sigma^2}{2} L_{2}
 so that $v$ under the optimal plan can be computed by solving the following discretized system of equations:
 
 ```math
-(\rho I - L) v &= r^*
+(\rho I - L) v = r^*
 ```
 
 where $v$ and $r^*$ are $M$-vectors whose $i$th elements are $v(x_i)$ and $r^*(x_i)$, respectively.
