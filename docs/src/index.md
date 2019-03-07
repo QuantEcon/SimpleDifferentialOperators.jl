@@ -8,7 +8,7 @@ To install, run
 ] add SimpleDifferentialOperators
 ```
 
-Note that this requires Julia 1.0 or later.
+Note that this requires Julia 1.1 or later.
 
 ## Usage
 
