@@ -1,85 +1,202 @@
-Optimal Stopping Problems
-===============================
+## Optimal Stopping Problems
 
-> Presented by Arnav Sood (`arnav.sood@ubc.ca`).
+> Presented by [Arnav Sood](email:arnav.sood@ubc.ca) and [Jesse Perla](email:jesseperla@gmail.com)
 
-### Introduction
+This notebook provides an expansion of lecture notes and Julia code to solve optimal stopping problems numerically as a [Differential Variational Inequality(DVI)](https://en.wikipedia.org/wiki/Differential_variational_inequality).  For more, see
 
-We are given:
+* [Huang, J. and J.-S. Pang (1998): "Option Pricing and Linear Complementarity,"](Journal of Computational Finance)
+* [Ben Moll's excellent notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf)
+* Source [Github](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/blob/master/docs/examples/LCP_simple.jmd) and compiled with [Weave.jl](https://github.com/mpastell/Weave.jl)
 
-* A stochastic process ``x``, with [infinitesimal generator](https://en.wikipedia.org/wiki/Infinitesimal_generator_(stochastic_processes)) ``\mathscr{A}``.
+## Simple Example
 
-* Flow utility ``u(x)`` and a discount rate ``\rho > 1``.
+Take as given:
 
-* A function ``S(x)`` which gives the value of stopping at state ``x``. The goal is to choose an optional stopping point ``\hat{x}``.
+* A stochastic process ``x``, with [infinitesimal generator](https://en.wikipedia.org/wiki/Infinitesimal_generator_(stochastic_processes)) ``\mathcal{L}^x``
+  and boundary conditions.  For example, the infintesimal generator for Brownian motion with drift ``\mu`` and variance ``\sigma`` is  ``\mathcal{L}^x \equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}``
+* Boundary conditions for the ``x`` stochastic process
+* Flow payoffs ``u(x)`` and a discount rate ``\rho > 0``
+* A function ``S(x)`` which gives the value of stopping at state ``x``
 
-For more detail, see [here](https://github.com/econtoolkit/continuous_time_methods/blob/master/optimal_stopping.pdf).
+The decision of the agent is when they should stop the process and gain the payoff ``S(x)``.  If there are only two regions, then this becomes the choice of a stopping threshold ``\hat{x}``
 
-### Classical Formulation
+#### Classical Formulation
 
-The "classical" formulation (see, e.g., [Stokey's book](https://press.princeton.edu/titles/8766.html)) of this problem is as a free-boundary problem:
+The "classical" formulation (e.g., [Stokey's "The Economics of Inaction"](https://press.princeton.edu/titles/8766.html)) of this problem is as a free-boundary problem.
 
+First, in a stationary environment, the Bellman equation within the interior (continuation) region is
+
+$$
+\rho v(x) = u(x) + \mathcal{L}^x v(x)
+$$
+
+Define a new operator and rewrite,
 ```math
-\rho v(x) &= u(x) + \mathscr{A} v(x) \\
-v(\hat{x}) &= S(\hat{x}) \hspace{5 em} \\
-v'(\hat{x}) &= 0
+\begin{align}
+  \mathcal{L} v(x) &= u(x)\label{eq:bellman}\\
+  \mathcal{L} &\equiv \rho - \mathcal{L}^x\label{eq:L-op}
+\end{align}
+```
+Along with boundary conditions from the stochastic process (e.g. a reflecting barrier at a ``x_{\min}`` and another at ``x_{\max}`` or a transversality condition)
+
+In special cases with sufficient monotonicity, there is a single stopping region,
+separated by a ``\hat{x}``.  With this, necessary conditions for optimality are the value matching condition
+```math
+\begin{equation}
+v(\hat{x}) = S(\hat{x})\label{eq:vm}
+\end{equation}
 ```
 
-Crucially, equations (2) and (3) are _imposed conditions_ required for a valid solution.
+and the smooth pasting condition
+```math
+\begin{equation}
+\partial_x v(\hat{x}) = 0\label{eq:sp}
+\end{equation}
+```
+The "value matching" and "smooth pasting" conditions are necessary conditions for optimality at any free-boundary conditions.  Typically, you would solve ``\eqref{eq:bellman}, \eqref{eq:vm},\eqref{eq:sp},`` to find a ``v(x)`` function and ``\hat{x}``.
 
-These are commonly called the "value matching" and "smooth pasting" conditions, respectively.
+While this approach works can analytically tractable, it is inconvenient for numerical solutions if: (1) the equations cannot be solved in closed form; (2) there are multiple stopping regions; (3) the dimension increases, leading to complicated stopping regions separated by non-linear manifolds.
 
-## HJB Variational Inequality
-
-Another approach is to write the problem as a [variational inequality](https://en.wikipedia.org/wiki/Variational_inequality).
-
-The advantage is that the VM and SP conditions are baked into the problem.
-
-That is:
+#### HJB Variational Inequality
+As discussed in [Ben Moll's notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf), the DVI form of the above problem is instead to solve
 
 ```math
-0 = \min\{\rho v(x) - u(x) - \mathscr{A} v(x), v(x) - S(x)\}
+\begin{equation}
+0 = \min\{\mathcal{L} v(x) - u(x), v(x) - S(x)\}\label{eq:DVI}
+\end{equation}
 ```
 
-### Discretization
+for ``v(x)``.  A few important notes:
 
-The next step is to discretize the problem to make it practicable for a computer.
+* The ``\mathcal{L} v(x) - u(x)`` term is just the Bellman equation ``\eqref{eq:bellman}`` if it is binding and ``=0``
+* The ``v(x) - S(x)`` term is the value matching condition in ``\eqref{eq:vm}`` if it is binding and ``=0``
+* You are **not solving for the boundaries** of the stopping regions directly (i.e. no ``\hat{x}`` in the system)
 
-The results of this process are below; for the details, see the [document](https://quantecon.github.io/SimpleDifferentialOperators.jl/dev/generated/discretized-differential-operator-derivation.pdf) in this repository.
+With a solution, for ``v(x)`` function, you can use it in ``\eqref{eq:DVI}`` to determine which region a particular ``x`` is in.  Those boundaries can be used to determine where a ``\hat{x}`` occurs.  Furthermore, you can prove that at any of those points, a solution to the DVI implies the smooth-pasting condition ``\eqref{eq:sp}``
 
+## Numerical Solution
+
+To solve the equation numerically, discretize the state-space, value function, and operators with  upwind finite difference methods
+
+Abusing notation, define
+* The grid of ``M`` values in the domain, ``x \equiv \{x_1, x_2, \ldots x_M\}``
+* Vectors for the values of functions at grid points: ``v \equiv \{v(x_m)\}_{m=1}^M`` and ``S \equiv \{S(x_m)\}_{m=1}^M``
+* The matrix ``L \in \mathbb{R}^{M \times M}`` as the discretization of the ``\mathcal{L}`` in ``\eqref{eq:L-op}`` imposing that the such that any boundary conditions on the stochastic process are fulfilled (i.e. properties of the ``x`` such as reflecting barriers)
+
+Note: See this [document](https://quantecon.github.io/SimpleDifferentialOperators.jl/dev/generated/discretized-differential-operator-derivation.pdf) in this repository for notes on the discretization of the ``\mathcal{L}`` to form the ``L`` operator - subject to various boundary conditions.
+
+Given these definitions, the DVI in ``\eqref{eq:DVI}`` becomes the variational inequality
 ```math
-0 = \min\{\rho v - u - A v, v - S\}
+\begin{equation}
+0 = \min\{L v - u, v - S\}\label{eq:VI}
+\end{equation}
 ```
+To solve ``\eqref{eq:VI}``, for the ``v\in\mathbb{R}^M`` vector, we can form it as a [linear complementarity problem (LCP)](https://en.wikipedia.org/wiki/Linear_complementarity_problem)
 
-where these quantities are now vectors of size ``n``.
-
-### LCP Formulation
-
-It happens that the inequality above can be written as a [linear complementarity problem](https://en.wikipedia.org/wiki/Linear_complementarity_problem).
-
-Define:
+First, do a change of variables
 
 ```math
-B &\equiv \rho I - A \\
+\begin{align}
 z &\equiv v - S \\
-q &\equiv -u + BS \\
-w &\equiv Bz + q
+q &\equiv -u + L S \\
+w &\equiv L z + q
+\end{align}
 ```
-
-where ``I`` is the ``n \times n`` identity matrix.
-
-Substituting into (5) yields:
+Substituting into ``\eqref{eq:VI}`` yields an equation in the typical form of a LCP
 
 ```math
-0 = \min \{Bz + q, z\}
+0 = \min \{L z + q, z\}
 ```
+We can also express these succinctly as a complementarity problem:
+
+```math
+0 \leq (L z + q) \perp z \geq 0
+```
+
+## Implementation
+
+We will solve a variation of this model where
+```math
+\begin{align}
+u(x) &= x^{\gamma}\\
+\mathcal{L}^x &= \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}\\
+S(x) &= S_0
+\end{align}
+```
+
+
+
+First, we install and load necessary packages.
+
+The key one is the [`PATHSolver.jl`](https://github.com/chkwon/PATHSolver.jl) package for complementarity problems.
+
+This is a commercial solver due to Dirkse, Ferris, and Munson, who have generously made it [available](http://pages.cs.wisc.edu/~ferris/path.html) for non-commerical academic use use.
+
+```julia
+# install if required,
+# ] add SimpleDifferentialOperators, PATHSolver, Plots, Suppressor
+
+using SimpleDifferentialOperators, PATHSolver, Plots, LinearAlgebra, Suppressor
+```
+
+Next, setup the equations and constants for our grid
+
+```julia
+μ = -0.1
+σ = 0.1
+ρ = 0.05
+γ = 0.5
+ρ = 0.05
+S₀ = 20.0
+u(x) = x^γ  # (10)
+S(x) = S₀  # (12)
+@assert μ <= 0 # otherwise we need to swap the L₁₋ operator
+
+```
+Next, discretize the grid, operators, and change of variables
+
+```julia
+M = 300
+x = range(0.0, 5.0, length = M)
+bc = (Reflecting(), Reflecting())  # assume x_t reflects at 0.0 and 5.0
+L = I * ρ - μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)  # (2) and (11)
+
+q = -u.(x) + L*S.(x)  # (8)
+w(z) = L*z + q; # (9)
+```
+Finally, solve the model by passing to the PATH solver
+```julia
+lb = zeros(M)
+ub = 300*ones(M) # Need to have upper bounds for the z.
+code, z, w_val = @suppress solveLCP(w, lb, ub)  # Solves ()
+@assert code == :Solved  # otherwise, an error in convergence
+
+v = z + S.(x)  # (7)
+x̂ = x[findfirst(z .> 0)]  # i.e. find first x index where non-binding
+
+# plot the solution and the stopping threshold
+plot(x, v, title = "Value Function for Optimal Stopping", legend = false, ylabel = "v(x)", xlabel = "x")
+vline!([x̂])
+```
+
+**Performance Note** As always in Julia, only test performance of code within functions (i.e. the global variables here are only for simplicity)
+
+### References
+
+* [Huang, J. and J.-S. Pang (1998): "Option Pricing and Linear Complementarity,"](Journal of Computational Finance)
+* [Ben Moll's notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf)
+
+<!--
+# MOVING THIS OUT.  CAN PUT BACK IN FOR ALTERNATE SOLVERS WHERE THEY ARE USED
 
 We can represent these as complementary slackness conditions:
 
 ```math
-z^T (Bz + q) &= 0 \\
+\begin{align}
+z' (L z + q) &= 0 \\
 z &\geq 0 \\
-Bz + q &\geq 0
+L z + q &\geq 0
+\end{align}
 ```
 
 Note that the first condition requires that at most one of ``z[i]`` or ``(Bz + q)[i]`` is nonzero ``\forall i \in \{1, 2, ... n\}``.
@@ -95,57 +212,4 @@ If the choice of solver requires a slack variable, we can use the ``w`` defined 
 ```math
 0 \leq w \perp z \geq 0
 ```
-
-### Implementation
-
-First, we install and load necessary packages.
-
-The key one is the [`PATHSolver.jl`](https://github.com/chkwon/PATHSolver.jl) package for complementarity problems.
-
-This is a commercial solver due to Dirkse, Ferris, and Munson, who have generously made it [available](http://pages.cs.wisc.edu/~ferris/path.html) for open-source use.
-
-```julia
-using Pkg
-
-# uncomment line below to add dependencies for local use
-# pkg"add PATHSolver Plots Suppressor"
-pkg"activate ../.." # activates the package
-
-using SimpleDifferentialOperators
-using PATHSolver, Plots, LinearAlgebra, Suppressor
-```
-
-Next, define the problem and set up our grid:
-
-```julia
-u(x) = x^(0.5) # flow utility
-S(x) = 10. # stopping value
-ρ = 0.05 # discount factor
-
-M = 300
-x = range(0., 5., length = M) # grid
-```
-
-Define LCP objects, solve the problem, and inspect the solution:
-
-```julia
-  bc = (Reflecting(), Reflecting())
-  L = -0.01*L₁₋(x, bc) + (0.01^2 / 2)*L₂(x, bc) # for μ = -0.01, σ = 0.01 in the discretization PDF.
-
-  B = ρ*I - L # (eq:6)
-  q = -u.(x) + B*S.(x) # (eq:8)
-  f(z) = B*z + q # (eq:9)
-
-  lb = zeros(M)
-  ub = 300*ones(M)
-  @time code, sol, sol_f = @suppress solveLCP(f, lb, ub);
-
-  v = sol + S.(x)
-  plot(v, title = "Value Function for Optimal Stopping", legend = false, ylabel = "v(x)")
-```
-
-### References
-
-* Huang, J. and J.-S. Pang (1998): "Option Pricing and Linear Complementarity," Journal of Computational Finance. Citeseer.
-
-* Ben Moll's [excellent notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf).
+-->
