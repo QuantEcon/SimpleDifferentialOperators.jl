@@ -1,14 +1,4 @@
-﻿Installation
-==============
-
-To install, run
-```julia
-] add SimpleDifferentialOperators
-```
-
-Note that this requires Julia 1.0 or later.
-
-Usage
+﻿Usage
 ==========
 Consider solving for `v` from the following equation by the Hamilton-Jacobi-Bellman equation (HJBE):
 ```math
@@ -51,9 +41,19 @@ v_bar = L \ [f.(x); 0.0; 0.0]
 v_interior = v_bar[2:end-1] 
 ```
 
-Examples
+Installation
+==============
+
+To install, run
+```julia
+] add SimpleDifferentialOperators
+```
+
+Note that this requires Julia 1.0 or later.
+
+Usage Examples
 ==========
-Solving HJBE with state-dependent drift variables
+### Solving HJBE with state-dependent drift variables
 -------------
 One can also deploy upwind schemes when drift variable is not constant. Consider solving for `v` from the following Bellman equation:
 ```math
@@ -87,7 +87,7 @@ L = L₁ - σ^2 / 2 * L₂(x,bc)
 v_bc = (I * ρ - L) \ f.(x) 
 ```
 
-Finding stationary distribution from the Kolmogorov forward equation (KFE)
+### Finding stationary distribution from the Kolmogorov forward equation (KFE)
 -------------
 One can also compute the stationary distribution of the state `x` above from the corresponding KFE:
 ```math
@@ -98,7 +98,7 @@ by taking $\partial_{t} g(x,t) = 0$, i.e., solving $g$ from the $L^* g(x) = 0$ w
 L^* = - \mu(x) \partial_{x} + \frac{\sigma^2}{2} \partial_{xx}
 ```
 
-By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for ${L}^*$. Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, ${L}$, and the correct discretization scheme for $L^*$ is, analogously, done by taking the transpose of the discretized operator for HJBE, $L$ (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569)). Hence, one can find the stationary distribution by solving the following discretized system of equations:
+By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for ${L}^*$. Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, ${L}$, and the correct discretization scheme for $L^*$ is, analogously, done by taking the transpose of the discretized operator for HJBE, $L$ (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569) and [Achdou et al., 2017](https://ideas.repec.org/p/nbr/nberwo/23732.html)). Hence, one can find the stationary distribution by solving the following discretized system of equations:
 
 ```math
 L^T g = 0
