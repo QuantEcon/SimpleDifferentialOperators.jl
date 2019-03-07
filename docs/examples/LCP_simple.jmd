@@ -59,7 +59,7 @@ and the smooth pasting condition
 \partial_x v(\hat{x}) = 0\label{eq:sp}
 \end{equation}
 ```
-The "value matching" and "smooth pasting" conditions are necessary conditions for optimality at any free-boundary conditions.  Typically, you would solve ``\eqref{eq:bellman}, \eqref{eq:vm},\eqref{eq:sp},`` to find a ``v(x)`` function and ``\hat{x}``.
+The "value matching" and "smooth pasting" conditions are necessary conditions for optimality at any free-boundary conditions.  Typically, you would solve ``\eqref{eq:bellman}, \eqref{eq:vm},\eqref{eq:sp},`` to find a ``v(x)`` function and a ``\hat{x}`` value.
 
 While this approach can be analytically tractable, it is inconvenient for numerical solutions if: (1) the equations cannot be solved in closed form; (2) there are multiple stopping regions; or (3) the dimension increases, leading to complicated stopping regions separated by non-linear manifolds.
 
@@ -90,15 +90,16 @@ Abusing notation, define
 * Vectors for the values of functions at grid points: ``v \equiv \{v(x_m)\}_{m=1}^M`` and ``S \equiv \{S(x_m)\}_{m=1}^M``
 * The matrix ``L \in \mathbb{R}^{M \times M}`` as the discretization of the ``\mathcal{L}`` in ``\eqref{eq:L-op}``, such that any boundary conditions on the stochastic process are fulfilled (i.e. properties of the ``x`` such as reflecting barriers)
 
-Note: See this [document](https://quantecon.github.io/SimpleDifferentialOperators.jl/dev/generated/discretized-differential-operator-derivation.pdf) in this repository for notes on the discretization of the ``\mathcal{L}`` to form the ``L`` operator - subject to various boundary conditions.
+Note: See the [document](https://quantecon.github.io/SimpleDifferentialOperators.jl/dev/generated/discretized-differential-operator-derivation.pdf) in this repository for notes on the discretization of the ``\mathcal{L}`` to form the ``L`` operator - subject to various boundary conditions.
 
 Given these definitions, the DVI in ``\eqref{eq:DVI}`` becomes the variational inequality
+
 ```math
 \begin{equation}
 0 = \min\{L v - u, v - S\}\label{eq:VI}
 \end{equation}
 ```
-To solve ``\eqref{eq:VI}``, for the ``v\in\mathbb{R}^M`` vector, we can form it as a [linear complementarity problem](https://en.wikipedia.org/wiki/Linear_complementarity_problem)(LCP)
+To solve ``\eqref{eq:VI}``, for the ``v\in\mathbb{R}^M`` vector, we can express it as a [linear complementarity problem](https://en.wikipedia.org/wiki/Linear_complementarity_problem) (LCP).
 
 First, do a change of variables
 
