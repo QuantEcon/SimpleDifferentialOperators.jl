@@ -16,7 +16,7 @@ Assume the following
 * A stochastic process ``x``, with [infinitesimal generator](https://en.wikipedia.org/wiki/Infinitesimal_generator_(stochastic_processes)) ``\mathcal{L}^x``
   and boundary conditions.  (e.g. the infinitesimal generator for Brownian motion with drift ``\mu`` and variance ``\sigma`` is
   ``\mathcal{L}^x \equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}``)
-* Boundary conditions for the ``x`` stochastic process (e.g. possible reflecting barriers at some minimum and maximum)
+* Boundary conditions for the ``x`` stochastic process (e.g. reflecting barriers at some minimum and maximum)
 * Flow payoffs ``u(x)`` discounted at rate ``\rho > 0``
 * Stopping payoff ``S(x)`` which gives the value of stopping at state ``x``
 
@@ -195,8 +195,7 @@ vline!([x̂])
 
 **Performance Note** As always in Julia, only test performance of code within functions (i.e. the global variables here are only for simplicity)
 
-
 ### References
 * [Github Source](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/blob/master/docs/examples/LCP_simple.jmd)
-* [Huang, J. and J.-S. Pang (1998): "Option Pricing and Linear Complementarity,"](Journal of Computational Finance)
+* [Huang, J. and J.-S. Pang (1998): "Option Pricing and Linear Complementarity,"](https://ecommons.cornell.edu/handle/1813/5453)
 * [Ben Moll's notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf)
