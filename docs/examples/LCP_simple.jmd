@@ -14,9 +14,9 @@ problems numerically as a [Differential Variational Inequality](https://en.wikip
 Assume the following
 
 * A stochastic process ``x``, with [infinitesimal generator](https://en.wikipedia.org/wiki/Infinitesimal_generator_(stochastic_processes)) ``\mathcal{L}^x``
-  and boundary conditions.  (e.g. the infintesimal generator for Brownian motion with drift ``\mu`` and variance ``\sigma`` is
+  and boundary conditions.  (e.g. the infinitesimal generator for Brownian motion with drift ``\mu`` and variance ``\sigma`` is
   ``\mathcal{L}^x \equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}``)
-* Boundary conditions for the ``x`` stochastic process (e.g. reflecting barriers at some minimum and maximum)
+* Boundary conditions for the ``x`` stochastic process (e.g. possible reflecting barriers at some minimum and maximum)
 * Flow payoffs ``u(x)`` discounted at rate ``\rho > 0``
 * Stopping payoff ``S(x)`` which gives the value of stopping at state ``x``
 
@@ -28,11 +28,12 @@ The "classical" formulation (e.g., [Stokey's "The Economics of Inaction"](https:
 
 First, in a stationary environment, the Bellman equation within the interior (continuation) region is
 
-$$
+```math
 \rho v(x) = u(x) + \mathcal{L}^x v(x)
-$$
+```
 
 Define a new operator and rewrite,
+
 ```math
 \begin{align}
   \mathcal{L} v(x) &= u(x)\label{eq:bellman}\\
@@ -41,8 +42,10 @@ Define a new operator and rewrite,
 ```
 Along with boundary conditions from the stochastic process (e.g. a reflecting barrier at a ``x_{\min}`` and another at ``x_{\max}`` or a transversality condition)
 
-In special cases with sufficient monotonicity, there is a single stopping region,
-separated by a ``\hat{x}``.  With this, necessary conditions for optimality are the value matching condition
+In special cases with sufficient monotonicity, there is a single stopping region, defined by a threshold at ``\hat{x}``.
+
+With this, necessary conditions for optimality are the value matching condition
+
 ```math
 \begin{equation}
 v(\hat{x}) = S(\hat{x})\label{eq:vm}
@@ -50,6 +53,7 @@ v(\hat{x}) = S(\hat{x})\label{eq:vm}
 ```
 
 and the smooth pasting condition
+
 ```math
 \begin{equation}
 \partial_x v(\hat{x}) = 0\label{eq:sp}
@@ -57,10 +61,11 @@ and the smooth pasting condition
 ```
 The "value matching" and "smooth pasting" conditions are necessary conditions for optimality at any free-boundary conditions.  Typically, you would solve ``\eqref{eq:bellman}, \eqref{eq:vm},\eqref{eq:sp},`` to find a ``v(x)`` function and ``\hat{x}``.
 
-While this approach works can analytically tractable, it is inconvenient for numerical solutions if: (1) the equations cannot be solved in closed form; (2) there are multiple stopping regions; (3) the dimension increases, leading to complicated stopping regions separated by non-linear manifolds.
+While this approach can be analytically tractable, it is inconvenient for numerical solutions if: (1) the equations cannot be solved in closed form; (2) there are multiple stopping regions; or (3) the dimension increases, leading to complicated stopping regions separated by non-linear manifolds.
 
 #### HJB Variational Inequality
-As discussed in [Ben Moll's notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf), the DVI form of the above problem is instead to solve
+
+As discussed in [Ben Moll's notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf), the DVI form of the above problem is to solve
 
 ```math
 \begin{equation}
@@ -83,7 +88,7 @@ To solve the equation numerically, discretize the state-space, value function, a
 Abusing notation, define
 * The grid of ``M`` values in the domain, ``x \equiv \{x_1, x_2, \ldots x_M\}``
 * Vectors for the values of functions at grid points: ``v \equiv \{v(x_m)\}_{m=1}^M`` and ``S \equiv \{S(x_m)\}_{m=1}^M``
-* The matrix ``L \in \mathbb{R}^{M \times M}`` as the discretization of the ``\mathcal{L}`` in ``\eqref{eq:L-op}`` imposing that the such that any boundary conditions on the stochastic process are fulfilled (i.e. properties of the ``x`` such as reflecting barriers)
+* The matrix ``L \in \mathbb{R}^{M \times M}`` as the discretization of the ``\mathcal{L}`` in ``\eqref{eq:L-op}``, such that any boundary conditions on the stochastic process are fulfilled (i.e. properties of the ``x`` such as reflecting barriers)
 
 Note: See this [document](https://quantecon.github.io/SimpleDifferentialOperators.jl/dev/generated/discretized-differential-operator-derivation.pdf) in this repository for notes on the discretization of the ``\mathcal{L}`` to form the ``L`` operator - subject to various boundary conditions.
 
@@ -117,7 +122,8 @@ We can also express these succinctly as a complementarity problem:
 
 ## Implementation
 
-We will solve a variation of this model where
+We will solve an instance of this model where
+
 ```math
 \begin{align}
 u(x) &= x^{\gamma}\\
@@ -125,8 +131,6 @@ u(x) &= x^{\gamma}\\
 S(x) &= S_0
 \end{align}
 ```
-
-
 
 First, we install and load necessary packages.
 
@@ -153,8 +157,8 @@ S₀ = 20.0
 u(x) = x^γ  # (10)
 S(x) = S₀  # (12)
 @assert μ <= 0 # otherwise we need to swap the L₁₋ operator
-
 ```
+
 Next, discretize the grid, operators, and change of variables
 
 ```julia
@@ -166,7 +170,9 @@ L = I * ρ - μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)  # (2) and (11)
 q = -u.(x) + L*S.(x)  # (8)
 w(z) = L*z + q; # (9)
 ```
+
 Finally, solve the model by passing to the PATH solver
+
 ```julia
 lb = zeros(M)
 ub = 300*ones(M) # Need to have upper bounds for the z.
@@ -194,31 +200,3 @@ vline!([x̂])
 * [Github Source](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/blob/master/docs/examples/LCP_simple.jmd)
 * [Huang, J. and J.-S. Pang (1998): "Option Pricing and Linear Complementarity,"](Journal of Computational Finance)
 * [Ben Moll's notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf)
-
-<!--
-# MOVING THIS OUT.  CAN PUT BACK IN FOR ALTERNATE SOLVERS WHERE THEY ARE USED
-
-We can represent these as complementary slackness conditions:
-
-```math
-\begin{align}
-z' (L z + q) &= 0 \\
-z &\geq 0 \\
-L z + q &\geq 0
-\end{align}
-```
-
-Note that the first condition requires that at most one of ``z[i]`` or ``(Bz + q)[i]`` is nonzero ``\forall i \in \{1, 2, ... n\}``.
-
-We can also express these succinctly using the complementarity constraints:
-
-```math
-0 \leq (Bz + q) \perp z \geq 0
-```
-
-If the choice of solver requires a slack variable, we can use the ``w`` defined earlier:
-
-```math
-0 \leq w \perp z \geq 0
-```
--->
