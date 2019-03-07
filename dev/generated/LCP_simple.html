@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<HTML lang = "en">
+<HEAD>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  
+  
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      TeX: { equationNumbers: { autoNumber: "AMS" } }
+    });
+  </script>
+
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+  
+<style>
+pre.hljl {
+    border: 1px solid #ccc;
+    margin: 5px;
+    padding: 5px;
+    overflow-x: auto;
+    color: rgb(68,68,68); background-color: rgb(251,251,251); }
+pre.hljl > span.hljl-t { }
+pre.hljl > span.hljl-w { }
+pre.hljl > span.hljl-e { }
+pre.hljl > span.hljl-eB { }
+pre.hljl > span.hljl-o { }
+pre.hljl > span.hljl-k { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kc { color: rgb(59,151,46); font-style: italic; }
+pre.hljl > span.hljl-kd { color: rgb(214,102,97); font-style: italic; }
+pre.hljl > span.hljl-kn { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kp { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kr { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kt { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-n { }
+pre.hljl > span.hljl-na { }
+pre.hljl > span.hljl-nb { }
+pre.hljl > span.hljl-nbp { }
+pre.hljl > span.hljl-nc { }
+pre.hljl > span.hljl-ncB { }
+pre.hljl > span.hljl-nd { color: rgb(214,102,97); }
+pre.hljl > span.hljl-ne { }
+pre.hljl > span.hljl-neB { }
+pre.hljl > span.hljl-nf { color: rgb(66,102,213); }
+pre.hljl > span.hljl-nfm { color: rgb(66,102,213); }
+pre.hljl > span.hljl-np { }
+pre.hljl > span.hljl-nl { }
+pre.hljl > span.hljl-nn { }
+pre.hljl > span.hljl-no { }
+pre.hljl > span.hljl-nt { }
+pre.hljl > span.hljl-nv { }
+pre.hljl > span.hljl-nvc { }
+pre.hljl > span.hljl-nvg { }
+pre.hljl > span.hljl-nvi { }
+pre.hljl > span.hljl-nvm { }
+pre.hljl > span.hljl-l { }
+pre.hljl > span.hljl-ld { color: rgb(148,91,176); font-style: italic; }
+pre.hljl > span.hljl-s { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sa { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sb { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sc { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sd { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sdB { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sdC { color: rgb(201,61,57); }
+pre.hljl > span.hljl-se { color: rgb(59,151,46); }
+pre.hljl > span.hljl-sh { color: rgb(201,61,57); }
+pre.hljl > span.hljl-si { }
+pre.hljl > span.hljl-so { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sr { color: rgb(201,61,57); }
+pre.hljl > span.hljl-ss { color: rgb(201,61,57); }
+pre.hljl > span.hljl-ssB { color: rgb(201,61,57); }
+pre.hljl > span.hljl-nB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nbB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nfB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nh { color: rgb(59,151,46); }
+pre.hljl > span.hljl-ni { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nil { color: rgb(59,151,46); }
+pre.hljl > span.hljl-noB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-oB { color: rgb(102,102,102); font-weight: bold; }
+pre.hljl > span.hljl-ow { color: rgb(102,102,102); font-weight: bold; }
+pre.hljl > span.hljl-p { }
+pre.hljl > span.hljl-c { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-ch { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cm { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cp { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cpB { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cs { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-csB { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-g { }
+pre.hljl > span.hljl-gd { }
+pre.hljl > span.hljl-ge { }
+pre.hljl > span.hljl-geB { }
+pre.hljl > span.hljl-gh { }
+pre.hljl > span.hljl-gi { }
+pre.hljl > span.hljl-go { }
+pre.hljl > span.hljl-gp { }
+pre.hljl > span.hljl-gs { }
+pre.hljl > span.hljl-gsB { }
+pre.hljl > span.hljl-gt { }
+</style>
+
+
+
+  <style type="text/css">
+  @font-face {
+  font-style: normal;
+  font-weight: 300;
+}
+@font-face {
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-style: normal;
+  font-weight: 600;
+}
+html {
+  font-family: sans-serif; /* 1 */
+  -ms-text-size-adjust: 100%; /* 2 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+}
+body {
+  margin: 0;
+}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+menu,
+nav,
+section,
+summary {
+  display: block;
+}
+audio,
+canvas,
+progress,
+video {
+  display: inline-block; /* 1 */
+  vertical-align: baseline; /* 2 */
+}
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+[hidden],
+template {
+  display: none;
+}
+a:active,
+a:hover {
+  outline: 0;
+}
+abbr[title] {
+  border-bottom: 1px dotted;
+}
+b,
+strong {
+  font-weight: bold;
+}
+dfn {
+  font-style: italic;
+}
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+mark {
+  background: #ff0;
+  color: #000;
+}
+small {
+  font-size: 80%;
+}
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+sup {
+  top: -0.5em;
+}
+sub {
+  bottom: -0.25em;
+}
+img {
+  border: 0;
+}
+svg:not(:root) {
+  overflow: hidden;
+}
+figure {
+  margin: 1em 40px;
+}
+hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 0;
+}
+pre {
+  overflow: auto;
+}
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+button,
+input,
+optgroup,
+select,
+textarea {
+  color: inherit; /* 1 */
+  font: inherit; /* 2 */
+  margin: 0; /* 3 */
+}
+button {
+  overflow: visible;
+}
+button,
+select {
+  text-transform: none;
+}
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button; /* 2 */
+  cursor: pointer; /* 3 */
+}
+button[disabled],
+html input[disabled] {
+  cursor: default;
+}
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+input {
+  line-height: normal;
+}
+input[type="checkbox"],
+input[type="radio"] {
+  box-sizing: border-box; /* 1 */
+  padding: 0; /* 2 */
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+input[type="search"] {
+  -webkit-appearance: textfield; /* 1 */
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box; /* 2 */
+  box-sizing: content-box;
+}
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+fieldset {
+  border: 1px solid #c0c0c0;
+  margin: 0 2px;
+  padding: 0.35em 0.625em 0.75em;
+}
+legend {
+  border: 0; /* 1 */
+  padding: 0; /* 2 */
+}
+textarea {
+  overflow: auto;
+}
+optgroup {
+  font-weight: bold;
+}
+table {
+  font-family: monospace, monospace;
+  font-size : 0.8em;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+td,
+th {
+  padding: 0;
+}
+thead th {
+    border-bottom: 1px solid black;
+    background-color: white;
+}
+tr:nth-child(odd){
+  background-color: rgb(248,248,248);
+}
+
+
+/*
+* Skeleton V2.0.4
+* Copyright 2014, Dave Gamache
+* www.getskeleton.com
+* Free to use under the MIT license.
+* http://www.opensource.org/licenses/mit-license.php
+* 12/29/2014
+*/
+.container {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box; }
+.column,
+.columns {
+  width: 100%;
+  float: left;
+  box-sizing: border-box; }
+@media (min-width: 400px) {
+  .container {
+    width: 85%;
+    padding: 0; }
+}
+@media (min-width: 550px) {
+  .container {
+    width: 80%; }
+  .column,
+  .columns {
+    margin-left: 4%; }
+  .column:first-child,
+  .columns:first-child {
+    margin-left: 0; }
+
+  .one.column,
+  .one.columns                    { width: 4.66666666667%; }
+  .two.columns                    { width: 13.3333333333%; }
+  .three.columns                  { width: 22%;            }
+  .four.columns                   { width: 30.6666666667%; }
+  .five.columns                   { width: 39.3333333333%; }
+  .six.columns                    { width: 48%;            }
+  .seven.columns                  { width: 56.6666666667%; }
+  .eight.columns                  { width: 65.3333333333%; }
+  .nine.columns                   { width: 74.0%;          }
+  .ten.columns                    { width: 82.6666666667%; }
+  .eleven.columns                 { width: 91.3333333333%; }
+  .twelve.columns                 { width: 100%; margin-left: 0; }
+
+  .one-third.column               { width: 30.6666666667%; }
+  .two-thirds.column              { width: 65.3333333333%; }
+
+  .one-half.column                { width: 48%; }
+
+  /* Offsets */
+  .offset-by-one.column,
+  .offset-by-one.columns          { margin-left: 8.66666666667%; }
+  .offset-by-two.column,
+  .offset-by-two.columns          { margin-left: 17.3333333333%; }
+  .offset-by-three.column,
+  .offset-by-three.columns        { margin-left: 26%;            }
+  .offset-by-four.column,
+  .offset-by-four.columns         { margin-left: 34.6666666667%; }
+  .offset-by-five.column,
+  .offset-by-five.columns         { margin-left: 43.3333333333%; }
+  .offset-by-six.column,
+  .offset-by-six.columns          { margin-left: 52%;            }
+  .offset-by-seven.column,
+  .offset-by-seven.columns        { margin-left: 60.6666666667%; }
+  .offset-by-eight.column,
+  .offset-by-eight.columns        { margin-left: 69.3333333333%; }
+  .offset-by-nine.column,
+  .offset-by-nine.columns         { margin-left: 78.0%;          }
+  .offset-by-ten.column,
+  .offset-by-ten.columns          { margin-left: 86.6666666667%; }
+  .offset-by-eleven.column,
+  .offset-by-eleven.columns       { margin-left: 95.3333333333%; }
+
+  .offset-by-one-third.column,
+  .offset-by-one-third.columns    { margin-left: 34.6666666667%; }
+  .offset-by-two-thirds.column,
+  .offset-by-two-thirds.columns   { margin-left: 69.3333333333%; }
+
+  .offset-by-one-half.column,
+  .offset-by-one-half.columns     { margin-left: 52%; }
+
+}
+html {
+  font-size: 62.5%; }
+body {
+  font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
+  line-height: 1.6;
+  font-weight: 400;
+  font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #222; }
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  font-weight: 300; }
+h1 { font-size: 3.6rem; line-height: 1.2;  letter-spacing: -.1rem;}
+h2 { font-size: 3.4rem; line-height: 1.25; letter-spacing: -.1rem; }
+h3 { font-size: 3.2rem; line-height: 1.3;  letter-spacing: -.1rem; }
+h4 { font-size: 2.8rem; line-height: 1.35; letter-spacing: -.08rem; }
+h5 { font-size: 2.4rem; line-height: 1.5;  letter-spacing: -.05rem; }
+h6 { font-size: 1.5rem; line-height: 1.6;  letter-spacing: 0; }
+
+p {
+  margin-top: 0; }
+a {
+  color: #1EAEDB; }
+a:hover {
+  color: #0FA0CE; }
+.button,
+button,
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  display: inline-block;
+  height: 38px;
+  padding: 0 30px;
+  color: #555;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 38px;
+  letter-spacing: .1rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border-radius: 4px;
+  border: 1px solid #bbb;
+  cursor: pointer;
+  box-sizing: border-box; }
+.button:hover,
+button:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+input[type="button"]:hover,
+.button:focus,
+button:focus,
+input[type="submit"]:focus,
+input[type="reset"]:focus,
+input[type="button"]:focus {
+  color: #333;
+  border-color: #888;
+  outline: 0; }
+.button.button-primary,
+button.button-primary,
+input[type="submit"].button-primary,
+input[type="reset"].button-primary,
+input[type="button"].button-primary {
+  color: #FFF;
+  background-color: #33C3F0;
+  border-color: #33C3F0; }
+.button.button-primary:hover,
+button.button-primary:hover,
+input[type="submit"].button-primary:hover,
+input[type="reset"].button-primary:hover,
+input[type="button"].button-primary:hover,
+.button.button-primary:focus,
+button.button-primary:focus,
+input[type="submit"].button-primary:focus,
+input[type="reset"].button-primary:focus,
+input[type="button"].button-primary:focus {
+  color: #FFF;
+  background-color: #1EAEDB;
+  border-color: #1EAEDB; }
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea,
+select {
+  height: 38px;
+  padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
+  background-color: #fff;
+  border: 1px solid #D1D1D1;
+  border-radius: 4px;
+  box-shadow: none;
+  box-sizing: border-box; }
+/* Removes awkward default styles on some inputs for iOS */
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none; }
+textarea {
+  min-height: 65px;
+  padding-top: 6px;
+  padding-bottom: 6px; }
+input[type="email"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+input[type="text"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  border: 1px solid #33C3F0;
+  outline: 0; }
+label,
+legend {
+  display: block;
+  margin-bottom: .5rem;
+  font-weight: 600; }
+fieldset {
+  padding: 0;
+  border-width: 0; }
+input[type="checkbox"],
+input[type="radio"] {
+  display: inline; }
+label > .label-body {
+  display: inline-block;
+  margin-left: .5rem;
+  font-weight: normal; }
+ul {
+  list-style: circle; }
+ol {
+  list-style: decimal; }
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+  margin: 1.5rem 0 1.5rem 3rem;
+  font-size: 90%; }
+li {
+  margin-bottom: 1rem; }
+th,
+td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #E1E1E1; }
+th:first-child,
+td:first-child {
+  padding-left: 0; }
+th:last-child,
+td:last-child {
+  padding-right: 0; }
+button,
+.button {
+  margin-bottom: 1rem; }
+input,
+textarea,
+select,
+fieldset {
+  margin-bottom: 1.5rem; }
+pre,
+blockquote,
+dl,
+figure,
+table,
+p,
+ul,
+ol,
+form {
+  margin-bottom: 2.5rem; }
+.u-full-width {
+  width: 100%;
+  box-sizing: border-box; }
+.u-max-full-width {
+  max-width: 100%;
+  box-sizing: border-box; }
+.u-pull-right {
+  float: right; }
+.u-pull-left {
+  float: left; }
+hr {
+  margin-top: 3rem;
+  margin-bottom: 3.5rem;
+  border-width: 0;
+  border-top: 1px solid #E1E1E1; }
+.container:after,
+.row:after,
+.u-cf {
+  content: "";
+  display: table;
+  clear: both; }
+
+pre {
+  display: block;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.42857143;
+  color: #333;
+  word-break: break-all;
+  word-wrap: break-word;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+pre.sourceCode.julia {
+  display: block;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.42857143;
+  color: #333;
+  word-break: break-all;
+  word-wrap: break-word;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+pre.output {
+  filter : brightness(90%);
+  border : none;
+  /* matching hard-coded values in Highlights.jl */
+  margin : 5px;  
+  padding : 5px;
+}
+
+pre.julia-error {
+  color : red
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+code {
+  padding: 2px 4px;
+  font-size: 90%;
+
+  background-color: #ffffff;
+  border-radius: 4px;
+}
+
+@media (min-width: 400px) {}
+@media (min-width: 550px) {}
+@media (min-width: 750px) {}
+@media (min-width: 1000px) {}
+@media (min-width: 1200px) {}
+
+h1.title {margin-top : 20px}
+img {max-width : 100%}
+div.title {text-align: center;}
+
+  </style>
+
+
+
+</HEAD>
+  <BODY>
+    <div class ="container">
+      <div class = "row">
+        <div class = "col-md-12 twelve columns">
+
+          <div class="title">
+            
+            
+            
+          </div>
+
+          <p>&lt;&#33;– Compile with Weave.jl –&gt;</p>
+<h2>Optimal Stopping Problems</h2>
+<blockquote>
+<p>Presented by <a href="email:arnav.sood@ubc.ca">Arnav Sood</a> and <a href="email:jesseperla@gmail.com">Jesse Perla</a></p>
+</blockquote>
+<p>This notebook provides an expansion of lecture notes and Julia code to solve optimal stopping problems numerically as a <a href="https://en.wikipedia.org/wiki/Differential_variational_inequality">Differential Variational Inequality</a> &#40;DVI&#41;.  For more, see</p>
+<ul>
+<li><p><a href="Journal of Computational Finance">Huang, J. and J.-S. Pang &#40;1998&#41;: &quot;Option Pricing and Linear Complementarity,&quot;</a></p>
+</li>
+<li><p><a href="http://www.princeton.edu/~moll/HACTproject/option_simple.pdf">Ben Moll&#39;s excellent notes</a></p>
+</li>
+</ul>
+<h2>A Univariate Example</h2>
+<p>Assume the following</p>
+<ul>
+<li><p>A stochastic process <span class="math">$x$</span>, with <a href="https://en.wikipedia.org/wiki/Infinitesimal_generator_&#40;stochastic_processes&#41;">infinitesimal generator</a> <span class="math">$\mathcal{L}^x$</span> and boundary conditions.  &#40;e.g. the infintesimal generator for Brownian motion with drift <span class="math">$\mu$</span> and variance <span class="math">$\sigma$</span> is <span class="math">$\mathcal{L}^x \equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}$</span>&#41;</p>
+</li>
+<li><p>Boundary conditions for the <span class="math">$x$</span> stochastic process &#40;e.g. reflecting barriers at some minimum and maximum&#41;</p>
+</li>
+<li><p>Flow payoffs <span class="math">$u(x)$</span> discounted at rate <span class="math">$\rho > 0$</span></p>
+</li>
+<li><p>Stopping payoff <span class="math">$S(x)$</span> which gives the value of stopping at state <span class="math">$x$</span></p>
+</li>
+</ul>
+<p>The control problem is: choose when to stop the process and gain the payoff <span class="math">$S(x)$</span>.  If there are only two regions, then this becomes the choice of a stopping threshold <span class="math">$\hat{x}$</span></p>
+<h4>Classical Formulation</h4>
+<p>The &quot;classical&quot; formulation &#40;e.g., <a href="https://press.princeton.edu/titles/8766.html">Stokey&#39;s &quot;The Economics of Inaction&quot;</a>&#41; of this problem is as a free-boundary problem.</p>
+<p>First, in a stationary environment, the Bellman equation within the interior &#40;continuation&#41; region is</p>
+:&#36;
+<p>\rho v&#40;x&#41; &#61; u&#40;x&#41; &#43; \mathcal&#123;L&#125;^x v&#40;x&#41; &#36;</p>
+<p>Define a new operator and rewrite,</p>
+<p class="math">\[
+\begin{align}
+\begin{align}
+  \mathcal{L} v(x) &= u(x)\label{eq:bellman}\\
+  \mathcal{L} &\equiv \rho - \mathcal{L}^x\label{eq:L-op}
+\end{align}
+\end{align}
+\]</p>
+<p>Along with boundary conditions from the stochastic process &#40;e.g. a reflecting barrier at a <span class="math">$x_{\min}$</span> and another at <span class="math">$x_{\max}$</span> or a transversality condition&#41;</p>
+<p>In special cases with sufficient monotonicity, there is a single stopping region, separated by a <span class="math">$\hat{x}$</span>.  With this, necessary conditions for optimality are the value matching condition</p>
+<p class="math">\[
+\begin{align}
+\begin{equation}
+v(\hat{x}) = S(\hat{x})\label{eq:vm}
+\end{equation}
+\end{align}
+\]</p>
+<p>and the smooth pasting condition</p>
+<p class="math">\[
+\begin{align}
+\begin{equation}
+\partial_x v(\hat{x}) = 0\label{eq:sp}
+\end{equation}
+\end{align}
+\]</p>
+<p>The &quot;value matching&quot; and &quot;smooth pasting&quot; conditions are necessary conditions for optimality at any free-boundary conditions.  Typically, you would solve <span class="math">$\eqref{eq:bellman}, \eqref{eq:vm},\eqref{eq:sp},$</span> to find a <span class="math">$v(x)$</span> function and <span class="math">$\hat{x}$</span>.</p>
+<p>While this approach works can analytically tractable, it is inconvenient for numerical solutions if: &#40;1&#41; the equations cannot be solved in closed form; &#40;2&#41; there are multiple stopping regions; &#40;3&#41; the dimension increases, leading to complicated stopping regions separated by non-linear manifolds.</p>
+<h4>HJB Variational Inequality</h4>
+<p>As discussed in <a href="http://www.princeton.edu/~moll/HACTproject/option_simple.pdf">Ben Moll&#39;s notes</a>, the DVI form of the above problem is instead to solve</p>
+<p class="math">\[
+\begin{align}
+\begin{equation}
+0 = \min\{\mathcal{L} v(x) - u(x), v(x) - S(x)\}\label{eq:DVI}
+\end{equation}
+\end{align}
+\]</p>
+<p>for <span class="math">$v(x)$</span>.  A few important notes:</p>
+<ul>
+<li><p>The <span class="math">$\mathcal{L} v(x) - u(x)$</span> term is just the Bellman equation <span class="math">$\eqref{eq:bellman}$</span> if it is binding and <span class="math">$=0$</span></p>
+</li>
+<li><p>The <span class="math">$v(x) - S(x)$</span> term is the value matching condition in <span class="math">$\eqref{eq:vm}$</span> if it is binding and <span class="math">$=0$</span></p>
+</li>
+<li><p>You are <strong>not solving for the boundaries</strong> of the stopping regions directly &#40;i.e. no <span class="math">$\hat{x}$</span> in the system&#41;</p>
+</li>
+</ul>
+<p>With a solution, for <span class="math">$v(x)$</span> function, you can use it in <span class="math">$\eqref{eq:DVI}$</span> to determine which region a particular <span class="math">$x$</span> is in.  Those boundaries can be used to determine where a <span class="math">$\hat{x}$</span> occurs.  Furthermore, you can prove that at any of those points, a solution to the DVI implies the smooth-pasting condition <span class="math">$\eqref{eq:sp}$</span></p>
+<h2>Numerical Solution</h2>
+<p>To solve the equation numerically, discretize the state-space, value function, and operators with  upwind finite difference methods</p>
+<p>Abusing notation, define</p>
+<ul>
+<li><p>The grid of <span class="math">$M$</span> values in the domain, <span class="math">$x \equiv \{x_1, x_2, \ldots x_M\}$</span></p>
+</li>
+<li><p>Vectors for the values of functions at grid points: <span class="math">$v \equiv \{v(x_m)\}_{m=1}^M$</span> and <span class="math">$S \equiv \{S(x_m)\}_{m=1}^M$</span></p>
+</li>
+<li><p>The matrix <span class="math">$L \in \mathbb{R}^{M \times M}$</span> as the discretization of the <span class="math">$\mathcal{L}$</span> in <span class="math">$\eqref{eq:L-op}$</span> imposing that the such that any boundary conditions on the stochastic process are fulfilled &#40;i.e. properties of the <span class="math">$x$</span> such as reflecting barriers&#41;</p>
+</li>
+</ul>
+<p>Note: See this <a href="https://quantecon.github.io/SimpleDifferentialOperators.jl/dev/generated/discretized-differential-operator-derivation.pdf">document</a> in this repository for notes on the discretization of the <span class="math">$\mathcal{L}$</span> to form the <span class="math">$L$</span> operator - subject to various boundary conditions.</p>
+<p>Given these definitions, the DVI in <span class="math">$\eqref{eq:DVI}$</span> becomes the variational inequality</p>
+<p class="math">\[
+\begin{align}
+\begin{equation}
+0 = \min\{L v - u, v - S\}\label{eq:VI}
+\end{equation}
+\end{align}
+\]</p>
+<p>To solve <span class="math">$\eqref{eq:VI}$</span>, for the <span class="math">$v\in\mathbb{R}^M$</span> vector, we can form it as a <a href="https://en.wikipedia.org/wiki/Linear_complementarity_problem">linear complementarity problem</a>&#40;LCP&#41;</p>
+<p>First, do a change of variables</p>
+<p class="math">\[
+\begin{align}
+\begin{align}
+z &\equiv v - S \\
+q &\equiv -u + L S \\
+w &\equiv L z + q
+\end{align}
+\end{align}
+\]</p>
+<p>Substituting into <span class="math">$\eqref{eq:VI}$</span> yields an equation in the typical form of a LCP</p>
+<p class="math">\[
+\begin{align}
+0 = \min \{L z + q, z\}
+\end{align}
+\]</p>
+<p>We can also express these succinctly as a complementarity problem:</p>
+<p class="math">\[
+\begin{align}
+0 \leq (L z + q) \perp z \geq 0
+\end{align}
+\]</p>
+<h2>Implementation</h2>
+<p>We will solve a variation of this model where</p>
+<p class="math">\[
+\begin{align}
+\begin{align}
+u(x) &= x^{\gamma}\\
+\mathcal{L}^x &= \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}\\
+S(x) &= S_0
+\end{align}
+\end{align}
+\]</p>
+<p>First, we install and load necessary packages.</p>
+<p>The key one is the <a href="https://github.com/chkwon/PATHSolver.jl"><code>PATHSolver.jl</code></a> package for complementarity problems.</p>
+<p>This is a commercial solver due to Dirkse, Ferris, and Munson, who have generously made it <a href="http://pages.cs.wisc.edu/~ferris/path.html">available</a> for non-commerical academic use use.</p>
+
+
+<pre class='hljl'>
+<span class='hljl-cs'># install if required,</span><span class='hljl-t'>
+</span><span class='hljl-cs'># ] add SimpleDifferentialOperators, PATHSolver, Plots, Suppressor</span><span class='hljl-t'>
+
+</span><span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>SimpleDifferentialOperators</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>PATHSolver</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>Plots</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>LinearAlgebra</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>Suppressor</span>
+</pre>
+
+
+
+<p>Next, setup the equations and constants for our grid</p>
+
+
+<pre class='hljl'>
+<span class='hljl-n'>μ</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-nfB'>0.1</span><span class='hljl-t'>
+</span><span class='hljl-n'>σ</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>0.1</span><span class='hljl-t'>
+</span><span class='hljl-n'>ρ</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>0.05</span><span class='hljl-t'>
+</span><span class='hljl-n'>γ</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>0.5</span><span class='hljl-t'>
+</span><span class='hljl-n'>ρ</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>0.05</span><span class='hljl-t'>
+</span><span class='hljl-n'>S₀</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>20.0</span><span class='hljl-t'>
+</span><span class='hljl-nf'>u</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>x</span><span class='hljl-oB'>^</span><span class='hljl-n'>γ</span><span class='hljl-t'>  </span><span class='hljl-cs'># (10)</span><span class='hljl-t'>
+</span><span class='hljl-nf'>S</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>S₀</span><span class='hljl-t'>  </span><span class='hljl-cs'># (12)</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@assert</span><span class='hljl-t'> </span><span class='hljl-n'>μ</span><span class='hljl-t'> </span><span class='hljl-oB'>&lt;=</span><span class='hljl-t'> </span><span class='hljl-ni'>0</span><span class='hljl-t'> </span><span class='hljl-cs'># otherwise we need to swap the L₁₋ operator</span>
+</pre>
+
+
+
+<p>Next, discretize the grid, operators, and change of variables</p>
+
+
+<pre class='hljl'>
+<span class='hljl-n'>M</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>300</span><span class='hljl-t'>
+</span><span class='hljl-n'>x</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>range</span><span class='hljl-p'>(</span><span class='hljl-nfB'>0.0</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-nfB'>5.0</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>length</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>M</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-n'>bc</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-nf'>Reflecting</span><span class='hljl-p'>(),</span><span class='hljl-t'> </span><span class='hljl-nf'>Reflecting</span><span class='hljl-p'>())</span><span class='hljl-t'>  </span><span class='hljl-cs'># assume x_t reflects at 0.0 and 5.0</span><span class='hljl-t'>
+</span><span class='hljl-n'>L</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>I</span><span class='hljl-t'> </span><span class='hljl-oB'>*</span><span class='hljl-t'> </span><span class='hljl-n'>ρ</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-t'> </span><span class='hljl-n'>μ</span><span class='hljl-oB'>*</span><span class='hljl-nf'>L₁₋</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>bc</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-t'> </span><span class='hljl-n'>σ</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-t'> </span><span class='hljl-oB'>/</span><span class='hljl-t'> </span><span class='hljl-ni'>2</span><span class='hljl-t'> </span><span class='hljl-oB'>*</span><span class='hljl-t'> </span><span class='hljl-nf'>L₂</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>bc</span><span class='hljl-p'>)</span><span class='hljl-t'>  </span><span class='hljl-cs'># (2) and (11)</span><span class='hljl-t'>
+
+</span><span class='hljl-n'>q</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-n'>u</span><span class='hljl-oB'>.</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-n'>L</span><span class='hljl-oB'>*</span><span class='hljl-n'>S</span><span class='hljl-oB'>.</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>)</span><span class='hljl-t'>  </span><span class='hljl-cs'># (8)</span><span class='hljl-t'>
+</span><span class='hljl-nf'>w</span><span class='hljl-p'>(</span><span class='hljl-n'>z</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>L</span><span class='hljl-oB'>*</span><span class='hljl-n'>z</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-n'>q</span><span class='hljl-p'>;</span><span class='hljl-t'> </span><span class='hljl-cs'># (9)</span>
+</pre>
+
+
+
+<p>Finally, solve the model by passing to the PATH solver</p>
+
+
+<pre class='hljl'>
+<span class='hljl-n'>lb</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>zeros</span><span class='hljl-p'>(</span><span class='hljl-n'>M</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-n'>ub</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>300</span><span class='hljl-oB'>*</span><span class='hljl-nf'>ones</span><span class='hljl-p'>(</span><span class='hljl-n'>M</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-cs'># Need to have upper bounds for the z.</span><span class='hljl-t'>
+</span><span class='hljl-n'>code</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>z</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>w_val</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nd'>@suppress</span><span class='hljl-t'> </span><span class='hljl-nf'>solveLCP</span><span class='hljl-p'>(</span><span class='hljl-n'>w</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>lb</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>ub</span><span class='hljl-p'>)</span><span class='hljl-t'>  </span><span class='hljl-cs'># Solves ()</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@assert</span><span class='hljl-t'> </span><span class='hljl-n'>code</span><span class='hljl-t'> </span><span class='hljl-oB'>==</span><span class='hljl-t'> </span><span class='hljl-sc'>:Solved</span><span class='hljl-t'>  </span><span class='hljl-cs'># otherwise, an error in convergence</span><span class='hljl-t'>
+
+</span><span class='hljl-n'>v</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>z</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-n'>S</span><span class='hljl-oB'>.</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>)</span><span class='hljl-t'>  </span><span class='hljl-cs'># (7)</span><span class='hljl-t'>
+</span><span class='hljl-n'>x̂_index</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>findfirst</span><span class='hljl-p'>(</span><span class='hljl-n'>z</span><span class='hljl-t'> </span><span class='hljl-oB'>.&gt;</span><span class='hljl-t'> </span><span class='hljl-ni'>0</span><span class='hljl-p'>)</span><span class='hljl-t'>  </span><span class='hljl-cs'># i.e. find first x index where non-binding</span><span class='hljl-t'>
+</span><span class='hljl-k'>if</span><span class='hljl-t'> </span><span class='hljl-nf'>isnothing</span><span class='hljl-p'>(</span><span class='hljl-n'>x̂_index</span><span class='hljl-p'>)</span><span class='hljl-t'>
+  </span><span class='hljl-n'>x̂</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>Inf</span><span class='hljl-t'> </span><span class='hljl-cs'># i.e. never non-binding = always stop</span><span class='hljl-t'>
+</span><span class='hljl-k'>else</span><span class='hljl-t'>
+  </span><span class='hljl-n'>x̂</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>x</span><span class='hljl-p'>[</span><span class='hljl-n'>x̂_index</span><span class='hljl-p'>]</span><span class='hljl-t'>
+</span><span class='hljl-k'>end</span><span class='hljl-t'>
+
+</span><span class='hljl-cs'># plot the solution and the stopping threshold</span><span class='hljl-t'>
+</span><span class='hljl-nf'>plot</span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>v</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;Value Function for Optimal Stopping&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'>
+     </span><span class='hljl-n'>legend</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-kc'>false</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;v(x)&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>xlabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;x&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-nf'>vline!</span><span class='hljl-p'>([</span><span class='hljl-n'>x̂</span><span class='hljl-p'>])</span>
+</pre>
+
+
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAkAAAAGACAIAAADK+EpIAAAABmJLR0QA/wD/AP+gvaeTAAAgAElEQVR4nO3deUAUdf8H8O/szHIfC4rK6a2I95EmIqAoKpdHpuWRYWVW9Cu19Hm07Mms1PJ5NLJ6MtEeszxD8UIOAUU07ysV7xsPBNFdkGVmvr8/1odn41gWhJ2d3ffrL/k6zHz2w+y+9zszO8tQSgkAAIDcKKQuAAAAoC4QYAAAIEsIMDNy9OhRhmE8PT0FQahygejoaIZhfv75ZyNX6O/vzzBM/RVoCGOQaWooV1pa+uTJE/0Rk7Xi5s2bUVFRLi4urq6uDbeVhw8fLliwICgoyMPDw8bGxtPTMzw8/LvvvispKantqiTslZEbys7OHjt2bKdOnZycnBo3btyzZ8/JkyefPHlSf5nKj8KUTPlEg7+gYDZEUQwICCCEpKWlVf7fwsJCpVJpZ2dXVFRk5Arbt29vsj8xIcTBwWFINUxTQ7nKD9xkrRg9ejQh5LnnnpsxY0YDbSIpKUmlUumevz4+PoGBgY0aNSr/8cCBA7Vam4S9qnFDoihOmTKFEMIwTM+ePUeMGDFkyJC2bdvqHuxHH31k/KoalLRbt2ZounlZuHAhISQ2Nrbyf61atYoQMmbMGOPXZuIAa9++vWm2VaPKD1ytVj9+/NgEm/b39yeEPHz4sIHWn5SUpJvUvv/++/n5+bpBURSvXLnywgsvEELs7e2PHz9u/Aol7FWN++fKlSsJIc8///yVK1fKB0VRzMnJ8fHxIYRs3rzZyFU1KJN1DCrAIUTzMn78eIZhNm3aVPl4yIYNGwgh48aNk6Iu2XN0dHRycjLBhiilhJAGOn5YVFQ0adIkSumWLVv+9a9/lU+8GIZp0aLFhg0bvvzyy5KSkokTJ4qiWOetmKxXNdq6dSsh5D//+U+LFi3KBxmG6du3r+793O+//y5RaX9hPh2zOhIHKFQyePBgQsimTZv0BwsKCpRKpZubW2lpafng6dOnx40b17lzZ0dHRzc3t27dui1YsEB/gQpvS6t8l1rl4IYNG8LDwz08PNzc3Pr165eQkCAIguGyiREzMGMK0P0oCMKiRYtatmxpa2vbrl27+fPn6z8unY0bN4aHhzdu3NjX13f48OFJSUnllVTewytvWhTFlStXDhgwwN3d3dvbe+jQocnJyZULM6YS/SZU+eQycluU0nnz5rm6us6aNavK9esm6BMmTKiuAJ7nu3fvTgjZtm1b+WpLS0s/+ugjHx8fJyen/v37f//996IoGt8r3Y9arfbTTz9t0aKFUqn08/P77LPPeJ4/derU0KFD3d3dPT09J0+eXFBQoF9MbffPynr16kUIuXbtWuX/Kikp+eSTT3788cfqHgU1uu0G+lOrZSr8aMye89tvv4WFhbm6unp6es6aNUv3ttV8jmSYPwSY2Vm9ejUhZNSoUfqDumMpU6ZMKR/59ddfFQoFIaRTp07jxo2LiYlxdnausEzdAuzdd98lhHh7e48aNSoqKsrNzY0Q8uKLLxrOsPoNsJkzZzZt2nTSpEkTJ060t7cnhEybNk3/tz744ANCiEqlioqKioiIsLGxIYR8++23lNL4+PgmTZoQQuLj4+Pj46vb9CuvvEIIcXV1jYyMDAsL021l/vz5ta1EX5WbNn5by5cv1z2ohQsXVrn+4OBgQsixY8eqK4BS+ssvvxBC3nrrrfLVjhkzxsbGpn///iEhIXZ2doSQiRMnGii4yr/IqFGjWrRo8cYbb4wZM4bjOELIyy+/rFKpwsLC3nzzTd1KyldL67R/VhYXF0cI6dKly5o1a0pKSqpb7BnbbqA/tVqmwo817jkzZswghLi4uERERAwaNMje3n748OEIsFpBgJkdtVrt6Ohoa2urfx4lIiKCEJKZmVk+ojvXMnny5PJ3gjdu3LC1tVWpVOXL1CHAMjIydC9/5e8Wi4qKRo4cSQjRvdutDiFEqVS2r0pZWZnxBeh+7Ny5871793QjBw8eJIQ0adKkfJn9+/cTQrp163bnzh3dyJkzZ1xcXFxcXHQvczVemLBz505CSNeuXW/fvq0bOX36tKenp1KpvHDhgvGVVFZ508Zvy83NLTU1Vf+tfQWNGzdmWfbJkycGCjh+/DghJCQkpHy1Hh4e5Zl34cKF1q1bE70LhWrsle7H8PBwjUajG1m/fr1urvOPf/xDN3Lu3DmGYRo1alT+W3XYPyvLz89//vnnddtydXWNiopasGDBvn37KnfgWdpuTH9q1UPj9+HOnTvfunVLN3LmzBkvLy8EWK0gwMyR7p1jQkKC7kfd8UNfX1/9OVBCQsLy5cuvXr2q/4u6UwXlP9YhwGJiYuzs7Cq8QNy/f7/8NbE6pHp1CLDyk/M6vr6++svorlbYvXu3/jLz5s3r06eP7rWpxhflym8IKKXLli0jhHzwwQfGV1JZ5U0bv63vvvvOwJoppRzH+fj4GF7m8ePHulfG8tV+8803+gts2bKFEBITE1NdwVX+RU6ePFk+otFoCCG2trb6+4mfn5/+b9Vh/6xSWVnZjh07pkyZoktEHQcHhwkTJpw7d87AqoxvuzH9qVUP67wPf//99wiwWkGAmaO0tDRCSFhYmO7HhIQEQsjMmTOrXLioqCgnJ+fbb7/VHX94xgBr06YNx3GVZ1EV3l9XZswTz/gAu3v3roFl/P39bWxsDBzSrPFFuXXr1ra2thXWcOHChcqvSoYrMWbTxm9L/xW5SsbMwE6fPl1hBnbp0iX9BbRare5PXF3BVf5FeJ7XX4YQ0qZNGwO/Vc74/bNG9+7d27Rp09SpU5s2bUoIcXR0zMnJqW5VxrfdmP7UqodG7sOVy7t48SICrFZwFaI5Cg0N9fHx2b17d15eHqnm+sPi4uJp06a1bNnS1dW1f//+//73v93d3csvSzMe/evk6ebNmzzP51ZC//vWvt7RqmZvHh4eBn7l6tWrnp6eulMsdXPr1q1mzZpVWIO3tzch5Pr168ZXUr/batWqleFVdejQQRCEc+fOGVjm1KlThBD9+Yqnp6f+Akql0tPT89q1a8aV/xTLsjWO6KuX/VOtVutmezoeHh6jRo36/vvvL1++PHnyZI1GozuNVCXj225Mf+rQwxr34crl6Q4hgvEQYOaIZVndlWZr164tKChITU3t2LFjly5d9Jd55513lixZ0rFjx02bNj18+PDkyZMJCQmNGzeu7bZ0hwfL+fn5eXl5Vflmp7S09FkfmBEF6Bi+r4Gnp+f9+/crJJ8oijzPG3n5uLe39507dyosrHu7oHuNM7KS+t2WUqk0vKqoqChCyOLFi6tbQBCEJUuWEEJGjBhRYVv6y9y5c6ehXyvrZf/08fHRHTKtMO7g4KC7IFM33ayS8W03pj916KHhPafK8u7evWvgV6AyBJiZmjhxIiHk119/3bx5M8/zus+H6S+wceNGd3f3LVu2jBo1SvcZFEppUVFRjWvW/4TZhQsXCgsL9f+3Q4cOeXl5Fd5aXrlyZerUqStWrHiWR2RkAcbw9/cvLi7+448/9AdnzZqlVCr37t1rzBrat29fWlqanZ2tP5iamkr+OnepF/W4rSlTpqhUqtWrVyclJVW5wOLFi//444+ePXvqPoyhs2PHDv1lUlJSysrK6v1hVlDn/VNfu3btHj58uGvXrsr/pTvaVuFdnT7j225Mf+q9h/7+/qWlpRV21/T09Dqv0EqZ6FAl1J7uQzC6m0vp34lAx9vb297evvwyJ61W+9FHH+n+ptVdNNGvXz9CyLp163Q/lpSU6E506y+juwoxMDBQN8WhlD569Cg0NJQQsnbtWgPVEiOO3RtTgDHnyXSvJr169Sp/+OfPn1epVM7OzvpXIepfeF3lGvSvY9RdosZxnO54qZGVVFZ5gTpvq0oG7sShu4uVs7Nz+fVy5VfQld+b48KFC7pbMe3YsUN/GQO9qrK2yn/uCovVYf+sTPeRgEaNGv3yyy/6F2eePXu2Q4cO5L8fnKjyURjfdmP6Y8wyhjtWYTA5OZn89SLJ3Nxc3e1FcA7MeAgw8/XNN9/onvD9+vWr/L+zZ88mhPj4+Lz11luxsbGtW7du27at7i3hyy+//Oeff9JKz5n4+HhCCMdxY8aMmTJlSps2bUJCQnTnXfTXPHXqVEKIq6vrkCFDRo0a5e7uTggZP378s38OzJgCjIyN2NhYQoibm1tUVJTuyklCyOrVq3X/27NnT0JIVFTUe++9V+UaRFHUzXF1nyQbNGiQbg1ffPFFbSupcYE6b6s6mzdvLr/Th6+vb79+/coPzXXo0EH/Xoi61QYFBdnY2ISEhISGhuo+kDRu3LjyPKixV3ULsDrsn5WJovjhhx/qHpqLi0v37t2Dg4PbtGmjG3nllVcMPArj2264P8YvY7hjlQcnT56se6JFREQMGTLEwcFBd0qvd+/eBnoC+hBg5uvevXu6T4xWeXW1VqtdsGBBu3bt7O3tu3btOnPmTLVavW3btqZNm7q4uOjuOFD5VXvZsmWdOnWys7Pz8PCIi4t7/PhxlU+2X375ZeDAge7u7u7u7n379v3555/L3zVXx5gAM6YAI5/8oiiuWrUqNDTUzc2tSZMmYWFh+lckb9++vVWrVkqlsmnTpgbWkJCQEBoaqruRxJAhQ1JSUgxvtLrBGheo27YMePDgweeff667ja+NjU379u2jo6NXrVpV4VpB3WqfPHkyY8aMjh07Ojs7BwYGLlu2TH82U2Ov6hZgddg/q5OTkzNp0qSWLVva29s7OzsHBAS88MIL6enphh8FNbrthvtj/DKGO1bdHhgYGOjg4NC8efN//vOf+fn5hJDIyMgaewI6DMU3MgNYKH9/f93hMqkLMVPG9KeBelhQUFBcXNykSRPdTWR0Tp8+3blz50mTJunu9Ag1wkUcAACmFh8f7+vru3HjRv1B3S1OGvr6GkuCAAMAMLVhw4YRQqZPn75p06aioqKrV69+9dVXX3zxhVKpHDt2rNTVyQYndQEAAFand+/es2bNWrhwoe7a0XJLlixp2bKlVFXJDs6BAVis+/fvC4LQrFkzqQsxU8b0p0F7uGvXrp9//vnChQvu7u5dunQZPXp0nz59GmJDlgoBBgAAsoRzYAAAIEsIMAAAkCUEGAAAyBICDAAAZAkBBgAAsoQAAwAAWUKAAQCALJl1gK1aterq1avGLFlaWtpA3xcsU4+Sf6FlWt2/tVotmlMdNMcANMcANMcArVar/721DcdCAqysrEyr1TZwOXKi3rNZP8DQnOqgOQagOQaUlZUhwKpjshdksw4wAACA6iDAAABAlhBgAAAgSwgwAACQJQQYAADIEgIMAABkCQEGAAD1ScObaEMIMAAAqAelAll1XgzayrdKVBZoGRNskTPBNgAAwIJRQtZdEmcdEju5kTnd2N6upUpCTbBdBBgAANTdLQ19fa9wt4SsCWWDmjGEEI2GCIIpNo1DiAAAUEfbrtOem/nApoqDwzldepkSZmAAAFBrIiUfHxHWXKSJg7m+TUwdXToIMAAAqJ3HZWRcBq8pI4dHcI3tJCsDhxABAKAWbmho0Fbe15FJGSZlehEEGAAAGO9EAQ1MEl5tp/iuH8tJHSA4hAgAAEbZfZu+nMEvC2RHt5Q6uwghCDAAADDGxitiXI6wIYwLNvnVhtVBgAEAQA1+PCfOOybuGsZ1dTeX9CIIMAAAMGzhCfHHc2JWJNvaxYzSiyDAAADAgNmHhKTrdG806+VgXulFEGAAAFAlSsi7OcLB+zQrimtkK3U1VUGAAQBARQIlr+8VLj+iaRGci1LqaqqBAAMAgL8oE8mETOFhKd05lHMw45Qw49IAAMDkSgUyZrdACEkK52xZqasxyCw+jAYAAOagmCcxKbwdSzaGsWaeXgQBBgAAOuoyErmLb+bA/DqAVcohHORQIwAANLAiLRmSzLdzZVYGs6zZXTBfNQQYAIC1Kywlg3fyPRszPwSxCpmkF0GAAQBYufwnJGwHH9KM+aavXKZeTyHAAACs190SMmA7H+HLfNXH7K/ZqAQBBgBgpW4X09Dt/JhWivm95JdeBJ8DAwCwTjc0NGyH8Fo7xayucp3JIMAAAKzOdTUN2yG8HaCY1kmu6UVwCBEAwNpcekSDtwnTOsk7vQhmYAAAVuV8ER28U/iom+INf3mnF0GAAQBYj7MPafhOYV5PRWw72acXQYABAFgJXXrN76WY1NYS0osgwAAArMHxB3RYMv9VH3ZCGwtJL4IAAwCweEfyadQu/ttA9oWWlpNeBAEGAGDZDt6nMSn8j0FsTHOLSi+CAAMAsGD779ERqfzKYC7CV163OTQKAgwAwDLtvUNHp/P/CeGG+FhgehEEGACARcrMo2N3878O4MK8LDO9CAIMAMDyZOXRsbv53wZwAy03vYgpbyWVnJwcEBCgUqkCAgJSUlIMDAIAQJ0l36RjdvObwiw8vYjJAkwUxfHjx8fHxxcUFMybNy82Nra6QQAAqLNt1+mrWfyWwVxQMwtPL2KyAON5fvXq1QMHDtRoNLa2tiqVqrpBAACom83XxNf38tuGcM83sfz0IiY7B2ZjYxMREaFWq11cXBiGyc7Orm5Q38OHDwcOHFh5batWrRo8eLD+iEajoZSq1eqGewjyIori3bt3id1jguYYhOYYgOYYUFxcLAiCRqORupD/2ZZn89GfTr/0fuRdxuflSVlJrZrj5uZmZ2dXtw2Z9CIOJycntVq9dOnS995779ChQwYGdVQqVVpaWmhoaIX1KBQVJ45qtZpS6uzs3GC1y8xthaJp06YKByeC5hiE5hiA5hig0WgEQXBxcZG6kKfWXhI/OSekRHJd3T2krsV0zTHRIcSrV69++OGHhBBHR8fXXnvt7Nmz1Q1WrK8qpqkZAEAW1l4SZ/wh7hrKdXW3iiOH5UwUBl5eXitWrMjKyqKUrlu3rnv37tUNAgCA8VadFz88KKZFsJ2tLL2IKc+BJSYmTp8+/cqVK/7+/gkJCdUNAgCAkX7KFecdFdMj2HauVpdexJTnwEJCQo4cOWLMIAAA1OiHs+KCE2JGJNvaxRrTi+BOHAAAcvTtGfGfp8SMSLals5WmF0GAAQDIzr9Oi8vOiBmRbHMn600vggADAJCXr0+J350Rd0dYe3oRBBgAgIx8cVz8zwUxO5r1crD29CIIMAAAufj0qLj+spgZxTWzl7oU84AAAwCQgY+PCJuv0oxIrgnS678QYAAA5u5vh4TkG3R3JOdRx7sGWiYEGACAWZtzWEi5SdMiuMZIr79CgAEAmClKyPv7hf33aHoE52YrdTXmBwEGAGCOKCFxOcKxfJo6jHO1kboas4QAAwAwOyIlb+0Tzjyku4ZxzkqpqzFXCDAAAPMiUvLGXuHSY7pzCOeE9KoeAgwAwIwIlEzeI9zU0O1DOEe8QhuE9gAAmAuBktgs4W4J3RbO2ePluSboEACAWSgTyfgMQc3TLeGcHSt1NXKAAAMAkJ5WJC/tFniRJA7ibJFexlFIXQAAgLUrFciL6QIhZOMgFullPAQYAICUnghkVBpvoyDrBrI2eEmuDXQLAEAyJTwZkcq72DC/DWCVeD2uJTQMAEAaxTyJSeXdbJnVISyHF+PaQ88AACSg4Ul0Ct/EjvklFOlVR2gbAICpaXgStYtv5cysDmVZfLVyXSHAAABMqkhLBu/gO6iYH/uzCqTXM0CAAQCYzkMtGbyTf86DWdYPU69nhQADADCRglIyaAffvxmztC/Sqx4gwAAATKGwlAzZyQ/0Yhb3wWeV6wcCDACgwd0rISHb+TBvZlFvpFe9QYABADSsuyUkbAcf4csseA7pVZ8QYAAADeiWhoZs48e1USC96h3uRg8A0FBuaOjA7cKbHRQfdMZsof4hwAAAGsQ1NR24XXi3o+L9TkivBoEAAwCof5cf07AdwozOirgApFdDQYABANSzC0V00E5hdjfFm/5IrwaEAAMAqE/nHtLBO4VPeyomt0N6NSwEGABAvfmzkA5JFr58TjGxDdKrwSHAAADqx8kCOjSZX9yHfbk10ssUEGAAAPXg2AMakcx/E8i+2BLpZSIIMACAZ3U4n0bt4r/vx45sgfQyHQQYAMAzOZxPo3fx/w5ihzdHepkUAgwAoO723aUjU/kVwWy0H9LL1BBgAAB1tPcOfTGdXzOAG+yNr/eSAAIMAKAuMu+ybxzk1w/kQjyRXtJAgAEA1FpqnmLKH+zvg7igZkgvyeCgLQBA7Wy7TqccYH/rp0V6SQszMACAWth8TZyaLWwM5rupRKlrsXYIMAAAY224Iv5fjrBzKNfOTisIUldj9XAIEQDAKL9eEt/fL6YM47o3wpFDs4AZGABAzf5zQZx9WEyNYANUSC9zgQADAKjBT7nivKNiegTb3hXpZUYQYAAAhvx4TvziuLg7km3jgvQyL6Y7B5acnBwQEKBSqQICAlJSUnSDhYWF0dHR7u7uMTExhYWFJisGAMAYS06LC0+ImUgvs2SiABNFcfz48fHx8QUFBfPmzYuNjdWNL1y4sHnz5nl5eX5+fosWLTJNMQAAxlh0UvzurJgZxbZwRnqZIxMdQuR5fvXq1QMHDlSr1ba2tiqVSjeemJi4ZcsWW1vbuLi44cOHf/nll/q/JQjC2bNn7e3tK6ytdevWrq6u+iNlZWWU0rKysgZ9FPJSVlamKCsjaI5BaI4BVt6cL06Q366QtCGkmQ1fuQdlZWWCIFhtcwyrVXNYllUo6jiVMlGA2djYREREqNVqFxcXhmGys7N147du3WrevDkhRDcPq/BbxcXFixcvdnR0rDA+f/78vn376o9oNBpKqSjic4VPUUofPXrElAkEzTEIzTHAmpuz4KztjjybxH4aB61YpK1igeLiYkEQKKUmL00GatUcFxcXGxubum3IpBdxODk5qdXqpUuXvvfee4cOHSKEUEoZhtH9Q6j0sUBnZ+fFixeHhobWuGY7OztKqbOzcwNULUu3GaZRo0YKByeC5hiE5hhgtc2ZdVBIu0+zYjgPO9vqltFoNIIguLi4mLIwuTBZc0x0Duzq1asffvghIcTR0fG11147e/asbtzLy+vGjRuEkFu3bnl7e5umGACAKlFCph0Q0m7T9EjOw07qaqAmJgowLy+vFStWZGVlUUrXrVvXvXt33Xh0dHRCQgKlNCEhYfjw4aYpBgCgMkrIe/uF7Ds0dRjXqNqpF5gR050DS0xMnD59+pUrV/z9/RMSEnTjc+fOHT9+vK+vb48ePVavXm2aYgAAKqCExOUIJwtoeiTnopS6GjCO6c6BhYSEHDlypMKgSqXavn27yWoAAKhMoCQ2S7hVTJOHco64u4N84G8FAFaNF8nELKGwlG4L5+zxiigr+HMBgPXSiuTl3YJWpFsGc7as1NVALSHAAMBKaUUyJl0QKN0YhvSSJXwfGABYo2KeRO/ibVny+yCkl1whwADA6mh4EpPCN7Jj1oSySrwKyhb+dABgXR6VkSE7+VYuzC+hLIeXQDnDXw8ArEhhKRm8g+/WiPl3EKvALeZlDgEGANbiQSkZtJMPasbEB7IILwuAAAMAq3CvhAzczg/2Zhb3QXpZCAQYAFi+OyVk4A5+mC+z4DlccWg5EGAAYOGuq2n/rfxLrRRILwuDDzIDgCW79IgO2ilM76R4tyPer1saBBgAWKzcIjp4h/BRd8UUf6SXBUKAAYBlOl1IhyYLX/RSvNIW6WWZ8HcFAAt07AEdvIP/8jmklyXDDAwALM2RfBqdwi/rx45qgfSyZAgwALAoe+/Q0en8qmBumC8+7mXhEGAAYDnSbtHxmfxvA7iBXkgvy4cAAwALsf0GnbyH3xTGBTVDelkFBBgAWILfr4pv7xO2hXPPeSC9rAUCDABk79dL4gd/CMlDuW6NkF5WBAEGAPK2Ilf8x1ExLYILUCG9rAsCDABk7Iez4oIT4u4Itq0r0svqIMAAQK6+Oin+eE7MimKbOyG9rBECDABk6dOj4rrLYlYU6+WA9LJSCDAAkJ9ZB4VdN2lmJNfEXupSQDoIMACQE0rIuznCwft0dyTnbit1NSApBBgAyIZAyRt7hYuPaFoE56KUuhqQGgIMAOShTCSvZAkPntCdQzlHvHQBAgwAZKFUIGN3CyIlW8M5W1bqasA8/CXAeJ5PSUlJSUnJzs6+ceNGQUGBm5ubj49Pv379Bg0aFBERoVRi0g4AplbMk1FpvIuSWTOAVeILUuC/ngaYVqv99ttvlyxZ4uXlFRISMnPmTE9PT1dX10ePHt25c+fo0aNff/3122+//c4770yfPt3Ozk7aogHAeqjLyPBU3tOBWRXMckgv0PM0wAIDA8PCwjIzM1u1alV5odGjRxNCrl+//tNPP/Xt23ffvn0ODg4mLRMArNJDLRmWzHdrxCwLZBX4uBf81dMA27FjR5MmTQwv6ufnN2/evPfffx8HEgHABO6VkPCd/BAfZkFvFuEFlT2dkOun1/379ysvd/nyZd0/3N3dEWAA0NBuamjwNn5US8VCpBdUo4ojyl26dElJSSn/kVL6008/de3a1YRVAYBVu/yYBm8Tpvgr5nbHWS+oVhU7R1xcXHR09IwZM0pLS/Py8qKjo999991PP/3U9MUBgBU6+5CGbhNmdVVM74z0AkOq+BzYnDlzoqKiXnnllZSUlNu3b/v7+584caJdu3amLw4ArM2xBzRyF7+oNzuhDdILalD1LtKyZctu3bpduHChsLAwOjq6devWJi4LAKzQ/nt0WDK/LBDpBUapYi/JyMjo3LnzqVOnjh49mp6e/u2334aEhFy6dMn0xQGA9cjKoyNT+Z9DuJEtkF5glCp2lMGDB48bN+7AgQMBAQEDBgw4efKkp6dnly5dTF8cAFiJrdfFMbv5DWHcEB9ccgjGquIcWEZGRv/+/ct/dHd3X79+/apVq0xXFABYk7WXxGkHhO1DuF6NkV5QC09nYPfu3Ssf0k8vHYZhYmNjdf8uKCgoKyszTXEAYPF+yhU/OCimRiC9oNaeBlhkZOTs2bOvXr1qYNEbN9AloMEAABk5SURBVG588sknYWFhCDAAqBfLzoifHxczIthObkgvqLWnhxD37dv3zTff9O/f39fXNyQkpFevXp6ens7Ozmq1Oi8v78iRI3v27Ll06dI777yTk5Njb48v8QaAZ7XwhLjyvLgnivV1RHpBXTwNMBsbmw8++OD9999PTk5OSUn54osvbty4UVhYqFKpfHx8AgMDZ8yYERkZiZtIAcCzo4TMOCBk5NE9UVwTvB+GuvrLRRwcx0VFRUVFRUlVDQBYPIGSKXuFc0U0I5JT2UhdDchZFZfRx8fHFxYWmr4UALB4WpGMyxBuaGjKMKQXPKsqAuyDDz7w9PScOHHinj17KKWmrwkALFIJT0am8lqBbA3nHKv4CA9A7VQRYHl5ed98883169dDQkL8/f2//vpr/YvsAQDqQF1GolN4lQ2zPoy1ZaWuBixCFQHm7u4+ZcqUrKysa9euxcbG/vzzzz4+PmPGjHmWzWzZsqVTp04qlSo4OPj8+fO6QaaSZ9kEAJitglIyaCffzpVZHcoqcaMoqCeGpvF+fn4jRozQarXx8fEbNmyo8zauX78+YcKElJSUbt26LVu2LDY2dt++fYSQx48fly+zaNEirVZb500AgNm6qaHhO4VRLZj5vTDzgvpUdYBdvHhx/fr169evP3HiRJs2beLi4saPH1/nbVy+fPmll17q27cvIWTSpEkLFizQjTs5Oen+cerUqZycnOTk5Aq/WFpa+vvvv588ebLCeHh4uJ+fn/5IcXExIYRl8fR4ilJaUlLCEAVBcwxCcwyol+ZcekxiMpRvthP/z18oLq6nysxAcXGxKIoch1N5VahVc2xtbeu8j1WxgV69eh05cqRRo0Zjx4794Ycf+vTp84wH90JDQ0NDQwkhgiDMnTt37Nix+v+r1Wpff/31lStXVn60giBcvHhRrVZXrtDT01N/hOd5SiluEaKvrKyM4coImmMQmmPAszfnTJHihb22sztqJ7bkLazHPM8LgoA9p0q1ao5SqazPAGvVqtXcuXOHDh1qY1OfV7mmpaXNnDkzPDx8/vz5+uOLFy/u3bt3QEBA5V9xcHCYOXOmLvwMY1mWUurs7Fxf1cqdhmFcXFwUDk4EzTEIzTHgGZtz4B4duZePD2RfbGmB18tzHCcIgouLi9SFmCOTNaeKAFu/fn39boNSOnv27H379q1du7bCNzsLgvDDDz+kp6fX7xYBQFoZefTl3fzKYG6YLy7OgoZiigO4OTk5iYmJBw4c4DhOdzyw/OzX7t27fX1927RpY4IyAMA0tlwTp2YLG8O4oGZIL2hApgiwzMzM3NxcNze38pHyz0evWrUqPDzcBDUAgGmsyBXnHhGTh3Fd3ZFe0LBMEWBz5syZM2dOlf+1Zs0aExQAAKbx9SnxuzNiZiTb1hXpBQ0O14ACQD2ghMw5JGy5RvdGsd74ehQwCQQYADwrgZJ39gnHHtA90VwjW6mrAauBAAOAZ6IVycRM4cETmh7BOeEbA8GEcFcyAKg7DU+id/G8SLYPQXqBqSHAAKCOCkrJoB28rxNuMA/SQIABQF3c0tDgbXxwM2Z5f5bFRRsgBQQYANTa+SLaf5swqa1iYW+EF0gGF3EAQO0cyafRKfynPdg3/PEOGKSEAAOAWsjMo2N38z8GscObI71AYggwADBW4lXxrX3ChjAuGDc5BDOAAAMAo/yUK/7jqJg8lOvWCOkFZgEBBgA1+/y4uPK8mBXJtnZBeoG5QIABgCGUkA//EHbdpFmRuMkhmBcEGABUSyuS8RnC7WKaHc25WuD3KoO84ToiAKiahmfG7FE+EUjyUKQXmCMEGABU4f4TErFb2dyJbAhj7XCbKDBLCDAAqOjKYxq0lR/sKSztVYY7bYDZwjkwAPiLEwU0apfw966KV/wESqWuBqB6mIEBwP9k5tHwnfy/nle8HYAXBzB3mIEBwFMbrohxOcK6gVyoJ44bggwgwACAEEKWnRG/PCEmD+W640YbIBMIMABrRwn56LDw+1WaHcW2cEZ6gWwgwACsGi+SN7KF3Ic0O5prZCt1NQC1gQADsF4anryYznMMkxbBOeDFAOQGFxoBWKl7JSR0G+/jyPw+iEV6gRwhwACs0eXHNGgbH+bN/BjEcngZAHnC+y4Aq/PHPToyjZ/Xk329PbILZAwBBmBdtl2nr+3lE4K5SF9ccAjyhgADsCI/nhP/cVTYGs719kB6gewhwACsAiXk48PC+it0bxSHb1UGy4AAA7B8WpG8vke48IjmRHON7aSuBqCeIMAALJy6jLyYztuyTDo+7AWWBdcgAViyWxrabyvfxoXZhA97gcVBgAFYrFMFNHCrMLGtIj6QxfdSguXBWzIAy5R6i07I5OP7smNa4X0qWCYEGIAFWnVe/NshYUMYF9wMMy+wWAgwAItCCZl7RPjtEt0TxbVzRXqBJUOAAViOUoG8tle49Ijuj+E8cLk8WDocHAewEAWlJHwnXyqQ3RFIL7AKCDAAS3D5MQ1M4vs0YdYNZO1xYAWsAwIMQPb236NBW/lpnRWLerMKnPYCq4G3agDytu6y+H/7hf+EcEN8kF1gXRBgADL2xXHxx3Ni2jCuszvSC6wOAgxAlrQieTNb+LOQ7o/hPB2krgZACggwAPl5UEpeSOPdbZnMSNyfF6wXLuIAkJnzRbRvEt/bg9kYhvvzglXD7g8gJxl59OXd/Oe92Nfa490nWDsEGIBsrMgVPzosrB3IhXrikg0ABBiAHIiUzDooJF2ne6K4trjDIQAhxGTnwLZs2dKpUyeVShUcHHz+/Hn9/zp9+rSjo6NpygCQo8dlZESqcOwBPRCD9AL4H1ME2PXr1ydMmLB8+fK8vLyYmJjY2Njy/yoqKnr11VeLi4tNUAaAHF1T06CtvJcD2TmUc7OVuhoAc2KKALt8+fJLL73Ut29fe3v7SZMm5ebm6sYppa+++urf/vY3E9QAIEf77tLAJOG19oofglglLtoA+CuGUmqyjQmCEBcXp1Aoli1bRghZsGBBfn7+119/zTBVl9G7d29XV9emTZtWGJ86dWrnzp31RzQaDaXUycmp4YqXF/WCyY7vxTP2jgTNMcicm7PmKvePU8ofntOGNRMkKcCcmyO54uJiQRCcnZ2lLsQc1ao5Dg4OSqWybhsy3UUcaWlpM2fODA8Pnz9/PiEkIyMjOTk5NTXVwK+wLNu5c+d27dpVGG/SpEmFB8xxHCGkzl2wSEqlklEqCZpjkHk2R6Dk42OK7bfZlEF8OxeFVJ/XNM/mmAmO4xQKBZpTpVo1R6Go++5tigCjlM6ePXvfvn1r164tT6P09PSsrCwbGxvdjwzD7N27NygoSP8XbW1tY2JiQkNDa9yEKIqUUgcH3FHnqYcMY29vr3BwIGiOQWbYnCItGZfBa0VycDjnZivl66MZNsd8UEoFQUBzqmSy5pjinV1OTk5iYmJSUpKXl5darVar1YSQ+fPn0/8ihFBKK6QXgBW6UET7JvGtnJmdQ3DJBkANTDEDy8zMzM3NdXNzKx8x5Yk3ALlIuUVfyeQ/68m+4Y8LNgBqZornyZw5c+hfVVgAeQbwr9Piq1n8xjAO6QVgJNyJA0BiTwTyZrZwqoAeiOH8nPA5ZQBj4b0egJRuaWjINl4rkuxopBdA7SDAACSTc5f2SRJGtVD8OgBfjAJQa3jSAEjj3+fET44IK4O5Yb6YeAHUBQIMwNRKBfLufiHnLs2O5tq4IL0A6ggBBmBSt4vpC2mCtyNzIIZzwm0cAJ4BzoEBmE72Hdp7ixDTXLEhjEV6ATwjzMAATOTbM+Lnx4RVIdwQHxw2BKgHCDCABlfMkzezhdOFNCeGa+mM9AKoHziECNCwLj2igUm8giE50UgvgPqEAANoQFuvi4Fb+Sn+ip9DWHsc7wCoV3hKATQIgZJPjgirL9Itg7nnm2DiBVD/EGAA9e/+EzI+g6eEHB7BedhJXQ2AhcIhRIB6lnOX9kzkn/NgkocivQAaEGZgAPWGErLktLjwhLAimIvEDaIAGhgCDKB+FGlJ7B7hpoYeiOFa4GpDgIaHQ4gA9eBoPu25mfd2IHujkF4AJoIZGMCz+u6M+Okx4dtA9sWWeEcIYDoIMIC6e1RG3tgrXHxE9+G+8gAmhzeMAHV0JJ/2TOQb25EcpBeAFDADA6g1Ssg3p8UvTgjLAtnROGwIIBEEGEDt5D8hk/cI957QA7gzL4Ck8OYRoBYy82iPRL6DiuyNQnoBSAwzMACj8CL59JiQkEtXhrDh3oguAOkhwABqduUxHZ8huNqQoyO5pvZSVwMAhBAcQgSo0a+XxOeT+BdbKXYMRXoBmBHMwACqVaQlcTnC0Xy6ayjXrREOGwKYF8zAAKq25w7tlsi72JDDI5BeAOYIMzCAirQi+eSI8PMFcXl/3FQewHwhwAD+4sxDOjFT8HFkjo9UNsEZLwAzhkOIAE+JlPzrtBi6jX+7g2LLYBbpBWDmMAMDIISQq49p7B5BoOSP4fiEMoA8YAYG1o4S8lOu2HsLH+mnyIxEegHIBmZgYNVuF5O4Q8qCMjEjkuvohugCkBPMwMB6rTwvBqXY9GlED8QgvQDkBzMwsEY3NPTNbOFuCUkKLevoKnJ4IwcgQ3jignWhhPx4TuyZyPdrqjgQw3VSUakrAoA6wgwMrMilR/SNvUKxQMrPeJVKXRIA1BlmYGAVeJF8dVJ8PomPbq7YF40zXgCWADMwsHxH8+nrewUPO3IQn/ECsCAIMLBk6jIy94jw2yVxUR92YhscbwCwKAgwsFhJ18T/2y+GejKnRysb2UpdDQDUNwQYWKBravrefjG3iK4MYQd44pghgGXCQRWwKFqRLDgh9trMP+fBnBjFIb0ALBhmYGA5Um/Rd3OEdq4MLtYAsAYIMLAE19R0xh/isXy6pK8i2g/HFQCsAp7qIG/FPPn0qNhrM9/NnflzNIf0ArAemIGBXFFC1l8WZx0Un2/CHB3J+TrimCGAdUGAgSwdvE+nHxBKBLI6lO3fDNEFYI0QYCAz19R09iEx6w79rKdiUluFAuEFYK1MfcJgy5YtnTp1UqlUwcHB58+fLx8XBMHf39/ExYC8FJaSD/8Qeiby7VVM7otcbDukF4BVM2mAXb9+fcKECcuXL8/Ly4uJiYmNjdWNL126NDAwMDc315TFgIw8EchXJ8X2G8oel5HTo5VzuysccewAwOqZNMAuX7780ksv9e3b197eftKkSeWJ1aVLl48//tiUlYBc8CL5KVdst54/cI/uieJ+CGKb2UtdEwCYB4ZSCb7QTxCEuLg4hUKxbNmy/5XCVCymR48eDx48cHR0rPDrX375Zb9+/fRHNBoNpdTJyanhapaX0sVv2rz9T8bekci2OSIlibeUX52z83EQZ3d40sNNaIityLQ5poHmGFBcXCwIgrOzs9SFmKNaNcfFxcXGxqZuG5LgQExaWtrMmTPDw8Pnz59veElHR8e33nqrV69eFcabN29eoTUsy1JKsTOVu88wLi4uCgcnIsPmUEISr5F5x4mrDfm+HwltpiCkoV5DZdccU0JzDOA4ThAEFxcXqQsxR7VqDsuydd9QnX+zDiils2fP3rdv39q1a9u1a1fj8izLtm3btnv37jUuqVQqKaVKpbI+yrQQSqVSoVQSWTVHpGTTVfGzY6I9SxY/zw71afCLNGTUHNNDcwxQKpUKhQLNqZLJmmPSAMvJyUlMTDxw4ADHcWq1mhCCoxOgw4tk3WXxi+Oiiw1Z8Bwb4YvrCwGgBiYNsMzMzNzcXDc3t/IRSc7AgVl5IpCfL4iLToi+TmRJX3awN6ILAIxi0qsQ58yZQ/9K/38RZtamsJR8eUJsta5s+3W6OpTNjOSQXgBgPHyaBiRw6RFd+qe45qIY01yROozr6IbcAoBaQ4CB6VBCdt+m8X+KOXfF19srTr3AeTkgugCgjhBgYAqPysgvF8RlZ0QFQ97tqPh1gNIBux4APBu8ikDDOpxPfzwnbroiDvJWLOvHhnpiygUA9QMBBg2ioJT8eklMyBWLtOS19oo/RytxCygAqF8IMKhPWpHsvCGuvkjTb4kRvoqv+rADPBncMx4AGgICDOqBQMmeO3TtJXHTFbGjGzOxrWJFf6VrHW9vBgBgFAQY1F2ZSDLz6O9Xxc1XRW9HZmwrxdGRnJ8TJlwAYAoIMKi1wlKy66a49TpNvim2c2VGtVDsi+FaOSO3AMCkEGBgFF4kB+/T9Nt0103xVAEN8VRE+TFf91F6OkhdGQBYKwQYVKtUIIfz6d47dM8dMecubeXMDPJm/tGD7d+Msa37FyAAANQPBBj8Dy+Sc0X0SD49kk8P3aenCmgHFdOvGTPFX7E6VNHIVur6AAD0IMCsV5GWXH5MLz6i54vImUJ65iHNLaJ+jkyPxkyvxsyLLRU9GzO4XwYAmC3LeX06XqhwKMX97J/yoCQrjwp2tESgDx4risrIE0a8/4TmPyH3ntAbanJTQwVKWjozbVyY9q5kiA8zvbMiQMXYW84eAQAWznJert47xClYQeoqzMUaniz5UyhWCvYsY0NYFyX1cKRN7JnO7qSJncLHkXg7Mu44JAgAcmY5AZYVrnV2dpa6CnNx+yBJHMQpHDhCiFpdQil1draTuigAgPpk0i+0BAAAqC8IMAAAkCULCbDU1NTU1FSpqzBT6enpu3btkroKM7V79+7k5GSpqzBTmZmZO3bskLoKM7Vnz55t27ZJXYWZys7OTkpKMsGGLCTADh8+fOjQIamrMFNHjhw5ePCg1FWYqWPHjh04cEDqKszU8ePH9+/fL3UVZgrNMeDEiRM5OTkm2JCFBBgAAFgbBBgAAMiSWV9Gr9Vqd+7ceeXKlRqXPHnypCiKK1euNEFVsjBAq12zZg3P2RBCTpw4odVq0ZwqHTt27MmTJ2hOlY4ePapWq9GcKh05cuThw4doTpUOHz6cn59vZHPCwsL8/PzqtiGGUvO9e0VOTs4PP/zAsjXfOLa0tJQQYmuLj+Y+pVIIRSKr+9OiOQZotVpKKZpTJTTHgLKyMlEU0Zwq1ao57777bo8ePeq2IbMOMAAAgOrgHBgAAMgSAgwAAGQJAQYAALKEAAMAAFmyhAArLCyMjo52d3ePiYkpLCyUuhxzJAiCv7+/1FWYnS1btnTq1EmlUgUHB58/f17qcsxLcnJyQECASqUKCAhISUmRuhxzdPr0aUdHR6mrMDv9+vVj/mvq1KkNui1LCLCFCxc2b948Ly/Pz89v0aJFUpdjdpYuXRoYGJibmyt1Iebl+vXrEyZMWL58eV5eXkxMTGxsrNQVmRFRFMePHx8fH19QUDBv3jw0p7KioqJXX321uLhY6kLMC6X03LlzN2/efPz48ePHj5csWdKgm7OEAEtMTIyLi7O1tY2Li/v999+lLsfsdOnS5eOPP5a6CrNz+fLll156qW/fvvb29pMmTULA6+N5fvXq1QMHDtRoNLa2tiqVSuqKzAul9NVXX/3b3/4mdSFm5+7du1qtdvjw4Z6enhMmTHj06FGDbs4SPgfm5OR0//59e3v7kpKSpk2bNnTLZIphLOFv3RAEQYiLi1MoFMuWLZO6FvOiVqudnZ0ZhsnOzg4MDJS6HDOyYMGC/Pz8r7/+Gk+rCo4fPz59+vR//vOffn5+06ZN02q1v/32W8NtzhK67+jo+ODBAzs7u+LiYg8PD41GI3VF5gjPtCqlpaXNnDkzPDx8/vz5HGfWd1aThEajWbp0aWJiIr7toVxGRsann36ampqqVCrxtDIgLy+vY8eOBQUFDbcJSziE6OXldePGDULIrVu3vL29pS4H5IFS+ve//33evHlr165dsGAB0kvf1atXP/zwQ0KIo6Pja6+9dvbsWakrMiPp6elZWVk2NjYMwxBCdDNUqYsyF0ePHi3/IhUbG5uGvtWWJQRYdHR0QkICpTQhIWH48OFSlwPykJOTk5iYmJSU5OXlpVar1Wq11BWZES8vrxUrVmRlZVFK161b1717d6krMiPz58+n/0UIoZQGBQVJXZS50Gg0I0eOPHv2rFar/eyzz0aMGNGgm7OEd51z584dP368r69vjx49Vq9eLXU5IA+ZmZm5ublubm7lIzgWVM7GxiYxMXH69OlXrlzx9/dPSEiQuiKQh6CgoE8++SQ6OrqoqCgiIiI+Pr5BN4cDuAAAIEuWcAgRAACsEAIMAABkCQEGAACyhAADAABZQoABAIAsIcAAAECWEGAAACBLCDAAAJAlBBgAAMgSAgwAAGQJAQYAALKEAAMAAFlCgAEAgCwhwAAAQJYQYAAAIEsIMADp7dmzh+O4jIwM3Y+ff/55s2bN7t27J21VAGYOX2gJYBb+/ve///bbbydPnrxy5Urv3r23bt0aHh4udVEAZg0BBmAWtFptnz59unTpcuLEibCwsMWLF0tdEYC5Q4ABmIszZ8706NGjbdu2hw8ftrW1lbocAHOHc2AA5uLu3btarTYvL6+wsFDqWgBkADMwALNQUFDQtWvXt99+e+vWre7u7lu3bmUYRuqiAMwaAgxAepTSMWPG5OXlZWVlXbx4sVu3bvHx8a+//rrUdQGYNRxCBJDeqlWrduzYsWrVKpZl27dv//nnn0+bNu3y5ctS1wVg1jADAwAAWcIMDAAAZOn/Ae7TeCD0QLLWAAAAAElFTkSuQmCC"  />
+
+<p><strong>Performance Note</strong> As always in Julia, only test performance of code within functions &#40;i.e. the global variables here are only for simplicity&#41;</p>
+<h3>References</h3>
+<ul>
+<li><p><a href="https://github.com/QuantEcon/SimpleDifferentialOperators.jl/blob/master/docs/examples/LCP_simple.jmd">Github Source</a></p>
+</li>
+<li><p><a href="Journal of Computational Finance">Huang, J. and J.-S. Pang &#40;1998&#41;: &quot;Option Pricing and Linear Complementarity,&quot;</a></p>
+</li>
+<li><p><a href="http://www.princeton.edu/~moll/HACTproject/option_simple.pdf">Ben Moll&#39;s notes</a></p>
+</li>
+</ul>
+<p>&lt;&#33;–</p>
+<h1>MOVING THIS OUT.  CAN PUT BACK IN FOR ALTERNATE SOLVERS WHERE THEY ARE USED</h1>
+<p>We can represent these as complementary slackness conditions:</p>
+<p class="math">\[
+\begin{align}
+\begin{align}
+z' (L z + q) &= 0 \\
+z &\geq 0 \\
+L z + q &\geq 0
+\end{align}
+\end{align}
+\]</p>
+<p>Note that the first condition requires that at most one of <span class="math">$z[i]$</span> or <span class="math">$(Bz + q)[i]$</span> is nonzero <span class="math">$\forall i \in \{1, 2, ... n\}$</span>.</p>
+<p>We can also express these succinctly using the complementarity constraints:</p>
+<p class="math">\[
+\begin{align}
+0 \leq (Bz + q) \perp z \geq 0
+\end{align}
+\]</p>
+<p>If the choice of solver requires a slack variable, we can use the <span class="math">$w$</span> defined earlier:</p>
+<p class="math">\[
+\begin{align}
+0 \leq w \perp z \geq 0
+\end{align}
+\]</p>
+<p>–&gt;</p>
+
+
+
+          <HR/>
+        
+
+
+        </div>
+      </div>
+    </div>
+  </BODY>
+</HTML>
