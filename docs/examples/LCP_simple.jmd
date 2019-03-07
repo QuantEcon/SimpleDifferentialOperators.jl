@@ -14,10 +14,10 @@ Assume the following
 
 * A stochastic process ``x``, with [infinitesimal generator](https://en.wikipedia.org/wiki/Infinitesimal_generator_(stochastic_processes)) ``\mathcal{L}^x``
   and boundary conditions.  (e.g. the infinitesimal generator for Brownian motion with drift ``\mu`` and variance ``\sigma`` is
-  ``\mathcal{L}^x \equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}``)
-* Boundary conditions for the ``x`` stochastic process (e.g., reflecting barriers at some minimum and maximum)
-* Flow payoffs ``u(x)`` discounted at rate ``\rho > 0``
-* Stopping payoff ``S(x)`` which gives the value of stopping at state ``x``
+  ``\mathcal{L}^x \equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}``.)
+* Boundary conditions for the ``x`` stochastic process (e.g., reflecting barriers at some minimum and maximum.)
+* Flow payoffs ``u(x)`` discounted at rate ``\rho > 0``.
+* Stopping payoff ``S(x)`` which gives the value of stopping at state ``x``.
 
 The control problem is: choose when to stop the process and gain the payoff ``S(x)``.  If there are only two regions, then this becomes the choice of a stopping threshold ``\hat{x}``.
 
@@ -37,7 +37,7 @@ Define a new operator and rewrite,
   \mathcal{L} v(x) &= u(x)\label{eq:bellman}\\
   \mathcal{L} &\equiv \rho - \mathcal{L}^x\label{eq:L-op}
 ```
-Along with boundary conditions from the stochastic process (e.g., a reflecting barrier at an ``x_{\min}`` and another at some ``x_{\max}``, or a transversality condition)
+Along with boundary conditions from the stochastic process (e.g., a reflecting barrier at an ``x_{\min}`` and another at some ``x_{\max}``, or a transversality condition.)
 
 In special cases with sufficient monotonicity, there is a single stopping region, defined by a threshold at ``\hat{x}``.
 
@@ -76,7 +76,7 @@ Furthermore, you can prove that at any of those points, a solution to ``\eqref{e
 
 ## Numerical Solution
 
-To solve the equation numerically, we first discretize the state-space, value function, and operators with  upwind finite difference methods
+To solve the equation numerically, we first discretize the state-space, value function, and operators with  upwind finite difference methods.
 
 Abusing notation, define
 * The grid of ``M`` values in the domain, ``x \equiv \{x_1, x_2, \ldots x_M\}``.
@@ -167,7 +167,7 @@ ub = 300*ones(M) # Need to have upper bounds for the z.
 code, z, w_val = @suppress solveLCP(w, lb, ub)  # Solves (12)
 @assert code == :Solved  # otherwise, an error in convergence
 
-v = z + S.(x)  # (7)
+v = z + S.(x)  # (8)
 x̂_index = findfirst(z .> 0)  # i.e. find first x index where non-binding
 if isnothing(x̂_index)
   x̂ = Inf # i.e. never non-binding = always stop
