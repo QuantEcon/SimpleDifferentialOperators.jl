@@ -136,7 +136,7 @@ First, we install and load necessary packages.
 
 The key one is the [`PATHSolver.jl`](https://github.com/chkwon/PATHSolver.jl) package for complementarity problems.
 
-This is a commercial solver due to Dirkse, Ferris, and Munson, who have generously made it [available](http://pages.cs.wisc.edu/~ferris/path.html) for non-commerical academic use use.
+This is a commercial solver due to Dirkse, Ferris, and Munson, who have generously made it [available](http://pages.cs.wisc.edu/~ferris/path.html) for non-commercial academic use.
 
 ```julia
 # install if required,
