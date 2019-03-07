@@ -129,6 +129,7 @@ b = \begin{bmatrix}
 Applications
 -------------
 ### Hamilton–Jacobi–Bellman equations (HJBE)
+-------------
 Consider solving for $v$ from the following optimal control problem
 ```math
 v(x_0) = \max_{ {\{\alpha(t) \} }_{t \geq 0} } \int_{0}^\infty e^{-\rho t} r( x(t), \alpha(t )) dt
@@ -177,6 +178,7 @@ where $v$ and $r^*$ are $M$-vectors whose $i$th elements are $v(x_i)$ and $r^*(x
 
 
 ### Kolmogorov forward equations (KFE) under diffusion process
+-------------
 Let $g(x, t)$ be the distribution of $x$ at time $t$ from the example above. By the Kolmogorov forward equation, the following PDE holds:
 
 ```math
