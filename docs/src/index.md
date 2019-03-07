@@ -51,7 +51,7 @@ To install, run
 
 Note that this requires Julia 1.0 or later.
 
-Examples
+Usage Examples
 ==========
 ### Solving HJBE with state-dependent drift variables
 -------------
