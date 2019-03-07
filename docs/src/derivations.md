@@ -144,18 +144,18 @@ for some constant $\mu \geq 0$ and $\sigma \geq 0$ with $x(0) = x_0$.
 
 Let $\alpha^*(t)$ be the optimal solution. Suppose that $r$ under $\alpha^*(t)$ can be expressed in terms of state variables, $r^* (x)$. Then, the HJBE yields
 
-```math\label{eq:hamilton-jacobi-bellman}
+```math
 \rho v(x) = r^*(x) +  \mu  \partial_{x} v(x) + \dfrac{\sigma^2}{2} \partial_{xx} v(x)
 ```
 
 In terms of differential operators, one can rewrite the equation as
-```math\label{eq:hjbe-system-function}
+```math
 (\rho - \tilde{L}) v(x) = r^*(x)
 ```
 
 where 
 
-```math\label{eq:L-defn}
+```math
 \tilde{L} = \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
 ```
 
