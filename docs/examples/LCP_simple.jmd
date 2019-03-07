@@ -1,4 +1,3 @@
-<!-- Compile with Weave.jl -->
 ## Optimal Stopping Problems
 
 > Presented by [Arnav Sood](email:arnav.sood@ubc.ca) and [Jesse Perla](email:jesseperla@gmail.com)
@@ -16,11 +15,11 @@ Assume the following
 * A stochastic process ``x``, with [infinitesimal generator](https://en.wikipedia.org/wiki/Infinitesimal_generator_(stochastic_processes)) ``\mathcal{L}^x``
   and boundary conditions.  (e.g. the infinitesimal generator for Brownian motion with drift ``\mu`` and variance ``\sigma`` is
   ``\mathcal{L}^x \equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}``)
-* Boundary conditions for the ``x`` stochastic process (e.g. reflecting barriers at some minimum and maximum)
+* Boundary conditions for the ``x`` stochastic process (e.g., reflecting barriers at some minimum and maximum)
 * Flow payoffs ``u(x)`` discounted at rate ``\rho > 0``
 * Stopping payoff ``S(x)`` which gives the value of stopping at state ``x``
 
-The control problem is: choose when to stop the process and gain the payoff ``S(x)``.  If there are only two regions, then this becomes the choice of a stopping threshold ``\hat{x}``
+The control problem is: choose when to stop the process and gain the payoff ``S(x)``.  If there are only two regions, then this becomes the choice of a stopping threshold ``\hat{x}``.
 
 #### Classical Formulation
 
@@ -38,11 +37,11 @@ Define a new operator and rewrite,
   \mathcal{L} v(x) &= u(x)\label{eq:bellman}\\
   \mathcal{L} &\equiv \rho - \mathcal{L}^x\label{eq:L-op}
 ```
-Along with boundary conditions from the stochastic process (e.g. a reflecting barrier at a ``x_{\min}`` and another at ``x_{\max}`` or a transversality condition)
+Along with boundary conditions from the stochastic process (e.g., a reflecting barrier at an ``x_{\min}`` and another at some ``x_{\max}``, or a transversality condition)
 
 In special cases with sufficient monotonicity, there is a single stopping region, defined by a threshold at ``\hat{x}``.
 
-With this, necessary conditions for optimality are the value matching condition
+With this, the necessary conditions for optimality are the value matching condition
 
 ```math
 v(\hat{x}) = S(\hat{x})\label{eq:vm}
@@ -53,13 +52,13 @@ and the smooth pasting condition
 ```math
 \partial_x v(\hat{x}) = 0\label{eq:sp}
 ```
-The "value matching" and "smooth pasting" conditions are necessary conditions for optimality at any free-boundary conditions.  Typically, you would solve ``\eqref{eq:bellman}, \eqref{eq:vm},\eqref{eq:sp},`` to find a ``v(x)`` function and a ``\hat{x}`` value.
+These conditions are necessary for optimality for any free-boundary problem.  Typically, you would solve ``\eqref{eq:bellman}, \eqref{eq:vm},\eqref{eq:sp},`` to find a value function ``v(x)`` and a stopping threshold ``\hat{x}``.
 
 While this approach can be analytically tractable, it is inconvenient for numerical solutions if: (1) the equations cannot be solved in closed form; (2) there are multiple stopping regions; or (3) the dimension increases, leading to complicated stopping regions separated by non-linear manifolds.
 
 #### HJB Variational Inequality
 
-As discussed in [Ben Moll's notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf), the DVI form of the above problem is to solve
+As discussed in [Ben Moll's notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf), the [DVI](https://en.wikipedia.org/wiki/Differential_variational_inequality) form of the above problem is to solve
 
 ```math
 0 = \min\{\mathcal{L} v(x) - u(x), v(x) - S(x)\}\label{eq:DVI}
@@ -67,20 +66,22 @@ As discussed in [Ben Moll's notes](http://www.princeton.edu/~moll/HACTproject/op
 
 for ``v(x)``.  A few important notes:
 
-* The ``\mathcal{L} v(x) - u(x)`` term is just the Bellman equation ``\eqref{eq:bellman}`` if it is binding and ``=0``
-* The ``v(x) - S(x)`` term is the value matching condition in ``\eqref{eq:vm}`` if it is binding and ``=0``
-* You are **not solving for the boundaries** of the stopping regions directly (i.e. no ``\hat{x}`` in the system)
+* The ``\mathcal{L} v(x) - u(x)`` term is just the Bellman equation ``\eqref{eq:bellman}`` if it is binding and ``=0``.
+* The ``v(x) - S(x)`` term is the value matching condition in ``\eqref{eq:vm}`` if it is binding and ``=0``.
+* You are **not directly solving for the boundaries** of the stopping regions (i.e., there is no ``\hat{x}`` in the system.)
 
-With a solution, for ``v(x)`` function, you can use it in ``\eqref{eq:DVI}`` to determine which region a particular ``x`` is in.  Those boundaries can be used to determine where a ``\hat{x}`` occurs.  Furthermore, you can prove that at any of those points, a solution to the DVI implies the smooth-pasting condition ``\eqref{eq:sp}``
+Given a solution for ``v(x)``, ``\eqref{eq:DVI}`` determines which regime a particular ``x`` is in.  Those boundaries can be used to determine where an ``\hat{x}`` occurs.
+
+Furthermore, you can prove that at any of those points, a solution to ``\eqref{eq:DVI}`` implies the smooth-pasting condition ``\eqref{eq:sp}``.
 
 ## Numerical Solution
 
-To solve the equation numerically, discretize the state-space, value function, and operators with  upwind finite difference methods
+To solve the equation numerically, we first discretize the state-space, value function, and operators with  upwind finite difference methods
 
 Abusing notation, define
-* The grid of ``M`` values in the domain, ``x \equiv \{x_1, x_2, \ldots x_M\}``
-* Vectors for the values of functions at grid points: ``v \equiv \{v(x_m)\}_{m=1}^M`` and ``S \equiv \{S(x_m)\}_{m=1}^M``
-* The matrix ``L \in \mathbb{R}^{M \times M}`` as the discretization of the ``\mathcal{L}`` in ``\eqref{eq:L-op}``, such that any boundary conditions on the stochastic process are fulfilled (i.e. properties of the ``x`` such as reflecting barriers)
+* The grid of ``M`` values in the domain, ``x \equiv \{x_1, x_2, \ldots x_M\}``.
+* Vectors for the values of functions at grid points: ``v \equiv \{v(x_m)\}_{m=1}^M`` and ``S \equiv \{S(x_m)\}_{m=1}^M``.
+* The matrix ``L \in \mathbb{R}^{M \times M}`` as the discretization of the ``\mathcal{L}`` in ``\eqref{eq:L-op}``, such that any boundary conditions on the stochastic process are fulfilled (i.e. properties of the ``x`` such as reflecting barriers.)
 
 Note: See the [document](https://quantecon.github.io/SimpleDifferentialOperators.jl/dev/generated/discretized-differential-operator-derivation.pdf) in this repository for notes on the discretization of the ``\mathcal{L}`` to form the ``L`` operator - subject to various boundary conditions.
 
@@ -89,7 +90,7 @@ Given these definitions, the DVI in ``\eqref{eq:DVI}`` becomes the variational i
 ```math
 0 = \min\{L v - u, v - S\}\label{eq:VI}
 ```
-To solve ``\eqref{eq:VI}``, for the ``v\in\mathbb{R}^M`` vector, we can express it as a [linear complementarity problem](https://en.wikipedia.org/wiki/Linear_complementarity_problem) (LCP).
+To solve ``\eqref{eq:VI}`` for the ``v\in\mathbb{R}^M`` vector, we can express it as a [linear complementarity problem](https://en.wikipedia.org/wiki/Linear_complementarity_problem) (or LCP).
 
 First, do a change of variables
 
@@ -98,12 +99,12 @@ z &\equiv v - S \\
 q &\equiv -u + L S \\
 w &\equiv L z + q
 ```
-Substituting into ``\eqref{eq:VI}`` yields an equation in the typical form of a LCP
+Substituting into ``\eqref{eq:VI}`` yields
 
 ```math
 0 = \min \{L z + q, z\}
 ```
-We can also express these succinctly as a complementarity problem:
+Or, in the typical notation of a complementarity problem
 
 ```math
 0 \leq (L z + q) \perp z \geq 0
@@ -114,9 +115,9 @@ We can also express these succinctly as a complementarity problem:
 We will solve an instance of this model where
 
 ```math
-u(x) &= x^{\gamma}\\
-\mathcal{L}^x &= \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}\\
-S(x) &= S_0
+u(x) &\equiv x^{\gamma}\\
+\mathcal{L}^x &\equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}\\
+S(x) &\equiv S_0
 ```
 
 First, we install and load necessary packages.
@@ -132,7 +133,7 @@ This is a commercial solver due to Dirkse, Ferris, and Munson, who have generous
 using SimpleDifferentialOperators, PATHSolver, Plots, LinearAlgebra, Suppressor
 ```
 
-Next, setup the equations and constants for our grid
+Next, define the necessary parameters and equations
 
 ```julia
 μ = -0.1
@@ -141,8 +142,8 @@ Next, setup the equations and constants for our grid
 γ = 0.5
 ρ = 0.05
 S₀ = 20.0
-u(x) = x^γ  # (10)
-S(x) = S₀  # (12)
+u(x) = x^γ  # (13)
+S(x) = S₀  # (15)
 @assert μ <= 0 # otherwise we need to swap the L₁₋ operator
 ```
 
@@ -152,10 +153,10 @@ Next, discretize the grid, operators, and change of variables
 M = 300
 x = range(0.0, 5.0, length = M)
 bc = (Reflecting(), Reflecting())  # assume x_t reflects at 0.0 and 5.0
-L = I * ρ - μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)  # (2) and (11)
+L = I * ρ - μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)  # (2) and (14)
 
-q = -u.(x) + L*S.(x)  # (8)
-w(z) = L*z + q; # (9)
+q = -u.(x) + L*S.(x)  # (9)
+w(z) = L*z + q; # (10)
 ```
 
 Finally, solve the model by passing to the PATH solver
@@ -163,7 +164,7 @@ Finally, solve the model by passing to the PATH solver
 ```julia
 lb = zeros(M)
 ub = 300*ones(M) # Need to have upper bounds for the z.
-code, z, w_val = @suppress solveLCP(w, lb, ub)  # Solves ()
+code, z, w_val = @suppress solveLCP(w, lb, ub)  # Solves (12)
 @assert code == :Solved  # otherwise, an error in convergence
 
 v = z + S.(x)  # (7)
