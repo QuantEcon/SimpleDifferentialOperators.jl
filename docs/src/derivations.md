@@ -11,10 +11,10 @@ Mixed Boundary Values
 Under $M$-length of grids on $v$ with end points $x_{\min} < x_{\max}$ with mixed boundary value conditions of
 
 ```math
-```math
-\underline{\xi} v(x_{\min}) + \nabla v(x_{\min}) &= 0\\
+\begin{align}
+\underline{\xi} v(x_{\min}) + \nabla v(x_{\min}) &= 0 \\
 \overline{\xi} v(x_{\max}) + \nabla v(x_{\max}) &= 0
-```
+\end{align}
 ```
 
 Note that this can be extended to reflecting boundary conditions by assigning $\underline{\xi} = 0$ and $\overline{\xi} = 0$. We use the following discretization schemes:
@@ -113,7 +113,7 @@ b = \begin{bmatrix}
 ```
 
 
-Likewise, for mixed boundary conditions $v'(x_{\min}) = \underline{\xi}$ and $v'(x_{\max}) = \overline{\xi}$, one can use
+Likewise, for non-homogenous boundary conditions $v'(x_{\min}) = \underline{\xi}$ and $v'(x_{\max}) = \overline{\xi}$, one can use
 
 ```math
 B = \begin{bmatrix}
@@ -129,6 +129,7 @@ b = \begin{bmatrix}
 Applications
 -------------
 ### Hamilton–Jacobi–Bellman equations (HJBE)
+-------------
 Consider solving for $v$ from the following optimal control problem
 ```math
 v(x_0) = \max_{ {\{\alpha(t) \} }_{t \geq 0} } \int_{0}^\infty e^{-\rho t} r( x(t), \alpha(t )) dt
@@ -144,18 +145,18 @@ for some constant $\mu \geq 0$ and $\sigma \geq 0$ with $x(0) = x_0$.
 
 Let $\alpha^*(t)$ be the optimal solution. Suppose that $r$ under $\alpha^*(t)$ can be expressed in terms of state variables, $r^* (x)$. Then, the HJBE yields
 
-```math\label{eq:hamilton-jacobi-bellman}
+```math
 \rho v(x) = r^*(x) +  \mu  \partial_{x} v(x) + \dfrac{\sigma^2}{2} \partial_{xx} v(x)
 ```
 
 In terms of differential operators, one can rewrite the equation as
-```math\label{eq:hjbe-system-function}
+```math
 (\rho - \tilde{L}) v(x) = r^*(x)
 ```
 
 where 
 
-```math\label{eq:L-defn}
+```math
 \tilde{L} = \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
 ```
 
@@ -169,7 +170,7 @@ L = \mu L_{1+} + \dfrac{\sigma^2}{2} L_{2}
 so that $v$ under the optimal plan can be computed by solving the following discretized system of equations:
 
 ```math
-(\rho I - L) v &= r^*
+(\rho I - L) v = r^*
 ```
 
 where $v$ and $r^*$ are $M$-vectors whose $i$th elements are $v(x_i)$ and $r^*(x_i)$, respectively.
@@ -177,9 +178,10 @@ where $v$ and $r^*$ are $M$-vectors whose $i$th elements are $v(x_i)$ and $r^*(x
 
 
 ### Kolmogorov forward equations (KFE) under diffusion process
+-------------
 Let $g(x, t)$ be the distribution of $x$ at time $t$ from the example above. By the Kolmogorov forward equation, the following PDE holds:
 
-```math\label{eq:kfe}
+```math
 \partial_{t} g(x, t) = - \mu \partial_{x}  g(x,t) + \dfrac{\sigma^2}{2} \partial_{xx} g(x,t)
 ```
 
@@ -202,7 +204,7 @@ where
 \tilde{L}^* =  - \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
 ```
 
-By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\tilde{L}^*$. Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, $\tilde{L}$, and the correct discretization scheme for $L^*$ is, analogously, done by taking the transpose of the discretized operator for HJBE, $L$ (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569)). Hence, one can find the stationary distribution by solving the following discretized system of equations:
+By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\tilde{L}^*$. Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, $\tilde{L}$, and the correct discretization scheme for $\tilde{L}^*$ is, analogously, done by taking the transpose of the discretized operator for HJBE, $L$ (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569) and [Achdou et al., 2017](https://ideas.repec.org/p/nbr/nberwo/23732.html)). Hence, one can find the stationary distribution by solving the following discretized system of equations:
 
 ```math
 L^T g = 0 
@@ -210,7 +212,7 @@ L^T g = 0
 where $L^T$ is the transpose of $L$ and $g$ is an $M$-vector whose element is $g(x_i)$ such that $\sum_{i=1}^M g(x_i) = 1$.
 
 #### Full dynamics of distributions
-One can also solve the full PDE in KFE equation, given an initial distribution $g(x, 0)$. After discretization, note that \eqref{eq:kfe} can be rewritten as
+One can also solve the full PDE in KFE equation, given an initial distribution $g(x, 0)$. After discretization, note that the KFE can be rewritten as
 
 ```math
 \dot{g}(t) = L^T g(t)
