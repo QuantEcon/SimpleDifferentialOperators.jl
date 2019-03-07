@@ -35,10 +35,8 @@ First, in a stationary environment, the Bellman equation within the interior (co
 Define a new operator and rewrite,
 
 ```math
-\begin{align}
   \mathcal{L} v(x) &= u(x)\label{eq:bellman}\\
   \mathcal{L} &\equiv \rho - \mathcal{L}^x\label{eq:L-op}
-\end{align}
 ```
 Along with boundary conditions from the stochastic process (e.g. a reflecting barrier at a ``x_{\min}`` and another at ``x_{\max}`` or a transversality condition)
 
@@ -47,17 +45,13 @@ In special cases with sufficient monotonicity, there is a single stopping region
 With this, necessary conditions for optimality are the value matching condition
 
 ```math
-\begin{equation}
 v(\hat{x}) = S(\hat{x})\label{eq:vm}
-\end{equation}
 ```
 
 and the smooth pasting condition
 
 ```math
-\begin{equation}
 \partial_x v(\hat{x}) = 0\label{eq:sp}
-\end{equation}
 ```
 The "value matching" and "smooth pasting" conditions are necessary conditions for optimality at any free-boundary conditions.  Typically, you would solve ``\eqref{eq:bellman}, \eqref{eq:vm},\eqref{eq:sp},`` to find a ``v(x)`` function and a ``\hat{x}`` value.
 
@@ -68,9 +62,7 @@ While this approach can be analytically tractable, it is inconvenient for numeri
 As discussed in [Ben Moll's notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf), the DVI form of the above problem is to solve
 
 ```math
-\begin{equation}
 0 = \min\{\mathcal{L} v(x) - u(x), v(x) - S(x)\}\label{eq:DVI}
-\end{equation}
 ```
 
 for ``v(x)``.  A few important notes:
@@ -95,20 +87,16 @@ Note: See the [document](https://quantecon.github.io/SimpleDifferentialOperators
 Given these definitions, the DVI in ``\eqref{eq:DVI}`` becomes the variational inequality
 
 ```math
-\begin{equation}
 0 = \min\{L v - u, v - S\}\label{eq:VI}
-\end{equation}
 ```
 To solve ``\eqref{eq:VI}``, for the ``v\in\mathbb{R}^M`` vector, we can express it as a [linear complementarity problem](https://en.wikipedia.org/wiki/Linear_complementarity_problem) (LCP).
 
 First, do a change of variables
 
 ```math
-\begin{align}
 z &\equiv v - S \\
 q &\equiv -u + L S \\
 w &\equiv L z + q
-\end{align}
 ```
 Substituting into ``\eqref{eq:VI}`` yields an equation in the typical form of a LCP
 
@@ -126,11 +114,9 @@ We can also express these succinctly as a complementarity problem:
 We will solve an instance of this model where
 
 ```math
-\begin{align}
 u(x) &= x^{\gamma}\\
 \mathcal{L}^x &= \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}\\
 S(x) &= S_0
-\end{align}
 ```
 
 First, we install and load necessary packages.
