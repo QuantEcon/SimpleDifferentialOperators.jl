@@ -21,7 +21,7 @@ var documenterSearchIndex = {"docs": [
     "page": "﻿SimpleDifferentialOperators.jl",
     "title": "Installation",
     "category": "section",
-    "text": "To install, run] add SimpleDifferentialOperatorsNote that this requires Julia 1.0 or later."
+    "text": "To install, run] add SimpleDifferentialOperatorsNote that this requires Julia 1.1 or later."
 },
 
 {
