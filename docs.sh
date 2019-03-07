@@ -38,8 +38,8 @@ echo "Cloned docs branch."
 mkdir -p SimpleDifferentialOperators.jl/$target/generated/
 mv docs/tex/discretized-differential-operator-derivation.pdf SimpleDifferentialOperators.jl/$target/generated/ # move PDF
 echo "Copied PDF."
-# mv docs/examples/*.ipynb SimpleDifferentialOperators.jl/$target/generated/ # move notebooks
-# echo "Copied example notebooks."
+mv docs/examples/*.ipynb SimpleDifferentialOperators.jl/$target/generated/ # move notebooks
+echo "Copied example notebooks."
 mv docs/examples/*.html SimpleDifferentialOperators.jl/$target/generated/ # move notebooks
 echo "Copied example HTML."
 
