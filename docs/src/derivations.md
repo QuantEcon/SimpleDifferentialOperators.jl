@@ -179,7 +179,7 @@ where $v$ and $r^*$ are $M$-vectors whose $i$th elements are $v(x_i)$ and $r^*(x
 ### Kolmogorov forward equations (KFE) under diffusion process
 Let $g(x, t)$ be the distribution of $x$ at time $t$ from the example above. By the Kolmogorov forward equation, the following PDE holds:
 
-```math\label{eq:kfe}
+```math
 \partial_{t} g(x, t) = - \mu \partial_{x}  g(x,t) + \dfrac{\sigma^2}{2} \partial_{xx} g(x,t)
 ```
 
@@ -210,7 +210,7 @@ L^T g = 0
 where $L^T$ is the transpose of $L$ and $g$ is an $M$-vector whose element is $g(x_i)$ such that $\sum_{i=1}^M g(x_i) = 1$.
 
 #### Full dynamics of distributions
-One can also solve the full PDE in KFE equation, given an initial distribution $g(x, 0)$. After discretization, note that \eqref{eq:kfe} can be rewritten as
+One can also solve the full PDE in KFE equation, given an initial distribution $g(x, 0)$. After discretization, note that the KFE can be rewritten as
 
 ```math
 \dot{g}(t) = L^T g(t)
