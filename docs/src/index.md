@@ -10,7 +10,7 @@ Note that this requires Julia 1.0 or later.
 
 Usage
 ==========
-Consider solving for `v` from the following equation:
+Consider solving for `v` from the following equation by the Hamilton-Jacobi-Bellman equation (HJBE):
 ```math
 \rho v(x) = f(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
 ```
@@ -53,9 +53,16 @@ v_interior = v_bar[2:end-1]
 
 Examples
 ==========
-One can also deploy upwind schemes when drift variable is not constant. Consider solving for `v` from the following equation:
+Solving HJBE with state-dependent drift variables
+-------------
+One can also deploy upwind schemes when drift variable is not constant. Consider solving for `v` from the following Bellman equation:
 ```math
 \rho v(x) = f(x) + \mu(x) \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
+```
+
+associated with the diffusion process
+```math
+dx = \mu(x) dt + \sigma dW
 ```
 
 for some constant $\rho, \sigma > 0$ and $\mu(x) = -x$. Note that $\mu(x)$ depends on states. The following code will solve `v` using upwind schemes:
@@ -63,7 +70,7 @@ for some constant $\rho, \sigma > 0$ and $\mu(x) = -x$. Note that $\mu(x)$ depen
 # setup 
 f(x) = x^2 
 μ(x) = -x # drift depends on state
-σ = 0.1
+σ = 1.0
 ρ = 0.05
 M = 100 # size of grid
 x = range(-1.0, 1.0, length = 100)
@@ -74,8 +81,38 @@ bc = (Reflecting(), Reflecting())
 L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋(x, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊(x, bc)
 
 # Define linear operator using upwind schemes
-L = I * ρ - L₁ - σ^2 / 2 * L₂(x,bc)
+L = L₁ - σ^2 / 2 * L₂(x,bc)
 
 # solve the value function
-v_bc = L \ f.(x) 
+v_bc = (I * ρ - L) \ f.(x) 
+```
+
+Finding stationary distribution from the Kolmogorov forward equation (KFE)
+-------------
+One can also compute the stationary distribution of the state `x` above from the corresponding KFE:
+```math
+\partial_{t} g(x,t) = - \mu(x) \partial_{x} g(x, t) + \frac{\sigma^2}{2} \partial_{xx} g(x,t)
+```
+by taking $\partial_{t} g(x,t) = 0$, i.e., solving $g$ from the $L^* g(x) = 0$ where
+```math
+L^* = - \mu(x) \partial_{x} + \frac{\sigma^2}{2} \partial_{xx}
+```
+
+By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for ${L}^*$. Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, ${L}$, and the correct discretization scheme for $L^*$ is, analogously, done by taking the transpose of the discretized operator for HJBE, $L$ (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569)). Hence, one can find the stationary distribution by solving the following discretized system of equations:
+
+```math
+L^T g = 0
+```
+
+such that the sum of $g$ is one. This can be found by finding a non-trivial eigenvector for $L^T$  associated with the eigenvalue of zero:
+
+```julia
+using Arpack # library for extracting eigenvalues and eigenvectors
+
+# extract eigenvalues and eigenvectors, smallest eigenval in magintute first
+λ, ϕ = eigs(transpose(L), which = :SM); 
+# extract the very first eigenvector (associated with the smallest eigenvalue)
+g_ss = real.(ϕ[:,1]);
+# normalize it
+g_ss = g_ss / sum(g_ss)
 ```
