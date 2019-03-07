@@ -26,14 +26,15 @@ If the payoff is in state `x` is `f(x)` and `ρ` is the discount rate, then the 
 subject to ![BC](https://quicklatex.com/cache3/8e/ql_1183a672e909e5a76851d18016a9c68e_l3.png)
 
 
-Written in operator form, define the differential operator
+
+Written in operator form, define the differential operators
 <!-- \mathcal{L} \equiv \rho - \mu \partial_x - \frac{\sigma^2}{2}\partial_{xx} -->
 
-![Operator](https://quicklatex.com/cache3/c4/ql_ed4d9566511e4900e75fcad5f5a733c4_l3.png)
+![Operator](https://quicklatex.com/cache3/bb/ql_b0c2d466a06eb9093cefcfe9bd14dcbb_l3.png)
 
-and the Bellman equation can then be written as
+then the Bellman equation can be written as
 
-![Bellman with Operator](https://quicklatex.com/cache3/18/ql_79d760116d413d809588f1937f403c18_l3.png)
+![Bellman with Operator](https://quicklatex.com/cache3/96/ql_1df64101bb60cb16eb8b0c759b0de496_l3.png)
 
 
 This package provides components to discretize differential operators.  To implement directly,
@@ -49,9 +50,10 @@ x = range(0.0, 1.0, length = 100)
 # discretize L = ρ - μ D_x - σ^2 / 2 D_xx
 # subject to reflecting barriers at 0 and 1
 bc = (Reflecting(), Reflecting())
-L = μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)
+L_x = μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)
+L = I * ρ - L_x
 ## solve the value function
-v = (I * ρ - L) \ f.(x) 
+v = L \ f.(x) 
 ```
 
 #### Kolmogorov forward equation
@@ -61,19 +63,19 @@ Likewise, one can also compute the corresponding stationary distribution of `x` 
 
 Written in operator form, define the differential operator
 
-![Operator for KFE](https://quicklatex.com/cache3/54/ql_cc18a8dc369251d704d9563e99ef4d54_l3.png)
+![Operator for KFE](https://quicklatex.com/cache3/4d/ql_610ba8019c30240cf65ed7853af36c4d_l3.png)
 
 and the KFE for the stationary distribution can then be written as
 
-![KFE with Operator](https://quicklatex.com/cache3/82/ql_5d14ec70e1ad4330d50bea9433d41b82_l3.png)
+![KFE with Operator](https://quicklatex.com/cache3/74/ql_d6698f4d95a1227d01efafb4afff7474_l3.png)
 
-Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, `L`, and the correct discretization scheme for `L^*` is, analogously, done by taking the transpose of the discretized operator for HJBE, `L` (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569) and [Achdou et al., 2017](https://ideas.repec.org/p/nbr/nberwo/23732.html)). Hence, one can find the stationary distribution as follows:
+Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, `L_x`, and the correct discretization scheme for `L_x^*` is, analogously, done by taking the transpose of the discretized operator for HJBE, `L_x` (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569) and [Achdou et al., 2017](https://ideas.repec.org/p/nbr/nberwo/23732.html)). Hence, one can find the stationary distribution as follows:
 
 ```julia
 using Arpack # library for extracting eigenvalues and eigenvectors
 
 # extract eigenvalues and eigenvectors, smallest eigenval in magintute first
-λ, ϕ = eigs(transpose(L), which = :SM); 
+λ, ϕ = eigs(transpose(L_x), which = :SM); 
 # extract the very first eigenvector (associated with the smallest eigenvalue)
 g_ss = real.(ϕ[:,1]);
 # normalize it
