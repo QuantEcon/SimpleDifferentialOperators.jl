@@ -1,5 +1,19 @@
-﻿Usage
-==========
+﻿[SimpleDifferentialOperators.jl](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/)
+=============
+
+## Installation
+
+To install, run
+```julia
+] add SimpleDifferentialOperators
+```
+
+Note that this requires Julia 1.0 or later.
+
+## Usage
+
+### Solving HJBE with constant drifts
+-------------
 Consider solving for `v` from the following equation by the Hamilton-Jacobi-Bellman equation (HJBE):
 ```math
 \rho v(x) = f(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
@@ -41,19 +55,7 @@ v_bar = L \ [f.(x); 0.0; 0.0]
 v_interior = v_bar[2:end-1] 
 ```
 
-Installation
-==============
-
-To install, run
-```julia
-] add SimpleDifferentialOperators
-```
-
-Note that this requires Julia 1.0 or later.
-
-Usage Examples
-==========
-### Solving HJBE with state-dependent drift variables
+### Solving HJBE with state-dependent drifts
 -------------
 One can also deploy upwind schemes when drift variable is not constant. Consider solving for `v` from the following Bellman equation:
 ```math
