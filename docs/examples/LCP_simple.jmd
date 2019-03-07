@@ -28,14 +28,18 @@ The "classical" formulation (e.g., [Stokey's "The Economics of Inaction"](https:
 First, in a stationary environment, the Bellman equation within the interior (continuation) region is
 
 ```math
-\rho v(x) = u(x) + \mathcal{L}_x v(x)
+\begin{equation}
+  \rho v(x) = u(x) + \mathcal{L}_x v(x)
+\end{equation}
 ```
 
 Define a new operator and rewrite,
 
 ```math
+\begin{align}
   \mathcal{L} v(x) &= u(x)\label{eq:bellman}\\
   \mathcal{L} &\equiv \rho - \mathcal{L}_x\label{eq:L-op}
+\end{align}
 ```
 Along with boundary conditions from the stochastic process (e.g., a reflecting barrier at an ``x_{\min}`` and another at some ``x_{\max}``, or a transversality condition.)
 
@@ -44,13 +48,17 @@ In special cases with sufficient monotonicity, there is a single stopping region
 With this, the necessary conditions for optimality are the value matching condition
 
 ```math
-v(\hat{x}) = S(\hat{x})\label{eq:vm}
+\begin{equation}
+  v(\hat{x}) = S(\hat{x})\label{eq:vm}
+\end{equation}
 ```
 
 and the smooth pasting condition
 
 ```math
-\partial_x v(\hat{x}) = 0\label{eq:sp}
+\begin{equation}
+  \partial_x v(\hat{x}) = 0\label{eq:sp}
+\end{equation}
 ```
 These conditions are necessary for optimality for any free-boundary problem.  Typically, you would solve ``\eqref{eq:bellman}, \eqref{eq:vm},\eqref{eq:sp},`` to find a value function ``v(x)`` and a stopping threshold ``\hat{x}``.
 
@@ -61,7 +69,9 @@ While this approach can be analytically tractable, it is inconvenient for numeri
 As discussed in [Ben Moll's notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf), the [DVI](https://en.wikipedia.org/wiki/Differential_variational_inequality) form of the above problem is to solve
 
 ```math
-0 = \min\{\mathcal{L} v(x) - u(x), v(x) - S(x)\}\label{eq:DVI}
+\begin{equation}
+  0 = \min\{\mathcal{L} v(x) - u(x), v(x) - S(x)\}\label{eq:DVI}
+\end{equation}
 ```
 
 for ``v(x)``.  A few important notes:
@@ -88,26 +98,34 @@ Note: See the [document](https://quantecon.github.io/SimpleDifferentialOperators
 Given these definitions, the DVI in ``\eqref{eq:DVI}`` becomes the variational inequality
 
 ```math
-0 = \min\{L v - u, v - S\}\label{eq:VI}
+\begin{equation}
+  0 = \min\{L v - u, v - S\}\label{eq:VI}
+\end{equation}
 ```
 To solve ``\eqref{eq:VI}`` for the ``v\in\mathbb{R}^M`` vector, we can express it as a [linear complementarity problem](https://en.wikipedia.org/wiki/Linear_complementarity_problem) (or LCP).
 
 First, do a change of variables
 
 ```math
-z &\equiv v - S \\
-q &\equiv -u + L S \\
-w &\equiv L z + q
+\begin{align}
+  z &\equiv v - S \\
+  q &\equiv -u + L S \\
+  w &\equiv L z + q
+\end{align}
 ```
 Substituting into ``\eqref{eq:VI}`` yields
 
 ```math
-0 = \min \{L z + q, z\}
+\begin{equation}
+  0 = \min \{L z + q, z\}
+\end{equation}
 ```
 Or, in the typical notation of a complementarity problem
 
 ```math
-0 \leq (L z + q) \perp z \geq 0
+\begin{equation}
+  0 \leq (L z + q) \perp z \geq 0
+\end{equation}
 ```
 
 ## Implementation
@@ -115,9 +133,11 @@ Or, in the typical notation of a complementarity problem
 We will solve an instance of this model where
 
 ```math
-u(x) &\equiv x^{\gamma}\\
-\mathcal{L}_x &\equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}\\
-S(x) &\equiv S_0
+\begin{align}
+  u(x) &\equiv x^{\gamma}\\
+  \mathcal{L}_x &\equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}\\
+  S(x) &\equiv S_0
+\end{align}
 ```
 
 First, we install and load necessary packages.
