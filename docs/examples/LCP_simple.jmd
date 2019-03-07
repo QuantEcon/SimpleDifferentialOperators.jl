@@ -12,9 +12,9 @@ problems numerically as a [Differential Variational Inequality](https://en.wikip
 
 Assume the following
 
-* A stochastic process ``x``, with [infinitesimal generator](https://en.wikipedia.org/wiki/Infinitesimal_generator_(stochastic_processes)) ``\mathcal{L}^x``
+* A stochastic process ``x``, with [infinitesimal generator](https://en.wikipedia.org/wiki/Infinitesimal_generator_(stochastic_processes)) ``\mathcal{L}_x``
   and boundary conditions.  (e.g. the infinitesimal generator for Brownian motion with drift ``\mu`` and variance ``\sigma`` is
-  ``\mathcal{L}^x \equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}``.)
+  ``\mathcal{L}_x \equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}``.)
 * Boundary conditions for the ``x`` stochastic process (e.g., reflecting barriers at some minimum and maximum.)
 * Flow payoffs ``u(x)`` discounted at rate ``\rho > 0``.
 * Stopping payoff ``S(x)`` which gives the value of stopping at state ``x``.
@@ -28,14 +28,14 @@ The "classical" formulation (e.g., [Stokey's "The Economics of Inaction"](https:
 First, in a stationary environment, the Bellman equation within the interior (continuation) region is
 
 ```math
-\rho v(x) = u(x) + \mathcal{L}^x v(x)
+\rho v(x) = u(x) + \mathcal{L}_x v(x)
 ```
 
 Define a new operator and rewrite,
 
 ```math
   \mathcal{L} v(x) &= u(x)\label{eq:bellman}\\
-  \mathcal{L} &\equiv \rho - \mathcal{L}^x\label{eq:L-op}
+  \mathcal{L} &\equiv \rho - \mathcal{L}_x\label{eq:L-op}
 ```
 Along with boundary conditions from the stochastic process (e.g., a reflecting barrier at an ``x_{\min}`` and another at some ``x_{\max}``, or a transversality condition.)
 
@@ -116,7 +116,7 @@ We will solve an instance of this model where
 
 ```math
 u(x) &\equiv x^{\gamma}\\
-\mathcal{L}^x &\equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}\\
+\mathcal{L}_x &\equiv \mu \partial_x + \frac{\sigma^2}{2}\partial_{xx}\\
 S(x) &\equiv S_0
 ```
 
