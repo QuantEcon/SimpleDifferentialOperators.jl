@@ -53,7 +53,7 @@ v_interior = v_bar[2:end-1]
 
 Examples
 ==========
-Solving HJBE with state-dependent drift variables
+### Solving HJBE with state-dependent drift variables
 -------------
 One can also deploy upwind schemes when drift variable is not constant. Consider solving for `v` from the following Bellman equation:
 ```math
@@ -87,7 +87,7 @@ L = L₁ - σ^2 / 2 * L₂(x,bc)
 v_bc = (I * ρ - L) \ f.(x) 
 ```
 
-Finding stationary distribution from the Kolmogorov forward equation (KFE)
+### Finding stationary distribution from the Kolmogorov forward equation (KFE)
 -------------
 One can also compute the stationary distribution of the state `x` above from the corresponding KFE:
 ```math
