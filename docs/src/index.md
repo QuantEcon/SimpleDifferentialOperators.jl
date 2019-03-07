@@ -1,14 +1,4 @@
-﻿Installation
-==============
-
-To install, run
-```julia
-] add SimpleDifferentialOperators
-```
-
-Note that this requires Julia 1.0 or later.
-
-Usage
+﻿Usage
 ==========
 Consider solving for `v` from the following equation by the Hamilton-Jacobi-Bellman equation (HJBE):
 ```math
@@ -50,6 +40,16 @@ v_bar = L \ [f.(x); 0.0; 0.0]
 ## extract the interior (is identical with `v_bc` above)
 v_interior = v_bar[2:end-1] 
 ```
+
+Installation
+==============
+
+To install, run
+```julia
+] add SimpleDifferentialOperators
+```
+
+Note that this requires Julia 1.0 or later.
 
 Examples
 ==========
