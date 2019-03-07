@@ -113,7 +113,7 @@ b = \begin{bmatrix}
 ```
 
 
-Likewise, for mixed boundary conditions $v'(x_{\min}) = \underline{\xi}$ and $v'(x_{\max}) = \overline{\xi}$, one can use
+Likewise, for non-homogenous boundary conditions $v'(x_{\min}) = \underline{\xi}$ and $v'(x_{\max}) = \overline{\xi}$, one can use
 
 ```math
 B = \begin{bmatrix}
