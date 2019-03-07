@@ -67,7 +67,7 @@ and the KFE for the stationary distribution can then be written as
 
 ![KFE with Operator](https://quicklatex.com/cache3/82/ql_5d14ec70e1ad4330d50bea9433d41b82_l3.png)
 
-Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, ${L}$, and the correct discretization scheme for $L^*$ is, analogously, done by taking the transpose of the discretized operator for HJBE, $L$ (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569)). Hence, one can find the stationary distribution as follows:
+Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, ${L}$, and the correct discretization scheme for $L^*$ is, analogously, done by taking the transpose of the discretized operator for HJBE, $L$ (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569) and [Achdou et al., 2017](https://ideas.repec.org/p/nbr/nberwo/23732.html)). Hence, one can find the stationary distribution as follows:
 
 ```julia
 using Arpack # library for extracting eigenvalues and eigenvectors
