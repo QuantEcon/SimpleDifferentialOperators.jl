@@ -4,6 +4,8 @@
 [![Codecov](https://codecov.io/gh/QuantEcon/SimpleDifferentialOperators.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/QuantEcon/SimpleDifferentialOperators.jl)
 
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://QuantEcon.github.io/SimpleDifferentialOperators.jl/stable)
+[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://QuantEcon.github.io/SimpleDifferentialOperators.jl/dev)
+
 
 ## Overview
 This is a package to return discretized differential operators subject to various boundary conditions.  It is intended to be a "simple" stopgap as more advanced implementations (e.g. [DiffEqOperators.jl](https://github.com/JuliaDiffEq/DiffEqOperators.jl/) ) mature.  This package is also not intended to provide a "higher-level" interface for constructing the equations.  See [EconPDEs.jl](https://github.com/matthieugomez/EconPDEs.jl/) for a package intended to make translation of the sorts of equations used in economics more direct.
@@ -40,7 +42,7 @@ This package provides components to discretize differential operators.  To imple
 
 ```julia
 using SimpleDifferentialOperators, LinearAlgebra
-f(x) = x^2 
+f(x) = x^2
 μ = -0.1 # constant negative drift
 σ = 0.1
 ρ = 0.05
@@ -52,7 +54,7 @@ bc = (Reflecting(), Reflecting())
 L_x = μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)
 L = I * ρ - L_x
 ## solve the value function
-v = L \ f.(x) 
+v = L \ f.(x)
 ```
 
 #### Kolmogorov forward equation
@@ -74,7 +76,7 @@ Note that the operator for the KFE in the original equation is the adjoint opera
 using Arpack # library for extracting eigenvalues and eigenvectors
 
 # extract eigenvalues and eigenvectors, smallest eigenval in magintute first
-λ, ϕ = eigs(transpose(L_x), which = :SM); 
+λ, ϕ = eigs(transpose(L_x), which = :SM);
 # extract the very first eigenvector (associated with the smallest eigenvalue)
 g_ss = real.(ϕ[:,1]);
 # normalize it
