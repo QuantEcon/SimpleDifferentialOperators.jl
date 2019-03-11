@@ -111,10 +111,34 @@ m = Model(with_optimizer(Ipopt.Optimizer, tol=1e-12));
 @time sol = @suppress optimize!(m);
 ```
 
-#### JuMP (Mosek)
+#### JuMP (OSQP)
 
 The flexibility of JuMP is that, after formulating the problem, swapping out solvers is fairly trivial.
 
-Here's the same code, using the commercial [Gurobi](http://www.gurobi.com/index) solver.
+Here's the same code, using the Oxford [OSQP](https://osqp.org/) solver (Operator Splitting for Quadratic Programs).
+
+As you can see, only one line needed to change.
+
+```julia
+# install if required
+# ] add OSQP
+```
+
+And run
+
+```julia
+using OSQP
+
+m = Model(with_optimizer(OSQP.MathOptInterfaceOSQP.Optimizer))
+@variable(m, z[1:300]);
+@constraint(m, z .>= 0);
+@constraint(m, L*z + q .>= 0);
+@objective(m, Min, z'*L*z + z'*q);
+@time sol = @suppress optimize!(m);
+```
+
+#### JuMP (Gurobi)
+
+#### JuMP (Mosek)
 
 #### Conclusion
