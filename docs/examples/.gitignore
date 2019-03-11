@@ -2,3 +2,4 @@
 *.pdf
 *.tmp
 *.tex
+.ipynb_checkpoints
