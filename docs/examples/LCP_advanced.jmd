@@ -4,7 +4,6 @@
 
 This notebook is a computational appendix to the [earlier notebook](../generated/LCP_simple.html) on optimal stopping problems, and their formulations as linear complementarity problems (LCPs).
 
-
 #### Model Setup
 
 As before, we run some setup code
@@ -122,7 +121,7 @@ The setup here is a bit different, since we're using the [quadratic formulation]
 ```julia
 using JuMP, Ipopt
 
-m = Model(with_optimizer(Ipopt.Optimizer, tol=1e-12));
+m = Model(with_optimizer(Ipopt.Optimizer(print_level = 0), tol=1e-12));
 @variable(m, z[1:300]);
 @constraint(m, z .>= 0);
 @constraint(m, L*z + q .>= 0);
@@ -175,7 +174,3 @@ v = value.(z) + S.(x)
 plot(x, v, title = "Value Function for Optimal Stopping",
      legend = false, ylabel = "v(x)", xlabel = "x")
 ```
-
-#### Conclusion and Addenda
-
-This code was run on an `Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz` CPU, using Julia 1.1 and the latest package versions as of Mar. 11, 2019.
