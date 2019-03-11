@@ -121,7 +121,7 @@ The setup here is a bit different, since we're using the [quadratic formulation]
 ```julia
 using JuMP, Ipopt
 
-m = Model(with_optimizer(Ipopt.Optimizer(print_level = 0, tol=1e-12));
+m = Model(with_optimizer(Ipopt.Optimizer(print_level = 0, tol=1e-12)));
 @variable(m, z[1:300]);
 @constraint(m, z .>= 0);
 @constraint(m, L*z + q .>= 0);
