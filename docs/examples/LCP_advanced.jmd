@@ -1,0 +1,120 @@
+## Optimal Stopping Problems, Computational Appendix
+
+> Presented by [Arnav Sood](email:arnav.sood@ubc.ca) and [Jesse Perla](email:jesseperla@gmail.com)
+
+This notebook is a computational appendix to the [earlier notebook](../generated/LCP_simple.html) on optimal stopping problems, and their formulations as linear complementarity problems (LCPs).
+
+#### Model Setup
+
+As before, we run some setup code
+
+```julia
+# install if required,
+# ] add SimpleDifferentialOperators Plots Suppressor
+
+using SimpleDifferentialOperators, Plots, LinearAlgebra, Suppressor
+```
+
+And define a set of model objects
+
+```julia
+μ = -0.1
+σ = 0.1
+ρ = 0.05
+γ = 0.5
+ρ = 0.05
+S₀ = 20.0
+u(x) = x^γ  # (13)
+S(x) = S₀  # (15)
+@assert μ <= 0 # otherwise we need to swap the L₁₋ operator
+```
+
+We can also define the boundary conditions and LCP matrices at this stage
+
+```julia
+M = 300
+x = range(0.0, 5.0, length = M)
+bc = (Reflecting(), Reflecting())  # assume x_t reflects at 0.0 and 5.0
+L = I * ρ - μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)  # (2) and (14)
+
+q = -u.(x) + L*S.(x)  # (9)
+w(z) = L*z + q; # (10)
+```
+
+#### PATHSolver
+
+This is the first solver we tried. To install it, simply run
+
+```julia
+# install if required
+# ] add PATHSolver
+```
+
+And to use it
+
+```julia
+using PATHSolver
+
+lb = zeros(M)
+ub = 300*ones(M) # Need to have upper bounds for the z.
+@time code, z, w_val = @suppress solveLCP(w, lb, ub)  # Solves (12)
+@assert code == :Solved  # otherwise, an error in convergence
+```
+
+**Note:** As mentioned, for anything other than a rough estimate, the Julia code you're benchmarking should be inside of a function.
+
+#### NLsolve
+
+There is also the [NLsolve.jl](https://github.com/JuliaNLSolvers/NLsolve.jl) package, which offers a `mcpsolve()` method for mixed complementarity problems.
+
+This one should be slower, because it's missing specializations for the linear case.
+
+```julia
+# install if required
+# ] add NLsolve
+```
+
+And run
+
+```julia
+using NLsolve
+
+@time r = @suppress mcpsolve(w, lb, ub,
+                zeros(300), # initial condition
+                reformulation = :smooth, # uses a so-called "Fischer function" to smooth out the problem
+                autodiff = :forward,
+                inplace = false,
+                ftol = 1e-12);
+```
+
+#### JuMP (Ipopt)
+
+We can also use [JuMP](https://github.com/JuliaOpt/JuMP.jl), Julia's DSL for numerical programming.
+
+The solver is the [Interior Point OPTimizer (IPOPT)](https://en.wikipedia.org/wiki/IPOPT).
+
+```julia
+# install if required
+# ] add JuMP Ipopt
+```
+
+The setup here is a bit different, since we're using the [quadratic formulation](https://en.wikipedia.org/wiki/Linear_complementarity_problem#Convex_quadratic-minimization:_Minimum_conditions).
+
+```julia
+using JuMP, Ipopt
+
+m = Model(with_optimizer(Ipopt.Optimizer, tol=1e-12));
+@variable(m, z[1:300]);
+@constraint(m, z .>= 0);
+@constraint(m, L*z + q .>= 0);
+@objective(m, Min, z'*L*z + z'*q);
+@time sol = @suppress optimize!(m);
+```
+
+#### JuMP (Mosek)
+
+The flexibility of JuMP is that, after formulating the problem, swapping out solvers is fairly trivial.
+
+Here's the same code, using the commercial [Gurobi](http://www.gurobi.com/index) solver.
+
+#### Conclusion
