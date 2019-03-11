@@ -10,9 +10,9 @@ As before, we run some setup code
 
 ```julia
 # install if required,
-# ] add SimpleDifferentialOperators Plots Suppressor
+# ] add SimpleDifferentialOperators Plots Suppressor BenchmarkTools
 
-using SimpleDifferentialOperators, Plots, LinearAlgebra, Suppressor
+using SimpleDifferentialOperators, Plots, LinearAlgebra, Suppressor, BenchmarkTools
 ```
 
 And define a set of model objects
@@ -57,7 +57,7 @@ using PATHSolver
 
 lb = zeros(M)
 ub = 300*ones(M) # Need to have upper bounds for the z.
-@time code, z, w_val = @suppress solveLCP(w, lb, ub)  # Solves (12)
+@btime code, z, w_val = @suppress solveLCP(w, lb, ub)  # Solves (12)
 @assert code == :Solved  # otherwise, an error in convergence
 ```
 
@@ -87,7 +87,7 @@ And run
 ```julia
 using NLsolve
 
-@time r = @suppress mcpsolve(w, lb, ub,
+@btime r = @suppress mcpsolve(w, lb, ub,
                 zeros(300), # initial condition
                 reformulation = :smooth, # uses a so-called "Fischer function" to smooth out the problem
                 autodiff = :forward,
@@ -126,7 +126,7 @@ m = Model(with_optimizer(Ipopt.Optimizer, tol=1e-12));
 @constraint(m, z .>= 0);
 @constraint(m, L*z + q .>= 0);
 @objective(m, Min, z'*L*z + z'*q);
-@time @suppress optimize!(m);
+@btime @suppress optimize!(m);
 
 @show termination_status(m)
 ```
@@ -162,7 +162,7 @@ m = Model(with_optimizer(OSQP.MathOptInterfaceOSQP.Optimizer))
 @constraint(m, z .>= 0);
 @constraint(m, L*z + q .>= 0);
 @objective(m, Min, z'*L*z + z'*q);
-@time optimize!(m);
+@btime optimize!(m);
 
 @show termination_status(m)
 ```
