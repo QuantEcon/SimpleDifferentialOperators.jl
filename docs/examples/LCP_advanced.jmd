@@ -4,6 +4,7 @@
 
 This notebook is a computational appendix to the [earlier notebook](../generated/LCP_simple.html) on optimal stopping problems, and their formulations as linear complementarity problems (LCPs).
 
+
 #### Model Setup
 
 As before, we run some setup code
@@ -61,6 +62,14 @@ ub = 300*ones(M) # Need to have upper bounds for the z.
 @assert code == :Solved  # otherwise, an error in convergence
 ```
 
+As a sanity check, we can plot
+
+```julia
+v = z + S.(x)
+plot(x, v, title = "Value Function for Optimal Stopping",
+     legend = false, ylabel = "v(x)", xlabel = "x")
+```
+
 **Note:** As mentioned, for anything other than a rough estimate, the Julia code you're benchmarking should be inside of a function.
 
 #### NLsolve
@@ -85,6 +94,16 @@ using NLsolve
                 autodiff = :forward,
                 inplace = false,
                 ftol = 1e-12);
+
+@assert converged(r) == true # otherwise, an error in convergence
+```
+
+And the plot
+
+```julia
+v = r.zero + S.(x)
+plot(x, v, title = "Value Function for Optimal Stopping",
+     legend = false, ylabel = "v(x)", xlabel = "x")
 ```
 
 #### JuMP (Ipopt)
@@ -108,7 +127,17 @@ m = Model(with_optimizer(Ipopt.Optimizer, tol=1e-12));
 @constraint(m, z .>= 0);
 @constraint(m, L*z + q .>= 0);
 @objective(m, Min, z'*L*z + z'*q);
-@time sol = @suppress optimize!(m);
+@time optimize!(m);
+
+@show termination_status(m)
+```
+
+And the plot
+
+```julia
+v = value.(z) + S.(x)
+plot(x, v, title = "Value Function for Optimal Stopping",
+     legend = false, ylabel = "v(x)", xlabel = "x")
 ```
 
 #### JuMP (OSQP)
@@ -134,11 +163,19 @@ m = Model(with_optimizer(OSQP.MathOptInterfaceOSQP.Optimizer))
 @constraint(m, z .>= 0);
 @constraint(m, L*z + q .>= 0);
 @objective(m, Min, z'*L*z + z'*q);
-@time sol = @suppress optimize!(m);
+@time optimize!(m);
+
+@show termination_status(m)
 ```
 
-#### JuMP (Gurobi)
+And the plot
 
-#### JuMP (Mosek)
+```julia
+v = value.(z) + S.(x)
+plot(x, v, title = "Value Function for Optimal Stopping",
+     legend = false, ylabel = "v(x)", xlabel = "x")
+```
 
-#### Conclusion
+#### Conclusion and Addenda
+
+This code was run on an `Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz` CPU, using Julia 1.1 and the latest package versions as of Mar. 11, 2019.
