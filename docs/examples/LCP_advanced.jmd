@@ -57,7 +57,7 @@ using PATHSolver
 
 lb = zeros(M)
 ub = 300*ones(M) # Need to have upper bounds for the z.
-@btime code, z, w_val = @suppress solveLCP(w, lb, ub)  # Solves (12)
+code, z, w_val = @btime @suppress solveLCP($w, $lb, $ub)  # Solves (12)
 @assert code == :Solved  # otherwise, an error in convergence
 ```
 
@@ -87,7 +87,7 @@ And run
 ```julia
 using NLsolve
 
-@btime r = @suppress mcpsolve(w, lb, ub,
+r = @btime @suppress mcpsolve($w, $lb, $ub,
                 zeros(300), # initial condition
                 reformulation = :smooth, # uses a so-called "Fischer function" to smooth out the problem
                 autodiff = :forward,
@@ -126,9 +126,9 @@ m = Model(with_optimizer(Ipopt.Optimizer, tol=1e-12));
 @constraint(m, z .>= 0);
 @constraint(m, L*z + q .>= 0);
 @objective(m, Min, z'*L*z + z'*q);
-@btime @suppress optimize!(m);
+@suppress optimize!(m);
 
-@show termination_status(m)
+termination_status(m)
 ```
 
 And the plot
@@ -138,6 +138,27 @@ v = value.(z) + S.(x)
 plot(x, v, title = "Value Function for Optimal Stopping",
      legend = false, ylabel = "v(x)", xlabel = "x")
 ```
+
+Note that we didn't compute a benchmark. As `optimize!()` is in-place (that is, it modifies its arguments), we need to ensure that runs are actually independent.
+
+Here's one approach.
+
+```julia
+function ipoptClosure()
+  m = Model(with_optimizer(Ipopt.Optimizer, tol=1e-12));
+  @variable(m, z[1:300]);
+  @constraint(m, z .>= 0);
+  @constraint(m, L*z + q .>= 0);
+  @objective(m, Min, z'*L*z + z'*q);
+  @suppress optimize!(m);
+end
+
+@benchmark ipoptClosure()
+```
+
+In other words, we're benchmarking the process of building and solving a model from scratch.
+
+Note that if you want more granular performance data, you can use the `@benchmark` macro as above. 
 
 #### JuMP (OSQP)
 
@@ -162,7 +183,7 @@ m = Model(with_optimizer(OSQP.MathOptInterfaceOSQP.Optimizer))
 @constraint(m, z .>= 0);
 @constraint(m, L*z + q .>= 0);
 @objective(m, Min, z'*L*z + z'*q);
-@btime optimize!(m);
+@suppress optimize!(m);
 
 @show termination_status(m)
 ```
@@ -173,4 +194,19 @@ And the plot
 v = value.(z) + S.(x)
 plot(x, v, title = "Value Function for Optimal Stopping",
      legend = false, ylabel = "v(x)", xlabel = "x")
+```
+
+We can also write benchmarking code as above
+
+```julia
+function osqpClosure()
+  m = Model(with_optimizer(OSQP.MathOptInterfaceOSQP.Optimizer))
+  @variable(m, z[1:300]);
+  @constraint(m, z .>= 0);
+  @constraint(m, L*z + q .>= 0);
+  @objective(m, Min, z'*L*z + z'*q);
+  @suppress optimize!(m);
+end
+
+@benchmark osqpClosure()
 ```
