@@ -49,4 +49,5 @@ echo "Carried out git operations."
 
 # Clean
 rm -rf SimpleDifferentialOperators.jl
+git checkout **/*.pdf
 echo "Cleaned."
