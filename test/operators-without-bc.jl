@@ -58,8 +58,8 @@ end
         L = [([zeros(N) Diagonal(ones(N,N)) zeros(N)] * 0.05 - L̄); B]
 
         ## solve the value function including the boundary conditions
-        v_bar = L \ [f.(x); 0.0; 0.0]
-        v_by_extended_operator = v_bar[2:end-1] # extract the interior
+        v̄ = L \ [f.(x); 0.0; 0.0]
+        v_by_extended_operator = v̄[2:end-1] # extract the interior
 
         @test v ≈ v_by_extended_operator
     end
