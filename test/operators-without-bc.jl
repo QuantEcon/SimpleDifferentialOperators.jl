@@ -50,7 +50,7 @@ end
         # operators with reflecting boundary conditions
         L = μ*L₁₋(x, bc) + σ^2 / 2 * L₂(x, bc)
         ## solve the value function
-        v_bc = (I * ρ - L) \ f.(x)
+        v = (I * ρ - L) \ f.(x)
 
         # operators without boundary conditions, adding extra two rows for boundary conditions
         L̄ = μ*L̄₁₋(x) + σ^2 / 2 * L̄₂(x)
@@ -59,8 +59,8 @@ end
 
         ## solve the value function including the boundary conditions
         v_bar = L \ [f.(x); 0.0; 0.0]
-        v_interior = v_bar[2:end-1] # extract the interior
+        v_by_extended_operator = v_bar[2:end-1] # extract the interior
 
-        @test v_bc ≈ v_interior
+        @test v ≈ v_by_extended_operator
     end
 end

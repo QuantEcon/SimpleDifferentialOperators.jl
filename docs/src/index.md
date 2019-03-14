@@ -36,7 +36,7 @@ x = range(0.0, 1.0, length = M) # grid
 bc = (Reflecting(), Reflecting())
 L = I * ρ - μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)
 ## solve the value function
-v_bc = L \ f.(x) 
+v = L \ f.(x) 
 ```
 
 Note that the code above uses differential operators with reflecting boundary conditions applied. 
@@ -51,8 +51,8 @@ B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]])
 L = [([zeros(M) Diagonal(ones(M,M)) zeros(M)] * 0.05 - L̄); B] 
 ## solve the value function with reflecting barrier bc (last two elements)
 v_bar = L \ [f.(x); 0.0; 0.0] 
-## extract the interior (is identical with `v_bc` above)
-v_interior = v_bar[2:end-1] 
+## extract the interior (is identical with `v` above)
+v = v_bar[2:end-1] 
 ```
 
 ### Solving HJBE with state-dependent drifts
@@ -86,7 +86,7 @@ L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋(x, bc) + Diagonal(max.(μ.(x), 0.0)
 L = L₁ - σ^2 / 2 * L₂(x,bc)
 
 # solve the value function
-v_bc = (I * ρ - L) \ f.(x) 
+v = (I * ρ - L) \ f.(x) 
 ```
 
 ### Finding stationary distribution from the Kolmogorov forward equation (KFE)
