@@ -19,7 +19,7 @@ Consider solving for `v` from the following equation by the Hamilton-Jacobi-Bell
 \rho v(x) = f(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
 ```
 
-for some constant $\rho, \sigma > 0$ and $\mu \leq 0$. To solve `v` on `M`-size discretized grids, one can run the following code:
+for some constant $\rho, \sigma > 0$ and $\mu \leq 0$. To solve `v` under the reflecting barrier conditions `v'(0) = v'(1) = 0` on `M`-size discretized grids, one can run the following code:
 ```julia
 # import LinearAlgebra package (for diagonal and identity matrices)
 using LinearAlgebra 
@@ -67,7 +67,7 @@ associated with the diffusion process
 dx = \mu(x) dt + \sigma dW
 ```
 
-for some constant $\rho, \sigma > 0$ and $\mu(x) = -x$. Note that $\mu(x)$ depends on states. The following code will solve `v` using upwind schemes:
+for some constant $\rho, \sigma > 0$ and $\mu(x) = -x$. Note that $\mu(x)$ depends on states. The following code will solve `v` using upwind schemes, with the reflecting barrier conditions `v'(0) = v'(1) = 0` applied:
 ```julia
 # setup 
 f(x) = x^2 
