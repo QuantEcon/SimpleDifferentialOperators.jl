@@ -55,7 +55,7 @@ end
         # operators without boundary conditions, adding extra two rows for boundary conditions
         L̄ = μ*L̄₁₋(x) + σ^2 / 2 * L̄₂(x)
         B = transpose([[-1; 1; zeros(N)] [zeros(N); -1; 1]])
-        L = [([zeros(N) Diagonal(ones(N,N)) zeros(N)] * 0.05 - L̄); B]
+        L = [([zeros(N) Diagonal(ones(N,N)) zeros(N)] * ρ - L̄); B]
 
         ## solve the value function including the boundary conditions
         v̄ = L \ [f.(x); 0.0; 0.0]

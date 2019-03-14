@@ -48,7 +48,7 @@ L̄ = μ*L̄₁₋(x) + σ^2 / 2 * L̄₂(x)
 ## matrix for boundary conditions
 B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]]) 
 ## stack them together
-L = [([zeros(M) Diagonal(ones(M,M)) zeros(M)] * 0.05 - L̄); B] 
+L = [([zeros(M) Diagonal(ones(M,M)) zeros(M)] * ρ - L̄); B] 
 ## solve the value function with reflecting barrier bc (last two elements)
 v̄ = L \ [f.(x); 0.0; 0.0] 
 ## extract the interior (is identical with `v` above)
