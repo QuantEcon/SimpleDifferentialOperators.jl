@@ -48,17 +48,17 @@ end
         bc = (Reflecting(), Reflecting()) # specify BC (reflecting barrier)
 
         # operators with reflecting boundary conditions
-        A = μ*L₁₋(x, bc) + σ^2 / 2 * L₂(x, bc)
+        L = μ*L₁₋(x, bc) + σ^2 / 2 * L₂(x, bc)
         ## solve the value function
-        v_bc = (I * ρ - A) \ f.(x)
+        v_bc = (I * ρ - L) \ f.(x)
 
         # operators without boundary conditions, adding extra two rows for boundary conditions
-        L = μ*L̄₁₋(x) + σ^2 / 2 * L̄₂(x)
+        L̄ = μ*L̄₁₋(x) + σ^2 / 2 * L̄₂(x)
         B = transpose([[-1; 1; zeros(N)] [zeros(N); -1; 1]])
-        A = [([zeros(N) Diagonal(ones(N,N)) zeros(N)] * 0.05 - L); B]
+        L = [([zeros(N) Diagonal(ones(N,N)) zeros(N)] * 0.05 - L̄); B]
 
         ## solve the value function including the boundary conditions
-        v_bar = A \ [f.(x); 0.0; 0.0]
+        v_bar = L \ [f.(x); 0.0; 0.0]
         v_interior = v_bar[2:end-1] # extract the interior
 
         @test v_bc ≈ v_interior

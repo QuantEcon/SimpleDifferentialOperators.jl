@@ -20,16 +20,16 @@ function LCP_objects(sp)
   u(x) = x^γ
   σ = σ_bar
 # construct operator
-  A = μ * L₁₋(grid, (Reflecting(), Reflecting())) + σ^2/2 * L₂(grid, (Reflecting(), Reflecting()))
+  L = μ * L₁₋(grid, (Reflecting(), Reflecting())) + σ^2/2 * L₂(grid, (Reflecting(), Reflecting()))
 # construct/return LCP objects
-  B = ρ*I - A
+  B = ρ*I - L
   S_vec = S.(grid)
   q_vec = -u.(grid) + B*S_vec
-  return (A = A, B = B, S = S_vec, q = q_vec)
+  return (L = L, B = B, S = S_vec, q = q_vec)
 end
 
 function LCPsolve(sp)
-  @unpack A, B, S, q = LCP_objects(sp)
+  @unpack L, B, S, q = LCP_objects(sp)
   f = z -> B*z + q
   n = sp.M
   lb = zeros(n)
@@ -65,18 +65,18 @@ function LCP_split(S)
     bc = (Reflecting(), Reflecting())
     L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋(x, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊(x, bc)
   # operator construction
-    A = L₁+ σ^2/2 * L₂(x, bc)
+    L = L₁+ σ^2/2 * L₂(x, bc)
   # LCP stuff
-    B = ρ*I - A
+    B = ρ*I - L
     S_vec = S * ones(M)
     q_vec = -u.(x) + B*S_vec
-    return (A = A, B = B, S = S_vec, q = q_vec)
+    return (L = L, B = B, S = S_vec, q = q_vec)
 end
 
 
 @testset "Split Case, Nonzero S" begin
   # setup
-  @unpack A, B, S, q = LCP_split(0.125)
+  @unpack L, B, S, q = LCP_split(0.125)
   f = z -> B*z + q
   n = 300
   lb = zeros(n)
@@ -94,7 +94,7 @@ end
 
 @testset "Split Case, Zero S" begin
   # setup
-  @unpack A, B, S, q = LCP_split(0.)
+  @unpack L, B, S, q = LCP_split(0.)
   f = z -> B*z + q
   n = 300
   lb = zeros(n)
