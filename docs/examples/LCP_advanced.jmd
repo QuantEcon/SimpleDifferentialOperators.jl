@@ -61,6 +61,13 @@ code, z, w_val = @btime @suppress solveLCP($w, $lb, $ub)  # Solves (12)
 @assert code == :Solved  # otherwise, an error in convergence
 ```
 
+We can also try the MCP solver. We expect this to be slower, since we forgo specializations for the linear case. 
+
+```julia 
+code_, z_, w_val_ = @btime @suppress solveMCP($w, $lb, $ub)  # Solves (12)
+@assert code_ == :Solved  # otherwise, an error in convergence
+```
+
 As a sanity check, we can plot
 
 ```julia
@@ -74,8 +81,6 @@ plot(x, v, title = "Value Function for Optimal Stopping",
 #### NLsolve
 
 There is also the [NLsolve.jl](https://github.com/JuliaNLSolvers/NLsolve.jl) package, which offers a `mcpsolve()` method for mixed complementarity problems.
-
-This one should be slower, because it's missing specializations for the linear case.
 
 ```julia
 # install if required
@@ -144,7 +149,7 @@ Note that we didn't compute a benchmark. As `optimize!()` is in-place (that is, 
 Here's one approach.
 
 ```julia
-function ipoptClosure()
+function ipoptFunc()
   m = Model(with_optimizer(Ipopt.Optimizer, tol=1e-12));
   @variable(m, z[1:300]);
   @constraint(m, z .>= 0);
@@ -153,7 +158,7 @@ function ipoptClosure()
   @suppress optimize!(m);
 end
 
-@benchmark ipoptClosure()
+@benchmark ipoptFunc()
 ```
 
 In other words, we're benchmarking the process of building and solving a model from scratch.
@@ -199,7 +204,7 @@ plot(x, v, title = "Value Function for Optimal Stopping",
 We can also write benchmarking code as above
 
 ```julia
-function osqpClosure()
+function osqpFunc()
   m = Model(with_optimizer(OSQP.MathOptInterfaceOSQP.Optimizer))
   @variable(m, z[1:300]);
   @constraint(m, z .>= 0);
@@ -208,5 +213,15 @@ function osqpClosure()
   @suppress optimize!(m);
 end
 
-@benchmark osqpClosure()
+@benchmark osqpFunc()
 ```
+
+#### Conclusions 
+
+The outcomes of this notebook are: 
+
+* Expository code for solving an LCP-formulated stopping problem using a variety of Julia tools.
+
+* The finding that using code optimized for the linear case leads to noticeable speed gains, and that `PATHSolver.jl` is a good bet for small problems like this one. 
+
+* Note: The size is crucial for this kind of analysis. `JuMP` (for example) is designed with massive problems in mind, and as such might be doing work that's costly here, but vital for the larger case. 
