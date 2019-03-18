@@ -42,17 +42,24 @@ v = L \ f.(x)
 Note that the code above uses differential operators with reflecting boundary conditions applied. 
 One can alternatively use differential operators on interior nodes and stack them with matrices for boundary conditions to compute `v`:
 ```julia
-# operators without boundary conditions, adding extra two rows for boundary conditions
-## differential operators on extended nodes
-L̄ = μ*L̄₁₋(x) + σ^2 / 2 * L̄₂(x)
-## matrix for boundary conditions
-B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]]) 
-## stack them together
-L = [([zeros(M) Diagonal(ones(M,M)) zeros(M)] * ρ - L̄); B] 
-## solve the value function with reflecting barrier bc (last two elements)
-v̄ = L \ [f.(x); 0.0; 0.0] 
-## extract the interior (is identical with `v` above)
-v = v̄[2:end-1] 
+# import SparseArrays package (for identity matrix and spzeros)
+using SparseArrays
+
+# differential operators on extended nodes
+L̄ₓ = μ*L̄₁₋(x) + σ^2 / 2 * L̄₂(x)
+
+# boundary conditions (i.e. B v̄ = b)
+B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]])
+b = [0.0; 0.0] 
+
+# form bellman equation on extension
+L̄ = [spzeros(M) ρ*I spzeros(M)] - L̄ₓ
+
+# stack the systems of bellman and boundary conditions, and solve
+v̄ =  [L̄; B] \ [f.(x); b]
+
+# extract the interior (is identical with `v` above)
+v =  v̄[2:end-1] 
 ```
 
 ### Solving HJBE with state-dependent drifts
