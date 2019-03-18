@@ -19,7 +19,7 @@ Consider solving for `v` from the following equation by the Hamilton-Jacobi-Bell
 \rho v(x) = f(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
 ```
 
-for some constant $\rho, \sigma > 0$ and $\mu \leq 0$. To solve `v` under the reflecting barrier conditions `v'(0) = v'(1) = 0` on `M`-size discretized grids, one can run the following code:
+for some constant $\rho, \sigma > 0$ and $\mu \leq 0$. To solve `v` under the reflecting barrier conditions $v'(0) = v'(1) = 0$ on `M`-size discretized grids, one can run the following code:
 ```julia
 # import LinearAlgebra package (for diagonal and identity matrices)
 using LinearAlgebra 
@@ -73,7 +73,7 @@ plot(x, v, lw = 4, label = "v")
 ![plot-hjbe-both-reflecting](assets/plot-hjbe-both-reflecting.png)
 
 ### Solving HJBE with absorbing barrier conditions
-Instead of having the reflecting barrier conditions on both lower bound and upper bound `v'(0) = v'(1) = 0` as above, one can impose an absorbing barrier condition as well. To solve `v` under the reflecting barrier conditions `v(0) = S` (absorbing barrier on lower bound) for some S and `v'(1) = 0` (reflecting barrier on upper bound), one can construct `B` and `b` for the boundary conditions as follows:
+Instead of having the reflecting barrier conditions on both lower bound and upper bound $v'(0) = v'(1) = 0$ as above, one can impose an absorbing barrier condition as well. To solve `v` under the reflecting barrier conditions $v(0) = S$ (absorbing barrier on lower bound) for some S and $v'(1) = 0$ (reflecting barrier on upper bound), one can construct `B` and `b` for the boundary conditions as follows:
 ```julia
 # define S
 S = 0.0 
@@ -112,7 +112,7 @@ associated with the diffusion process
 dx = \mu(x) dt + \sigma dW
 ```
 
-for some constant $\rho, \sigma > 0$ and $\mu(x) = -x$. Note that $\mu(x)$ depends on states. The following code will solve `v` using upwind schemes, with the reflecting barrier conditions `v'(0) = v'(1) = 0` applied:
+for some constant $\rho, \sigma > 0$ and $\mu(x) = -x$. Note that $\mu(x)$ depends on states. The following code will solve `v` using upwind schemes, with the reflecting barrier conditions $v'(0) = v'(1) = 0$ applied:
 ```julia
 # setup 
 f(x) = x^2 
