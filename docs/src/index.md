@@ -118,3 +118,12 @@ g_ss = real.(ϕ[:,1]);
 # normalize it
 g_ss = g_ss / sum(g_ss)
 ```
+
+which results in the following stationary distribution:
+
+```julia
+using Plots
+plot(x, g_ss, lw = 4, label = "g_ss")
+```
+
+![plot-stationary-dist](assets/plot-stationary-dist.png)
