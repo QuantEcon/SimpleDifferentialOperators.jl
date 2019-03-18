@@ -62,6 +62,26 @@ v̄ =  [L̄; B] \ [f.(x); b]
 v =  v̄[2:end-1] 
 ```
 
+### Solving HJBE with absorbing barrier conditions
+Instead of having the reflecting barrier conditions on both lower bound and upper bound `v'(0) = v'(1) = 0` as above, one can impose an absorbing barrier condition as well. To solve `v` under the reflecting barrier conditions `v(0) = S` (absorbing barrier on lower bound) for some S and `v'(1) = 0` (reflecting barrier on upper bound), one can construct `B` and `b` for the boundary conditions as follows:
+```julia
+# define S
+S = 0.0 
+
+# boundary conditions (i.e. B v̄ = b)
+B = transpose([[0; 1; zeros(M)] [zeros(M); -1; 1]])
+b = [S; 0.0];
+```
+
+and solve `v`:
+```julia
+# stack the systems of bellman and boundary conditions, and solve
+v̄ =  [L̄; B] \ [f.(x); b]
+
+# extract the interior (is identical with `v` above)
+v =  v̄[2:end-1] 
+```
+
 ### Solving HJBE with state-dependent drifts
 -------------
 One can also deploy upwind schemes when drift variable is not constant. Consider solving for `v` from the following Bellman equation:
