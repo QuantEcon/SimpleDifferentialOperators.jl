@@ -119,7 +119,7 @@ g_ss = real.(ϕ[:,1]);
 g_ss = g_ss / sum(g_ss)
 ```
 
-which results in the following stationary distribution:
+Using `L` from the state-dependent drift example above, this results in the following stationary distribution:
 
 ```julia
 using Plots
