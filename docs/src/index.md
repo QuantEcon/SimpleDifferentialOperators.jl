@@ -62,6 +62,16 @@ v̄ =  [L̄; B] \ [f.(x); b]
 v =  v̄[2:end-1] 
 ```
 
+
+Here is a plot for `v`:
+
+```julia
+using Plots
+plot(x, v, lw = 4, label = "v")
+```
+
+![plot-hjbe-both-reflecting](assets/plot-hjbe-both-reflecting.png)
+
 ### Solving HJBE with absorbing barrier conditions
 Instead of having the reflecting barrier conditions on both lower bound and upper bound `v'(0) = v'(1) = 0` as above, one can impose an absorbing barrier condition as well. To solve `v` under the reflecting barrier conditions `v(0) = S` (absorbing barrier on lower bound) for some S and `v'(1) = 0` (reflecting barrier on upper bound), one can construct `B` and `b` for the boundary conditions as follows:
 ```julia
@@ -81,6 +91,14 @@ v̄ =  [L̄; B] \ [f.(x); b]
 # extract the interior (is identical with `v` above)
 v =  v̄[2:end-1] 
 ```
+
+Here is a plot for `v`:
+
+```julia
+plot(x, v, lw = 4, label = "v")
+```
+
+![plot-hjbe-lb-absorbing-ub-reflecting](assets/plot-hjbe-lb-absorbing-ub-reflecting.png)
 
 ### Solving HJBE with state-dependent drifts
 -------------
@@ -149,7 +167,6 @@ g_ss = g_ss / sum(g_ss)
 Using `L` from the state-dependent drift example above, this results in the following stationary distribution:
 
 ```julia
-using Plots
 plot(x, g_ss, lw = 4, label = "g_ss")
 ```
 
