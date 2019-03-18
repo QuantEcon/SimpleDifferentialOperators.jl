@@ -19,7 +19,7 @@ Consider solving for `v` from the following equation by the Hamilton-Jacobi-Bell
 \rho v(x) = f(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
 ```
 
-for some constant $\rho, \sigma > 0$ and $\mu \leq 0$. To solve `v` on `M`-size discretized grids, one can run the following code:
+for some constant $\rho, \sigma > 0$ and $\mu \leq 0$. To solve `v` under the reflecting barrier conditions `v'(0) = v'(1) = 0` on `M`-size discretized grids, one can run the following code:
 ```julia
 # import LinearAlgebra package (for diagonal and identity matrices)
 using LinearAlgebra 
@@ -36,23 +36,30 @@ x = range(0.0, 1.0, length = M) # grid
 bc = (Reflecting(), Reflecting())
 L = I * ρ - μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)
 ## solve the value function
-v_bc = L \ f.(x) 
+v = L \ f.(x) 
 ```
 
 Note that the code above uses differential operators with reflecting boundary conditions applied. 
 One can alternatively use differential operators on interior nodes and stack them with matrices for boundary conditions to compute `v`:
 ```julia
-# operators without boundary conditions, adding extra two rows for boundary conditions
-## differential operators on extended nodes
-A = μ*L̄₁₋(x) + σ^2 / 2 * L̄₂(x)
-## matrix for boundary conditions
-B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]]) 
-## stack them together
-L = [([zeros(M) Diagonal(ones(M,M)) zeros(M)] * 0.05 - A); B] 
-## solve the value function with reflecting barrier bc (last two elements)
-v_bar = L \ [f.(x); 0.0; 0.0] 
-## extract the interior (is identical with `v_bc` above)
-v_interior = v_bar[2:end-1] 
+# import SparseArrays package (for identity matrix and spzeros)
+using SparseArrays
+
+# differential operators on extended nodes
+L̄ₓ = μ*L̄₁₋(x) + σ^2 / 2 * L̄₂(x)
+
+# boundary conditions (i.e. B v̄ = b)
+B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]])
+b = [0.0; 0.0] 
+
+# form bellman equation on extension
+L̄ = [spzeros(M) ρ*I spzeros(M)] - L̄ₓ
+
+# stack the systems of bellman and boundary conditions, and solve
+v̄ =  [L̄; B] \ [f.(x); b]
+
+# extract the interior (is identical with `v` above)
+v =  v̄[2:end-1] 
 ```
 
 ### Solving HJBE with state-dependent drifts
@@ -67,7 +74,7 @@ associated with the diffusion process
 dx = \mu(x) dt + \sigma dW
 ```
 
-for some constant $\rho, \sigma > 0$ and $\mu(x) = -x$. Note that $\mu(x)$ depends on states. The following code will solve `v` using upwind schemes:
+for some constant $\rho, \sigma > 0$ and $\mu(x) = -x$. Note that $\mu(x)$ depends on states. The following code will solve `v` using upwind schemes, with the reflecting barrier conditions `v'(0) = v'(1) = 0` applied:
 ```julia
 # setup 
 f(x) = x^2 
@@ -86,7 +93,7 @@ L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋(x, bc) + Diagonal(max.(μ.(x), 0.0)
 L = L₁ - σ^2 / 2 * L₂(x,bc)
 
 # solve the value function
-v_bc = (I * ρ - L) \ f.(x) 
+v = (I * ρ - L) \ f.(x) 
 ```
 
 ### Finding stationary distribution from the Kolmogorov forward equation (KFE)
@@ -118,3 +125,12 @@ g_ss = real.(ϕ[:,1]);
 # normalize it
 g_ss = g_ss / sum(g_ss)
 ```
+
+Using `L` from the state-dependent drift example above, this results in the following stationary distribution:
+
+```julia
+using Plots
+plot(x, g_ss, lw = 4, label = "g_ss")
+```
+
+![plot-stationary-dist](assets/plot-stationary-dist.png)
