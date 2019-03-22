@@ -326,7 +326,7 @@ b = \begin{bmatrix}
 \subsubsection{Gaussian elimination}
 Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value function $v(\overline{x})$ on the extended grid, one can perform Gaussian elimination to reduce the system and solve $v(x)$, which gives the identical solution as the interior of $v(\overline{x})$. 
 
-\begin{example}
+\begin{example}\label{ex:gaussian-elimination-reflecting-barrier}
 	 Consider $L = L_{2}$ to solve $L v = f(x)$ with $M = 3$ with under uniform grids $x = \{x_1, x_2, x_3\}$ with $\Delta = 1$. This gives
 	 \begin{align}
 	 L = 	 \begin{bmatrix}
@@ -372,9 +372,9 @@ Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value fun
 	  Constructing the stacked extended system \eqref{eq:reflecting-barrier-extended-system} gives
 	  \begin{align}\label{eq:extended-system-reflecting-barrier-before-gaussian-elimination}
  	 \begin{bmatrix}
-	  1 & -1 & 1 & 0 & 0 \\
+	  1 & -2 & 1 & 0 & 0 \\
       0 & 1 & -2 & 1 & 0 \\
-	  0 & 0 & 1 & -1 & 1 \\
+	  0 & 0 & 1 & -2 & 1 \\
 	  -1 & 1  & 0 & 0 & 0 \\
 	  0 & 0 & 0 & -1 & 1
 	  \end{bmatrix} 
@@ -419,7 +419,7 @@ Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value fun
 	 0 
 	 \end{bmatrix} 
 	 \end{align}
-	 Note that now we have the first three rows of the coefficient matrix with zero columns on the extended nodes, $v(x_1 - \Delta)$ and $v(x_3 + \Delta)$. Extracting the system corresponding to the first three rows returns the following system:
+	 Note that now we have the first three rows of the coefficient matrix with zero columns on the extended nodes, $v(x_1 - \Delta)$ and $v(x_3 + \Delta)$. Extracting the system corresponding to the first three rows returns the following system, which solves the interior of $v(\overline{x})$, $v(x)$:
 	 \begin{align}
 	 	 \begin{bmatrix}
 	 -1 & 1 & 0  \\
