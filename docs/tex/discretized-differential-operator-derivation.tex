@@ -21,6 +21,10 @@
 \newenvironment{psmallmatrix}
 {\left(\begin{smallmatrix}}
 	{\end{smallmatrix}\right)}
+
+\theoremstyle{definition}
+\newtheorem{example}{Examples}[section]
+
 \bibliographystyle{ecta}
 \begin{document}
 \title{Derivations, extensions, and applications for \texttt{SimpleDifferentialOperators.jl}}
@@ -290,7 +294,7 @@ Boundary conditions can be applied manually by using operators on extended grids
 
 Suppose that we want to solve a system $L v({x}) = f(x) $ for $v(x)$ where $L$ is a linear combination of discretized differential operators for some $f(x)$ that represents the values of a function $f$ on discretized $x$. To solve the system under boundary conditions on $v$, one can construct and solve the following extended system:
 
-\begin{equation}\label{eq:extended-system}
+\begin{equation}\label{eq:reflecting-barrier-extended-system}
 \begin{bmatrix}
 \overline{L} \\
 B
@@ -302,11 +306,15 @@ b
 \end{bmatrix} 
 \end{equation}
 
-with $M_E$ by $(M+2)$ matrix $B$ and $M_E$-length vector $b$ that represent the current boundary conditions, where $M_E$ is the number of boundary conditions to be applied. For instance, to apply reflecting barrier conditions $v'(x_{\min}) = v'(x_{\max}) = 0$, one can use
+with $M_E$ by $(M+2)$ matrix $B$ and $M_E$-length vector $b$ that represent the current boundary conditions, where $M_E$ is the number of boundary conditions to be applied. 
+
+\subsection{Reflecting barrier conditions}
+
+To apply reflecting barrier conditions $v'(x_{\min}) = v'(x_{\max}) = 0$, one can use
 
 \begin{equation}\label{eq:reflecting-barrier-matrix}
 B = \begin{bmatrix}
-1 & -1 & 0 & \dots & 0 & 0 & 0 \\
+-1 & 1 & 0 & \dots & 0 & 0 & 0 \\
 0 & 0 & 0 & \dots & 0 & -1 & 1\\
 \end{bmatrix}_{2 \times (M+2)} \quad 
 b = \begin{bmatrix}
@@ -315,18 +323,234 @@ b = \begin{bmatrix}
 \end{bmatrix}
 \end{equation}
 
-Likewise, for non-homogenous boundary conditions $v'(x_{\min}) = \underline{\xi}$ and $v'(x_{\max}) = \overline{\xi}$, one can use
+\subsubsection{Gaussian elimination}
+Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value function $v(\overline{x})$ on the extended grid, one can perform Gaussian elimination to reduce the system and solve $v(x)$, which gives the identical solution as the interior of $v(\overline{x})$. 
 
-\begin{equation}\label{eq:mixed-boundary-matrix}
+\begin{example}\label{ex:gaussian-elimination-reflecting-barrier}
+	 Consider $L = L_{2}$ to solve $L v = f(x)$ with $M = 3$ under uniform grids $x = \{x_2, x_3, x_4\}$ and $\Delta = 1$, whose corresponding extended grid is $\{x_1, x_2, x_3, x_4, x_5\}$. This gives
+	 \begin{align}
+	 L = 	 \begin{bmatrix}
+	 -2 & 1 & 0 \\
+	 1 & -2 & 1 \\
+	 0 & 1 & -2 \\
+	 \end{bmatrix}
+	 \end{align}
+	 so $L v= f(x)$ on the grid $x$ results in the following system
+	 \begin{align} \label{eq:extended-system-reflecting-barrier-reduced-system}
+	 	 	 \begin{bmatrix}
+	 -1 & 1 & 0  \\
+	 1 & -2 & 1 \\
+	 0 & 1 & -1 \\
+	 \end{bmatrix} 	  \begin{bmatrix}
+	 v(x_2) \\
+	 v(x_3) \\
+	 v(x_4) 
+	 \end{bmatrix}
+	 = 
+	 \begin{bmatrix}
+	 f(x_2) \\
+	 f(x_3) \\
+	 f(x_4) 
+	 \end{bmatrix} 
+	 \end{align}
+	 
+	 
+	 For the extended system we have
+	 \begin{align}
+	 \overline{L} &= 
+	 \begin{bmatrix}
+	 1 & -2 & 1 & 0 & 0 \\
+	 0 & 1 & -2 & 1 & 0 \\
+	 0 & 0 & 1 & -2 & 1 \\
+	 \end{bmatrix} \\
+	 B &= \begin{bmatrix}
+  	-1 & 1  & 0 & 0 & 0 \\
+	0 & 0 & 0 & -1 & 1
+	 \end{bmatrix}
+	 \end{align}
+	 
+	  Constructing the stacked extended system \eqref{eq:reflecting-barrier-extended-system} gives
+	  \begin{align}\label{eq:extended-system-reflecting-barrier-before-gaussian-elimination}
+ 	 \begin{bmatrix}
+	  1 & -2 & 1 & 0 & 0 \\
+      0 & 1 & -2 & 1 & 0 \\
+	  0 & 0 & 1 & -2 & 1 \\
+	  -1 & 1  & 0 & 0 & 0 \\
+	  0 & 0 & 0 & -1 & 1
+	  \end{bmatrix} 
+	  \begin{bmatrix}
+	  v(x_1) \\
+	  v(x_2) \\
+	  v(x_3) \\
+	  v(x_4) \\
+	  v(x_5) \\
+	  \end{bmatrix}
+	  = 
+ 		\begin{bmatrix}
+	  f(x_2) \\
+	  f(x_3) \\
+	  f(x_4) \\
+	  0 \\
+	  0 
+	  \end{bmatrix} 
+	  \end{align}
+	  
+	 Note that substracting the first row of $\overline{L}$ by $(-1)$ times the first row of $B$ returns an identical system as \eqref{eq:extended-system-reflecting-barrier-before-gaussian-elimination}. Likewise, substracting the last row of $\overline{L}$ by $(-1)$ times the last row of $B$ returns the identical system. Performing the two Gaussian elimination yields the following system:
+	 \begin{align}\label{eq:extended-system-reflecting-barrier-after-gaussian-elimination}
+	 \begin{bmatrix}
+	 0 & -1 & 1 & 0 & 0 \\
+     0 & 1 & -2 & 1 & 0 \\
+     0 & 0 & 1 & -1 & 0 \\
+	 1 & -1  & 0 & 0 & 0 \\
+	 0 & 0 & 0 & -1 & 1
+	 \end{bmatrix} 	  \begin{bmatrix}
+	 v(x_1) \\
+	 v(x_2) \\
+	 v(x_3) \\
+	 v(x_4) \\
+	 v(x_5)  \\
+	 \end{bmatrix}
+	 = 
+	 \begin{bmatrix}
+	 f(x_2) \\
+	 f(x_3) \\
+	 f(x_4) \\
+	 0 \\
+	 0 
+	 \end{bmatrix} 
+	 \end{align}
+	 Note that now we have the first three rows of the coefficient matrix with zero columns on the extended nodes, $v(x_1 - \Delta)$ and $v(x_3 + \Delta)$. Extracting the system corresponding to the first three rows returns the following system, which solves the interior of $v(\overline{x})$, i.e., $v(x)$:
+	 \begin{align}
+	 	 \begin{bmatrix}
+	 -1 & 1 & 0  \\
+	 1 & -2 & 1 \\
+	 0 & 1 & -1 \\
+	 \end{bmatrix} 	  \begin{bmatrix}
+	 v(x_2) \\
+	 v(x_3) \\
+	 v(x_4) 
+	 \end{bmatrix}
+	 = 
+	 \begin{bmatrix}
+	 f(x_2) \\
+	 f(x_3) \\
+	 f(x_4) 
+	 \end{bmatrix} 
+	 \end{align}
+	 which is identical as  \eqref{eq:extended-system-reflecting-barrier-reduced-system}.
+\end{example}
+
+
+\subsection{Absorbing barrier conditions}
+
+To apply an absorbing barrier condition $v(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
+
+\begin{equation}\label{eq:absorbing-barrier-matrix}
 B = \begin{bmatrix}
-1 & -1 & 0 & \dots & 0 & 0 & 0 \\
+1 & 0 & 0 & \dots & 0 & 0 & 0 \\
 0 & 0 & 0 & \dots & 0 & -1 & 1\\
 \end{bmatrix}_{2 \times (M+2)} \quad 
 b = \begin{bmatrix}
- \underline{\xi} \Delta_{1,+} \\
-\overline{\xi} \Delta_{M,-}
+S \\
+0
 \end{bmatrix}
 \end{equation}
+
+Similarly, one can apply an absorbing condition on the upper bound  $v(x_{\max}) =S$ for some $S \in \mathbb{R}$ and the 
+
+
+\begin{equation}\label{eq:absorbing-barrier-matrix-ub}
+B = \begin{bmatrix}
+-1 & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & 0 & 1\\
+\end{bmatrix}_{2 \times (M+2)} \quad 
+b = \begin{bmatrix}
+0 \\
+S
+\end{bmatrix}
+\end{equation}
+
+\subsubsection{Gaussian elimination}
+
+\begin{example}
+	Consider solving \eqref{eq:extended-system-reflecting-barrier-reduced-system}, but this time with an absorbing barrier condition on the lower bound, $v(x_1-\Delta) = S$ with a boundary condition matrix 
+	\begin{align}
+	B &= \begin{bmatrix}
+			1 & 0  & 0 & 0 & 0 \\
+			0 & 0 & 0 & -1 & 1
+		\end{bmatrix}
+	\end{align}
+	The corresponding extended system is
+\begin{align}\label{eq:extended-system-absorbing-barrier-before-gaussian-elimination}
+\begin{bmatrix}
+1 & -2 & 1 & 0 & 0 \\
+0 & 1 & -2 & 1 & 0 \\
+0 & 0 & 1 & -2 & 1 \\
+1 & 0  & 0 & 0 & 0 \\
+0 & 0 & 0 & -1 & 1
+\end{bmatrix} 
+\begin{bmatrix}
+v(x_1 - \Delta) \\
+v(x_1) \\
+v(x_2) \\
+v(x_3) \\
+v(x_3 +  \Delta) \\
+\end{bmatrix}
+= 
+\begin{bmatrix}
+f(x_1) \\
+f(x_2) \\
+f(x_3) \\
+S \\
+0 
+\end{bmatrix} 
+\end{align}
+
+Note that substracting the first row of $\overline{L}$ by $(-1)$ times the first row of $B$ returns an identical system as \eqref{eq:extended-system-absorbing-barrier-before-gaussian-elimination}. Likewise, substracting the last row of $\overline{L}$ by $(-1)$ times the last row of $B$ returns the identical system. Performing the two Gaussian elimination yields the following system:
+\begin{align}\label{eq:extended-system-absorbing-barrier-after-gaussian-elimination}
+\begin{bmatrix}
+0 & -2 & 1 & 0 & 0 \\
+0 & 1 & -2 & 1 & 0 \\
+0 & 0 & 1 & -1 & 0 \\
+1 & 0  & 0 & 0 & 0 \\
+0 & 0 & 0 & -1 & 1
+\end{bmatrix} 	  \begin{bmatrix}
+v(x_1 - \Delta) \\
+v(x_1) \\
+v(x_2) \\
+v(x_3) \\
+v(x_3 +  \Delta) \\
+\end{bmatrix}
+= 
+\begin{bmatrix}
+f(x_1) - S \\
+f(x_2) \\
+f(x_3) \\
+0 \\
+0 
+\end{bmatrix} 
+\end{align}
+
+\end{example}
+
+Extracting the system corresponding to the first three rows returns the following system, which solves the interior of $v(\overline{x})$, i.e., $v(x)$:
+\begin{align}
+\begin{bmatrix}
+-2 & 1 & 0  \\
+1 & -2 & 1 \\
+0 & 1 & -1 \\
+\end{bmatrix} 	  \begin{bmatrix}
+v(x_1) \\
+v(x_2) \\
+v(x_3) 
+\end{bmatrix}
+= 
+\begin{bmatrix}
+f(x_1) - S \\
+f(x_2) \\
+f(x_3) 
+\end{bmatrix} 
+\end{align}
 
 \section{Applications}
 
@@ -352,25 +576,25 @@ Let $\alpha^*(t)$ be the optimal solution. Suppose that $r$ under $\alpha^*(t)$ 
 
 In terms of differential operators, one can rewrite the equation as
 \begin{equation}\label{eq:hjbe-system-function}
-(\rho -  \tilde{L} ) v(x) = r^*(x)
+\tilde{L}  v(x) = r^*(x)
 \end{equation}
 
-where 
+with $\tilde{L} = \rho -  \tilde{L}_x$ where $\tilde{L}_x$ is defined as
 
 \begin{equation}\label{eq:L-defn}
-\tilde{L} = \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
+\tilde{L}_x = \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
 \end{equation}
 
 
 By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\partial_{x}$ ($L_{1+}$), $\partial_{xx}$ ($L_2$) on some grids of length $M$, $\{x_i\}_{i=1}^M$:
 \begin{align}\label{eq:L-descritized-defn}
-L = \mu L_{1+} + \dfrac{\sigma^2}{2} L_{2}
+L_x = \mu L_{1+} + \dfrac{\sigma^2}{2} L_{2}
 \end{align}
 so that $v$ from \eqref{eq:hjbe-system-function} can be computed by solving the following discretized system of equations:
 \begin{align}
-(\rho I - L) v &= r^*
+L v &= r^*
 \end{align}
-where $v$ and $r^*$ are $M$-vectors whose $i$th elements are $v(x_i)$ and $r^*(x_i)$, respectively.
+where $v$ and $r^*$ are $M$-vectors whose $i$th elements are $v(x_i)$ and $r^*(x_i)$, respectively, and $L$ is defined as $L = \rho I - L_x$.
 
 
 
@@ -391,26 +615,26 @@ The stationary distribution $g^*(x)$ satisfies
 which can be rewritten as 
 
 \begin{equation}
-\tilde{L}^* g(x) = 0
+\tilde{L}^*_x g(x) = 0
 \end{equation}
 
 where 
 
 \begin{equation}\label{eq:L_star-defn}
-\tilde{L}^* =  - \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
+\tilde{L}^*_x =  - \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
 \end{equation}
 
-By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\tilde{L}^*$. Note that the operator for the KFE in \eqref{eq:L_star-defn} is the adjoint operator of the operator for the HJBE in \eqref{eq:L-defn}, and the correct discretization scheme for \eqref{eq:L_star-defn} can be, analogously, done by taking the transpose of the discretized operator for HJBE in \eqref{eq:L-descritized-defn} -- see \cite{gabaix16} and \cite{achdou17}. Hence, one can find the stationary distribution by solving the following discretized system of equations:
+By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\tilde{L}^*_x$. Note that the operator for the KFE in \eqref{eq:L_star-defn} is the adjoint operator of the operator for the HJBE in \eqref{eq:L-defn}, and the correct discretization scheme for \eqref{eq:L_star-defn} can be, analogously, done by taking the transpose of the discretized operator for HJBE in \eqref{eq:L-descritized-defn} -- see \cite{gabaix16} and \cite{achdou17}. Hence, one can find the stationary distribution by solving the following discretized system of equations:
 
 \begin{equation}
-L^T g = 0 
+L^T_x g = 0 
 \end{equation}
-where $L^T$ is the transpose of $L$ from \eqref{eq:L-descritized-defn} and $g$ is an $M$-vector whose element is $g(x_i)$ such that $\sum_{i=1}^M g(x_i) = 1$.
+where $L^T_x$ is the transpose of $L_x$ from \eqref{eq:L-descritized-defn} and $g$ is an $M$-vector whose element is $g(x_i)$ such that $\sum_{i=1}^M g(x_i) = 1$.
 
 \subsubsection{Full dynamics of distributions}
 One can also solve the full PDE in \eqref{eq:kfe}, given an initial distribution $g(x, 0)$. After discretization, note that \eqref{eq:kfe} can be rewritten as
 \begin{equation}\label{eq:kfe-discretized}
-\dot{g}(t) = L^T g(t)
+\dot{g}(t) = L^T_x g(t)
 \end{equation}
 where $\dot{g}(t)$ is an $M$-vector whose $i$th element is $\partial_{t} g(x_i, t)$, which can be efficently solved by a number of differential equation solvers available in public, including \cite{rackauckas17}.
 
