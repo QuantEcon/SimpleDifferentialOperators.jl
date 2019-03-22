@@ -419,7 +419,7 @@ Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value fun
 	 0 
 	 \end{bmatrix} 
 	 \end{align}
-	 Note that now we have the first three rows of the coefficient matrix with zero columns on the extended nodes, $v(x_1 - \Delta)$ and $v(x_3 + \Delta)$. Extracting the system corresponding to the first three rows returns the following system, which solves the interior of $v(\overline{x})$, $v(x)$:
+	 Note that now we have the first three rows of the coefficient matrix with zero columns on the extended nodes, $v(x_1 - \Delta)$ and $v(x_3 + \Delta)$. Extracting the system corresponding to the first three rows returns the following system, which solves the interior of $v(\overline{x})$, i.e., $v(x)$:
 	 \begin{align}
 	 	 \begin{bmatrix}
 	 -1 & 1 & 0  \\
@@ -439,6 +439,119 @@ Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value fun
 	 \end{align}
 	 which is identical as  \eqref{eq:extended-system-reflecting-barrier-reduced-system}.
 \end{example}
+
+
+\subsection{Absorbing barrier conditions}
+
+To apply an absorbing barrier condition $v(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
+
+\begin{equation}\label{eq:absorbing-barrier-matrix}
+B = \begin{bmatrix}
+1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1\\
+\end{bmatrix}_{2 \times (M+2)} \quad 
+b = \begin{bmatrix}
+S \\
+0
+\end{bmatrix}
+\end{equation}
+
+Similarly, one can apply an absorbing condition on the upper bound  $v(x_{\max}) =S$ for some $S \in \mathbb{R}$ and the 
+
+
+\begin{equation}\label{eq:absorbing-barrier-matrix-ub}
+B = \begin{bmatrix}
+-1 & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & 0 & 1\\
+\end{bmatrix}_{2 \times (M+2)} \quad 
+b = \begin{bmatrix}
+0 \\
+S
+\end{bmatrix}
+\end{equation}
+
+\subsubsection{Gaussian elimination}
+
+\begin{example}
+	Consider solving \eqref{eq:extended-system-reflecting-barrier-reduced-system}, but this time with an absorbing barrier condition on the lower bound, $v(x_1-\Delta) = S$ with a boundary condition matrix 
+	\begin{align}
+	B &= \begin{bmatrix}
+			1 & 0  & 0 & 0 & 0 \\
+			0 & 0 & 0 & -1 & 1
+		\end{bmatrix}
+	\end{align}
+	The corresponding extended system is
+\begin{align}\label{eq:extended-system-absorbing-barrier-before-gaussian-elimination}
+\begin{bmatrix}
+1 & -2 & 1 & 0 & 0 \\
+0 & 1 & -2 & 1 & 0 \\
+0 & 0 & 1 & -2 & 1 \\
+1 & 0  & 0 & 0 & 0 \\
+0 & 0 & 0 & -1 & 1
+\end{bmatrix} 
+\begin{bmatrix}
+v(x_1 - \Delta) \\
+v(x_1) \\
+v(x_2) \\
+v(x_3) \\
+v(x_3 +  \Delta) \\
+\end{bmatrix}
+= 
+\begin{bmatrix}
+f(x_1) \\
+f(x_2) \\
+f(x_3) \\
+S \\
+0 
+\end{bmatrix} 
+\end{align}
+
+Note that substracting the first row of $\overline{L}$ by $(-1)$ times the first row of $B$ returns an identical system as \eqref{eq:extended-system-absorbing-barrier-before-gaussian-elimination}. Likewise, substracting the last row of $\overline{L}$ by $(-1)$ times the last row of $B$ returns the identical system. Performing the two Gaussian elimination yields the following system:
+\begin{align}\label{eq:extended-system-absorbing-barrier-after-gaussian-elimination}
+\begin{bmatrix}
+0 & -2 & 1 & 0 & 0 \\
+0 & 1 & -2 & 1 & 0 \\
+0 & 0 & 1 & -1 & 0 \\
+1 & 0  & 0 & 0 & 0 \\
+0 & 0 & 0 & -1 & 1
+\end{bmatrix} 	  \begin{bmatrix}
+v(x_1 - \Delta) \\
+v(x_1) \\
+v(x_2) \\
+v(x_3) \\
+v(x_3 +  \Delta) \\
+\end{bmatrix}
+= 
+\begin{bmatrix}
+f(x_1) - S \\
+f(x_2) \\
+f(x_3) \\
+0 \\
+0 
+\end{bmatrix} 
+\end{align}
+
+\end{example}
+
+Extracting the system corresponding to the first three rows returns the following system, which solves the interior of $v(\overline{x})$, i.e., $v(x)$:
+\begin{align}
+\begin{bmatrix}
+-2 & 1 & 0  \\
+1 & -2 & 1 \\
+0 & 1 & -1 \\
+\end{bmatrix} 	  \begin{bmatrix}
+v(x_1) \\
+v(x_2) \\
+v(x_3) 
+\end{bmatrix}
+= 
+\begin{bmatrix}
+f(x_1) - S \\
+f(x_2) \\
+f(x_3) 
+\end{bmatrix} 
+\end{align}
+
 \section{Applications}
 
 \subsection{Hamilton–Jacobi–Bellman equations (HJBE)}
