@@ -18,14 +18,14 @@ using Test, LinearAlgebra, DualNumbers
         @test x̄ == [0; x; 4]
 
         # Irregular grid
-        x = collect(x)
+        x = [1.0; 2.0; 4.0]
         L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, (Reflecting(), Reflecting()))
         @test @inferred(diffusionoperators(x,(Reflecting(), Reflecting()))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
         @test @inferred(diffusionoperators(x, (Mixed(0.), Mixed(0.)))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄) # test that the mixed case properly nests the reflecting case
-        @test Array(L₁₋) == [0. 0. 0.; -1. 1. 0.; 0. -1. 1.]
-        @test Array(L₁₊) == [-1. 1. 0.; 0. -1. 1.; 0. 0. 0.]
-        @test Array(L₂) == [-1. 1. 0.; 1. -2. 1.; 0. 1. -1.]
-        @test x̄ == [0; x; 4]
+        @test Array(L₁₋) == [0. 0. 0.; -1. 1. 0.; 0. -1/2 1/2]
+        @test Array(L₁₊) == [-1. 1. 0.; 0. -1/2 1/2; 0. 0. 0.]
+        @test Array(L₂) == [-1. 1. 0.; 2/((2.0+1.0)*1.0) -2/(2.0*1.0) 2/((2.0+1.0)*2.0); 0. 1/4 -1/4]
+        @test x̄ == [0; x; 6]
     end
 
     @testset "Consistency" begin
