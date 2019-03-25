@@ -59,15 +59,15 @@ end
         @test x̄ == [0; x; 4]
 
         # Irregular grid
-        x = collect(x)
+        x = [1.0; 2.0; 4.0]
         ξ_lb, ξ_ub = (1., 2.)
 
         L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, (Mixed(ξ_lb), Mixed(ξ_ub)))
         @test @inferred(diffusionoperators(x, (Mixed(ξ_lb), Mixed(ξ_ub)))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
-        @test Array(L₁₋) == [-ξ_lb 0. 0.; -1. 1. 0.; 0. -1. 1.]
-        @test Array(L₁₊) == [-1. 1. 0.; 0. -1. 1.; 0. 0. -ξ_ub]
-        @test Array(L₂) == [(-1. + ξ_lb) 1. 0.; 1. -2. 1.; 0. 1. (-1. - ξ_ub)]
-        @test x̄ == [0; x; 4]
+        @test Array(L₁₋) == [-ξ_lb 0. 0.; -1. 1. 0.; 0. -1/2 1/2]
+        @test Array(L₁₊) == [-1. 1. 0.; 0. -1/2 1/2; 0. 0. -ξ_ub]
+        @test Array(L₂) == [(-1. + ξ_lb) 1. 0.; 2/((2.0+1.0)*1.0) -2/(2.0*1.0) 2/((2.0+1.0)*2.0); 0. 1/4 (-1. - ξ_ub*2.0)/4]
+        @test x̄ == [0; x; 6]
     end
 
     @testset "Consistency" begin
