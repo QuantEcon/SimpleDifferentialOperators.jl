@@ -4,7 +4,7 @@ Detailed derivation, including formula for irregular grids, can be found [here](
 
 Setup
 ----------
-Let $\{x_i\}_{i=1}^M$ be a collection of discretized $M$-length of grids on $x$ with end points $x_1 = x_{\min}$ and $x_M = x_{\max}$. Also, throughout the section, we consider regular grids, i.e., $x_{i+1} - x_i = \Delta$ for some constant $\Delta > 0$ for all $i = 1, ..., M-1$. Also, given a real-valued function $v$, let $v(x)$ be the $M$-length vector whose $i$th element is $v(x_i)$. The goal is to construct a matrix $L$ such that $L v(x)$ represents the first-order or second-order derivative of $v$ on $x$ under some boundary conditions.
+Let $\overline{x} = \{x_i\}_{i=0}^{M+1}$ be an extended grid of discretized $M$-length of grids on $x$ with end points $x_0 = x_{\min}$ and $x_{M+1} = x_{\max}$, and $x = \{x_i\}_{i=1}^M$ be the corresponding interior grid. Also, throughout the section, we consider regular grids, i.e., $x_{i+1} - x_i = \Delta$ for some constant $\Delta > 0$ for all $i = 0, ..., M$. Given a real-valued function $v$, let $v(x)$ be the $M$-length vector whose $i$th element is $v(x_i)$. The goal is to construct a matrix $L$ such that $L v(x)$ represents the first-order or second-order derivative of $v$ on $x$ under some boundary conditions.
 
 Mixed Boundary Values
 ----------
@@ -53,7 +53,7 @@ which represent the backward first order, foward first order, and central second
 
 Applying boundary conditions with operators on extended grids
 ----------
-Boundary conditions can be applied manually by using operators on extended grids. This can be done by first extending $x = \{x_i\}_{i=1}^M$ to $ \overline{x} = \{x_i\}_{i=0}^{M+1}$ where $x_{i+1} - x_i = \Delta$ for some constant $\Delta > 0$ for all $i = 0, ..., M$. We call $x_0$ and $x_{M+1}$, extra nodes just before and after $x_{\min}$ and $x_{\max}$, as ghost nodes. Likewise, define $v(\overline{x})$ as $(M+2)$-vector whose $i$th element is $\overline {x}_i$. We can then define the following operators on $\overline{x}$:
+Boundary conditions can be applied manually by using operators on extended grids. Define $v(\overline{x})$ as $(M+2)$-vector whose $i$th element is $\overline {x}_{i-1}$. We can then define the following operators on $\overline{x}$:
 
 ```math
 \overline{L}_{1-} \equiv \frac{1}{\Delta}\begin{pmatrix}
@@ -103,7 +103,7 @@ with $M_E$ by $(M+2)$ matrix $B$ and $M_E$-length vector $b$ that represent the 
 
 ```math
 B = \begin{bmatrix}
-1 & -1 & 0 & \dots & 0 & 0 & 0 \\
+-1 & 1 & 0 & \dots & 0 & 0 & 0 \\
 0 & 0 & 0 & \dots & 0 & -1 & 1\\
 \end{bmatrix}_{2 \times (M+2)} \quad 
 b = \begin{bmatrix}
@@ -117,7 +117,7 @@ Likewise, for non-homogenous boundary conditions $v'(x_{\min}) = \underline{\xi}
 
 ```math
 B = \begin{bmatrix}
-1 & -1 & 0 & \dots & 0 & 0 & 0 \\
+-1 & 1 & 0 & \dots & 0 & 0 & 0 \\
 0 & 0 & 0 & \dots & 0 & -1 & 1\\
 \end{bmatrix}_{2 \times (M+2)} \quad 
 b = \begin{bmatrix}

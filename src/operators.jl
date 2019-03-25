@@ -11,22 +11,47 @@ julia> x̄ = 0:5
 0:5
 
 julia> ExtensionDifferentialOperator(x̄, BackwardFirstDifference())
-3×3 Tridiagonal{Float64,Array{Float64,1}}:
-  0.0   0.0   ⋅
- -1.0   1.0  0.0
-   ⋅   -1.0  1.0
+4×6 SparseArrays.SparseMatrixCSC{Float64,Int64} with 11 stored entries:
+  [1, 1]  =  -1.0
+  [1, 2]  =  1.0
+  [2, 2]  =  -1.0
+  [1, 3]  =  0.0
+  [2, 3]  =  1.0
+  [3, 3]  =  -1.0
+  [2, 4]  =  0.0
+  [3, 4]  =  1.0
+  [4, 4]  =  -1.0
+  [3, 5]  =  0.0
+  [4, 5]  =  1.0
 
 julia> ExtensionDifferentialOperator(x̄, ForwardFirstDifference())
-3×3 Tridiagonal{Float64,Array{Float64,1}}:
- -1.0   1.0   ⋅
-  0.0  -1.0  1.0
-   ⋅    0.0  0.0
+4×6 SparseArrays.SparseMatrixCSC{Float64,Int64} with 11 stored entries:
+  [1, 2]  =  -1.0
+  [2, 2]  =  0.0
+  [1, 3]  =  1.0
+  [2, 3]  =  -1.0
+  [3, 3]  =  0.0
+  [2, 4]  =  1.0
+  [3, 4]  =  -1.0
+  [4, 4]  =  0.0
+  [3, 5]  =  1.0
+  [4, 5]  =  -1.0
+  [4, 6]  =  1.0
 
 julia> ExtensionDifferentialOperator(x̄, CentralSecondDifference())
-3×3 Tridiagonal{Float64,Array{Float64,1}}:
- -1.0   1.0    ⋅
-  1.0  -2.0   1.0
-   ⋅    1.0  -1.0
+4×6 SparseArrays.SparseMatrixCSC{Float64,Int64} with 12 stored entries:
+  [1, 1]  =  1.0
+  [1, 2]  =  -2.0
+  [2, 2]  =  1.0
+  [1, 3]  =  1.0
+  [2, 3]  =  -2.0
+  [3, 3]  =  1.0
+  [2, 4]  =  1.0
+  [3, 4]  =  -2.0
+  [4, 4]  =  1.0
+  [3, 5]  =  1.0
+  [4, 5]  =  -2.0
+  [4, 6]  =  1.0
 ```
 """
 function ExtensionDifferentialOperator(x̄, method::DifferenceMethod)
@@ -63,22 +88,25 @@ julia> x̄ = 0:5
 0:5
 
 julia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), BackwardFirstDifference())
-3×3 Tridiagonal{Float64,Array{Float64,1}}:
-  0.0   0.0   ⋅
- -1.0   1.0  0.0
-   ⋅   -1.0  1.0
+4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
+  0.0   0.0    ⋅    ⋅
+ -1.0   1.0   0.0   ⋅
+   ⋅   -1.0   1.0  0.0
+   ⋅     ⋅   -1.0  1.0
 
 julia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), ForwardFirstDifference())
-3×3 Tridiagonal{Float64,Array{Float64,1}}:
- -1.0   1.0   ⋅
-  0.0  -1.0  1.0
-   ⋅    0.0  0.0
+4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
+ -1.0   1.0    ⋅    ⋅
+  0.0  -1.0   1.0   ⋅
+   ⋅    0.0  -1.0  1.0
+   ⋅     ⋅    0.0  0.0
 
 julia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), CentralSecondDifference())
-3×3 Tridiagonal{Float64,Array{Float64,1}}:
- -1.0   1.0    ⋅
-  1.0  -2.0   1.0
-   ⋅    1.0  -1.0
+4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
+ -1.0   1.0    ⋅     ⋅
+  1.0  -2.0   1.0    ⋅
+   ⋅    1.0  -2.0   1.0
+   ⋅     ⋅    1.0  -1.0
 ```
 """
 function DifferentialOperator(x̄, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)
@@ -108,22 +136,25 @@ julia> x̄ = 0:5
 0:5
 
 julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), BackwardFirstDifference())
-3×3 Tridiagonal{Float64,Array{Float64,1}}:
- -1.0   0.0   ⋅
- -1.0   1.0  0.0
-   ⋅   -1.0  1.0
+4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
+ -1.0   0.0    ⋅    ⋅
+ -1.0   1.0   0.0   ⋅
+   ⋅   -1.0   1.0  0.0
+   ⋅     ⋅   -1.0  1.0
 
 julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), ForwardFirstDifference())
-3×3 Tridiagonal{Float64,Array{Float64,1}}:
- -1.0   1.0    ⋅
-  0.0  -1.0   1.0
-   ⋅    0.0  -1.0
+4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
+ -1.0   1.0    ⋅     ⋅
+  0.0  -1.0   1.0    ⋅
+   ⋅    0.0  -1.0   1.0
+   ⋅     ⋅    0.0  -1.0
 
 julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), CentralSecondDifference())
-3×3 Tridiagonal{Float64,Array{Float64,1}}:
- 0.0   1.0    ⋅
- 1.0  -2.0   1.0
-  ⋅    1.0  -2.0
+4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
+ 0.0   1.0    ⋅     ⋅
+ 1.0  -2.0   1.0    ⋅
+  ⋅    1.0  -2.0   1.0
+  ⋅     ⋅    1.0  -2.0
 ```
 """
 function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)
@@ -161,10 +192,11 @@ julia> x̄ = 0:5
 0:5
 
 julia> L₁₋(x̄, (Reflecting(), Reflecting()))
-3×3 Tridiagonal{Float64,Array{Float64,1}}:
-  0.0   0.0   ⋅
- -1.0   1.0  0.0
-   ⋅   -1.0  1.0
+4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
+  0.0   0.0    ⋅    ⋅
+ -1.0   1.0   0.0   ⋅
+   ⋅   -1.0   1.0  0.0
+   ⋅     ⋅   -1.0  1.0
 ```
 """
 L₁₋(x̄, bc) = DifferentialOperator(x̄, bc, BackwardFirstDifference())
@@ -183,10 +215,11 @@ julia> x̄ = 0:5
 0:5
 
 julia> L₁₊(x̄, (Reflecting(), Reflecting()))
-3×3 Tridiagonal{Float64,Array{Float64,1}}:
- -1.0   1.0   ⋅
-  0.0  -1.0  1.0
-   ⋅    0.0  0.0
+4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
+ -1.0   1.0    ⋅    ⋅
+  0.0  -1.0   1.0   ⋅
+   ⋅    0.0  -1.0  1.0
+   ⋅     ⋅    0.0  0.0
 ```
 """
 L₁₊(x̄, bc) = DifferentialOperator(x̄, bc, ForwardFirstDifference())
@@ -204,10 +237,11 @@ julia> x̄ = 0:5
 0:5
 
 julia> L₂(x̄, (Reflecting(), Reflecting()))
-3×3 Tridiagonal{Float64,Array{Float64,1}}:
- -1.0   1.0    ⋅
-  1.0  -2.0   1.0
-   ⋅    1.0  -1.0
+4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
+ -1.0   1.0    ⋅     ⋅
+  1.0  -2.0   1.0    ⋅
+   ⋅    1.0  -2.0   1.0
+   ⋅     ⋅    1.0  -1.0
 ```
 """
 L₂(x̄, bc) = DifferentialOperator(x̄, bc, CentralSecondDifference())
@@ -226,10 +260,8 @@ julia> x̄ = 1:3
 1:3
 
 julia> Array(L̄₁₋(x̄))
-3×5 Array{Float64,2}:
- -1.0   1.0   0.0  0.0  0.0
-  0.0  -1.0   1.0  0.0  0.0
-  0.0   0.0  -1.0  1.0  0.0
+1×3 Array{Float64,2}:
+ -1.0  1.0  0.0
 ```
 """
 L̄₁₋(x̄) = ExtensionDifferentialOperator(x̄, BackwardFirstDifference())
@@ -248,10 +280,11 @@ julia> x̄ = 0:5
 0:5
 
 julia> Array(L̄₁₊(x̄))
-3×5 Array{Float64,2}:
- 0.0  -1.0   1.0   0.0  0.0
- 0.0   0.0  -1.0   1.0  0.0
- 0.0   0.0   0.0  -1.0  1.0
+4×6 Array{Float64,2}:
+ 0.0  -1.0   1.0   0.0   0.0  0.0
+ 0.0   0.0  -1.0   1.0   0.0  0.0
+ 0.0   0.0   0.0  -1.0   1.0  0.0
+ 0.0   0.0   0.0   0.0  -1.0  1.0
 ```
 """
 L̄₁₊(x̄) = ExtensionDifferentialOperator(x̄, ForwardFirstDifference())
@@ -270,10 +303,11 @@ julia> x̄ = 0:5
 0:5 
 
 julia> Array(L̄₂(x̄))
-3×5 Array{Float64,2}:
- 1.0  -2.0   1.0   0.0  0.0
- 0.0   1.0  -2.0   1.0  0.0
- 0.0   0.0   1.0  -2.0  1.0
+4×6 Array{Float64,2}:
+ 1.0  -2.0   1.0   0.0   0.0  0.0
+ 0.0   1.0  -2.0   1.0   0.0  0.0
+ 0.0   0.0   1.0  -2.0   1.0  0.0
+ 0.0   0.0   0.0   1.0  -2.0  1.0
 ```
 """
 L̄₂(x̄)  = ExtensionDifferentialOperator(x̄, CentralSecondDifference())
@@ -287,10 +321,7 @@ julia> x̄ = 0:5
 0:5
 
 julia> interior(x̄)
-3-element Array{Int64,1}:
- 1
- 2
- 3
+1:4
 
 julia> x̄ = [1.0; 1.5; 1.7]
 3-element Array{Float64,1}:
@@ -299,7 +330,7 @@ julia> x̄ = [1.0; 1.5; 1.7]
  1.7
 
 julia> interior(x̄)
-5-element Array{Float64,1}:
+1-element Array{Float64,1}:
  1.5
 ```
 """
@@ -314,10 +345,7 @@ julia> x̄ = 0:5
 0:5
 
 julia> interior(x̄, (Reflecting(), Reflecting()))
-3-element Array{Int64,1}:
- 1
- 2
- 3
+1:4
 
 julia> x̄ = [1.0; 1.5; 1.7]
 3-element Array{Float64,1}:
@@ -326,7 +354,7 @@ julia> x̄ = [1.0; 1.5; 1.7]
  1.7
 
 julia> interior(x̄, (Mixed(1.0), Mixed(1.0)))
-5-element Array{Float64,1}:
+1-element Array{Float64,1}:
  1.5
 ```
 """
