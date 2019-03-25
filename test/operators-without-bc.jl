@@ -3,7 +3,7 @@ using Test, LinearAlgebra, DualNumbers
 
 @testset "Accuracy & regression test" begin
     regular_grid = 1:1:2
-    irregular_grid = collect(regular_grid)
+    irregular_grid = [1.0; 2.0; 4.0]
     ## regular grids
     L̄₁₋_regular = L̄₁₋(regular_grid)
     L̄₁₊_regular = L̄₁₊(regular_grid)
@@ -24,10 +24,10 @@ using Test, LinearAlgebra, DualNumbers
     L̄₁₊_irregular = L̄₁₊(irregular_grid)
     L̄₂_irregular = L̄₂(irregular_grid)
     x̄_irregular = x̄(irregular_grid)
-    @test Array(L̄₁₋_irregular) == [-1. 1. 0. 0.; 0. -1. 1. 0.]
-    @test Array(L̄₁₊_irregular) == [0. -1. 1. 0.; 0. 0. -1. 1.]
-    @test Array(L̄₂_irregular) == [1. -2. 1. 0.; 0. 1. -2. 1.]
-    @test Array(x̄_irregular) == [0; 1; 2; 3]
+    @test Array(L̄₁₋_irregular) == [-1. 1. 0. 0. 0.; 0. -1. 1. 0. 0.; 0. 0. -1/2 1/2 0.]
+    @test Array(L̄₁₊_irregular) == [0. -1. 1. 0. 0.; 0. 0. -1/2 1/2 0.; 0. 0. 0. -1/2 1/2]
+    @test Array(L̄₂_irregular) == [1. -2. 1. 0. 0.; 0 2/((1+2)*1) -2/(2*1) 2/((1+2)*2) 0; 0. 0. 1/4 -2/(2*2) 1/4]
+    @test Array(x̄_irregular) == [0; 1; 2; 4; 6]
 
     @test @inferred(L̄₁₋(irregular_grid)) == L̄₁₋_irregular
     @test @inferred(L̄₁₊(irregular_grid)) == L̄₁₊_irregular
