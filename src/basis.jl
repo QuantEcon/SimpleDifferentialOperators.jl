@@ -69,16 +69,13 @@ function get_basis_L₂(x̄::AbstractArray)
     T = eltype(x̄) # get data type of the grid
     d = diff(x̄) # using the first difference as diff from ghost node
     M = length(x̄) - 2
-    Δ_m = d[2:end]
-    Δ_p = d[1:end-1]
     Δ_m = d[1:end-1]
     Δ_p = d[2:end]
     
     # define L₂
     Δ=Δ_p+Δ_m
     dl_2 = 2*ones(T, M-1)./(Δ_m[2:end].*Δ[2:end])
-    d_2 = -2*ones(T, M)
-    d_2 = d_2./(Δ_p.*Δ_m)
+    d_2 = -2*ones(T, M)./(Δ_p.*Δ_m)
     du_2 = 2*ones(T, M-1)./(Δ_p[1:end-1].*Δ[1:end-1])
     L₂ = Tridiagonal(dl_2, d_2, du_2)
 end
