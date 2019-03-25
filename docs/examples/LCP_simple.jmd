@@ -176,9 +176,10 @@ Next, discretize the grid, operators, and change of variables
 
 ```julia
 M = 300
-x = range(0.0, 5.0, length = M)
+x̄ = range(0.0, 5.0, length = (M+2))
+x = interior(x̄)
 bc = (Reflecting(), Reflecting())  # assume x_t reflects at 0.0 and 5.0
-L = I * ρ - μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)  # (2) and (14)
+L = I * ρ - μ*L₁₋(x̄, bc) - σ^2 / 2 * L₂(x̄, bc)  # (2) and (14)
 
 q = -u.(x) + L*S.(x)  # (9)
 w(z) = L*z + q; # (10)

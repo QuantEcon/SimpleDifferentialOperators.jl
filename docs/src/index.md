@@ -20,7 +20,7 @@ Consider solving for `v` from the following equation by the Hamilton-Jacobi-Bell
 ```
 
 for some constant $\rho, \sigma > 0$ and $\mu \leq 0$. To solve `v` under the reflecting barrier conditions $v'(0) = v'(1) = 0$ on `M`-size discretized grids, one can run the following code:
-```juliax   
+```julia
 # import LinearAlgebra package (for diagonal and identity matrices)
 using LinearAlgebra 
 # setup 
@@ -29,12 +29,12 @@ f(x) = x^2
 σ = 0.1
 ρ = 0.05
 M = 100 # size of grid
-x = range(0.0, 1.0, length = M) # grid
-
+x̄ = range(0.0, 1.0, length = (M+2)) # grid
+x = interior(x̄) # interior nodes
 # discretize L = ρ - μ D_x - σ^2 / 2 D_xx
 # subject to reflecting barriers at 0 and 1
 bc = (Reflecting(), Reflecting())
-L = I * ρ - μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)
+L = I * ρ - μ*L₁₋(x̄, bc) - σ^2 / 2 * L₂(x̄, bc)
 ## solve the value function
 v = L \ f.(x) 
 ```
@@ -46,7 +46,7 @@ One can alternatively use differential operators on interior nodes and stack the
 using SparseArrays
 
 # differential operators on extended nodes
-L̄ₓ = μ*L̄₁₋(x) + σ^2 / 2 * L̄₂(x)
+L̄ₓ = μ*L̄₁₋(x̄) + σ^2 / 2 * L̄₂(x̄)
 
 # boundary conditions (i.e. B v̄ = b)
 B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]])
@@ -122,15 +122,16 @@ f(x) = x^2
 σ = 1.0
 ρ = 0.05
 M = 100 # size of grid
-x = range(-1.0, 1.0, length = 100)
+x̄ = range(-1.0, 1.0, length = (M+2))
+x = interior(x̄) # interior nodes
 
 bc = (Reflecting(), Reflecting())
 
 # Define first order differential operator using upwind scheme
-L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋(x, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊(x, bc)
+L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋(x̄, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊(x̄, bc)
 
 # Define linear operator using upwind schemes
-L = L₁ - σ^2 / 2 * L₂(x,bc)
+L = L₁ - σ^2 / 2 * L₂(x̄,bc)
 
 # solve the value function
 v = (I * ρ - L) \ f.(x) 
