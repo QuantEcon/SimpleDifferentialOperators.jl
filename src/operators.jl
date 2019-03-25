@@ -316,3 +316,57 @@ function x̄(x)
     d = diff(x) # dispatches based on AbstractArray or not
     x̄ = collect([x[1] - d[1]; x; x[end] + d[end]])
 end
+
+"""
+    interior(x̄)
+
+Returns an interior grid of length `length(x̄)-2` given extended grid `x̄`.
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x̄ = 0:5
+0:5
+
+julia> interior(x̄)
+3-element Array{Int64,1}:
+ 1
+ 2
+ 3
+
+julia> x̄ = [1.0; 1.5; 1.7]
+3-element Array{Float64,1}:
+ 1.0
+ 1.5
+ 1.7
+
+julia> interior(x̄)
+5-element Array{Float64,1}:
+ 1.5
+```
+"""
+interior(x̄) = x̄[2:end-1]
+
+"""
+    interior(x̄, bc)
+
+Returns an interior grid corresponding to the boundary condition `bc` given extended grid `x̄`.
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x̄ = 0:5
+0:5
+
+julia> interior(x̄, (Reflecting(), Reflecting()))
+3-element Array{Int64,1}:
+ 1
+ 2
+ 3
+
+julia> x̄ = [1.0; 1.5; 1.7]
+3-element Array{Float64,1}:
+ 1.0
+ 1.5
+ 1.7
+
+julia> interior(x̄, (Mixed(1.0), Mixed(1.0)))
+5-element Array{Float64,1}:
+ 1.5
+```
+"""
+interior(x̄, bc) = interior(x̄)

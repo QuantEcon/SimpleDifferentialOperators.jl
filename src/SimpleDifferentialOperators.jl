@@ -30,6 +30,7 @@ export DifferentialOperator,
         L₁₊,
         L₂,
         x̄,
+        interior,
         L̄₁₊,
         L̄₁₋,
         L̄₂
