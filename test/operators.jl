@@ -8,24 +8,22 @@ using Test, LinearAlgebra, DualNumbers
 
     @testset "Accuracy & regression test" begin
         # Uniform grid
-        x = 1:3
+        x = 0:4
         L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, (Reflecting(), Reflecting()))
         @test @inferred(diffusionoperators(x, (Reflecting(), Reflecting()))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
         @test @inferred(diffusionoperators(x, (Mixed(0.), Mixed(0.)))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄) # test that the mixed case properly nests the reflecting case
         @test Array(L₁₋) == [0. 0. 0.; -1. 1. 0.; 0. -1. 1.]
         @test Array(L₁₊) == [-1. 1. 0.; 0. -1. 1.; 0. 0. 0.]
         @test Array(L₂) == [-1. 1. 0.; 1. -2. 1.; 0. 1. -1.]
-        @test x̄ == [0; x; 4]
 
         # Irregular grid
-        x = [1.0; 2.0; 4.0]
+        x = [0.0; 1.0; 2.0; 4.0; 6.0]
         L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, (Reflecting(), Reflecting()))
         @test @inferred(diffusionoperators(x,(Reflecting(), Reflecting()))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄)
         @test @inferred(diffusionoperators(x, (Mixed(0.), Mixed(0.)))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x̄ = x̄) # test that the mixed case properly nests the reflecting case
         @test Array(L₁₋) == [0. 0. 0.; -1. 1. 0.; 0. -1/2 1/2]
         @test Array(L₁₊) == [-1. 1. 0.; 0. -1/2 1/2; 0. 0. 0.]
         @test Array(L₂) == [-1. 1. 0.; 2/((2.0+1.0)*1.0) -2/(2.0*1.0) 2/((2.0+1.0)*2.0); 0. 1/4 -1/4]
-        @test x̄ == [0; x; 6]
     end
 
     @testset "Consistency" begin
@@ -48,7 +46,7 @@ end
 
     @testset "Accuracy & regression test" begin
         # Uniform grid
-        x = 1:3
+        x = 0:4
         ξ_lb, ξ_ub = (1., 2.)
 
         L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, (Mixed(ξ_lb), Mixed(ξ_ub)))
@@ -56,10 +54,9 @@ end
         @test Array(L₁₋) == [-ξ_lb 0. 0.; -1. 1. 0.; 0. -1. 1.]
         @test Array(L₁₊) == [-1. 1. 0.; 0. -1. 1.; 0. 0. -ξ_ub]
         @test Array(L₂) == [(-1. + ξ_lb) 1. 0.; 1. -2. 1.; 0. 1. (-1. - ξ_ub)]
-        @test x̄ == [0; x; 4]
 
         # Irregular grid
-        x = [1.0; 2.0; 4.0]
+        x = [0.0; 1.0; 2.0; 4.0; 6.0]
         ξ_lb, ξ_ub = (1., 2.)
 
         L₁₋, L₁₊, L₂, x̄ = diffusionoperators(x, (Mixed(ξ_lb), Mixed(ξ_ub)))
@@ -67,7 +64,6 @@ end
         @test Array(L₁₋) == [-ξ_lb 0. 0.; -1. 1. 0.; 0. -1/2 1/2]
         @test Array(L₁₊) == [-1. 1. 0.; 0. -1/2 1/2; 0. 0. -ξ_ub]
         @test Array(L₂) == [(-1. + ξ_lb) 1. 0.; 2/((2.0+1.0)*1.0) -2/(2.0*1.0) 2/((2.0+1.0)*2.0); 0. 1/4 (-1. - ξ_ub*2.0)/4]
-        @test x̄ == [0; x; 6]
     end
 
     @testset "Consistency" begin
@@ -89,19 +85,20 @@ end
     σ = 0.1
     ρ = 0.05
     M = 100 # size of grid
-    x = range(-1.0, 1.0, length = M) # grid
+    x̄ = range(-1.0, 1.0, length = M+2) # grid
+    x = x̄[2:end-1]
     bc = (Reflecting(), Reflecting()) # specify BC (reflecting barrier)
     ## M-vector of drifts stacked according to the states
     μs = μ.(x)
 
     # Define first order differential operator using upwind scheme
-    L_1_upwind = (μs .<= 0) .* L₁₋(x, bc) + (μs .> 0) .* L₁₊(x, bc)
+    L_1_upwind = (μs .<= 0) .* L₁₋(x̄, bc) + (μs .> 0) .* L₁₊(x̄, bc)
 
     indices_m = findall(μs .<= 0)
     indices_p = findall(μs .> 0)
 
-    @test L_1_upwind[indices_m, indices_m] == Array(L₁₋(x, bc)[indices_m, indices_m])
-    @test L_1_upwind[indices_p, indices_p] == Array(L₁₊(x, bc)[indices_p, indices_p])
+    @test L_1_upwind[indices_m, indices_m] == Array(L₁₋(x̄, bc)[indices_m, indices_m])
+    @test L_1_upwind[indices_p, indices_p] == Array(L₁₊(x̄, bc)[indices_p, indices_p])
 end
 
 @testset "Input Type Variance" begin

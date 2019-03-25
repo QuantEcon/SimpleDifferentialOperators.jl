@@ -1,43 +1,43 @@
 """
-    ExtensionDifferentialOperator(x, method::DifferenceMethod)
+    ExtensionDifferentialOperator(x̄, method::DifferenceMethod)
 
-Returns a discretized differential operator of `length(x)` by `length(x) + 2` matrix
-whose first and last columns are applied to the ghost nodes just before `x[1]` and `x[end]` respectively
+Returns a discretized differential operator of `length(x̄)` by `length(x̄) + 2` matrix
+whose first and last columns are applied to the ghost nodes just before `x̄[1]` and `x̄[end]` respectively
 under no boundary condition using finite difference method specified by `method`.
 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
-julia> x = 1:3
-1:3
+julia> x̄ = 0:5
+0:5
 
-julia> ExtensionDifferentialOperator(x, BackwardFirstDifference())
+julia> ExtensionDifferentialOperator(x̄, BackwardFirstDifference())
 3×3 Tridiagonal{Float64,Array{Float64,1}}:
   0.0   0.0   ⋅
  -1.0   1.0  0.0
    ⋅   -1.0  1.0
 
-julia> ExtensionDifferentialOperator(x, ForwardFirstDifference())
+julia> ExtensionDifferentialOperator(x̄, ForwardFirstDifference())
 3×3 Tridiagonal{Float64,Array{Float64,1}}:
  -1.0   1.0   ⋅
   0.0  -1.0  1.0
    ⋅    0.0  0.0
 
-julia> ExtensionDifferentialOperator(x, CentralSecondDifference())
+julia> ExtensionDifferentialOperator(x̄, CentralSecondDifference())
 3×3 Tridiagonal{Float64,Array{Float64,1}}:
  -1.0   1.0    ⋅
   1.0  -2.0   1.0
    ⋅    1.0  -1.0
 ```
 """
-function ExtensionDifferentialOperator(x, method::DifferenceMethod)
-    T = eltype(x)
-    d = diff(x)
+function ExtensionDifferentialOperator(x̄, method::DifferenceMethod)
+    T = eltype(x̄)
+    d = diff(x̄)
     Δ_1 = d[1]
     Δ_M = d[end]
-    M = length(x)
+    M = length(x̄) - 2
 
     # get basis operator on interior nodes
-    L_basis = get_basis_operator(x, method)
+    L_basis = get_basis_operator(x̄, method)
 
     # add columns for ghost nodes next to boundaries
     col_lb = zeros(T, M)
@@ -51,41 +51,41 @@ function ExtensionDifferentialOperator(x, method::DifferenceMethod)
 end
 
 """
-    DifferentialOperator(x, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)
+    DifferentialOperator(x̄, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)
 
-Returns a discretized differential operator of `length(x)` by `length(x)` matrix
+Returns a discretized differential operator of `length(x̄)` by `length(x̄)` matrix
 under reflecting boundary conditions from `bc` using finite difference method specified by `method`.
 
 # Examples
 
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
-julia> x = 1:3
-1:3
+julia> x̄ = 0:5
+0:5
 
-julia> DifferentialOperator(x, (Reflecting(), Reflecting()), BackwardFirstDifference())
+julia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), BackwardFirstDifference())
 3×3 Tridiagonal{Float64,Array{Float64,1}}:
   0.0   0.0   ⋅
  -1.0   1.0  0.0
    ⋅   -1.0  1.0
 
-julia> DifferentialOperator(x, (Reflecting(), Reflecting()), ForwardFirstDifference())
+julia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), ForwardFirstDifference())
 3×3 Tridiagonal{Float64,Array{Float64,1}}:
  -1.0   1.0   ⋅
   0.0  -1.0  1.0
    ⋅    0.0  0.0
 
-julia> DifferentialOperator(x, (Reflecting(), Reflecting()), CentralSecondDifference())
+julia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), CentralSecondDifference())
 3×3 Tridiagonal{Float64,Array{Float64,1}}:
  -1.0   1.0    ⋅
   1.0  -2.0   1.0
    ⋅    1.0  -1.0
 ```
 """
-function DifferentialOperator(x, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)
-    T = eltype(x)
+function DifferentialOperator(x̄, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)
+    T = eltype(x̄)
 
     # get basis operator on interior nodes
-    L = get_basis_operator(x, method)
+    L = get_basis_operator(x̄, method)
 
     # apply boundary conditions
     L[1,1] = typeof(method) <: BackwardFirstDifference ? zero(T) : L[1,1]
@@ -97,45 +97,45 @@ function DifferentialOperator(x, bc::Tuple{Reflecting, Reflecting}, method::Diff
 end
 
 """
-    DifferentialOperator(x, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)
+    DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)
 
-Returns a discretized differential operator of `length(x)` by `length(x)` matrix
+Returns a discretized differential operator of `length(x̄)` by `length(x̄)` matrix
 under mixed boundary conditions from `bc` using finite difference method specified by `method`.
 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
-julia> x = 1:3
-1:3
+julia> x̄ = 0:5
+0:5
 
-julia> DifferentialOperator(x, (Mixed(1.0), Mixed(1.0)), BackwardFirstDifference())
+julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), BackwardFirstDifference())
 3×3 Tridiagonal{Float64,Array{Float64,1}}:
  -1.0   0.0   ⋅
  -1.0   1.0  0.0
    ⋅   -1.0  1.0
 
-julia> DifferentialOperator(x, (Mixed(1.0), Mixed(1.0)), ForwardFirstDifference())
+julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), ForwardFirstDifference())
 3×3 Tridiagonal{Float64,Array{Float64,1}}:
  -1.0   1.0    ⋅
   0.0  -1.0   1.0
    ⋅    0.0  -1.0
 
-julia> DifferentialOperator(x, (Mixed(1.0), Mixed(1.0)), CentralSecondDifference())
+julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), CentralSecondDifference())
 3×3 Tridiagonal{Float64,Array{Float64,1}}:
  0.0   1.0    ⋅
  1.0  -2.0   1.0
   ⋅    1.0  -2.0
 ```
 """
-function DifferentialOperator(x, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)
-    T = eltype(x)
-    d = diff(x)
+function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)
+    T = eltype(x̄)
+    d = diff(x̄)
     Δ_1 = d[1]
     Δ_M = d[end]
     ξ_lb = bc[1].ξ
     ξ_ub = bc[2].ξ
 
     # get basis operator on interior nodes
-    L = DifferentialOperator(x, (Reflecting(), Reflecting()), method)
+    L = DifferentialOperator(x̄, (Reflecting(), Reflecting()), method)
 
     # apply boundary conditions
     L[1,1] -= typeof(method) <: BackwardFirstDifference ? ξ_lb : zero(T)
@@ -148,135 +148,135 @@ end
 
 # Convenience calls
 """
-    L₁₋(x, bc::Tuple{BoundaryCondition, BoundaryCondition})
+    L₁₋(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
 
-Returns a discretized first-order differential operator of `length(x)` by `length(x)` matrix
+Returns a discretized first-order differential operator of `length(x̄)` by `length(x̄)` matrix
 using backward difference under boundary conditions specified by `bc`.
 
 The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper.
 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
-julia> x = 1:3
-1:3
+julia> x̄ = 0:5
+0:5
 
-julia> L₁₋(x, (Reflecting(), Reflecting()))
+julia> L₁₋(x̄, (Reflecting(), Reflecting()))
 3×3 Tridiagonal{Float64,Array{Float64,1}}:
   0.0   0.0   ⋅
  -1.0   1.0  0.0
    ⋅   -1.0  1.0
 ```
 """
-L₁₋(x, bc) = DifferentialOperator(x, bc, BackwardFirstDifference())
+L₁₋(x̄, bc) = DifferentialOperator(x̄, bc, BackwardFirstDifference())
 
 """
-    L₁₊(x, bc::Tuple{BoundaryCondition, BoundaryCondition})
+    L₁₊(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
 
-Returns a discretized first-order differential operator of `length(x)` by `length(x)` matrix
+Returns a discretized first-order differential operator of `length(x̄)` by `length(x̄)` matrix
 using forward difference under boundary conditions specified by `bc`.
 
 The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper.
 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
-julia> x = 1:3
-1:3
+julia> x̄ = 0:5
+0:5
 
-julia> L₁₊(x, (Reflecting(), Reflecting()))
+julia> L₁₊(x̄, (Reflecting(), Reflecting()))
 3×3 Tridiagonal{Float64,Array{Float64,1}}:
  -1.0   1.0   ⋅
   0.0  -1.0  1.0
    ⋅    0.0  0.0
 ```
 """
-L₁₊(x, bc) = DifferentialOperator(x, bc, ForwardFirstDifference())
+L₁₊(x̄, bc) = DifferentialOperator(x̄, bc, ForwardFirstDifference())
 
 """
-    L₂(x, bc::Tuple{BoundaryCondition, BoundaryCondition})
+    L₂(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
 
-Returns a discretized second-order differential operator of `length(x)` by `length(x)` matrix
+Returns a discretized second-order differential operator of `length(x̄)` by `length(x̄)` matrix
 using central difference under boundary conditions specified by `bc`.
 
 The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper.
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
-julia> x = 1:3
-1:3
+julia> x̄ = 0:5
+0:5
 
-julia> L₂(x, (Reflecting(), Reflecting()))
+julia> L₂(x̄, (Reflecting(), Reflecting()))
 3×3 Tridiagonal{Float64,Array{Float64,1}}:
  -1.0   1.0    ⋅
   1.0  -2.0   1.0
    ⋅    1.0  -1.0
 ```
 """
-L₂(x, bc) = DifferentialOperator(x, bc, CentralSecondDifference())
+L₂(x̄, bc) = DifferentialOperator(x̄, bc, CentralSecondDifference())
 
 """
-    L̄₁₋(x)
+    L̄₁₋(x̄)
 
-Returns a discretized first-order differential operator of `length(x)` by `length(x) + 2` matrix
+Returns a discretized first-order differential operator of `length(x̄)` by `length(x̄) + 2` matrix
 using backward difference under no boundary condition.
 
-The first and last columns are applied to the ghost nodes just before `x[1]` and `x[end]` respectively.
+The first and last columns are applied to the ghost nodes just before `x̄[1]` and `x̄[end]` respectively.
 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
-julia> x = 1:3
+julia> x̄ = 1:3
 1:3
 
-julia> Array(L̄₁₋(x))
+julia> Array(L̄₁₋(x̄))
 3×5 Array{Float64,2}:
  -1.0   1.0   0.0  0.0  0.0
   0.0  -1.0   1.0  0.0  0.0
   0.0   0.0  -1.0  1.0  0.0
 ```
 """
-L̄₁₋(x) = ExtensionDifferentialOperator(x, BackwardFirstDifference())
+L̄₁₋(x̄) = ExtensionDifferentialOperator(x̄, BackwardFirstDifference())
 
 """
-    L̄₁₊(x)
+    L̄₁₊(x̄)
 
-Returns a discretized first-order differential operator of `length(x)` by `length(x) + 2` matrix using
+Returns a discretized first-order differential operator of `length(x̄)` by `length(x̄) + 2` matrix using
 forward difference under no boundary condition.
 
-The first and last columns are applied to the ghost nodes just before `x[1]` and `x[end]` respectively.
+The first and last columns are applied to the ghost nodes just before `x̄[1]` and `x̄[end]` respectively.
 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
-julia> x = 1:3
-1:3
+julia> x̄ = 0:5
+0:5
 
-julia> Array(L̄₁₊(x))
+julia> Array(L̄₁₊(x̄))
 3×5 Array{Float64,2}:
  0.0  -1.0   1.0   0.0  0.0
  0.0   0.0  -1.0   1.0  0.0
  0.0   0.0   0.0  -1.0  1.0
 ```
 """
-L̄₁₊(x) = ExtensionDifferentialOperator(x, ForwardFirstDifference())
+L̄₁₊(x̄) = ExtensionDifferentialOperator(x̄, ForwardFirstDifference())
 
 """
-    L̄₂(x)
+    L̄₂(x̄)
 
-Returns a discretized second-order differential operator of `length(x)` by `length(x) + 2` matrix
+Returns a discretized second-order differential operator of `length(x̄)` by `length(x̄) + 2` matrix
 using central difference under no boundary condition.
 
-The first and last columns are applied to the ghost nodes just before `x[1]` and `x[end]` respectively.
+The first and last columns are applied to the ghost nodes just before `x̄[1]` and `x̄[end]` respectively.
 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
-julia> x = 1:3
-1:3
+julia> x̄ = 0:5
+0:5 
 
-julia> Array(L̄₂(x))
+julia> Array(L̄₂(x̄))
 3×5 Array{Float64,2}:
  1.0  -2.0   1.0   0.0  0.0
  0.0   1.0  -2.0   1.0  0.0
  0.0   0.0   1.0  -2.0  1.0
 ```
 """
-L̄₂(x)  = ExtensionDifferentialOperator(x, CentralSecondDifference())
+L̄₂(x̄)  = ExtensionDifferentialOperator(x̄, CentralSecondDifference())
 
 """
     x̄(x)
