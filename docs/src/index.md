@@ -20,7 +20,7 @@ Consider solving for `v` from the following equation by the Hamilton-Jacobi-Bell
 ```
 
 for some constant $\rho, \sigma > 0$ and $\mu \leq 0$. To solve `v` under the reflecting barrier conditions $v'(0) = v'(1) = 0$ on `M`-size discretized grids, one can run the following code:
-```julia
+```juliax   
 # import LinearAlgebra package (for diagonal and identity matrices)
 using LinearAlgebra 
 # setup 
@@ -91,6 +91,8 @@ v̄ =  [L̄; B] \ [f.(x); b]
 # extract the interior (is identical with `v` above)
 v =  v̄[2:end-1] 
 ```
+
+Note that this can be alternatively done by 
 
 Here is a plot for `v`:
 
@@ -164,7 +166,7 @@ g_ss = real.(ϕ[:,1]);
 g_ss = g_ss / sum(g_ss)
 ```
 
-Using `L` from the constant drift example, running the above code returns the following stationary distribution:
+Using `L` from the state-dependent drift example above, this results in the following stationary distribution:
 
 ```julia
 plot(x, g_ss, lw = 4, label = "g_ss")

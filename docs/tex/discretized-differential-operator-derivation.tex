@@ -34,22 +34,13 @@
 \section{Setup}
 
 \begin{itemize}
-	\item Define an irregular grid $\set{x_i}_{i=1}^M$ with $x_1 = {x_{\min}}$ and $x_{M} = {x_{\max}}$. Denote the grid with the variable name, i.e. $x \equiv \set{x_i}_{i=1}^M$.
-	\item Denote the distance between the grid points as
+	\item Define an irregular grid $\set{x_i}_{i=0}^{M+1}$ with \textbf{boundary nodes}, $x_0 = {x_{\min}}$ and $x_{M+1} = {x_{\max}}$. Denote the \textbf{extended grid} as $\overline{x} \equiv \set{x_i}_{i=0}^{M+1}$ and the \textbf{interior grid}, a collection of nodes excluding the boundary nodes, as $x \equiv \set{x_i}_{i=1}^{M} $.
+	\item Denote the backward and forward distance between the grid points as
 	\begin{align}
-	\Delta_{i,-} &\equiv x_i - x_{i-1},\, \text{for } i = 2,\ldots, M\\
-	\Delta_{i,+} &\equiv x_{i+1} - x_i,\, \text{for } i = 1,\ldots, M-1
+	\Delta_{i,-} &\equiv x_i - x_{i-1},\, \text{for } i = 1,\ldots, M+1\\
+	\Delta_{i,+} &\equiv x_{i+1} - x_i,\, \text{for } i = 0,\ldots, M
 	\end{align}
-	
-	\item Assume $\Delta_{1, -} = \Delta_{1, +}$ and $\Delta_{M, +} = \Delta_{M, -}$, due to ghost points, $x_0$ and $x_{M+1}$ on both boundaries. (i.e. the distance to the ghost nodes are the same as the distance to the closest nodes).  Then define the vector of backwards and forwards first differences as
-	\begin{align}
-	\Delta_{-} &\equiv \begin{bmatrix} \Delta_{1,-} \\
-	\text{diff}(x)
-	\end{bmatrix}\\
-	\Delta_{+} &\equiv \begin{bmatrix} \text{diff}(x)\\
-	\Delta_{M,+}
-	\end{bmatrix}
-	\end{align}
+	 Then define the vector of backward and forward first differences on interior nodes as $\Delta_{-} = \set{\Delta_{i,-}}_{i=1}^{M}$, $\Delta_{+} \equiv \set{\Delta_{i,+}}_{i=1}^{M}$.
 	\item Reflecting barrier conditions:
 	\begin{align}
 	\underline{\xi} v({x_{\min}}) + \D[x]v({x_{\min}} ) &= 0\label{eq:new-BC1}\\
@@ -72,27 +63,27 @@ Suppose that the grids are regular, i.e., elements of $\text{diff}(x)$ are all i
 
 Using the backwards first-order difference, \eqref{eq:new-BC1} implies
 \begin{align}
-\dfrac{v({x_{\min}}) - v({x_{\min}}-\Delta)}{\Delta} &= - \underline{\xi} v({x_{\min}})
+\dfrac{v({x_{1}}) - v(x_{\min})}{\Delta} &= - \underline{\xi} v({x_{1}})
 \end{align}
 at the lower bound.
 
 Likewise, \eqref{eq:new-BC2} under the forwards first-order difference yields
 \begin{align}
-\dfrac{v({x_{\max}} + \Delta) - v({x_{\max}})}{\Delta} &= - \overline{\xi} v({x_{\max}})
+\dfrac{v(x_{\max}) - v({x_{M}})}{\Delta} &= - \overline{\xi} v({x_{M}})
 \end{align}
 at the upper bound.
 
 The discretized central difference of second order under \eqref{eq:new-BC1} at the lower bound is
 \begin{align}
-\dfrac{v ({x_{\min}} + \Delta) - 2 v({x_{\min}}) + v({x_{\min}}-\Delta)}{\Delta^2} &=   \dfrac{v({x_{\min}} + \Delta) - v({x_{\min}})}{\Delta^2} - \dfrac{1}{\Delta}\dfrac{v ({x_{\min}}) - v({x_{\min}}-\Delta) }{\Delta}  \\
-&= \dfrac{v({x_{\min}} + \Delta) - v({x_{\min}})}{\Delta^2} + \dfrac{1}{\Delta} \underline{\xi} v({x_{\min}})  \\ 
-&= \dfrac{1}{\Delta^2}  (- 1 + \Delta \underline{\xi}) v({x_{\min}})  + \dfrac{1}{\Delta^2}  v({x_{\min}} + \Delta)  
+\dfrac{v ({x_{1}} + \Delta) - 2 v({x_{1}}) + v(x_{\min})}{\Delta^2} &=   \dfrac{v({x_{1}} + \Delta) - v({x_{1}})}{\Delta^2} - \dfrac{1}{\Delta}\dfrac{v ({x_{1}}) - v(x_{\min}) }{\Delta}  \\
+&= \dfrac{v({x_{1}} + \Delta) - v({x_{1}})}{\Delta^2} + \dfrac{1}{\Delta} \underline{\xi} v({x_{1}})  \\ 
+&= \dfrac{1}{\Delta^2}  (- 1 + \Delta \underline{\xi}) v({x_{1}})  + \dfrac{1}{\Delta^2}  v({x_{1}} + \Delta)  
 \end{align}
 Similarly, by \eqref{eq:new-BC2}, we have
 \begin{align}
-\dfrac{v ({x_{\max}} + \Delta) - 2 v({x_{\max}} ) + v({x_{\max}} -\Delta)}{\Delta^2} &=   \dfrac{v({x_{\max}} - \Delta) - v({x_{\max}})}{\Delta^2} + \dfrac{1}{\Delta}\dfrac{ v({x_{\max}}+\Delta) - v ({x_{\max}}) }{\Delta}  \\
-&= \dfrac{v({x_{\max}} - \Delta) - v({x_{\max}})}{\Delta^2}  - \dfrac{1}{\Delta} \overline{\xi} v({x_{\max}})  \\ 
-&= \dfrac{1}{\Delta^2}  (- 1 - \Delta \overline{\xi}) v({x_{\max}})  + \dfrac{1}{\Delta^2}  v({x_{\max}} - \Delta)  
+\dfrac{v(x_{\max}) - 2 v({x_{M}} ) + v({x_{M}} -\Delta)}{\Delta^2} &=   \dfrac{v({x_{M}} - \Delta) - v({x_{M}})}{\Delta^2} + \dfrac{1}{\Delta}\dfrac{ v(x_{\max}) - v ({x_{M}}) }{\Delta}  \\
+&= \dfrac{v({x_{M}} - \Delta) - v({x_{M}})}{\Delta^2}  - \dfrac{1}{\Delta} \overline{\xi} v({x_{M}})  \\ 
+&= \dfrac{1}{\Delta^2}  (- 1 - \Delta \overline{\xi}) v({x_{M}})  + \dfrac{1}{\Delta^2}  v({x_{M}} - \Delta)  
 \end{align}
 at the upper bound.
 
@@ -125,31 +116,31 @@ L_2 &\equiv \frac{1}{\Delta^2}\begin{pmatrix}
 \subsection{Irregular grids}
 Using the backwards first-order difference, \eqref{eq:new-BC1} implies
 \begin{align}
-\dfrac{v({x_{\min}}) - v({x_{\min}}-\Delta_{1, -})}{\Delta_{1, -}} &= - \underline{\xi} v({x_{\min}})
+\dfrac{v({x_{1}}) - v(x_{\min})}{\Delta_{1, -}} &= - \underline{\xi} v({x_{1}})
 \end{align}
 
 at the lower bound. Likewise, the forwards first-order difference under \eqref{eq:new-BC2} yields
 \begin{align}
-\dfrac{v({x_{\max}} + \Delta_{M, +}) - v( {x_{\max}})}{\Delta_{M, +}} &= - \overline{\xi} v({x_{\max}})
+\dfrac{v(x_{\max}) - v( {x_{M}})}{\Delta_{M, +}} &= - \overline{\xi} v({x_{M}})
 \end{align}
 at the upper bound.
 
 Note that we have assumed that $\Delta_{1,-} = \Delta_{1,+}$ and $\Delta_{M,+} = \Delta_{M,-}$ for the ghost notes. The discretized central difference of second order scheme at the lower bound under \eqref{eq:new-BC1} is 
 \begin{align}
-&\dfrac{\Delta_{1,-} v( {x_{\min}} + \Delta_{1,+}) - (\Delta_{1,+} + \Delta_{1,-}) v({x_{\min}}) + \Delta_{1,+}  v( {x_{\min}} - \Delta_{1,-})}{\frac{1}{2}(\Delta_{1,+} + \Delta_{1,-}) \Delta_{1,+} \Delta_{1,-} } \\
+&\dfrac{\Delta_{1,-} v( {x_{1}} + \Delta_{1,+}) - (\Delta_{1,+} + \Delta_{1,-}) v({x_{1}}) + \Delta_{1,+}  v( x_{\min})}{\frac{1}{2}(\Delta_{1,+} + \Delta_{1,-}) \Delta_{1,+} \Delta_{1,-} } \\
 &=
-\dfrac{v ({x_{\min}}+\Delta_{1, +}) - 2 v({x_{\min}}) + v({x_{\min}}-\Delta_{1, +})}{\Delta_{1, +}^2} \\ 
-&= \dfrac{v({x_{\min}} + \Delta_{1, +}) - v({x_{\min}})}{\Delta_{1, +}^2} - \dfrac{1}{\Delta_{1, +}}\dfrac{v({x_{\min}}) - v({x_{\min}}-\Delta_{1, +}) }{\Delta_{1, +}}  \\
-&= \dfrac{v({x_{\min}} + \Delta_{1, +}) - v({x_{\min}})}{\Delta_{1, +}^2} + \dfrac{1}{\Delta_{i,+}} \underline{\xi} v({x_{\min}})  \\ 
-&= \dfrac{1}{\Delta_{1, +}^2}  (- 1 + \Delta_{1, +} \underline{\xi}) v({x_{\min}})  + \dfrac{1}{\Delta_{1, +}^2}  v({x_{\min}} + \Delta_{1, +})  
+\dfrac{v ({x_{1}}+\Delta_{1, +}) - 2 v({x_{1}}) + v(x_{\min})}{\Delta_{1, +}^2} \\ 
+&= \dfrac{v({x_{1}} + \Delta_{1, +}) - v({x_{1}})}{\Delta_{1, +}^2} - \dfrac{1}{\Delta_{1, +}}\dfrac{v({x_{1}}) - v(x_{\min}) }{\Delta_{1, +}}  \\
+&= \dfrac{v({x_{1}} + \Delta_{1, +}) - v({x_{1}})}{\Delta_{1, +}^2} + \dfrac{1}{\Delta_{i,+}} \underline{\xi} v({x_{1}})  \\ 
+&= \dfrac{1}{\Delta_{1, +}^2}  (- 1 + \Delta_{1, +} \underline{\xi}) v({x_{1}})  + \dfrac{1}{\Delta_{1, +}^2}  v({x_{1}} + \Delta_{1, +})  
 \end{align}
 Similarly, by \eqref{eq:new-BC2}, we have
 \begin{align}
-&\dfrac{\Delta_{M,-} v( {x_{\max}} + \Delta_{M,+}) - (\Delta_{M,+} + \Delta_{M,-}) v({x_{\max}} ) + \Delta_{M,+}  v( {x_{\max}} - \Delta_{M,-})}{\frac{1}{2}(\Delta_{M,+} + \Delta_{M,-}) \Delta_{M,+} \Delta_{M,-} } \\
-&=\dfrac{v ({x_{\max}} + \Delta_{M,-}) - 2 v({x_{\max}} ) + v({x_{\max}} -\Delta_{M,-})}{\Delta_{M,-}^2} \\
-&=   \dfrac{v({x_{\max}} - \Delta_{M,-}) - v({x_{\max}})}{\Delta_{M,-}^2} + \dfrac{1}{\Delta_{M,-}}\dfrac{ v({x_{\max}}+\Delta_{M,-}) - v ({x_{\max}}) }{\Delta_{M,-}}  \\
-&= \dfrac{v({x_{\max}} - \Delta_{M,-}) - v({x_{\max}})}{\Delta_{M,-}^2}  - \dfrac{1}{\Delta_{M,-}} \overline{\xi} v({x_{\max}})  \\ 
-&= \dfrac{1}{\Delta_{M,-}^2}  (- 1 - \Delta_{M,-} \overline{\xi}) v({x_{\max}})  + \dfrac{1}{\Delta_{M,-}^2}  v({x_{\max}} - \Delta_{M,-})  
+&\dfrac{\Delta_{M,-} v( x_{\max}) - (\Delta_{M,+} + \Delta_{M,-}) v({x_{M}} ) + \Delta_{M,+}  v( {x_{M}} - \Delta_{M,-})}{\frac{1}{2}(\Delta_{M,+} + \Delta_{M,-}) \Delta_{M,+} \Delta_{M,-} } \\
+&=\dfrac{v(x_{\max}) - 2 v({x_{M}} ) + v({x_{M}} -\Delta_{M,-})}{\Delta_{M,-}^2} \\
+&=   \dfrac{v({x_{M}} - \Delta_{M,-}) - v({x_{M}})}{\Delta_{M,-}^2} + \dfrac{1}{\Delta_{M,-}}\dfrac{ v(x_{\max}) - v ({x_{M}}) }{\Delta_{M,-}}  \\
+&= \dfrac{v({x_{M}} - \Delta_{M,-}) - v({x_{M}})}{\Delta_{M,-}^2}  - \dfrac{1}{\Delta_{M,-}} \overline{\xi} v({x_{M}})  \\ 
+&= \dfrac{1}{\Delta_{M,-}^2}  (- 1 - \Delta_{M,-} \overline{\xi}) v({x_{M}})  + \dfrac{1}{\Delta_{M,-}^2}  v({x_{M}} - \Delta_{M,-})  
 \end{align}
 at the upper bound.
 
@@ -257,7 +248,7 @@ The diagonal elements of \eqref{eq:L-2-by-basis} are also identical with the one
 which is identical with $\text{diag} (L_2)$ with $L_2$ from \eqref{eq:L-2} except the first row and last row that are affected by $B_1$ and $B_{M}$.
 
 \section{Boundary conditions with operators on extended grids}
-Boundary conditions can be applied manually by using operators on extended grids. This can be done by first extending $x = \{x_i\}_{i=1}^M$ to $ \overline{x} = \{x_i\}_{i=0}^{M+1}$ such that $x_1 - x_0 = \Delta_{1,+} (= \Delta_{1,-})$ and $x_{M+1} - x_M = \Delta_{M,-} (= \Delta_{M,+})$. We call $x_0$ and $x_{M+1}$, the extra nodes just before and after $x_{\min}$ and $x_{\max}$, as ghost nodes. Likewise, define $v(\overline{x})$ as $(M+2)$-vector whose $i$th element is $\overline {x}_i$. We can then define the following operators on $\overline{x}$:
+Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids. Define $v(\overline{x})$ as $(M+2)$-vector whose $i$th element is $v(\overline {x}_i)$. We can then define the following operators on $\overline{x}$:
 
 
 \begin{equation}\label{eq:L-1-minus-extended}
@@ -306,7 +297,15 @@ b
 \end{bmatrix} 
 \end{equation}
 
-with $M_E$ by $(M+2)$ matrix $B$ and $M_E$-length vector $b$ that represent the current boundary conditions, where $M_E$ is the number of boundary conditions to be applied. 
+with $M_E$ by $(M+2)$ matrix $B$ and $M_E$-length vector $b$ that represent the current boundary conditions, where $M_E$ is the number of boundary conditions to be applied. The solution of \eqref{eq:reflecting-barrier-extended-system}, $v(\overline{x})$ can be decomposed into 
+\begin{align}
+v(\overline{x}) = \begin{bmatrix}
+v(x_{\min}) \\
+v(x) \\
+v(x_{\max})
+\end{bmatrix}
+\end{align}
+which also gives the solution for $v(x)$.
 
 \subsection{Reflecting barrier conditions}
 
@@ -327,7 +326,7 @@ b = \begin{bmatrix}
 Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value function $v(\overline{x})$ on the extended grid, one can perform Gaussian elimination to reduce the system and solve $v(x)$, which gives the identical solution as the interior of $v(\overline{x})$. 
 
 \begin{example}\label{ex:gaussian-elimination-reflecting-barrier}
-	 Consider $L = L_{2}$ to solve $L v = f(x)$ with $M = 3$ under uniform grids $x = \{x_2, x_3, x_4\}$ and $\Delta = 1$, whose corresponding extended grid is $\{x_1, x_2, x_3, x_4, x_5\}$. This gives
+	 Consider $L = L_{2}$ to solve $L v = f(x)$ with $M = 3$ under uniform grids $\overline{x} = \{x_0, x_1, x_2, x_3, x_4\}$ and $\Delta = 1$, whose corresponding interior grid is $x = \{x_1, x_2, x_3\}$. This gives
 	 \begin{align}
 	 L = 	 \begin{bmatrix}
 	 -2 & 1 & 0 \\
@@ -342,15 +341,15 @@ Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value fun
 	 1 & -2 & 1 \\
 	 0 & 1 & -1 \\
 	 \end{bmatrix} 	  \begin{bmatrix}
+	 v(x_1) \\
 	 v(x_2) \\
-	 v(x_3) \\
-	 v(x_4) 
+	 v(x_3) 
 	 \end{bmatrix}
 	 = 
 	 \begin{bmatrix}
+	 f(x_1) \\
 	 f(x_2) \\
-	 f(x_3) \\
-	 f(x_4) 
+	 f(x_3) 
 	 \end{bmatrix} 
 	 \end{align}
 	 
@@ -379,17 +378,17 @@ Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value fun
 	  0 & 0 & 0 & -1 & 1
 	  \end{bmatrix} 
 	  \begin{bmatrix}
+	  v(x_0) \\
 	  v(x_1) \\
 	  v(x_2) \\
 	  v(x_3) \\
-	  v(x_4) \\
-	  v(x_5) \\
+	  v(x_4) 
 	  \end{bmatrix}
 	  = 
  		\begin{bmatrix}
+	  f(x_1) \\
 	  f(x_2) \\
 	  f(x_3) \\
-	  f(x_4) \\
 	  0 \\
 	  0 
 	  \end{bmatrix} 
@@ -404,11 +403,11 @@ Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value fun
 	 1 & -1  & 0 & 0 & 0 \\
 	 0 & 0 & 0 & -1 & 1
 	 \end{bmatrix} 	  \begin{bmatrix}
+	 v(x_0) \\
 	 v(x_1) \\
 	 v(x_2) \\
 	 v(x_3) \\
-	 v(x_4) \\
-	 v(x_5)  \\
+	 v(x_4)  \\
 	 \end{bmatrix}
 	 = 
 	 \begin{bmatrix}
@@ -426,15 +425,15 @@ Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value fun
 	 1 & -2 & 1 \\
 	 0 & 1 & -1 \\
 	 \end{bmatrix} 	  \begin{bmatrix}
+	 v(x_1) \\
 	 v(x_2) \\
-	 v(x_3) \\
-	 v(x_4) 
+	 v(x_3) 
 	 \end{bmatrix}
 	 = 
 	 \begin{bmatrix}
+	 f(x_1) \\
 	 f(x_2) \\
-	 f(x_3) \\
-	 f(x_4) 
+	 f(x_3) 
 	 \end{bmatrix} 
 	 \end{align}
 	 which is identical as  \eqref{eq:extended-system-reflecting-barrier-reduced-system}.
@@ -473,7 +472,7 @@ S
 \subsubsection{Gaussian elimination}
 
 \begin{example}
-	Consider solving \eqref{eq:extended-system-reflecting-barrier-reduced-system}, but this time with an absorbing barrier condition on the lower bound, $v(x_1-\Delta) = S$ with a boundary condition matrix 
+	Consider solving \eqref{eq:extended-system-reflecting-barrier-reduced-system}, but this time with an absorbing barrier condition on the lower bound, $v(x_{\min}) = S$ with a boundary condition matrix 
 	\begin{align}
 	B &= \begin{bmatrix}
 			1 & 0  & 0 & 0 & 0 \\
@@ -490,11 +489,11 @@ S
 0 & 0 & 0 & -1 & 1
 \end{bmatrix} 
 \begin{bmatrix}
-v(x_1 - \Delta) \\
+v(x_0) \\
 v(x_1) \\
 v(x_2) \\
 v(x_3) \\
-v(x_3 +  \Delta) \\
+v(x_4) \\
 \end{bmatrix}
 = 
 \begin{bmatrix}
@@ -515,11 +514,11 @@ Note that substracting the first row of $\overline{L}$ by $(-1)$ times the first
 1 & 0  & 0 & 0 & 0 \\
 0 & 0 & 0 & -1 & 1
 \end{bmatrix} 	  \begin{bmatrix}
-v(x_1 - \Delta) \\
+v(x_0) \\
 v(x_1) \\
 v(x_2) \\
 v(x_3) \\
-v(x_3 +  \Delta) \\
+v(x_4) \\
 \end{bmatrix}
 = 
 \begin{bmatrix}

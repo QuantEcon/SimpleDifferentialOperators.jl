@@ -15,12 +15,13 @@ function LCP_objects(sp)
 # setup
   @unpack μ_bar, σ_bar, S_bar, γ, ρ, x_min, x_max, M = sp
   grid = range(x_min, x_max, length = M)
+  grid_extended = [grid[1] - diff(grid)[1]; grid; grid[end] + diff(grid)[end]]
   μ = μ_bar
   S(x) = S_bar
   u(x) = x^γ
   σ = σ_bar
 # construct operator
-  L = μ * L₁₋(grid, (Reflecting(), Reflecting())) + σ^2/2 * L₂(grid, (Reflecting(), Reflecting()))
+  L = μ * L₁₋(grid_extended, (Reflecting(), Reflecting())) + σ^2/2 * L₂(grid_extended, (Reflecting(), Reflecting()))
 # construct/return LCP objects
   B = ρ*I - L
   S_vec = S.(grid)
@@ -41,17 +42,17 @@ end
 @testset "Backward Case, Nonzero S" begin
   code, sol, f = LCPsolve(StoppingProblem())
   @test code == :Solved
-  @test sol[1] == 0.0
-  @test sol[5] ≈ 12.066957816758809
-  @test f[1] ≈ 0.39946441597137766
+  @test sol[1] ≈ 0.0 atol = 1e-5
+  @test sol[5] ≈ 12.066957816758809 atol = 1e-5
+  @test f[1] ≈ 0.39946441597137766 atol = 1e-5
 end
 
 @testset "Backward Case, Zero S" begin
   code, sol, f = LCPsolve(StoppingProblem(S_bar = 0.))
   @test code == :Solved
-  @test sol[1] ≈ 2.050665004133949
-  @test sol[8] ≈ 30.258918534086924
-  @test f[1] == 0.0
+  @test sol[1] ≈ 2.050665004133949 atol = 1e-5
+  @test sol[8] ≈ 30.258918534086924 atol = 1e-5
+  @test f[1] ≈ 0.0 atol = 1e-5
 end
 
 function LCP_split(S)
@@ -62,10 +63,11 @@ function LCP_split(S)
     σ = 0.1
     M = 300
     x = range(-5., 5., length = M)
+    x̄ = [x[1] - diff(x)[1]; x; x[end] + diff(x)[end]]
     bc = (Reflecting(), Reflecting())
-    L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋(x, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊(x, bc)
+    L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋(x̄, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊(x̄, bc)
   # operator construction
-    L = L₁+ σ^2/2 * L₂(x, bc)
+    L = L₁+ σ^2/2 * L₂(x̄, bc)
   # LCP stuff
     B = ρ*I - L
     S_vec = S * ones(M)
@@ -86,10 +88,10 @@ end
 
   # tests
   @test exit_code == :StationaryPointFound
-  @test sol_z[3] ≈ 8.774937148286833
-  @test sol_z[120] ≈ 0.3021168981772892
-  @test sol_z[270] ≈ 5.729541001488482
-  @test sol_f[end-1] ≈ 3.197442310920451e-14
+  @test sol_z[3] ≈ 8.774937148286833 atol = 1e-5
+  @test sol_z[120] ≈ 0.3021168981772892 atol = 1e-5
+  @test sol_z[270] ≈ 5.729541001488482 atol = 1e-5
+  @test sol_f[end-1] ≈ 3.197442310920451e-14 atol = 1e-5
 end
 
 @testset "Split Case, Zero S" begin
@@ -104,9 +106,9 @@ end
 
   # tests
   @test exit_code == :Solved
-  @test sol_z[3] ≈ 8.888461348456772
-  @test sol_z[76] ≈ 2.279767804635279
-  @test sol_z[150] ≈ 0.005770703117189083
-  @test sol_z[269] ≈ 5.744079221450249
-  @test sol_f[123] ≈ 1.7763568394002505e-15
+  @test sol_z[3] ≈ 8.888461348456772 atol = 1e-5
+  @test sol_z[76] ≈ 2.279767804635279 atol = 1e-5
+  @test sol_z[150] ≈ 0.005770703117189083 atol = 1e-5
+  @test sol_z[269] ≈ 5.744079221450249 atol = 1e-5
+  @test sol_f[123] ≈ 1.7763568394002505e-15 atol = 1e-5
 end
