@@ -326,7 +326,7 @@ b = \begin{bmatrix}
 Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value function $v(\overline{x})$ on the extended grid, one can perform Gaussian elimination to reduce the system and solve $v(x)$, which gives the identical solution as the interior of $v(\overline{x})$. 
 
 \begin{example}\label{ex:gaussian-elimination-reflecting-barrier}
-	 Consider $L = L_{2}$ to solve $L v = f(x)$ with $M = 3$ under uniform grids $x = \{x_2, x_3, x_4\}$ and $\Delta = 1$, whose corresponding extended grid is $\{x_1, x_2, x_3, x_4, x_5\}$. This gives
+	 Consider $L = L_{2}$ to solve $L v = f(x)$ with $M = 3$ under uniform grids $\overline{x} = \{x_0, x_1, x_2, x_3, x_4\}$ and $\Delta = 1$, whose corresponding interior grid is $x = \{x_1, x_2, x_3\}$. This gives
 	 \begin{align}
 	 L = 	 \begin{bmatrix}
 	 -2 & 1 & 0 \\
@@ -341,15 +341,15 @@ Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value fun
 	 1 & -2 & 1 \\
 	 0 & 1 & -1 \\
 	 \end{bmatrix} 	  \begin{bmatrix}
+	 v(x_1) \\
 	 v(x_2) \\
-	 v(x_3) \\
-	 v(x_4) 
+	 v(x_3) 
 	 \end{bmatrix}
 	 = 
 	 \begin{bmatrix}
+	 f(x_1) \\
 	 f(x_2) \\
-	 f(x_3) \\
-	 f(x_4) 
+	 f(x_3) 
 	 \end{bmatrix} 
 	 \end{align}
 	 
@@ -378,17 +378,17 @@ Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value fun
 	  0 & 0 & 0 & -1 & 1
 	  \end{bmatrix} 
 	  \begin{bmatrix}
+	  v(x_0) \\
 	  v(x_1) \\
 	  v(x_2) \\
 	  v(x_3) \\
-	  v(x_4) \\
-	  v(x_5) \\
+	  v(x_4) 
 	  \end{bmatrix}
 	  = 
  		\begin{bmatrix}
+	  f(x_1) \\
 	  f(x_2) \\
 	  f(x_3) \\
-	  f(x_4) \\
 	  0 \\
 	  0 
 	  \end{bmatrix} 
@@ -403,11 +403,11 @@ Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value fun
 	 1 & -1  & 0 & 0 & 0 \\
 	 0 & 0 & 0 & -1 & 1
 	 \end{bmatrix} 	  \begin{bmatrix}
+	 v(x_0) \\
 	 v(x_1) \\
 	 v(x_2) \\
 	 v(x_3) \\
-	 v(x_4) \\
-	 v(x_5)  \\
+	 v(x_4)  \\
 	 \end{bmatrix}
 	 = 
 	 \begin{bmatrix}
@@ -425,15 +425,15 @@ Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value fun
 	 1 & -2 & 1 \\
 	 0 & 1 & -1 \\
 	 \end{bmatrix} 	  \begin{bmatrix}
+	 v(x_1) \\
 	 v(x_2) \\
-	 v(x_3) \\
-	 v(x_4) 
+	 v(x_3) 
 	 \end{bmatrix}
 	 = 
 	 \begin{bmatrix}
+	 f(x_1) \\
 	 f(x_2) \\
-	 f(x_3) \\
-	 f(x_4) 
+	 f(x_3) 
 	 \end{bmatrix} 
 	 \end{align}
 	 which is identical as  \eqref{eq:extended-system-reflecting-barrier-reduced-system}.
@@ -472,7 +472,7 @@ S
 \subsubsection{Gaussian elimination}
 
 \begin{example}
-	Consider solving \eqref{eq:extended-system-reflecting-barrier-reduced-system}, but this time with an absorbing barrier condition on the lower bound, $v(x_1-\Delta) = S$ with a boundary condition matrix 
+	Consider solving \eqref{eq:extended-system-reflecting-barrier-reduced-system}, but this time with an absorbing barrier condition on the lower bound, $v(x_{\min}) = S$ with a boundary condition matrix 
 	\begin{align}
 	B &= \begin{bmatrix}
 			1 & 0  & 0 & 0 & 0 \\
@@ -489,11 +489,11 @@ S
 0 & 0 & 0 & -1 & 1
 \end{bmatrix} 
 \begin{bmatrix}
-v(x_1 - \Delta) \\
+v(x_0) \\
 v(x_1) \\
 v(x_2) \\
 v(x_3) \\
-v(x_3 +  \Delta) \\
+v(x_4) \\
 \end{bmatrix}
 = 
 \begin{bmatrix}
@@ -514,11 +514,11 @@ Note that substracting the first row of $\overline{L}$ by $(-1)$ times the first
 1 & 0  & 0 & 0 & 0 \\
 0 & 0 & 0 & -1 & 1
 \end{bmatrix} 	  \begin{bmatrix}
-v(x_1 - \Delta) \\
+v(x_0) \\
 v(x_1) \\
 v(x_2) \\
 v(x_3) \\
-v(x_3 +  \Delta) \\
+v(x_4) \\
 \end{bmatrix}
 = 
 \begin{bmatrix}
