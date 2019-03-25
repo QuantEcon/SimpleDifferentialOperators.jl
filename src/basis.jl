@@ -41,13 +41,13 @@ function get_basis_L₁₋(x̄::AbstractArray)
     T = eltype(x̄) # get data type of the grid
     d = diff(x̄) # using the first difference as diff from ghost node
     M = length(x̄) - 2
-    Δ_m = d[1:end-1]
-    Δ_p = d[2:end]
+    Δ₋ = d[1:end-1]
+    Δ₊ = d[2:end]
 
     # define L₁₋
-    dl_m1 = -ones(T, M-1)./Δ_m[2:end]
-    d_m1 = ones(T, M)./Δ_m
-    du_m1 = zeros(T, M-1)./Δ_p[1:end-1]
+    dl_m1 = -ones(T, M-1)./Δ₋[2:end]
+    d_m1 = ones(T, M)./Δ₋
+    du_m1 = zeros(T, M-1)./Δ₊[1:end-1]
     L₁₋ = Tridiagonal(dl_m1, d_m1, du_m1)
 end
 
@@ -55,13 +55,13 @@ function get_basis_L₁₊(x̄::AbstractArray)
     T = eltype(x̄) # get data type of the grid
     d = diff(x̄) # using the first difference as diff from ghost node
     M = length(x̄) - 2
-    Δ_m = d[1:end-1]
-    Δ_p = d[2:end]
+    Δ₋ = d[1:end-1]
+    Δ₊ = d[2:end]
 
     # define L₁₊
-    dl_p1 = zeros(T, M-1)./Δ_m[2:end]
-    d_p1 = -ones(T, M)./Δ_p
-    du_p1 = ones(T, M-1)./Δ_p[1:end-1]
+    dl_p1 = zeros(T, M-1)./Δ₋[2:end]
+    d_p1 = -ones(T, M)./Δ₊
+    du_p1 = ones(T, M-1)./Δ₊[1:end-1]
     L₁₊ = Tridiagonal(dl_p1, d_p1, du_p1)
 end
 
@@ -69,14 +69,14 @@ function get_basis_L₂(x̄::AbstractArray)
     T = eltype(x̄) # get data type of the grid
     d = diff(x̄) # using the first difference as diff from ghost node
     M = length(x̄) - 2
-    Δ_m = d[1:end-1]
-    Δ_p = d[2:end]
+    Δ₋ = d[1:end-1]
+    Δ₊ = d[2:end]
     
     # define L₂
-    Δ=Δ_p+Δ_m
-    dl_2 = 2*ones(T, M-1)./(Δ_m[2:end].*Δ[2:end])
-    d_2 = -2*ones(T, M)./(Δ_p.*Δ_m)
-    du_2 = 2*ones(T, M-1)./(Δ_p[1:end-1].*Δ[1:end-1])
+    Δ=Δ₊+Δ₋
+    dl_2 = 2*ones(T, M-1)./(Δ₋[2:end].*Δ[2:end])
+    d_2 = -2*ones(T, M)./(Δ₊.*Δ₋)
+    du_2 = 2*ones(T, M-1)./(Δ₊[1:end-1].*Δ[1:end-1])
     L₂ = Tridiagonal(dl_2, d_2, du_2)
 end
 
