@@ -248,7 +248,7 @@ The diagonal elements of \eqref{eq:L-2-by-basis} are also identical with the one
 which is identical with $\text{diag} (L_2)$ with $L_2$ from \eqref{eq:L-2} except the first row and last row that are affected by $B_1$ and $B_{M}$.
 
 \section{Boundary conditions with operators on extended grids}
-Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$. Define $v(\overline{x})$ as $(M+2)$-vector whose $i$th element is $\overline {x}_i$. We can then define the following operators on $\overline{x}$:
+Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids. Define $v(\overline{x})$ as $(M+2)$-vector whose $i$th element is $v(\overline {x}_i)$. We can then define the following operators on $\overline{x}$:
 
 
 \begin{equation}\label{eq:L-1-minus-extended}
@@ -297,11 +297,19 @@ b
 \end{bmatrix} 
 \end{equation}
 
-with $M_E$ by $(M+2)$ matrix $B$ and $M_E$-length vector $b$ that represent the current boundary conditions, where $M_E$ is the number of boundary conditions to be applied. 
+with $M_E$ by $(M+2)$ matrix $B$ and $M_E$-length vector $b$ that represent the current boundary conditions, where $M_E$ is the number of boundary conditions to be applied. The solution of \eqref{eq:reflecting-barrier-extended-system}, $v(\overline{x})$ can be decomposed into 
+\begin{align}
+v(\overline{x}) = \begin{bmatrix}
+v(x_{\min}) \\
+v(x) \\
+v(x_{\max})
+\end{bmatrix}
+\end{align}
+which also gives the solution for $v(x)$.
 
 \subsection{Reflecting barrier conditions}
 
-To apply reflecting barrier conditions $v'(x_{1}) = v'(x_{M}) = 0$, one can use
+To apply reflecting barrier conditions $v'(x_{\min}) = v'(x_{\max}) = 0$, one can use
 
 \begin{equation}\label{eq:reflecting-barrier-matrix}
 B = \begin{bmatrix}
@@ -434,7 +442,7 @@ Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value fun
 
 \subsection{Absorbing barrier conditions}
 
-To apply an absorbing barrier condition $v(x_{1}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{M}) = 0$, one can use
+To apply an absorbing barrier condition $v(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
 
 \begin{equation}\label{eq:absorbing-barrier-matrix}
 B = \begin{bmatrix}
@@ -447,7 +455,7 @@ S \\
 \end{bmatrix}
 \end{equation}
 
-Similarly, one can apply an absorbing condition on the upper bound  $v(x_{M}) =S$ for some $S \in \mathbb{R}$ and the 
+Similarly, one can apply an absorbing condition on the upper bound  $v(x_{\max}) =S$ for some $S \in \mathbb{R}$ and the 
 
 
 \begin{equation}\label{eq:absorbing-barrier-matrix-ub}
