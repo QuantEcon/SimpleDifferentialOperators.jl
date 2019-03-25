@@ -279,45 +279,6 @@ julia> Array(L̄₂(x̄))
 L̄₂(x̄)  = ExtensionDifferentialOperator(x̄, CentralSecondDifference())
 
 """
-    x̄(x)
-
-Returns an extended grid of length `length(x)+2` given grid `x`.
-
-The first and last elements of the returned extended grid represent the ghost nodes
-just before `x[1]` and `x[end]` respectively.
-```jldoctest; setup = :(using SimpleDifferentialOperators)
-julia> x = 1:3
-1:3
-
-julia> x̄(x)
-5-element Array{Int64,1}:
- 0
- 1
- 2
- 3
- 4
-
-julia> x = [1.0; 1.5; 1.7]
-3-element Array{Float64,1}:
- 1.0
- 1.5
- 1.7
-
-julia> x̄(x)
-5-element Array{Float64,1}:
- 0.5
- 1.0
- 1.5
- 1.7
- 1.9
-```
-"""
-function x̄(x)
-    d = diff(x) # dispatches based on AbstractArray or not
-    x̄ = collect([x[1] - d[1]; x; x[end] + d[end]])
-end
-
-"""
     interior(x̄)
 
 Returns an interior grid of length `length(x̄)-2` given extended grid `x̄`.
