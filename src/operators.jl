@@ -279,40 +279,55 @@ julia> Array(L̄₂(x̄))
 L̄₂(x̄)  = ExtensionDifferentialOperator(x̄, CentralSecondDifference())
 
 """
-    x̄(x)
+    interior(x̄)
 
-Returns an extended grid of length `length(x)+2` given grid `x`.
-
-The first and last elements of the returned extended grid represent the ghost nodes
-just before `x[1]` and `x[end]` respectively.
+Returns an interior grid of length `length(x̄)-2` given extended grid `x̄`.
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
-julia> x = 1:3
-1:3
+julia> x̄ = 0:5
+0:5
 
-julia> x̄(x)
-5-element Array{Int64,1}:
- 0
+julia> interior(x̄)
+3-element Array{Int64,1}:
  1
  2
  3
- 4
 
-julia> x = [1.0; 1.5; 1.7]
+julia> x̄ = [1.0; 1.5; 1.7]
 3-element Array{Float64,1}:
  1.0
  1.5
  1.7
 
-julia> x̄(x)
+julia> interior(x̄)
 5-element Array{Float64,1}:
- 0.5
+ 1.5
+```
+"""
+interior(x̄) = x̄[2:end-1]
+
+"""
+    interior(x̄, bc)
+
+Returns an interior grid corresponding to the boundary condition `bc` given extended grid `x̄`.
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x̄ = 0:5
+0:5
+
+julia> interior(x̄, (Reflecting(), Reflecting()))
+3-element Array{Int64,1}:
+ 1
+ 2
+ 3
+
+julia> x̄ = [1.0; 1.5; 1.7]
+3-element Array{Float64,1}:
  1.0
  1.5
  1.7
- 1.9
+
+julia> interior(x̄, (Mixed(1.0), Mixed(1.0)))
+5-element Array{Float64,1}:
+ 1.5
 ```
 """
-function x̄(x)
-    d = diff(x) # dispatches based on AbstractArray or not
-    x̄ = collect([x[1] - d[1]; x; x[end] + d[end]])
-end
+interior(x̄, bc) = interior(x̄)
