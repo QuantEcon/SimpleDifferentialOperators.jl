@@ -27,7 +27,7 @@ fi
 echo "Weaved example notebooks."
 
 # Run pdflatex steps
-(cd docs/tex && pdflatex discretized-differential-operator-derivation.tex) # compiled pdf to docs/tex
+(cd docs/tex && pdflatex discretized-differential-operator-derivation.tex && pdflatex discretized-differential-operator-derivation.tex) # compiled pdf to docs/tex
 echo "Compiled PDF."
 
 # Clone gh-pages branch
