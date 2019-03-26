@@ -440,6 +440,52 @@ Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value fun
 \end{example}
 
 
+\subsection{Mixed barrier conditions}
+
+To apply a mixed barrier condition $v'(x_{\min}) = - \underline{\xi} v(x_{\min}) $ for some $\xi \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$ and $\Delta_{1,-} = x_1 - x_0$ one can use
+
+\begin{equation}\label{eq:mixed-barrier-matrix-original}
+B = \begin{bmatrix}
+\dfrac{1}{\Delta_{1,-}} - \underline{\xi} & \dfrac{1}{\Delta_{1,-}} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1\\
+\end{bmatrix}_{2 \times (M+2)} \quad 
+b = \begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\end{equation}
+from the discretized scheme
+\begin{align}
+\dfrac{v(x_1) - v(x_0)}{\Delta_{1,-}} = - \underline{\xi} v(x_0)
+\end{align}
+for $v'(x_{\min}) = - \underline{\xi} v(x_{\min})$. Or equivalently,
+\begin{equation}\label{eq:mixed-barrier-matrix}
+B = \begin{bmatrix}
+1 - \underline{\xi} \Delta_{1,-} & \Delta_{1,-} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1\\
+\end{bmatrix}_{2 \times (M+2)} \quad 
+b = \begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\end{equation}
+
+Similarly, one can apply a mixed barrier condition $v'(x_{\min}) = - \underline{\xi} v(x_{\min}) $ for some $\xi \in \mathbb{R}$ on the upper bound, with one reflecting barrier condition on the lower bound $v'(x_{\min}) = 0$ and $\Delta_{M,+} = x_{M+1} - x_M$ with
+
+
+\begin{equation}\label{eq:mixed-barrier-matrix-ub}
+B = \begin{bmatrix}
+-1 & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\Delta_{M,+} & 1 + \overline{\xi} \Delta_{M,+}   \\
+\end{bmatrix}_{2 \times (M+2)} \quad 
+b = \begin{bmatrix}
+0 \\
+S
+\end{bmatrix}
+\end{equation}
+
+
+
 \subsection{Absorbing barrier conditions}
 
 To apply an absorbing barrier condition $v(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
