@@ -30,7 +30,7 @@ f(x) = x^2
 ρ = 0.05
 M = 100 # size of grid
 x̄ = range(0.0, 1.0, length = (M+2)) # grid
-x = interior(x̄) # interior nodes
+x = interiornodes(x̄) # interior nodes
 # discretize L = ρ - μ D_x - σ^2 / 2 D_xx
 # subject to reflecting barriers at 0 and 1
 bc = (Reflecting(), Reflecting())
@@ -123,7 +123,7 @@ f(x) = x^2
 ρ = 0.05
 M = 100 # size of grid
 x̄ = range(-1.0, 1.0, length = (M+2))
-x = interior(x̄) # interior nodes
+x = interiornodes(x̄) # interior nodes
 
 bc = (Reflecting(), Reflecting())
 

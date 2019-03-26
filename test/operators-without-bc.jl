@@ -8,7 +8,7 @@ using Test, LinearAlgebra, DualNumbers
     L̄₁₋_regular = L̄₁₋(regular_grid)
     L̄₁₊_regular = L̄₁₊(regular_grid)
     L̄₂_regular = L̄₂(regular_grid)
-    x_regular = interior(regular_grid)
+    x_regular = interiornodes(regular_grid)
     @test Array(L̄₁₋_regular) == [-1. 1. 0. 0.; 0. -1. 1. 0.]
     @test Array(L̄₁₊_regular) == [0. -1. 1. 0.; 0. 0. -1. 1.]
     @test Array(L̄₂_regular) == [1. -2. 1. 0.; 0. 1. -2. 1.]
@@ -17,13 +17,13 @@ using Test, LinearAlgebra, DualNumbers
     @test @inferred(L̄₁₋(regular_grid)) == L̄₁₋_regular
     @test @inferred(L̄₁₊(regular_grid)) == L̄₁₊_regular
     @test @inferred(L̄₂(regular_grid)) == L̄₂_regular
-    @test @inferred(interior(regular_grid)) == x_regular
+    @test @inferred(interiornodes(regular_grid)) == x_regular
 
     ## irregular grids
     L̄₁₋_irregular = L̄₁₋(irregular_grid)
     L̄₁₊_irregular = L̄₁₊(irregular_grid)
     L̄₂_irregular = L̄₂(irregular_grid)
-    x_irregular = interior(irregular_grid)
+    x_irregular = interiornodes(irregular_grid)
     @test Array(L̄₁₋_irregular) == [-1. 1. 0. 0. 0.; 0. -1. 1. 0. 0.; 0. 0. -1/2 1/2 0.]
     @test Array(L̄₁₊_irregular) == [0. -1. 1. 0. 0.; 0. 0. -1/2 1/2 0.; 0. 0. 0. -1/2 1/2]
     @test Array(L̄₂_irregular) == [1. -2. 1. 0. 0.; 0 2/((1+2)*1) -2/(2*1) 2/((1+2)*2) 0; 0. 0. 1/4 -2/(2*2) 1/4]
@@ -32,7 +32,7 @@ using Test, LinearAlgebra, DualNumbers
     @test @inferred(L̄₁₋(irregular_grid)) == L̄₁₋_irregular
     @test @inferred(L̄₁₊(irregular_grid)) == L̄₁₊_irregular
     @test @inferred(L̄₂(irregular_grid)) == L̄₂_irregular
-    @test @inferred(interior(irregular_grid)) == x_irregular
+    @test @inferred(interiornodes(irregular_grid)) == x_irregular
 end
 
 @testset "Consistency" begin

@@ -29,7 +29,7 @@ export DifferentialOperator,
         L₁₋,
         L₁₊,
         L₂,
-        interior,
+        interiornodes,
         L̄₁₊,
         L̄₁₋,
         L̄₂
