@@ -4,7 +4,7 @@ using Test, LinearAlgebra, DualNumbers
 @testset "Operators under reflecting barrier conditions" begin
 
     # helper function to get differential operators in a more efficient way
-    diffusionoperators(x̄, bc) = (L₁₋ = L₁₋(x̄, bc), L₁₊ = L₁₊(x̄, bc), L₂ = L₂(x̄, bc), x = interior(x̄, bc))
+    diffusionoperators(x̄, bc) = (L₁₋ = L₁₋(x̄, bc), L₁₊ = L₁₊(x̄, bc), L₂ = L₂(x̄, bc), x = interiornodes(x̄, bc))
 
     @testset "Accuracy & regression test" begin
         # Uniform grid
@@ -43,7 +43,7 @@ end
 @testset "Operators under mixed barrier conditions" begin
 
     # helper function to get differential operators in a more efficient way
-    diffusionoperators(x̄, bc) = (L₁₋ = L₁₋(x̄, bc), L₁₊ = L₁₊(x̄, bc), L₂ = L₂(x̄, bc), x = interior(x̄, bc))
+    diffusionoperators(x̄, bc) = (L₁₋ = L₁₋(x̄, bc), L₁₊ = L₁₊(x̄, bc), L₂ = L₂(x̄, bc), x = interiornodes(x̄, bc))
 
     @testset "Accuracy & regression test" begin
         # Uniform grid

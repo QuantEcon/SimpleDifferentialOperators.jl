@@ -48,7 +48,7 @@ f(x) = x^2
 ρ = 0.05
 M = 100 # size of interior nodes
 x̄ = range(0.0, 1.0, length = (M+2)) # extended grid
-x = interior(x̄) # interior grid
+x = interiornodes(x̄) # interior grid
 
 # discretize L = ρ - μ D_x - σ^2 / 2 D_xx on the interior
 # subject to reflecting barriers at 0 and 1

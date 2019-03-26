@@ -34,7 +34,7 @@ We can also define the boundary conditions and LCP matrices at this stage
 ```julia
 M = 300
 x̄ = range(0.0, 5.0, length = (M+2))
-x = interior(x̄)
+x = interiornodes(x̄)
 bc = (Reflecting(), Reflecting())  # assume x_t reflects at 0.0 and 5.0
 L = I * ρ - μ*L₁₋(x̄, bc) - σ^2 / 2 * L₂(x̄, bc)  # (2) and (14)
 
