@@ -46,14 +46,16 @@ f(x) = x^2
 μ = -0.1 # constant negative drift
 σ = 0.1
 ρ = 0.05
-x = range(0.0, 1.0, length = 100)
+M = 100 # size of interior nodes
+x̄ = range(0.0, 1.0, length = (M+2)) # extended grid
+x = interior(x̄) # interior grid
 
-# discretize L = ρ - μ D_x - σ^2 / 2 D_xx
+# discretize L = ρ - μ D_x - σ^2 / 2 D_xx on the interior
 # subject to reflecting barriers at 0 and 1
 bc = (Reflecting(), Reflecting())
-L_x = μ*L₁₋(x, bc) - σ^2 / 2 * L₂(x, bc)
+L_x = μ*L₁₋(x̄, bc) - σ^2 / 2 * L₂(x̄, bc)
 L = I * ρ - L_x
-## solve the value function
+## solve the value function on the interior
 v = L \ f.(x)
 ```
 
