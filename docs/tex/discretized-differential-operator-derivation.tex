@@ -49,11 +49,12 @@
 	0
 	\end{bmatrix}\in\R^{M+2}
 	\end{align}
-	\item Reflecting barrier conditions:
+	\item Mixed boundary conditions:
 	\begin{align}
 	\underline{\xi} v({x_{\min}}) + \D[x]v({x_{\min}} ) &= 0\label{eq:new-BC1}\\
 	\overline{\xi} v({x_{\max}}) + \D[x]v({x_{\max}}) &= 0\label{eq:new-BC2}
 	\end{align}
+	Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$.
 \end{itemize}
 
 Let $L_{1-}$, $L_{1+}$ be the discretized backward and forward first order differential operators and $L_2$ be the discretized central difference  second order differential operator, all subject to the Neumann boundary conditions in \cref{eq:new-BC1,eq:new-BC2}, such that $L_{1-} v(x), L_{1+} v(x)$ and $L_2 v(x)$ represent the first-order (backward and forward) and second-order derivatives of $v(x)$ respectively at $x$. For second derivatives, we use the following numerical scheme from \cite{achdou17}:
@@ -465,9 +466,9 @@ Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value fun
 \end{example}
 
 
-\subsection{Mixed barrier conditions}
+\subsection{Mixed boundary conditions}
 
-To apply a mixed barrier condition $v'(x_{\min}) = - \underline{\xi} v(x_{\min}) $ for some $\xi \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$ and $\Delta_{1,-} = x_1 - x_0$ one can use
+To apply a mixed boundary condition $v'(x_{\min}) = - \underline{\xi} v(x_{\min}) $ for some $\xi \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$ and $\Delta_{1,-} = x_1 - x_0$ one can use
 
 \begin{equation}\label{eq:mixed-barrier-matrix-original}
 B = \begin{bmatrix}
@@ -495,7 +496,7 @@ b = \begin{bmatrix}
 \end{bmatrix}
 \end{equation}
 
-Similarly, one can apply a mixed barrier condition $v'(x_{\min}) = - \underline{\xi} v(x_{\min}) $ for some $\xi \in \mathbb{R}$ on the upper bound, with one reflecting barrier condition on the lower bound $v'(x_{\min}) = 0$ and $\Delta_{M+1,-} = x_{M+1} - x_M$ with
+Similarly, one can apply a mixed boundary condition $v'(x_{\min}) = - \underline{\xi} v(x_{\min}) $ for some $\xi \in \mathbb{R}$ on the upper bound, with one reflecting barrier condition on the lower bound $v'(x_{\min}) = 0$ and $\Delta_{M+1,-} = x_{M+1} - x_M$ with
 
 
 \begin{equation}\label{eq:mixed-barrier-matrix-ub}
