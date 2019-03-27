@@ -63,17 +63,25 @@ Suppose that the grids are regular, i.e., elements of $\text{diff}(x)$ are all i
 
 Using the backwards first-order difference, \eqref{eq:new-BC1} implies
 \begin{align}
-\dfrac{v({x_{1}}) - v(x_{\min})}{\Delta} &= - \underline{\xi} v({x_{1}})
+\dfrac{v({x_{1}}) - v(x_{0})}{\Delta} &= - \underline{\xi} v({x_{0}})
+\end{align}
+i.e.,
+\begin{align}\label{eq:BC1-extrapolation-uniform}
+v(x_0) = \frac{1}{1-\underline{\xi} \Delta_{1,-} } v(x_1)
 \end{align}
 at the lower bound.
 
 Likewise, \eqref{eq:new-BC2} under the forwards first-order difference yields
 \begin{align}
-\dfrac{v(x_{\max}) - v({x_{M}})}{\Delta} &= - \overline{\xi} v({x_{M}})
+\dfrac{v(x_{M+1}) - v({x_{M}})}{\Delta} &= - \overline{\xi} v({x_{M+1} })
+\end{align}
+i.e.,
+\begin{align}\label{eq:BC2-extrapolation-uniform}
+v(x_{M+1}) = \frac{1}{1+\overline{\xi} \Delta_{M,+} } v(x_M)
 \end{align}
 at the upper bound.
 
-The discretized central difference of second order under \eqref{eq:new-BC1} at the lower bound is
+The discretized central difference of second order under \eqref{eq:new-BC1} at the lower bound is, by substituting \eqref{eq:BC1-extrapolation-uniform} in,
 \begin{align}
 \dfrac{v ({x_{1}} + \Delta) - 2 v({x_{1}}) + v(x_{\min})}{\Delta^2} &=   \dfrac{v({x_{1}} + \Delta) - v({x_{1}})}{\Delta^2} - \dfrac{1}{\Delta}\dfrac{v ({x_{1}}) - v(x_{\min}) }{\Delta}  \\
 &= \dfrac{v({x_{1}} + \Delta) - v({x_{1}})}{\Delta^2} + \dfrac{1}{\Delta} \underline{\xi} v({x_{1}})  \\ 
@@ -116,16 +124,23 @@ L_2 &\equiv \frac{1}{\Delta^2}\begin{pmatrix}
 \subsection{Irregular grids}
 Using the backwards first-order difference, \eqref{eq:new-BC1} implies
 \begin{align}
-\dfrac{v({x_{1}}) - v(x_{\min})}{\Delta_{1, -}} &= - \underline{\xi} v({x_{1}})
+\dfrac{v({x_{1}}) - v(x_{0})}{\Delta_{1, -}} &= - \underline{\xi} v({x_{0}})
 \end{align}
-
+i.e.,
+\begin{align}\label{eq:BC1-extrapolation}
+v(x_0) = \frac{1}{1-\underline{\xi} \Delta_{1,-} } v(x_1)
+\end{align}
 at the lower bound. Likewise, the forwards first-order difference under \eqref{eq:new-BC2} yields
 \begin{align}
-\dfrac{v(x_{\max}) - v( {x_{M}})}{\Delta_{M, +}} &= - \overline{\xi} v({x_{M}})
+\dfrac{v(x_{M+1}) - v( {x_{M}})}{\Delta_{M, +}} &= - \overline{\xi} v({x_{M+1}})
+\end{align}
+i.e.,
+\begin{align}\label{eq:BC2-extrapolation}
+v(x_{M+1}) = \frac{1}{1+\overline{\xi} \Delta_{M,+} } v(x_M)
 \end{align}
 at the upper bound.
 
-Note that we have assumed that $\Delta_{1,-} = \Delta_{1,+}$ and $\Delta_{M,+} = \Delta_{M,-}$ for the ghost notes. The discretized central difference of second order scheme at the lower bound under \eqref{eq:new-BC1} is 
+Note that we have assumed that $\Delta_{1,-} = \Delta_{1,+}$ and $\Delta_{M,+} = \Delta_{M,-}$ for the ghost notes. The discretized central difference of second order scheme at the lower bound under \eqref{eq:new-BC1}, by substituting \eqref{eq:BC2-extrapolation}, is 
 \begin{align}
 &\dfrac{\Delta_{1,-} v( {x_{1}} + \Delta_{1,+}) - (\Delta_{1,+} + \Delta_{1,-}) v({x_{1}}) + \Delta_{1,+}  v( x_{\min})}{\frac{1}{2}(\Delta_{1,+} + \Delta_{1,-}) \Delta_{1,+} \Delta_{1,-} } \\
 &=
