@@ -40,7 +40,15 @@
 	\Delta_{i,-} &\equiv x_i - x_{i-1},\, \text{for } i = 1,\ldots, M+1\\
 	\Delta_{i,+} &\equiv x_{i+1} - x_i,\, \text{for } i = 0,\ldots, M
 	\end{align}
-	 Then define the vector of backward and forward first differences on interior nodes as $\Delta_{-} = \set{\Delta_{i,-}}_{i=1}^{M}$, $\Delta_{+} \equiv \set{\Delta_{i,+}}_{i=1}^{M}$.
+	\item Define the vector of backwards and forwards first differences, padding with $\Delta_{0,-} = \Delta_{M+1,+} = 0$, as
+	\begin{align}
+	\Delta_{-} &\equiv \begin{bmatrix} 0 \\
+	\text{diff}(z)
+	\end{bmatrix}\in\R^{M+2}\label{eq:Delta-minus}\\
+	\Delta_{+} &\equiv \begin{bmatrix} \text{diff}(z)\\
+	0
+	\end{bmatrix}\in\R^{M+2}
+	\end{align}
 	\item Reflecting barrier conditions:
 	\begin{align}
 	\underline{\xi} v({x_{\min}}) + \D[x]v({x_{\min}} ) &= 0\label{eq:new-BC1}\\
@@ -234,31 +242,31 @@ L_2 &= \dfrac{1}{\Delta^2} (U_1^+ - U_1^-) + B_1 + B_{M}
 \end{align}
 
 \subsubsection{Irregular grids}
-For notational brevity, for vectors with the same size, $x_1, x_2$, define $x_1 x_2$ as the elementwise-multiplied vector. Then, we have
+For notational brevity, for vectors with the same size, $x_1, x_2$, define $x_1 x_2$ as the elementwise-multiplied vector. Also, let $\Delta_-^\circ, \Delta_+^\circ$ as the vectors of differences on the interior nodes, i.e., $\Delta_{-}^\circ = \set{\Delta_{i,-}}_{i=1}^M$, $\Delta_{+}^\circ = \set{\Delta_{i,}}_{i=1}^M$. Then, we have
 \begin{align}
-L_{1-} &= \text{diag}(\Delta_{-} )^{-1} U_1^{-} - B_1 \\
-L_{1+} &= \text{diag}(\Delta_{+} )^{-1} U_1^{+} + B_{M} \\
-L_2 &= \text{diag} \left[ \frac{1}{2} ( \Delta_+ + \Delta_- ) \Delta_+ \right]^{-1}  U_1^{+} - 
- \text{diag} \left[ \frac{1}{2} ( \Delta_+ + \Delta_- ) \Delta_- \right]^{-1}  U_1^{-} 
+L_{1-} &= \text{diag}(\Delta_{-}^{\circ} )^{-1} U_1^{-} - B_1 \\
+L_{1+} &= \text{diag}(\Delta_{+}^{\circ} )^{-1} U_1^{+} + B_{M} \\
+L_2 &= \text{diag} \left[ \frac{1}{2} ( {\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}} ) {\Delta_{+}^{\circ}} \right]^{-1}  U_1^{+} - 
+ \text{diag} \left[ \frac{1}{2} ( {\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}} ) {\Delta_{-}^{\circ}} \right]^{-1}  U_1^{-} 
 + B_1 + B_{M} 
 \end{align}
 We can simplify this expression further by introducing a new notation. Let $x^{-1}$ be defined as the elementwise inverse of a vector $x$ that contains no zero element. Then, $L_2$ can be represented as
 \begin{align}
 L_2 &=
-2\left[ \text{diag} \left( ( \Delta_+ + \Delta_- )^{-1} \Delta_+^{-1} \right) U_1^{+} - 
-\text{diag} \left( ( \Delta_+ + \Delta_- )^{-1} \Delta_-^{-1} \right) U_1^{-}  \right]
+2\left[ \text{diag} \left( ( {\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}} )^{-1} {\Delta_{+}^{\circ}}^{-1} \right) U_1^{+} - 
+\text{diag} \left( ( {\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}} )^{-1} {\Delta_{-}^{\circ}}^{-1} \right) U_1^{-}  \right]
 + B_1 + B_{M} \\ \label{eq:L-2-by-basis}
-&= 2 \text{diag} \left( ( \Delta_+ + \Delta_- )^{-1} \right) \left[ \text{diag} \left(  \Delta_+^{-1} \right) U_1^{+} - 
-\text{diag} \left(  \Delta_-^{-1} \right) U_1^{-}  \right]
+&= 2 \text{diag} \left( ( {\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}} )^{-1} \right) \left[ \text{diag} \left(  {\Delta_{+}^{\circ}}^{-1} \right) U_1^{+} - 
+\text{diag} \left(  {\Delta_{-}^{\circ}}^{-1} \right) U_1^{-}  \right]
 + B_1 + B_{M}
 \end{align}
 
 
 The diagonal elements of \eqref{eq:L-2-by-basis} are also identical with the one provided in \eqref{eq:L-2} -- to see this, note that the diagonal elements of \eqref{eq:L-2-by-basis}, modulo $B_1$ and $B_{M}$, are
 \begin{align}
--2 \left[ (\Delta_+ + \Delta_-)^{-1} \Delta_+^{-1} + (\Delta_+ + \Delta_-)^{-1} \Delta_-^{-1} \right] &= -2 (\Delta_+ + \Delta_-)^{-1}  ( \Delta_+^{-1} + \Delta_-^{-1} ) \\
-&= -2(\Delta_+ + \Delta_-)^{-1} (\Delta_+^{-1} \Delta_-^{-1}) (\Delta_+ + \Delta_- )  \\
-&= -2 (\Delta_+^{-1} \Delta_-^{-1})
+-2 \left[ ({\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}})^{-1} {\Delta_{+}^{\circ}}^{-1} + ({\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}})^{-1} {\Delta_{-}^{\circ}}^{-1} \right] &= -2 ({\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}})^{-1}  ( {\Delta_{+}^{\circ}}^{-1} + {\Delta_{-}^{\circ}}^{-1} ) \\
+&= -2({\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}})^{-1} ({\Delta_{+}^{\circ}}^{-1} {\Delta_{-}^{\circ}}^{-1}) ({\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}} )  \\
+&= -2 ({\Delta_{+}^{\circ}}^{-1} {\Delta_{-}^{\circ}}^{-1})
 \end{align}
 which is identical with $\text{diag} (L_2)$ with $L_2$ from \eqref{eq:L-2} except the first row and last row that are affected by $B_1$ and $B_{M}$.
 
