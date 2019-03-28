@@ -299,12 +299,13 @@ Boundary conditions can be applied manually by using operators on extended grids
 
 
 \begin{equation}\label{eq:L-2-extended} \small
-\overline{L}_2 \equiv \begin{psmallmatrix}
-\Delta_{1,-}^{-2} &-2\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  & \Delta_{i,+}^{-2}&\dots&0&0&0\\
-0&2(\Delta_{2,+}+\Delta_{2,-})^{-1} \Delta_{2,-}^{-1} &-2\Delta_{2,-}^{-1} \Delta_{2,+}^{-1} &\dots&0&0&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
-0&0&0&\dots&-2\Delta_{M-1,-}^{-1} \Delta_{M-1,+}^{-1}  & 2 (\Delta_{M-1,+}+\Delta_{M-1,-})^{-1} \Delta_{M-1,+}^{-1}&0\\
-0&0&0&\cdots&\Delta_{M,-}^{-2} &-2\Delta_{M,-}^{-1} \Delta_{M,+}^{-1}  & \Delta_{M,+}^{-2}
+\overline{L}_2 \equiv 2 \begin{psmallmatrix}
+(\Delta_{1,+}+\Delta_{1,-})^{-1}\Delta_{1,-}^{-1} &-\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  & (\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{i,+}^{-1}&\dots&0&0\\
+0 & \ddots & \ddots &\ddots & 0 & 0\\ 
+\vdots&\ddots &\ddots & \ddots & \ddots & \vdots\\ 
+0&0&\cdots&
+(\Delta_{M,+}+\Delta_{M,-})^{-1}\Delta_{M,-}^{-1} &-\Delta_{M,-}^{-1} \Delta_{M,+}^{-1}  & 
+(\Delta_{M,+}+\Delta_{M,-})^{-1}\Delta_{M,+}^{-1}
 \end{psmallmatrix}_{M\times (M+2)}
 \end{equation}
 
