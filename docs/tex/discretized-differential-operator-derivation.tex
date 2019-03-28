@@ -274,7 +274,14 @@ which is identical with $\text{diag} (L_2)$ with $L_2$ from \eqref{eq:L-2} excep
 \fi 
 
 \section{Boundary conditions with operators on extended grids}
-Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids. Define $v(\overline{x})$ as $(M+2)$-vector whose $i$th element is $v(\overline {x}_i)$. We can then define the following operators on $\overline{x}$:
+Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids. Define $v(\overline{x})$ as $(M+2)$-vector whose $i$th element is $v(\overline {x}_i)$, and define the vectors of backward and forward distance for interior nodes as follows: 
+\begin{align}
+\Delta_{-}^\circ &= \set{\Delta_{i,-}}_{i=1}^M \\
+\Delta_{+}^\circ &= \set{\Delta_{i,+}}_{i=1}^M
+\end{align}
+
+
+We can then define the following operators on $\overline{x}$:
 
 
 \begin{equation}\label{eq:L-1-minus-extended}
@@ -309,6 +316,25 @@ Boundary conditions can be applied manually by using operators on extended grids
 \end{psmallmatrix}_{M\times (M+2)}
 \end{equation}
 
+Alternatively, in a more compact form, using vectors distances for interior nodes:
+\begin{align}
+\overline{L}_{1-} \equiv 
+\begin{bmatrix}
+\text{tridiag($\mathbf{0}_{M-1}$, $-(\Delta_-^\circ)^{-1}$, $(\Delta_-^\circ)^{-1}$) } & \vdots & \mathbf{0}_M
+\end{bmatrix}_{M\times (M+2)}
+\end{align} 
+\begin{align}
+\overline{L}_{1+} \equiv 
+\begin{bmatrix}
+\mathbf{0}_M & \vdots &
+\text{tridiag($\mathbf{0}_{M-1}$, $-(\Delta_-^\circ)^{-1}$, $(\Delta_-^\circ)^{-1}$) }  
+\end{bmatrix}_{M\times (M+2)} 
+\end{align}
+\begin{align}
+\overline{L}_{2} \equiv 
+2 \odot \text{tridiag $\left[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, -(\Delta_-^\circ \odot \Delta_+^\circ)^{-1} , (\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \right]$  } _{M\times (M+2)}
+\end{align}
+where $\text{tridiag}(x,y,z)$ is a matrix whose lower, main, upper diagonal vectors are $x$, $y$, and $z$, respectively.
 
 Suppose that we want to solve a system $L v({x}) = f(x) $ for $v(x)$ where $L$ is a linear combination of discretized differential operators for some $f(x)$ that represents the values of a function $f$ on discretized $x$. To solve the system under boundary conditions on $v$, one can construct and solve the following extended system:
 
