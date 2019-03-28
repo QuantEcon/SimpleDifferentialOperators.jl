@@ -472,7 +472,7 @@ To apply a mixed boundary condition $v'(x_{\min}) = - \underline{\xi} v(x_{\min}
 
 \begin{equation}\label{eq:mixed-barrier-matrix-original}
 B = \begin{bmatrix}
-\dfrac{1}{\Delta_{0,+}} - \underline{\xi} & \dfrac{1}{\Delta_{0,+}} & 0 & \dots & 0 & 0 & 0 \\
+-\dfrac{1}{\Delta_{0,+}} + \underline{\xi} & \dfrac{1}{\Delta_{0,+}} & 0 & \dots & 0 & 0 & 0 \\
 0 & 0 & 0 & \dots & 0 & -1 & 1\\
 \end{bmatrix}_{2 \times (M+2)} \quad 
 b = \begin{bmatrix}
@@ -487,7 +487,7 @@ from the discretized scheme
 for $v'(x_{\min}) = - \underline{\xi} v(x_{\min})$. Or equivalently,
 \begin{equation}\label{eq:mixed-barrier-matrix}
 B = \begin{bmatrix}
-1 - \underline{\xi} \Delta_{1,-} & \Delta_{1,-} & 0 & \dots & 0 & 0 & 0 \\
+-1 +  \underline{\xi} \Delta_{1,-} & 1 & 0 & \dots & 0 & 0 & 0 \\
 0 & 0 & 0 & \dots & 0 & -1 & 1\\
 \end{bmatrix}_{2 \times (M+2)} \quad 
 b = \begin{bmatrix}
@@ -502,7 +502,7 @@ Similarly, one can apply a mixed boundary condition $v'(x_{\min}) = - \underline
 \begin{equation}\label{eq:mixed-barrier-matrix-ub}
 B = \begin{bmatrix}
 -1 & 1 & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & -\Delta_{M+1,-} & 1 + \overline{\xi} \Delta_{M+1,-}   \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi} \Delta_{M+1,-}   \\
 \end{bmatrix}_{2 \times (M+2)} \quad 
 b = \begin{bmatrix}
 0 \\
