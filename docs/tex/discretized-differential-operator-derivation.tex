@@ -186,7 +186,7 @@ L_{1+} &\equiv \begin{pmatrix}
 0&0&0&\dots&0&0&\Delta_{M,+}^{-1}  [-1 + (1 - \overline{\xi} \Delta_{M,+})]  \\
 \end{pmatrix}_{M\times M}\label{eq:L-1-plus} \\
 L_2 &\equiv \begin{psmallmatrix}
-\Delta_{1,+}^{-2}[-2 + (1+\underline{\xi} \Delta_{1,+})] &\Delta_{1,+}^{-2}&0&\cdots&0&0&0 \\
+\Delta_{1,-}^{-2}[-2 + (1+\underline{\xi} \Delta_{1,-})] &\Delta_{1,-}^{-2}&0&\cdots&0&0&0 \\
 \vdots&\ddots&\ddots&\ddots&\ddots&\vdots&\vdots\\
 0&\cdots&2(\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,-}^{-1} &-2\Delta_{i,-}^{-1} \Delta_{i,+}^{-1}  & 2 (\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,+}^{-1}&\cdots&0 \\
 \vdots&\vdots&\vdots&\ddots&\ddots&\ddots&\vdots\\
@@ -380,72 +380,147 @@ which also gives the solution for $v(x)$.
 \subsection{Gaussian elimination}
 Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value function $v(\overline{x})$ on the extended grid, one can perform Gaussian elimination to reduce the system and solve $v(x)$, which gives the identical solution as the interior of $v(\overline{x})$. 
 
-Note that in the first columns of all the extension operators have non-zero element only in the first rows. Thus, a single Gaussian elimination for the first extension grid will suffice to remove the extended.
-
- Likewise, in the last columns of all the extension operators have non-zero element only in the last row. 
-
-\subsubsection{Reflecting barrier conditions}
-
-To apply reflecting barrier conditions $v'(x_{\min}) = v'(x_{\max}) = 0$, one can use
-
-\begin{equation}\label{eq:reflecting-barrier-matrix}
-B = \begin{bmatrix}
--1 & 1 & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & -1 & 1\\
-\end{bmatrix}_{2 \times (M+2)} \quad 
-b = \begin{bmatrix}
-0 \\
-0
-\end{bmatrix}
-\end{equation}
-
-
 \subsubsection{Mixed boundary conditions}
+Mixed boundary conditions:
+\begin{align}
+\underline{\xi} v({x_{\min}}) + \D[x]v({x_{\min}} ) &= 0\label{eq:new-BC1}\\
+\overline{\xi} v({x_{\max}}) + \D[x]v({x_{\max}}) &= 0\label{eq:new-BC2}
+\end{align}
+Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$. Using forward difference and backward difference discretization scheme for the lower bound and upper bound respectively, we have
+\begin{align}
+&\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} - \underline{\xi} \overline{v}_0 = 0 \\
+&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} - \overline{\xi} \overline{v}_{M+1} = 0
+\end{align}
 
-To apply a mixed boundary condition $v'(x_{\min}) = - \underline{\xi} v(x_{\min}) $ for some $\xi \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$ and $\Delta_{1,-} = x_1 - x_0$ one can use
+Thus, the corresponding boundary condition matrix $B$ is
 
 \begin{equation}\label{eq:mixed-barrier-matrix-original}
 B = \begin{bmatrix}
 -\dfrac{1}{\Delta_{0,+}} + \underline{\xi} & \dfrac{1}{\Delta_{0,+}} & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & -1 & 1\\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta_{M+1,-}} & \dfrac{1}{\Delta_{M+1,-}} + \overline{\xi}\\
 \end{bmatrix}_{2 \times (M+2)} \quad 
 b = \begin{bmatrix}
 0 \\
 0
 \end{bmatrix}
 \end{equation}
-from the discretized scheme
-\begin{align}
-\dfrac{v(x_1) - v(x_0)}{\Delta_{0,+}} = - \underline{\xi} v(x_0)
-\end{align}
-for $v'(x_{\min}) = - \underline{\xi} v(x_{\min})$. Or equivalently,
+which provides the identical system as
 \begin{equation}\label{eq:mixed-barrier-matrix}
 B = \begin{bmatrix}
 -1 +  \underline{\xi} \Delta_{1,-} & 1 & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & -1 & 1\\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi} \Delta_{M,+}\\
 \end{bmatrix}_{2 \times (M+2)} \quad 
 b = \begin{bmatrix}
 0 \\
 0
 \end{bmatrix}
 \end{equation}
+since $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$
 
-Similarly, one can apply a mixed boundary condition $v'(x_{\min}) = - \underline{\xi} v(x_{\min}) $ for some $\xi \in \mathbb{R}$ on the upper bound, with one reflecting barrier condition on the lower bound $v'(x_{\min}) = 0$ and $\Delta_{M+1,-} = x_{M+1} - x_M$ with
 
+The first columns of all the extension operators above, $\overline{L}_{1-}, \overline{L}_{1+}, \overline{L}_{2}, \overline{I}$, have non-zero element only in the first rows. Thus, a single Gaussian elimination for the first extension grid will suffice to remove the extended. Likewise, in the last columns of all the extension operators have non-zero element only in the last row. 
 
-\begin{equation}\label{eq:mixed-barrier-matrix-ub}
-B = \begin{bmatrix}
--1 & 1 & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi} \Delta_{M+1,-}   \\
-\end{bmatrix}_{2 \times (M+2)} \quad 
-b = \begin{bmatrix}
-0 \\
-0
+Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta_{1,-} )^{-1}\Delta_{1,-}^{-1}$ gives, with the corresponding Gaussian elimination operator $B_0$,
+
+\begin{equation}
+B_0 \overline{L}_{1-} = \begin{pmatrix}
+0&\Delta_{1,-}^{-1} \left[ 1 - (1+\underline{\xi} \Delta_{1,-} )\right] &0&\dots&0&0&0\\
+0&-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&\Delta_{M-1,-}^{-1}&0&0\\
+0&0&0&\cdots&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}&0
+\end{pmatrix}_{M\times (M+2)}
+\end{equation}
+note that there is no zero element in the first and last column for nodes on boundaries. Hence, solving the corresponding extended system, 
+\begin{equation}
+\begin{bmatrix}
+\overline{L}\\
+B
+\end{bmatrix} = 
+\begin{bmatrix}
+f(x) \\ b
 \end{bmatrix}
 \end{equation}
+limited to the interior, is identical as solving the following system with an operator $L$ on interior nodes
+\begin{equation}
+L_{1-} v(x) = f(x)
+\end{equation}
+instead of solving the full system with boundary conditions, where we have $\overline{L} = \overline{L}_{1-}$ and $L = L_{1-}$ with
+\begin{equation}
+L_{1-} \equiv \frac{1}{\Delta}\begin{pmatrix}
+1 - (1 + \underline{\xi} \Delta) &0&0&\dots&0&0&0\\
+-1&1&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-1&1&0\\
+0&0&0&\cdots&0&-1&1
+\end{pmatrix}_{M\times M}
+\end{equation}
+Similarly, one can define differential operators on the interior as follows:
+
+\begin{align}
+L_{1-} &\equiv \begin{pmatrix}
+\Delta^{-1}_{1,-} [1 - (1 + \underline{\xi} \Delta_{1,-})] &0&0&\dots&0&0&0\\
+-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-\Delta_{M-1,-}^{-1}&\Delta_{M-1,-}^{-1}&0\\
+0&0&0&\cdots&0&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}
+\end{pmatrix}_{M\times M}\label{eq:L-1} \\
+L_{1+} &\equiv \begin{pmatrix}
+-\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&0&\dots&0&0&0\\
+0&-\Delta_{2,+}^{-1}&\Delta_{2,+}^{-1}&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\cdots&0&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}\\
+0&0&0&\dots&0&0&\Delta_{M,+}^{-1}  [-1 + (1 - \overline{\xi} \Delta_{M,+})]  \\
+\end{pmatrix}_{M\times M}\label{eq:L-1-plus} \\
+L_2 &\equiv \begin{psmallmatrix}
+\Delta_{1,-}^{-2}[-2 + (1+\underline{\xi} \Delta_{1,-})] &\Delta_{1,+}^{-2}&0&\cdots&0&0&0 \\
+\vdots&\ddots&\ddots&\ddots&\ddots&\vdots&\vdots\\
+0&\cdots&2(\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,-}^{-1} &-2\Delta_{i,-}^{-1} \Delta_{i,+}^{-1}  & 2 (\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,+}^{-1}&\cdots&0 \\
+\vdots&\vdots&\vdots&\ddots&\ddots&\ddots&\vdots\\
+0&0&0&\cdots&0&\Delta_{M,+}^{-2}&\Delta_{M,+}^{-2} [-2 + (1- \overline{\xi}\Delta_{M,+})]
+\end{psmallmatrix}_{M\times M}\label{eq:L-2} \\
+I &\equiv \begin{pmatrix}
+1 & 0 & \cdots & 0 & 0 \\
+0 & 1 & \cdots & 0 & 0 \\
+\vdots  & \ddots & \ddots &  \vdots  & \vdots   \\
+0 & 0 & \cdots & 1 & 0 \\
+0 & 0 & \cdots & 0 & 1
+\end{pmatrix}_{M\times M}
+\end{align}
 
 
+Or, alternatively, with vectorized differences:
 
+
+\begin{align}
+{L}_{1-} \equiv 
+\text{tridiag} \left[-(\Delta_-^\circ)^{-1}[2:M], \begin{pmatrix}\Delta^{-1}_{1,-} [1 - (1 + \underline{\xi} \Delta_{1,-})]; (\Delta_-^\circ )^{-1}[2:M] \end{pmatrix}, \mathbf{0}_{M-1}  \right] 
+\end{align}
+
+\begin{align}
+{L}_{1+} \equiv 
+\text{tridiag} \left[  \mathbf{0}_{M-1},
+\begin{pmatrix}-(\Delta_-^\circ )^{-1}[1:M-1]; \Delta^{-1}_{M,+} [-1 + (1 - \overline{\xi} \Delta_{M,+})] \end{pmatrix}, 
+(\Delta_-^\circ)^{-1}[2:M]
+ \right] 
+\end{align}
+\begin{align}
+{L}_{2} \equiv 
+2 \odot \text{tridiag}& \Big[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, \\&
+	\begin{pmatrix}
+	\Delta_{1,-}^{-2}[-2 + (1+\underline{\xi} \Delta_{1,-})] ;
+	-(\Delta_-^\circ \odot \Delta_+^\circ)^{-1}[2:M-1];
+	\Delta_{M,+}^{-2}[-2 + (1-\overline{\xi} \Delta_{M,+})]
+	\end{pmatrix} , \\&
+	(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \Big]
+\end{align}
+
+\begin{align}
+I \equiv  \text{diag($\mathbf{1}_M$)} 
+\end{align}
+	
+	
+	
 \subsubsection{Absorbing barrier conditions}
 
 To apply an absorbing barrier condition $v(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
