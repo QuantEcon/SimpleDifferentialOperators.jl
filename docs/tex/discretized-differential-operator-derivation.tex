@@ -76,7 +76,7 @@ We can then define the following operators on $\overline{x}$:
 
 
 \begin{equation}\label{eq:L-1-minus-extended}
-\overline{L}_{1-} \equiv\begin{pmatrix}
+{L}_{1-} \equiv\begin{pmatrix}
 -\Delta_{1,-}^{-1}&\Delta_{1,-}^{-1}&0&\dots&0&0&0\\
 0&-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
@@ -86,7 +86,7 @@ We can then define the following operators on $\overline{x}$:
 \end{equation}
 
 \begin{equation}\label{eq:L-1-plus-extended}
-\overline{L}_{1+} \equiv \begin{pmatrix}
+{L}_{1+} \equiv \begin{pmatrix}
 0&-\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&\dots&0&0&0\\
 0&0&-\Delta_{2,+}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
@@ -97,7 +97,7 @@ We can then define the following operators on $\overline{x}$:
 
 
 \begin{equation}\label{eq:L-2-extended} \small
-\overline{L}_2 \equiv 2 \begin{psmallmatrix}
+{L}_2 \equiv 2 \begin{psmallmatrix}
 (\Delta_{1,+}+\Delta_{1,-})^{-1}\Delta_{1,-}^{-1} &-\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  & (\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{i,+}^{-1}&\dots&0&0\\
 0 & \ddots & \ddots &\ddots & 0 & 0\\ 
 \vdots&\ddots &\ddots & \ddots & \ddots & \vdots\\ 
@@ -109,7 +109,7 @@ We can then define the following operators on $\overline{x}$:
 
 and one for identity matrix:
 \begin{equation}\label{eq:I-extended} 
-\overline{I} \equiv \begin{pmatrix}
+{I} \equiv \begin{pmatrix}
 0 & 1 & 0 & \cdots & 0 & 0 & 0\\
 0 & 0 & 1 & \cdots & 0 & 0 & 0\\
 \vdots & \vdots  & \ddots & \ddots &  \vdots  & \vdots  & \vdots  \\
@@ -120,24 +120,24 @@ and one for identity matrix:
 
 Alternatively, in a more compact form, using vectors distances for interior nodes:
 \begin{align}
-\overline{L}_{1-} \equiv 
+{L}_{1-} \equiv 
 \begin{bmatrix}
 \text{tridiag($\mathbf{0}_{M-1}$, $-(\Delta_-^\circ)^{-1}$, $(\Delta_-^\circ)^{-1}$) } & \vdots & \mathbf{0}_M
 \end{bmatrix}
 \end{align} 
 \begin{align}
-\overline{L}_{1+} \equiv 
+{L}_{1+} \equiv 
 \begin{bmatrix}
 \mathbf{0}_M & \vdots &
 \text{tridiag($\mathbf{0}_{M-1}$, $-(\Delta_-^\circ)^{-1}$, $(\Delta_-^\circ)^{-1}$) }  
 \end{bmatrix}
 \end{align}
 \begin{align}
-\overline{L}_{2} \equiv 
+{L}_{2} \equiv 
 2 \odot \text{tridiag $\left[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, -(\Delta_-^\circ \odot \Delta_+^\circ)^{-1} , (\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \right]$  }
 \end{align}
 \begin{align}
-\overline{I} \equiv 
+{I} \equiv 
 \begin{bmatrix}
 \mathbf{0}_M & \vdots & \text{diag($\mathbf{1}_M$)} & \vdots & \mathbf{0}_M
 \end{bmatrix}
@@ -148,7 +148,7 @@ Suppose that we want to solve a system $L v({x}) = f(x) $ for $v(x)$ where $L$ i
 
 \begin{equation}\label{eq:reflecting-barrier-extended-system}
 \begin{bmatrix}
-\overline{L} \\
+{L} \\
 B
 \end{bmatrix} 
 v(\overline{x}) = 
@@ -214,7 +214,7 @@ The first columns of all the extension operators above, $\overline{L}_{1-}, \ove
 Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta_{1,-} )^{-1}\Delta_{1,-}^{-1}$ gives, with the corresponding Gaussian elimination operator $B_0$,
 
 \begin{equation}
-B_0 \overline{L}_{1-} = \begin{pmatrix}
+B_0 {L}_{1-} = \begin{pmatrix}
 0&\Delta_{1,-}^{-1} \left[ 1 - (1+\underline{\xi} \Delta_{1,-} )\right] &0&\dots&0&0&0\\
 0&-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
@@ -225,20 +225,20 @@ B_0 \overline{L}_{1-} = \begin{pmatrix}
 note that there is no zero element in the first and last column for nodes on boundaries. Hence, solving the corresponding extended system, 
 \begin{equation}
 \begin{bmatrix}
-\overline{L}\\
+{L}\\
 B
 \end{bmatrix} = 
 \begin{bmatrix}
 f(x) \\ b
 \end{bmatrix}
 \end{equation}
-limited to the interior, is identical as solving the following system with an operator $L$ on interior nodes
+limited to the interior, is identical as solving the following system with an operator $L^B$ on interior nodes
 \begin{equation}
-L_{1-} v(x) = f(x)
+L^B v(x) = f(x)
 \end{equation}
-instead of solving the full system with boundary conditions, where we have $\overline{L} = \overline{L}_{1-}$ and $L = L_{1-}$ with
+instead of solving the full system with boundary conditions, where we have ${L} = {L}_{1-}$ and $L^B = L_{1-}^B$ with
 \begin{equation}
-L_{1-} \equiv \frac{1}{\Delta}\begin{pmatrix}
+L_{1-}^B \equiv \frac{1}{\Delta}\begin{pmatrix}
 1 - (1 + \underline{\xi} \Delta) &0&0&\dots&0&0&0\\
 -1&1&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
@@ -249,21 +249,21 @@ L_{1-} \equiv \frac{1}{\Delta}\begin{pmatrix}
 Similarly, one can define differential operators on the interior as follows:
 
 \begin{align}
-L_{1-} &\equiv \begin{pmatrix}
+L_{1-}^B &\equiv \begin{pmatrix}
 \Delta^{-1}_{1,-} [1 - (1 + \underline{\xi} \Delta_{1,-})] &0&0&\dots&0&0&0\\
 -\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-\Delta_{M-1,-}^{-1}&\Delta_{M-1,-}^{-1}&0\\
 0&0&0&\cdots&0&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}
 \end{pmatrix}_{M\times M}\label{eq:L-1} \\
-L_{1+} &\equiv \begin{pmatrix}
+L_{1+}^B &\equiv \begin{pmatrix}
 -\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&0&\dots&0&0&0\\
 0&-\Delta_{2,+}^{-1}&\Delta_{2,+}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\cdots&0&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}\\
 0&0&0&\dots&0&0&\Delta_{M,+}^{-1}  [-1 + (1 - \overline{\xi} \Delta_{M,+})]  \\
 \end{pmatrix}_{M\times M}\label{eq:L-1-plus} \\
-L_2 &\equiv 2 \begin{psmallmatrix}
+L_2^B &\equiv 2 \begin{psmallmatrix}
 \Xi_1 &
 (\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{1,+}^{-1}
 &0&\cdots&0&0&0 \\
@@ -275,7 +275,7 @@ L_2 &\equiv 2 \begin{psmallmatrix}
 \vdots&\vdots&\vdots&\ddots&\ddots&\ddots&\vdots\\
 0&0&0&\cdots&0&(\Delta_{M,+}+\Delta_{M,-})^{-1} \Delta_{M,-}^{-1}&\Xi_M
 \end{psmallmatrix}_{M\times M}\label{eq:L-2} \\
-I &\equiv \begin{pmatrix}
+I^B &\equiv \begin{pmatrix}
 1 & 0 & \cdots & 0 & 0 \\
 0 & 1 & \cdots & 0 & 0 \\
 \vdots  & \ddots & \ddots &  \vdots  & \vdots   \\
@@ -295,19 +295,19 @@ Or, alternatively, with vectorized differences:
 
 
 \begin{align}
-{L}_{1-} \equiv 
+{L}_{1-}^B \equiv 
 \text{tridiag} \left[-(\Delta_-^\circ)^{-1}[2:M], \begin{pmatrix}\Delta^{-1}_{1,-} [1 - (1 + \underline{\xi} \Delta_{1,-})]; (\Delta_-^\circ )^{-1}[2:M] \end{pmatrix}, \mathbf{0}_{M-1}  \right] 
 \end{align}
 
 \begin{align}
-{L}_{1+} \equiv 
+{L}_{1+}^B \equiv 
 \text{tridiag} \left[  \mathbf{0}_{M-1},
 \begin{pmatrix}-(\Delta_-^\circ )^{-1}[1:M-1]; \Delta^{-1}_{M,+} [-1 + (1 - \overline{\xi} \Delta_{M,+})] \end{pmatrix}, 
 (\Delta_-^\circ)^{-1}[2:M]
  \right] 
 \end{align}
 \begin{align}
-{L}_{2} \equiv 
+{L}_{2}^B \equiv 
 2 \odot \text{tridiag}& \Big[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, \\&
 	\begin{pmatrix}
 	\Xi_1 ;
@@ -318,7 +318,7 @@ Or, alternatively, with vectorized differences:
 \end{align}
 
 \begin{align}
-I \equiv  \text{diag($\mathbf{1}_M$)} 
+I^B \equiv  \text{diag($\mathbf{1}_M$)} 
 \end{align}
 	
 	
@@ -357,13 +357,13 @@ S
 \begin{example}\label{ex:gaussian-elimination-reflecting-barrier}
 	Consider $L = L_{2}$ to solve $L v = f(x)$ with $M = 3$ under uniform grids $\overline{x} = \{x_0, x_1, x_2, x_3, x_4\}$ and $\Delta = 1$, whose corresponding interior grid is $x = \{x_1, x_2, x_3\}$. This gives
 	\begin{align}
-	L = 	 \begin{bmatrix}
+	L^B = 	 \begin{bmatrix}
 	-2 & 1 & 0 \\
 	1 & -2 & 1 \\
 	0 & 1 & -2 \\
 	\end{bmatrix}
 	\end{align}
-	so $L v= f(x)$ on the grid $x$ results in the following system
+	so $L^B v= f(x)$ on the grid $x$ results in the following system
 	\begin{align} \label{eq:extended-system-reflecting-barrier-reduced-system}
 	\begin{bmatrix}
 	-1 & 1 & 0  \\
@@ -385,7 +385,7 @@ S
 	
 	For the extended system we have
 	\begin{align}
-	\overline{L} &= 
+	{L} &= 
 	\begin{bmatrix}
 	1 & -2 & 1 & 0 & 0 \\
 	0 & 1 & -2 & 1 & 0 \\
@@ -423,7 +423,7 @@ S
 	\end{bmatrix} 
 	\end{align}
 	
-	Note that substracting the first row of $\overline{L}$ by $(-1)$ times the first row of $B$ returns an identical system as \eqref{eq:extended-system-reflecting-barrier-before-gaussian-elimination}. Likewise, substracting the last row of $\overline{L}$ by $(-1)$ times the last row of $B$ returns the identical system. Performing the two Gaussian elimination yields the following system:
+	Note that substracting the first row of ${L}$ by $(-1)$ times the first row of $B$ returns an identical system as \eqref{eq:extended-system-reflecting-barrier-before-gaussian-elimination}. Likewise, substracting the last row of ${L}$ by $(-1)$ times the last row of $B$ returns the identical system. Performing the two Gaussian elimination yields the following system:
 	\begin{align}\label{eq:extended-system-reflecting-barrier-after-gaussian-elimination}
 	\begin{bmatrix}
 	0 & -1 & 1 & 0 & 0 \\
@@ -502,7 +502,7 @@ S
 	\end{bmatrix} 
 	\end{align}
 	
-	Note that substracting the first row of $\overline{L}$ by $(-1)$ times the first row of $B$ returns an identical system as \eqref{eq:extended-system-absorbing-barrier-before-gaussian-elimination}. Likewise, substracting the last row of $\overline{L}$ by $(-1)$ times the last row of $B$ returns the identical system. Performing the two Gaussian elimination yields the following system:
+	Note that substracting the first row of ${L}$ by $(-1)$ times the first row of $B$ returns an identical system as \eqref{eq:extended-system-absorbing-barrier-before-gaussian-elimination}. Likewise, substracting the last row of ${L}$ by $(-1)$ times the last row of $B$ returns the identical system. Performing the two Gaussian elimination yields the following system:
 	\begin{align}\label{eq:extended-system-absorbing-barrier-after-gaussian-elimination}
 	\begin{bmatrix}
 	0 & -2 & 1 & 0 & 0 \\
