@@ -377,7 +377,14 @@ v(x_{\max})
 \end{align}
 which also gives the solution for $v(x)$.
 
-\subsection{Reflecting barrier conditions}
+\subsection{Gaussian elimination}
+Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value function $v(\overline{x})$ on the extended grid, one can perform Gaussian elimination to reduce the system and solve $v(x)$, which gives the identical solution as the interior of $v(\overline{x})$. 
+
+Note that in the first columns of all the extension operators have non-zero element only in the first rows. Thus, a single Gaussian elimination for the first extension grid will suffice to remove the extended.
+
+ Likewise, in the last columns of all the extension operators have non-zero element only in the last row. 
+
+\subsubsection{Reflecting barrier conditions}
 
 To apply reflecting barrier conditions $v'(x_{\min}) = v'(x_{\max}) = 0$, one can use
 
@@ -392,125 +399,8 @@ b = \begin{bmatrix}
 \end{bmatrix}
 \end{equation}
 
-\subsubsection{Gaussian elimination}
-Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value function $v(\overline{x})$ on the extended grid, one can perform Gaussian elimination to reduce the system and solve $v(x)$, which gives the identical solution as the interior of $v(\overline{x})$. 
 
-\begin{example}\label{ex:gaussian-elimination-reflecting-barrier}
-	 Consider $L = L_{2}$ to solve $L v = f(x)$ with $M = 3$ under uniform grids $\overline{x} = \{x_0, x_1, x_2, x_3, x_4\}$ and $\Delta = 1$, whose corresponding interior grid is $x = \{x_1, x_2, x_3\}$. This gives
-	 \begin{align}
-	 L = 	 \begin{bmatrix}
-	 -2 & 1 & 0 \\
-	 1 & -2 & 1 \\
-	 0 & 1 & -2 \\
-	 \end{bmatrix}
-	 \end{align}
-	 so $L v= f(x)$ on the grid $x$ results in the following system
-	 \begin{align} \label{eq:extended-system-reflecting-barrier-reduced-system}
-	 	 	 \begin{bmatrix}
-	 -1 & 1 & 0  \\
-	 1 & -2 & 1 \\
-	 0 & 1 & -1 \\
-	 \end{bmatrix} 	  \begin{bmatrix}
-	 v(x_1) \\
-	 v(x_2) \\
-	 v(x_3) 
-	 \end{bmatrix}
-	 = 
-	 \begin{bmatrix}
-	 f(x_1) \\
-	 f(x_2) \\
-	 f(x_3) 
-	 \end{bmatrix} 
-	 \end{align}
-	 
-	 
-	 For the extended system we have
-	 \begin{align}
-	 \overline{L} &= 
-	 \begin{bmatrix}
-	 1 & -2 & 1 & 0 & 0 \\
-	 0 & 1 & -2 & 1 & 0 \\
-	 0 & 0 & 1 & -2 & 1 \\
-	 \end{bmatrix} \\
-	 B &= \begin{bmatrix}
-  	-1 & 1  & 0 & 0 & 0 \\
-	0 & 0 & 0 & -1 & 1
-	 \end{bmatrix}
-	 \end{align}
-	 
-	  Constructing the stacked extended system \eqref{eq:reflecting-barrier-extended-system} gives
-	  \begin{align}\label{eq:extended-system-reflecting-barrier-before-gaussian-elimination}
- 	 \begin{bmatrix}
-	  1 & -2 & 1 & 0 & 0 \\
-      0 & 1 & -2 & 1 & 0 \\
-	  0 & 0 & 1 & -2 & 1 \\
-	  -1 & 1  & 0 & 0 & 0 \\
-	  0 & 0 & 0 & -1 & 1
-	  \end{bmatrix} 
-	  \begin{bmatrix}
-	  v(x_0) \\
-	  v(x_1) \\
-	  v(x_2) \\
-	  v(x_3) \\
-	  v(x_4) 
-	  \end{bmatrix}
-	  = 
- 		\begin{bmatrix}
-	  f(x_1) \\
-	  f(x_2) \\
-	  f(x_3) \\
-	  0 \\
-	  0 
-	  \end{bmatrix} 
-	  \end{align}
-	  
-	 Note that substracting the first row of $\overline{L}$ by $(-1)$ times the first row of $B$ returns an identical system as \eqref{eq:extended-system-reflecting-barrier-before-gaussian-elimination}. Likewise, substracting the last row of $\overline{L}$ by $(-1)$ times the last row of $B$ returns the identical system. Performing the two Gaussian elimination yields the following system:
-	 \begin{align}\label{eq:extended-system-reflecting-barrier-after-gaussian-elimination}
-	 \begin{bmatrix}
-	 0 & -1 & 1 & 0 & 0 \\
-     0 & 1 & -2 & 1 & 0 \\
-     0 & 0 & 1 & -1 & 0 \\
-	 1 & -1  & 0 & 0 & 0 \\
-	 0 & 0 & 0 & -1 & 1
-	 \end{bmatrix} 	  \begin{bmatrix}
-	 v(x_0) \\
-	 v(x_1) \\
-	 v(x_2) \\
-	 v(x_3) \\
-	 v(x_4)  \\
-	 \end{bmatrix}
-	 = 
-	 \begin{bmatrix}
-	 f(x_2) \\
-	 f(x_3) \\
-	 f(x_4) \\
-	 0 \\
-	 0 
-	 \end{bmatrix} 
-	 \end{align}
-	 Note that now we have the first three rows of the coefficient matrix with zero columns on the extended nodes, $v(x_1 - \Delta)$ and $v(x_3 + \Delta)$. Extracting the system corresponding to the first three rows returns the following system, which solves the interior of $v(\overline{x})$, i.e., $v(x)$:
-	 \begin{align}
-	 	 \begin{bmatrix}
-	 -1 & 1 & 0  \\
-	 1 & -2 & 1 \\
-	 0 & 1 & -1 \\
-	 \end{bmatrix} 	  \begin{bmatrix}
-	 v(x_1) \\
-	 v(x_2) \\
-	 v(x_3) 
-	 \end{bmatrix}
-	 = 
-	 \begin{bmatrix}
-	 f(x_1) \\
-	 f(x_2) \\
-	 f(x_3) 
-	 \end{bmatrix} 
-	 \end{align}
-	 which is identical as  \eqref{eq:extended-system-reflecting-barrier-reduced-system}.
-\end{example}
-
-
-\subsection{Mixed boundary conditions}
+\subsubsection{Mixed boundary conditions}
 
 To apply a mixed boundary condition $v'(x_{\min}) = - \underline{\xi} v(x_{\min}) $ for some $\xi \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$ and $\Delta_{1,-} = x_1 - x_0$ one can use
 
@@ -556,7 +446,7 @@ b = \begin{bmatrix}
 
 
 
-\subsection{Absorbing barrier conditions}
+\subsubsection{Absorbing barrier conditions}
 
 To apply an absorbing barrier condition $v(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
 
@@ -585,87 +475,201 @@ S
 \end{bmatrix}
 \end{equation}
 
-\subsubsection{Gaussian elimination}
+
+\subsection{Examples}
+
+\begin{example}\label{ex:gaussian-elimination-reflecting-barrier}
+	Consider $L = L_{2}$ to solve $L v = f(x)$ with $M = 3$ under uniform grids $\overline{x} = \{x_0, x_1, x_2, x_3, x_4\}$ and $\Delta = 1$, whose corresponding interior grid is $x = \{x_1, x_2, x_3\}$. This gives
+	\begin{align}
+	L = 	 \begin{bmatrix}
+	-2 & 1 & 0 \\
+	1 & -2 & 1 \\
+	0 & 1 & -2 \\
+	\end{bmatrix}
+	\end{align}
+	so $L v= f(x)$ on the grid $x$ results in the following system
+	\begin{align} \label{eq:extended-system-reflecting-barrier-reduced-system}
+	\begin{bmatrix}
+	-1 & 1 & 0  \\
+	1 & -2 & 1 \\
+	0 & 1 & -1 \\
+	\end{bmatrix} 	  \begin{bmatrix}
+	v(x_1) \\
+	v(x_2) \\
+	v(x_3) 
+	\end{bmatrix}
+	= 
+	\begin{bmatrix}
+	f(x_1) \\
+	f(x_2) \\
+	f(x_3) 
+	\end{bmatrix} 
+	\end{align}
+	
+	
+	For the extended system we have
+	\begin{align}
+	\overline{L} &= 
+	\begin{bmatrix}
+	1 & -2 & 1 & 0 & 0 \\
+	0 & 1 & -2 & 1 & 0 \\
+	0 & 0 & 1 & -2 & 1 \\
+	\end{bmatrix} \\
+	B &= \begin{bmatrix}
+	-1 & 1  & 0 & 0 & 0 \\
+	0 & 0 & 0 & -1 & 1
+	\end{bmatrix}
+	\end{align}
+	
+	Constructing the stacked extended system \eqref{eq:reflecting-barrier-extended-system} gives
+	\begin{align}\label{eq:extended-system-reflecting-barrier-before-gaussian-elimination}
+	\begin{bmatrix}
+	1 & -2 & 1 & 0 & 0 \\
+	0 & 1 & -2 & 1 & 0 \\
+	0 & 0 & 1 & -2 & 1 \\
+	-1 & 1  & 0 & 0 & 0 \\
+	0 & 0 & 0 & -1 & 1
+	\end{bmatrix} 
+	\begin{bmatrix}
+	v(x_0) \\
+	v(x_1) \\
+	v(x_2) \\
+	v(x_3) \\
+	v(x_4) 
+	\end{bmatrix}
+	= 
+	\begin{bmatrix}
+	f(x_1) \\
+	f(x_2) \\
+	f(x_3) \\
+	0 \\
+	0 
+	\end{bmatrix} 
+	\end{align}
+	
+	Note that substracting the first row of $\overline{L}$ by $(-1)$ times the first row of $B$ returns an identical system as \eqref{eq:extended-system-reflecting-barrier-before-gaussian-elimination}. Likewise, substracting the last row of $\overline{L}$ by $(-1)$ times the last row of $B$ returns the identical system. Performing the two Gaussian elimination yields the following system:
+	\begin{align}\label{eq:extended-system-reflecting-barrier-after-gaussian-elimination}
+	\begin{bmatrix}
+	0 & -1 & 1 & 0 & 0 \\
+	0 & 1 & -2 & 1 & 0 \\
+	0 & 0 & 1 & -1 & 0 \\
+	1 & -1  & 0 & 0 & 0 \\
+	0 & 0 & 0 & -1 & 1
+	\end{bmatrix} 	  \begin{bmatrix}
+	v(x_0) \\
+	v(x_1) \\
+	v(x_2) \\
+	v(x_3) \\
+	v(x_4)  \\
+	\end{bmatrix}
+	= 
+	\begin{bmatrix}
+	f(x_2) \\
+	f(x_3) \\
+	f(x_4) \\
+	0 \\
+	0 
+	\end{bmatrix} 
+	\end{align}
+	Note that now we have the first three rows of the coefficient matrix with zero columns on the extended nodes, $v(x_1 - \Delta)$ and $v(x_3 + \Delta)$. Extracting the system corresponding to the first three rows returns the following system, which solves the interior of $v(\overline{x})$, i.e., $v(x)$:
+	\begin{align}
+	\begin{bmatrix}
+	-1 & 1 & 0  \\
+	1 & -2 & 1 \\
+	0 & 1 & -1 \\
+	\end{bmatrix} 	  \begin{bmatrix}
+	v(x_1) \\
+	v(x_2) \\
+	v(x_3) 
+	\end{bmatrix}
+	= 
+	\begin{bmatrix}
+	f(x_1) \\
+	f(x_2) \\
+	f(x_3) 
+	\end{bmatrix} 
+	\end{align}
+	which is identical as  \eqref{eq:extended-system-reflecting-barrier-reduced-system}.
+\end{example}
 
 \begin{example}
 	Consider solving \eqref{eq:extended-system-reflecting-barrier-reduced-system}, but this time with an absorbing barrier condition on the lower bound, $v(x_{\min}) = S$ with a boundary condition matrix 
 	\begin{align}
 	B &= \begin{bmatrix}
-			1 & 0  & 0 & 0 & 0 \\
-			0 & 0 & 0 & -1 & 1
-		\end{bmatrix}
+	1 & 0  & 0 & 0 & 0 \\
+	0 & 0 & 0 & -1 & 1
+	\end{bmatrix}
 	\end{align}
 	The corresponding extended system is
-\begin{align}\label{eq:extended-system-absorbing-barrier-before-gaussian-elimination}
-\begin{bmatrix}
-1 & -2 & 1 & 0 & 0 \\
-0 & 1 & -2 & 1 & 0 \\
-0 & 0 & 1 & -2 & 1 \\
-1 & 0  & 0 & 0 & 0 \\
-0 & 0 & 0 & -1 & 1
-\end{bmatrix} 
-\begin{bmatrix}
-v(x_0) \\
-v(x_1) \\
-v(x_2) \\
-v(x_3) \\
-v(x_4) \\
-\end{bmatrix}
-= 
-\begin{bmatrix}
-f(x_1) \\
-f(x_2) \\
-f(x_3) \\
-S \\
-0 
-\end{bmatrix} 
-\end{align}
-
-Note that substracting the first row of $\overline{L}$ by $(-1)$ times the first row of $B$ returns an identical system as \eqref{eq:extended-system-absorbing-barrier-before-gaussian-elimination}. Likewise, substracting the last row of $\overline{L}$ by $(-1)$ times the last row of $B$ returns the identical system. Performing the two Gaussian elimination yields the following system:
-\begin{align}\label{eq:extended-system-absorbing-barrier-after-gaussian-elimination}
-\begin{bmatrix}
-0 & -2 & 1 & 0 & 0 \\
-0 & 1 & -2 & 1 & 0 \\
-0 & 0 & 1 & -1 & 0 \\
-1 & 0  & 0 & 0 & 0 \\
-0 & 0 & 0 & -1 & 1
-\end{bmatrix} 	  \begin{bmatrix}
-v(x_0) \\
-v(x_1) \\
-v(x_2) \\
-v(x_3) \\
-v(x_4) \\
-\end{bmatrix}
-= 
-\begin{bmatrix}
-f(x_1) - S \\
-f(x_2) \\
-f(x_3) \\
-0 \\
-0 
-\end{bmatrix} 
-\end{align}
-
+	\begin{align}\label{eq:extended-system-absorbing-barrier-before-gaussian-elimination}
+	\begin{bmatrix}
+	1 & -2 & 1 & 0 & 0 \\
+	0 & 1 & -2 & 1 & 0 \\
+	0 & 0 & 1 & -2 & 1 \\
+	1 & 0  & 0 & 0 & 0 \\
+	0 & 0 & 0 & -1 & 1
+	\end{bmatrix} 
+	\begin{bmatrix}
+	v(x_0) \\
+	v(x_1) \\
+	v(x_2) \\
+	v(x_3) \\
+	v(x_4) \\
+	\end{bmatrix}
+	= 
+	\begin{bmatrix}
+	f(x_1) \\
+	f(x_2) \\
+	f(x_3) \\
+	S \\
+	0 
+	\end{bmatrix} 
+	\end{align}
+	
+	Note that substracting the first row of $\overline{L}$ by $(-1)$ times the first row of $B$ returns an identical system as \eqref{eq:extended-system-absorbing-barrier-before-gaussian-elimination}. Likewise, substracting the last row of $\overline{L}$ by $(-1)$ times the last row of $B$ returns the identical system. Performing the two Gaussian elimination yields the following system:
+	\begin{align}\label{eq:extended-system-absorbing-barrier-after-gaussian-elimination}
+	\begin{bmatrix}
+	0 & -2 & 1 & 0 & 0 \\
+	0 & 1 & -2 & 1 & 0 \\
+	0 & 0 & 1 & -1 & 0 \\
+	1 & 0  & 0 & 0 & 0 \\
+	0 & 0 & 0 & -1 & 1
+	\end{bmatrix} 	  \begin{bmatrix}
+	v(x_0) \\
+	v(x_1) \\
+	v(x_2) \\
+	v(x_3) \\
+	v(x_4) \\
+	\end{bmatrix}
+	= 
+	\begin{bmatrix}
+	f(x_1) - S \\
+	f(x_2) \\
+	f(x_3) \\
+	0 \\
+	0 
+	\end{bmatrix} 
+	\end{align}
+	
+	Extracting the system corresponding to the first three rows returns the following system, which solves the interior of $v(\overline{x})$, i.e., $v(x)$:
+	\begin{align}
+	\begin{bmatrix}
+	-2 & 1 & 0  \\
+	1 & -2 & 1 \\
+	0 & 1 & -1 \\
+	\end{bmatrix} 	  \begin{bmatrix}
+	v(x_1) \\
+	v(x_2) \\
+	v(x_3) 
+	\end{bmatrix}
+	= 
+	\begin{bmatrix}
+	f(x_1) - S \\
+	f(x_2) \\
+	f(x_3) 
+	\end{bmatrix} 
+	\end{align}
 \end{example}
-
-Extracting the system corresponding to the first three rows returns the following system, which solves the interior of $v(\overline{x})$, i.e., $v(x)$:
-\begin{align}
-\begin{bmatrix}
--2 & 1 & 0  \\
-1 & -2 & 1 \\
-0 & 1 & -1 \\
-\end{bmatrix} 	  \begin{bmatrix}
-v(x_1) \\
-v(x_2) \\
-v(x_3) 
-\end{bmatrix}
-= 
-\begin{bmatrix}
-f(x_1) - S \\
-f(x_2) \\
-f(x_3) 
-\end{bmatrix} 
-\end{align}
 
 \section{Applications}
 
