@@ -129,15 +129,6 @@ L_2 &\equiv \frac{1}{\Delta^2} \text{tridiag}^+(\mathbf{1}_{M}, -2\mathbf{1}_M, 
 where $\text{tridiag}(x,y,z)$ is a matrix whose lower, main, upper diagonal vectors are $x$, $y$, and $z$, respectively, and $\text{tridiag}^+(x,y,z)$ is a matrix whose main, upper, and second upper diagonal vectors $x$, $y$, and $z$, respectively.
 
 \subsection{Applying Boundary Conditions}
-\subsubsection{Mixed Boundary Conditions}
-\subsubsection{Absorbing Boundary Conditions}
-
-
-
-
-\section{Discretizing Operators with a Irregular Grid}
-
-\subsection{Extension Operators}
 Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids. Define $\overline{v}$ as $(M+2)$-vector whose $i$th element is $v(\overline {x}_i)$.
 
 Suppose that we want to solve a system $L v({x}) = f(x) $ for $v(x)$ where $L$ is a linear combination of discretized differential operators for some $f(x)$ that represents the values of a function $f$ on discretized $x$. To solve the system under boundary conditions on $v$, one can construct and solve the following extended system:
@@ -163,6 +154,14 @@ v(x_{M+1})
 \end{bmatrix}
 \end{align}
 which also gives the solution for $v$.
+
+\subsubsection{Mixed Boundary Conditions}
+\subsubsection{Absorbing Boundary Conditions}
+
+
+
+
+\section{Discretizing Operators with a Irregular Grid}
 
 \subsection{Applying Boundary Conditions}
 Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value function $v(\overline{x})$ on the extended grid, one can perform Gaussian elimination to reduce the system and solve $v(x)$, which gives the identical solution as the interior of $v(\overline{x})$.
