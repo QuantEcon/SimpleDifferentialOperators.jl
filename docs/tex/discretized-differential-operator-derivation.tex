@@ -34,7 +34,9 @@
 \section{Setup}
 
 \begin{itemize}
-	\item Define an irregular grid $\set{x_i}_{i=0}^{M+1}$ with \textbf{boundary nodes}, $x_0 = {x_{\min}}$ and $x_{M+1} = {x_{\max}}$. Denote the \textbf{extended grid} as $\overline{x} \equiv \set{x_i}_{i=0}^{M+1}$ and the \textbf{interior grid}, a collection of nodes excluding the boundary nodes, as $x \equiv \set{x_i}_{i=1}^{M} $.
+	\item Define an irregular grid $\set{x_i}_{i=0}^{M+1}$ with \textbf{boundary nodes}, $x_0 = {x_{\min}}$ and $x_{M+1} = {x_{\max}}$. Denote the \textbf{extended grid} as $\overline{x} \equiv \set{x_i}_{i=0}^{M+1}$ and the \textbf{interior grid}, a collection of nodes excluding the boundary nodes, as $x \equiv \set{x_i}_{i=1}^{M} $. 
+	
+	\item Define $v$ as a vector of a function of interest, $v(x)$, evaluated on the interior grid $x$, i.e., $v = \set{v(x_i)}_{i=1}^M$. Likewise, we define a vector of $v$ on the extended grid as $\overline{v} = \set{v(\overline{x}_i)}_{i=0}^{M+1}$.
 	\item Denote the backward and forward distance between the grid points as
 	\begin{align}
 	\Delta_{i,-} &\equiv x_i - x_{i-1},\, \text{for } i = 1,\ldots, M+1\\
@@ -57,16 +59,822 @@
 	Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$.
 \end{itemize}
 
-Let $L_{1-}$, $L_{1+}$ be the discretized backward and forward first order differential operators and $L_2$ be the discretized central difference  second order differential operator, all subject to the Neumann boundary conditions in \cref{eq:new-BC1,eq:new-BC2}, such that $L_{1-} v(x), L_{1+} v(x)$ and $L_2 v(x)$ represent the first-order (backward and forward) and second-order derivatives of $v(x)$ respectively at $x$. For second derivatives, we use the following numerical scheme from \cite{achdou17}:
+Let $L_{1-}$, $L_{1+}$ be the discretized backward and forward first order differential operators and $L_2$ be the discretized central difference  second order differential operator, all subject to the Neumann boundary conditions in \cref{eq:new-BC1,eq:new-BC2}, such that $L_{1-} v(x), L_{1+} v(x)$ and $L_2 v(x)$ represent the first-order (backward and forward) and second-order derivatives of $v(x)$ respectively at $x$. 
+\section{Discretizing Operators with a Regular Grid}
+In this section, we study discretization schemes under regular grids, i.e., grids such that $x_{i+1} - x_i = \Delta$ for all $i = 0,...,M$ for some fixed $\Delta > 0$. 
+\subsection{Extension Operators}
+Consider constructing first-order derivatives by backward difference $i$th node:
+\begin{equation}\label{eq:first-order-bd}
+v'_{i,-} = \dfrac{v_{i} - v_{i-1}}{\Delta}
+\end{equation}
+similarly, using forward differences,
+\begin{equation}\label{eq:first-order-fd}
+v'_{i,+} = \dfrac{v_{i+1} - v_{i}}{\Delta}
+\end{equation}
+and second-order derivatives, 
+\begin{equation}\label{eq:second-order}
+v''_{i} = \dfrac{v_{i+1} - 2 v_{i} + v_{i-1} }{\Delta^2}
+\end{equation}
+for $i \in \{1, ..., M\}$. Stacking over all first-order derivatives and second order derivatives as vectors, 
+\begin{align}
+v'_{-} &= \set{v'_{i,-}}_{i=1}^M \\
+v'_{+} &= \set{v'_{i,+}}_{i=1}^M \\
+v'' &= \set{v''_{i}}_{i=1}^M
+\end{align}
+using \eqref{eq:first-order-bd}, \eqref{eq:first-order-fd}, \eqref{eq:second-order}, one can represent the vectors of discretized derivatives as
+\begin{align}
+v'_{-} &= L_{1-} \overline{v} \\
+v'_{+} &= L_{1+} \overline{v} \\
+v'' &=  L_{2} \overline{v}
+\end{align}
+with the following \textbf{extension operators}:
+\begin{align}
+L_{1-} &\equiv \frac{1}{\Delta}\begin{pmatrix}
+-1 &1 &0&\dots&0&0&0&0\\
+0&-1&1&\ddots&0&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-1&1&0&0\\
+0&0&0&\cdots&0&-1&1&0
+\end{pmatrix}_{M\times (M+2)}\label{eq:L-1-extended-regular} \\
+L_{1+} &\equiv \frac{1}{\Delta}\begin{pmatrix}
+0&-1&1&0&\dots&0&0&0\\
+0&0&-1&1&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&0&\dots&-1&1&0\\
+0&0&0&0&\cdots&0&-1&1
+\end{pmatrix}_{M\times( M+2)}\label{eq:L-1-plus-extended-regular} \\
+L_2 &\equiv \frac{1}{\Delta^2}\begin{pmatrix}
+1&-2  &1&0&\dots&0&0&0&0\\
+0&1&-2&1&\dots&0&0&0&0\\
+\vdots&\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots&\vdots\\
+0&0&0&0&\dots&1&-2&1&0\\
+0&0&0&0&\cdots&0&1&-2 &1
+\end{pmatrix}_{M\times (M+2)}\label{eq:L-2-extended-regular}
+\end{align}
+
+which can be defined in more compact forms:
+\begin{align}
+L_{1-} &\equiv  \Delta^{-1} \begin{bmatrix}
+\text{tridiag}(\mathbf{0}_{M-1}, -\mathbf{1}_M, \mathbf{1}_{M} ) & \mathbf{0}_M
+\end{bmatrix} \\
+L_{1+} &\equiv \Delta^{-1} \begin{bmatrix}
+\mathbf{0}_M & \text{tridiag}(\mathbf{0}_{M-1}, -\mathbf{1}_M, \mathbf{1}_{M} )
+\end{bmatrix} \\
+L_2 &\equiv \frac{1}{\Delta^2} \text{tridiag}^+(\mathbf{1}_{M}, -2\mathbf{1}_M, \mathbf{1}_{M} )
+\end{align}
+
+where $\text{tridiag}(x,y,z)$ is a matrix whose lower, main, upper diagonal vectors are $x$, $y$, and $z$, respectively, and $\text{tridiag}^+(x,y,z)$ is a matrix whose main, upper, and second upper diagonal vectors $x$, $y$, and $z$, respectively.
+
+\subsection{Applying Boundary Conditions}
+Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids. 
+Suppose that we want to solve a system $L v({x}) = f(x) $ for $v(x)$ where $L$ is a linear combination of discretized differential operators for some $f(x)$ that represents the values of a function $f$ on discretized $x$. To solve the system under boundary conditions on $v$, one can construct and solve the following extended system:
+
+\begin{equation}\label{eq:reflecting-barrier-extended-system}
+\begin{bmatrix}
+{L} \\
+B
+\end{bmatrix}
+\overline{v} =
+\begin{bmatrix}
+f(x) \\
+b
+\end{bmatrix}
+\end{equation}
+
+with $M_E$ by $(M+2)$ matrix $B$ and $M_E$-length vector $b$ that represent the current boundary conditions, where $M_E$ is the number of boundary conditions to be applied. The solution of \eqref{eq:reflecting-barrier-extended-system}, $v(\overline{x})$ can be decomposed into
+\begin{align}
+\overline{v} = \begin{bmatrix}
+v(x_0) \\
+v \\
+v(x_{M+1})
+\end{bmatrix}
+\end{align}
+which also gives the solution for $v$.
+
+\subsubsection{Mixed Boundary Conditions}
+Recall mixed boundary conditions from \eqref{eq:new-BC1} and \eqref{eq:new-BC2}. Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$. Using forward difference and backward difference discretization scheme for the lower bound and upper bound respectively, we have
+\begin{align}
+&\frac{\overline{v}_1 - \overline{v}_0}{\Delta} - \underline{\xi} \overline{v}_0 = 0 \\
+&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta} - \overline{\xi} \overline{v}_{M+1} = 0
+\end{align}
+
+Thus, the corresponding boundary condition matrix $B$ is
+
+\begin{equation}\label{eq:mixed-barrier-matrix-original-regular}
+B = \begin{bmatrix}
+-\dfrac{1}{\Delta} + \underline{\xi} & \dfrac{1}{\Delta} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta} & \dfrac{1}{\Delta} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)} \quad
+b = \begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\end{equation}
+which provides the identical system as
+\begin{equation}\label{eq:mixed-barrier-matrix-regular}
+B = \begin{bmatrix}
+-1 +  \underline{\xi} \Delta & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi} \Delta\\
+\end{bmatrix}_{2 \times (M+2)} \quad
+b = \begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\end{equation}
+
+Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta_{1,-} )^{-1}\Delta_{1,-}^{-1}$ gives, with the corresponding row operation matrix $R$,
 
 \begin{equation}
-v''(x_i) \approx \dfrac{ \Delta_{i,-} v( x_i + \Delta_{i,+}) - (\Delta_{i,+} + \Delta_{i,-}) v( x_i ) + \Delta_{i,+} v( x_i - \Delta_{i,-})}{\frac{1}{2}(\Delta_{i,+} + \Delta_{i,-}) \Delta_{i,+} \Delta_{i,-} }, \text{for } i = 1, \ldots, M
+R {L}_{1-} = \begin{pmatrix}
+1 - (1 + \underline{\xi}\Delta )&0&0&\dots&0&0&0\\
+-1&1&0&\ddots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-1&1&0\\
+0&0&0&\cdots&0&-1&1
+\end{pmatrix}_{M\times M}
+\end{equation}
+note that there is no zero element in the first and last column for nodes on boundaries. Hence, solving the corresponding extended system,
+\begin{align}
+\begin{bmatrix}
+{L}\\
+B
+\end{bmatrix} =
+\begin{bmatrix}
+f(x) \\ b
+\end{bmatrix}
+\end{align}
+is identical as solving the following system
+\begin{align}
+R
+\begin{bmatrix}
+{L}\\
+B
+\end{bmatrix} &=
+R
+\begin{bmatrix}
+f(x) \\ b
+\end{bmatrix} \\
+&= \begin{bmatrix}
+f(x) \\ b
+\end{bmatrix}
+\end{align}
+as $b$ is a zero vector so that the row operations $R$ do not change anything on the RHS. Furthermore, limited to the interior, solving $v$ in the system above is identical as solving the following system with an operator $L^B$ on interior nodes:
+\begin{equation}
+L^B v(x) = f(x)
+\end{equation}
+where we have ${L} = {L}_{1-}$ and $L^B = L_{1-}^B$ with
+\begin{equation}
+L_{1-}^B \equiv \frac{1}{\Delta}\begin{pmatrix}
+1 - (1 + \underline{\xi} \Delta) &0&0&\dots&0&0&0\\
+-1&1&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-1&1&0\\
+0&0&0&\cdots&0&-1&1
+\end{pmatrix}_{M\times M}
+\end{equation}
+instead of solving the full system with boundary conditions. Similarly, one can define differential operators on the interior as follows:
+
+\begin{align}
+L_{1-}^B &\equiv \frac{1}{\Delta}\begin{pmatrix}
+1 - (1 + \underline{\xi} \Delta) &0&0&\dots&0&0&0\\
+-1&1&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-1&1&0\\
+0&0&0&\cdots&0&-1&1
+\end{pmatrix}_{M\times M}\label{eq:L-1-regular} \\
+L_{1+}^B &\equiv \frac{1}{\Delta}\begin{pmatrix}
+-1&1&0&\dots&0&0&0\\
+0&-1&1&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&0&-1&1\\
+0&0&0&\cdots&0&0&-1+(1-\overline{\xi} \Delta)
+\end{pmatrix}_{M\times M}\label{eq:L-1-plus-regular} \\
+L_2^B &\equiv \frac{1}{\Delta^2}\begin{pmatrix}
+-2 + (1 + \underline{\xi}\Delta) &1&0&\dots&0&0&0\\
+1&-2&1&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&1&-2&1\\
+0&0&0&\cdots&0&1&-2 + (1- \overline{\xi}\Delta)
+\end{pmatrix}_{M\times M}\label{eq:L-2-regular}
+\end{align}
+
+which can be defined in more compact forms:
+\begin{align}
+L_{1-}^B &\equiv   
+\text{tridiag}(-\mathbf{1}_{M-1}, \begin{bmatrix}
+1-(1+\underline{\xi} \Delta) & \mathbf{1}_{M-1}^T
+\end{bmatrix}^T, \mathbf{0}_{M-1} )  \\
+L_{1+}^B &\equiv \text{tridiag}(\mathbf{0}_{M-1}, \begin{bmatrix}
+ -\mathbf{1}_{M-1}^T & -1+(1-\overline{\xi} \Delta)
+\end{bmatrix}^T, \mathbf{1}_{M-1} ) \\
+L_2^B &\equiv \text{tridiag}(
+\mathbf{1}_{M-1}, 
+\begin{bmatrix}
+-2+(1+\underline{\xi} \Delta)& -2\mathbf{1}_{M-2}^T & -2+(1-\overline{\xi} \Delta)
+\end{bmatrix}^T, 
+\mathbf{1}_{M-1} )
+\end{align}
+
+\subsubsection{Absorbing Boundary Conditions}
+To apply an absorbing barrier condition $v(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
+
+\begin{equation}\label{eq:absorbing-barrier-matrix-regular}
+B = \begin{bmatrix}
+1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1\\
+\end{bmatrix}_{2 \times (M+2)} \quad
+b = \begin{bmatrix}
+S \\
+0
+\end{bmatrix}
+\end{equation}
+
+Similarly, one can apply an absorbing condition on the upper bound  $v(x_{\max}) =S$ for some $S \in \mathbb{R}$ and the
+
+
+\begin{equation}\label{eq:absorbing-barrier-matrix-ub-regular}
+B = \begin{bmatrix}
+-1 & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & 0 & 1\\
+\end{bmatrix}_{2 \times (M+2)} \quad
+b = \begin{bmatrix}
+0 \\
+S
+\end{bmatrix}
 \end{equation}
 
 
+\section{Discretizing Operators with a Irregular Grid}
+
+\subsection{Applying Boundary Conditions}
+Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value function $v(\overline{x})$ on the extended grid, one can perform Gaussian elimination to reduce the system and solve $v(x)$, which gives the identical solution as the interior of $v(\overline{x})$.
+
+
+\subsection{Irregular grids}
+
+Define the vectors of backward and forward distance for interior nodes as follows:
+\begin{align}
+\Delta_{-}^\circ &= \set{\Delta_{i,-}}_{i=1}^M \\
+\Delta_{+}^\circ &= \set{\Delta_{i,+}}_{i=1}^M
+\end{align}
+
+
+We can then define the following operators on $\overline{x}$:
+
+
+\begin{equation}\label{eq:L-1-minus-extended}
+{L}_{1-} \equiv\begin{pmatrix}
+-\Delta_{1,-}^{-1}&\Delta_{1,-}^{-1}&0&\dots&0&0&0\\
+0&-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&\Delta_{M-1,-}^{-1}&0&0\\
+0&0&0&\cdots&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}&0
+\end{pmatrix}_{M\times (M+2)}
+\end{equation}
+
+\begin{equation}\label{eq:L-1-plus-extended}
+{L}_{1+} \equiv \begin{pmatrix}
+0&-\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&\dots&0&0&0\\
+0&0&-\Delta_{2,+}^{-1}&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}&0\\
+0&0&0&\cdots&0&-\Delta_{M,+}^{-1}&\Delta_{M,+}^{-1}&
+\end{pmatrix}_{M\times (M+2)}
+\end{equation}
+
+
+\begin{equation}\label{eq:L-2-extended} \small
+{L}_2 \equiv 2 \begin{psmallmatrix}
+(\Delta_{1,+}+\Delta_{1,-})^{-1}\Delta_{1,-}^{-1} &-\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  & (\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{i,+}^{-1}&\dots&0&0\\
+0 & \ddots & \ddots &\ddots & 0 & 0\\
+\vdots&\ddots &\ddots & \ddots & \ddots & \vdots\\
+0&0&\cdots&
+(\Delta_{M,+}+\Delta_{M,-})^{-1}\Delta_{M,-}^{-1} &-\Delta_{M,-}^{-1} \Delta_{M,+}^{-1}  &
+(\Delta_{M,+}+\Delta_{M,-})^{-1}\Delta_{M,+}^{-1}
+\end{psmallmatrix}_{M\times (M+2)}
+\end{equation}
+
+Note that we use the following discretization scheme scheme from \cite{achdou17}:
+\begin{equation}
+v''(x_i) \approx \dfrac{ \Delta_{i,-} v( x_i + \Delta_{i,+}) - (\Delta_{i,+} + \Delta_{i,-}) v( x_i ) + \Delta_{i,+} v( x_i - \Delta_{i,-})}{\frac{1}{2}(\Delta_{i,+} + \Delta_{i,-}) \Delta_{i,+} \Delta_{i,-} }, \text{for } i = 1, \ldots, M
+\end{equation}
+for second-order derivatives. 
+
+And one for identity matrix:
+\begin{equation}\label{eq:I-extended}
+{I} \equiv \begin{pmatrix}
+0 & 1 & 0 & \cdots & 0 & 0 & 0\\
+0 & 0 & 1 & \cdots & 0 & 0 & 0\\
+\vdots & \vdots  & \ddots & \ddots &  \vdots  & \vdots  & \vdots  \\
+0 & 0 & 0 & \cdots & 1 & 0 & 0 \\
+0 & 0 & 0 & \cdots & 0 & 1 & 0
+\end{pmatrix}_{M\times (M+2)}
+\end{equation}
+
+Alternatively, in a more compact form, using vectors distances for interior nodes:
+\begin{align}
+{L}_{1-} \equiv
+\begin{bmatrix}
+\text{tridiag($\mathbf{0}_{M-1}$, $-(\Delta_-^\circ)^{-1}$, $(\Delta_-^\circ)^{-1}$) } &  \mathbf{0}_M
+\end{bmatrix}
+\end{align}
+\begin{align}
+{L}_{1+} \equiv
+\begin{bmatrix}
+\mathbf{0}_M & 
+\text{tridiag($\mathbf{0}_{M-1}$, $-(\Delta_-^\circ)^{-1}$, $(\Delta_-^\circ)^{-1}$) }
+\end{bmatrix}
+\end{align}
+\begin{align}
+{L}_{2} \equiv
+2 \odot \text{tridiag}^+ \left[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, -(\Delta_-^\circ \odot \Delta_+^\circ)^{-1} , (\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \right]  
+\end{align}
+\begin{align}
+{I} \equiv
+\begin{bmatrix}
+\mathbf{0}_M &  \text{diag($\mathbf{1}_M$)} &  \mathbf{0}_M
+\end{bmatrix}
+\end{align}
+
+\subsubsection{Mixed boundary conditions}
+Recall mixed boundary conditions from \eqref{eq:new-BC1} and \eqref{eq:new-BC2}. Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$. Using forward difference and backward difference discretization scheme for the lower bound and upper bound respectively, we have
+\begin{align}
+&\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} - \underline{\xi} \overline{v}_0 = 0 \\
+&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} - \overline{\xi} \overline{v}_{M+1} = 0
+\end{align}
+
+Thus, the corresponding boundary condition matrix $B$ is
+
+\begin{equation}\label{eq:mixed-barrier-matrix-original}
+B = \begin{bmatrix}
+-\dfrac{1}{\Delta_{0,+}} + \underline{\xi} & \dfrac{1}{\Delta_{0,+}} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta_{M+1,-}} & \dfrac{1}{\Delta_{M+1,-}} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)} \quad
+b = \begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\end{equation}
+which provides the identical system as
+\begin{equation}\label{eq:mixed-barrier-matrix}
+B = \begin{bmatrix}
+-1 +  \underline{\xi} \Delta_{1,-} & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi} \Delta_{M,+}\\
+\end{bmatrix}_{2 \times (M+2)} \quad
+b = \begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\end{equation}
+since $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$
+
+
+The first columns of all the extension operators above, $\overline{L}_{1-}, \overline{L}_{1+}, \overline{L}_{2}, \overline{I}$, have non-zero element only in the first rows. Thus, a single Gaussian elimination for the first extension grid will suffice to remove the extended. Likewise, in the last columns of all the extension operators have non-zero element only in the last row.
+
+
+Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta_{1,-} )^{-1}\Delta_{1,-}^{-1}$ gives, with the corresponding row operation matrix $R$ for Gaussian elimination,
+
+\begin{equation}
+R {L}_{1-} = \begin{pmatrix}
+0&\Delta_{1,-}^{-1} \left[ 1 - (1+\underline{\xi} \Delta_{1,-} )\right] &0&\dots&0&0&0\\
+0&-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&\Delta_{M-1,-}^{-1}&0&0\\
+0&0&0&\cdots&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}&0
+\end{pmatrix}_{M\times (M+2)}
+\end{equation}
+note that there is no zero element in the first and last column for nodes on boundaries. Hence, solving the corresponding extended system,
+\begin{align}
+\begin{bmatrix}
+{L}\\
+B
+\end{bmatrix} =
+\begin{bmatrix}
+f(x) \\ b
+\end{bmatrix}
+\end{align}
+is identical as solving the following system
+\begin{align}
+R
+\begin{bmatrix}
+{L}\\
+B
+\end{bmatrix} &=
+R
+\begin{bmatrix}
+f(x) \\ b
+\end{bmatrix} \\
+&= \begin{bmatrix}
+f(x) \\ b
+\end{bmatrix}
+\end{align}
+as $b$ is a zero vector so that the row operations $R$ do not change anything on the RHS. Furthermore, limited to the interior, solving $v$ in the system above is identical as solving the following system with an operator $L^B$ on interior nodes:
+\begin{equation}
+L^B v(x) = f(x)
+\end{equation}
+where we have ${L} = {L}_{1-}$ and $L^B = L_{1-}^B$ with
+\begin{equation}
+L_{1-}^B \equiv \begin{pmatrix}
+\Delta_{1,-}^{-1} [1 - (1 + \underline{\xi} \Delta_{1,-})] &0&0&\dots&0&0&0\\
+-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-\Delta_{M-1,-}^{-1}&\Delta_{M-1,-}^{-1}&0\\
+0&0&0&\cdots&0&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}
+\end{pmatrix}_{M\times M}
+\end{equation}
+instead of solving the full system with boundary conditions. Similarly, one can define differential operators on the interior as follows:
+
+
+\begin{align}
+L_{1-}^B &\equiv \begin{pmatrix}
+\Delta^{-1}_{1,-} [1 - (1 + \underline{\xi} \Delta_{1,-})] &0&0&\dots&0&0&0\\
+-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-\Delta_{M-1,-}^{-1}&\Delta_{M-1,-}^{-1}&0\\
+0&0&0&\cdots&0&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}
+\end{pmatrix}_{M\times M}\label{eq:L-1} \\
+L_{1+}^B &\equiv \begin{pmatrix}
+-\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&0&\dots&0&0&0\\
+0&-\Delta_{2,+}^{-1}&\Delta_{2,+}^{-1}&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\cdots&0&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}\\
+0&0&0&\dots&0&0&\Delta_{M,+}^{-1}  [-1 + (1 - \overline{\xi} \Delta_{M,+})]  \\
+\end{pmatrix}_{M\times M}\label{eq:L-1-plus} \\
+L_2^B &\equiv 2 \begin{psmallmatrix}
+\Xi_1 &
+(\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{1,+}^{-1}
+&0&\cdots&0&0&0 \\
+\vdots&\ddots&\ddots&\ddots&\ddots&\vdots&\vdots\\
+0&\cdots&
+(\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,-}^{-1} &
+-\Delta_{i,-}^{-1} \Delta_{i,+}^{-1}  &
+ (\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,+}^{-1}&\cdots&0 \\
+\vdots&\vdots&\vdots&\ddots&\ddots&\ddots&\vdots\\
+0&0&0&\cdots&0&(\Delta_{M,+}+\Delta_{M,-})^{-1} \Delta_{M,-}^{-1}&\Xi_M
+\end{psmallmatrix}_{M\times M}\label{eq:L-2} \\
+I^B &\equiv \begin{pmatrix}
+1 & 0 & \cdots & 0 & 0 \\
+0 & 1 & \cdots & 0 & 0 \\
+\vdots  & \ddots & \ddots &  \vdots  & \vdots   \\
+0 & 0 & \cdots & 1 & 0 \\
+0 & 0 & \cdots & 0 & 1
+\end{pmatrix}_{M\times M}
+\end{align}
+where
+
+\begin{align}
+\Xi_{1} &= -2\left[  \Delta_{1,-}^{-1} \Delta_{1,+}^{-1} + (-1 + \underline{\xi} \Delta_{1,-})^{-1} (\Delta_{1,+} + \Delta_{1,-})^{-1}  \Delta_{1,-}^{-1} \right] \\
+\Xi_{M} &= -2\left[  \Delta_{M,-}^{-1} \Delta_{M,+}^{-1} - (1 + \overline{\xi} \Delta_{M,+})^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1} \right]
+\end{align}
+
+
+Or, alternatively, with vectorized differences:
+
+
+\begin{align}
+{L}_{1-}^B \equiv
+\text{tridiag} \left[-(\Delta_-^\circ)^{-1}[2:M], \begin{pmatrix}\Delta^{-1}_{1,-} [1 - (1 + \underline{\xi} \Delta_{1,-})]; (\Delta_-^\circ )^{-1}[2:M] \end{pmatrix}, \mathbf{0}_{M-1}  \right]
+\end{align}
+
+\begin{align}
+{L}_{1+}^B \equiv
+\text{tridiag} \left[  \mathbf{0}_{M-1},
+\begin{pmatrix}-(\Delta_-^\circ )^{-1}[1:M-1]; \Delta^{-1}_{M,+} [-1 + (1 - \overline{\xi} \Delta_{M,+})] \end{pmatrix},
+(\Delta_-^\circ)^{-1}[2:M]
+ \right]
+\end{align}
+\begin{align}
+{L}_{2}^B \equiv
+2 \odot \text{tridiag}& \Big[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, \\&
+	\begin{pmatrix}
+	\Xi_1 ;
+	-(\Delta_-^\circ \odot \Delta_+^\circ)^{-1}[2:M-1];
+	\Xi_M
+	\end{pmatrix} , \\&
+	(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \Big]
+\end{align}
+
+\begin{align}
+I^B \equiv  \text{diag($\mathbf{1}_M$)}
+\end{align}
+
+
+\subsubsection{Absorbing barrier conditions}
+
+To apply an absorbing barrier condition $v(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
+
+\begin{equation}\label{eq:absorbing-barrier-matrix}
+B = \begin{bmatrix}
+1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1\\
+\end{bmatrix}_{2 \times (M+2)} \quad
+b = \begin{bmatrix}
+S \\
+0
+\end{bmatrix}
+\end{equation}
+
+Similarly, one can apply an absorbing condition on the upper bound  $v(x_{\max}) =S$ for some $S \in \mathbb{R}$ and the
+
+
+\begin{equation}\label{eq:absorbing-barrier-matrix-ub}
+B = \begin{bmatrix}
+-1 & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & 0 & 1\\
+\end{bmatrix}_{2 \times (M+2)} \quad
+b = \begin{bmatrix}
+0 \\
+S
+\end{bmatrix}
+\end{equation}
+
+Note that the corresponding $B$ and $b$ are identical with regular grid cases.
+
+\subsection{Examples}
+
+\begin{example}\label{ex:gaussian-elimination-reflecting-barrier}
+	Consider $L = L_{2}$ to solve $L v = f(x)$ with $M = 3$ under uniform grids $\overline{x} = \{x_0, x_1, x_2, x_3, x_4\}$ and $\Delta = 1$, whose corresponding interior grid is $x = \{x_1, x_2, x_3\}$. This gives
+	\begin{align}
+	L^B = 	 \begin{bmatrix}
+	-2 & 1 & 0 \\
+	1 & -2 & 1 \\
+	0 & 1 & -2 \\
+	\end{bmatrix}
+	\end{align}
+	so $L^B v= f(x)$ on the grid $x$ results in the following system
+	\begin{align} \label{eq:extended-system-reflecting-barrier-reduced-system}
+	\begin{bmatrix}
+	-1 & 1 & 0  \\
+	1 & -2 & 1 \\
+	0 & 1 & -1 \\
+	\end{bmatrix} 	  \begin{bmatrix}
+	v(x_1) \\
+	v(x_2) \\
+	v(x_3)
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+	f(x_1) \\
+	f(x_2) \\
+	f(x_3)
+	\end{bmatrix}
+	\end{align}
+
+
+	For the extended system we have
+	\begin{align}
+	{L} &=
+	\begin{bmatrix}
+	1 & -2 & 1 & 0 & 0 \\
+	0 & 1 & -2 & 1 & 0 \\
+	0 & 0 & 1 & -2 & 1 \\
+	\end{bmatrix} \\
+	B &= \begin{bmatrix}
+	-1 & 1  & 0 & 0 & 0 \\
+	0 & 0 & 0 & -1 & 1
+	\end{bmatrix}
+	\end{align}
+
+	Constructing the stacked extended system \eqref{eq:reflecting-barrier-extended-system} gives
+	\begin{align}\label{eq:extended-system-reflecting-barrier-before-gaussian-elimination}
+	\begin{bmatrix}
+	1 & -2 & 1 & 0 & 0 \\
+	0 & 1 & -2 & 1 & 0 \\
+	0 & 0 & 1 & -2 & 1 \\
+	-1 & 1  & 0 & 0 & 0 \\
+	0 & 0 & 0 & -1 & 1
+	\end{bmatrix}
+	\begin{bmatrix}
+	v(x_0) \\
+	v(x_1) \\
+	v(x_2) \\
+	v(x_3) \\
+	v(x_4)
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+	f(x_1) \\
+	f(x_2) \\
+	f(x_3) \\
+	0 \\
+	0
+	\end{bmatrix}
+	\end{align}
+
+	Note that substracting the first row of ${L}$ by $(-1)$ times the first row of $B$ returns an identical system as \eqref{eq:extended-system-reflecting-barrier-before-gaussian-elimination}. Likewise, substracting the last row of ${L}$ by $(-1)$ times the last row of $B$ returns the identical system. Performing the two Gaussian elimination yields the following system:
+	\begin{align}\label{eq:extended-system-reflecting-barrier-after-gaussian-elimination}
+	\begin{bmatrix}
+	0 & -1 & 1 & 0 & 0 \\
+	0 & 1 & -2 & 1 & 0 \\
+	0 & 0 & 1 & -1 & 0 \\
+	1 & -1  & 0 & 0 & 0 \\
+	0 & 0 & 0 & -1 & 1
+	\end{bmatrix} 	  \begin{bmatrix}
+	v(x_0) \\
+	v(x_1) \\
+	v(x_2) \\
+	v(x_3) \\
+	v(x_4)  \\
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+	f(x_2) \\
+	f(x_3) \\
+	f(x_4) \\
+	0 \\
+	0
+	\end{bmatrix}
+	\end{align}
+	Note that now we have the first three rows of the coefficient matrix with zero columns on the extended nodes, $v(x_1 - \Delta)$ and $v(x_3 + \Delta)$. Extracting the system corresponding to the first three rows returns the following system, which solves the interior of $v(\overline{x})$, i.e., $v(x)$:
+	\begin{align}
+	\begin{bmatrix}
+	-1 & 1 & 0  \\
+	1 & -2 & 1 \\
+	0 & 1 & -1 \\
+	\end{bmatrix} 	  \begin{bmatrix}
+	v(x_1) \\
+	v(x_2) \\
+	v(x_3)
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+	f(x_1) \\
+	f(x_2) \\
+	f(x_3)
+	\end{bmatrix}
+	\end{align}
+	which is identical as  \eqref{eq:extended-system-reflecting-barrier-reduced-system}.
+\end{example}
+
+\begin{example}
+	Consider solving \eqref{eq:extended-system-reflecting-barrier-reduced-system}, but this time with an absorbing barrier condition on the lower bound, $v(x_{\min}) = S$ with a boundary condition matrix
+	\begin{align}
+	B &= \begin{bmatrix}
+	1 & 0  & 0 & 0 & 0 \\
+	0 & 0 & 0 & -1 & 1
+	\end{bmatrix}
+	\end{align}
+	The corresponding extended system is
+	\begin{align}\label{eq:extended-system-absorbing-barrier-before-gaussian-elimination}
+	\begin{bmatrix}
+	1 & -2 & 1 & 0 & 0 \\
+	0 & 1 & -2 & 1 & 0 \\
+	0 & 0 & 1 & -2 & 1 \\
+	1 & 0  & 0 & 0 & 0 \\
+	0 & 0 & 0 & -1 & 1
+	\end{bmatrix}
+	\begin{bmatrix}
+	v(x_0) \\
+	v(x_1) \\
+	v(x_2) \\
+	v(x_3) \\
+	v(x_4) \\
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+	f(x_1) \\
+	f(x_2) \\
+	f(x_3) \\
+	S \\
+	0
+	\end{bmatrix}
+	\end{align}
+
+	Note that substracting the first row of ${L}$ by $(-1)$ times the first row of $B$ returns an identical system as \eqref{eq:extended-system-absorbing-barrier-before-gaussian-elimination}. Likewise, substracting the last row of ${L}$ by $(-1)$ times the last row of $B$ returns the identical system. Performing the two Gaussian elimination yields the following system:
+	\begin{align}\label{eq:extended-system-absorbing-barrier-after-gaussian-elimination}
+	\begin{bmatrix}
+	0 & -2 & 1 & 0 & 0 \\
+	0 & 1 & -2 & 1 & 0 \\
+	0 & 0 & 1 & -1 & 0 \\
+	1 & 0  & 0 & 0 & 0 \\
+	0 & 0 & 0 & -1 & 1
+	\end{bmatrix} 	  \begin{bmatrix}
+	v(x_0) \\
+	v(x_1) \\
+	v(x_2) \\
+	v(x_3) \\
+	v(x_4) \\
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+	f(x_1) - S \\
+	f(x_2) \\
+	f(x_3) \\
+	0 \\
+	0
+	\end{bmatrix}
+	\end{align}
+
+	Extracting the system corresponding to the first three rows returns the following system, which solves the interior of $v(\overline{x})$, i.e., $v(x)$:
+	\begin{align}
+	\begin{bmatrix}
+	-2 & 1 & 0  \\
+	1 & -2 & 1 \\
+	0 & 1 & -1 \\
+	\end{bmatrix} 	  \begin{bmatrix}
+	v(x_1) \\
+	v(x_2) \\
+	v(x_3)
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+	f(x_1) - S \\
+	f(x_2) \\
+	f(x_3)
+	\end{bmatrix}
+	\end{align}
+\end{example}
+
+\section{Applications}
+
+\subsection{Hamilton–Jacobi–Bellman equations (HJBE)}
+Consider solving for $v$ from the following optimal control problem
+\begin{align}
+v(x_0) = \max_{ {\{\alpha(t) \} }_{t \geq 0} } \int_{0}^\infty e^{-\rho t} r( x(t), \alpha(t )) dt
+\end{align}
+
+with the law of motion for the state
+\begin{align}
+dx = \mu dt + \sigma dW
+\end{align}
+
+
+for some constant $\mu \geq 0$ and $\sigma \geq 0$ with $x(0) = x_0$.
+
+Let $\alpha^*(t)$ be the optimal solution. Suppose that $r$ under $\alpha^*(t)$ can be expressed in terms of state variables, $r^* (x)$. Then, the HJBE yields
+
+\begin{equation}\label{eq:hamilton-jacobi-bellman}
+\rho v(x) = r^*(x) +  \mu  \partial_{x} v(x) + \dfrac{\sigma^2}{2} \partial_{xx} v(x)
+\end{equation}
+
+In terms of differential operators, one can rewrite the equation as
+\begin{equation}\label{eq:hjbe-system-function}
+\tilde{L}  v(x) = r^*(x)
+\end{equation}
+
+with $\tilde{L} = \rho -  \tilde{L}_x$ where $\tilde{L}_x$ is defined as
+
+\begin{equation}\label{eq:L-defn}
+\tilde{L}_x = \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
+\end{equation}
+
+
+By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\partial_{x}$ ($L_{1+}$), $\partial_{xx}$ ($L_2$) on some grids of length $M$, $\{x_i\}_{i=1}^M$:
+\begin{align}\label{eq:L-descritized-defn}
+L_x = \mu L_{1+} + \dfrac{\sigma^2}{2} L_{2}
+\end{align}
+so that $v$ from \eqref{eq:hjbe-system-function} can be computed by solving the following discretized system of equations:
+\begin{align}
+L v &= r^*
+\end{align}
+where $v$ and $r^*$ are $M$-vectors whose $i$th elements are $v(x_i)$ and $r^*(x_i)$, respectively, and $L$ is defined as $L = \rho I - L_x$.
 
 
 
+\subsection{Kolmogorov forward equations (KFE) under diffusion process}
+Let $g(x, t)$ be the distribution of $x$ at time $t$ from the example above. By the Kolmogorov forward equation, the following PDE holds:
+
+\begin{equation}\label{eq:kfe}
+\partial_{t} g(x, t) = - \mu \partial_{x}  g(x,t) + \dfrac{\sigma^2}{2} \partial_{xx} g(x,t)
+\end{equation}
+
+\subsubsection{Stationary distributions}
+The stationary distribution $g^*(x)$ satisfies
+
+\begin{equation}\label{eq:kfe-stationary}
+0 = - \mu \partial_{x} g^*(x) + \dfrac{\sigma^2}{2} \partial_{xx} g^*(x)
+\end{equation}
+
+which can be rewritten as
+
+\begin{equation}
+\tilde{L}^*_x g(x) = 0
+\end{equation}
+
+where
+
+\begin{equation}\label{eq:L_star-defn}
+\tilde{L}^*_x =  - \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
+\end{equation}
+
+By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\tilde{L}^*_x$. Note that the operator for the KFE in \eqref{eq:L_star-defn} is the adjoint operator of the operator for the HJBE in \eqref{eq:L-defn}, and the correct discretization scheme for \eqref{eq:L_star-defn} can be, analogously, done by taking the transpose of the discretized operator for HJBE in \eqref{eq:L-descritized-defn} -- see \cite{gabaix16} and \cite{achdou17}. Hence, one can find the stationary distribution by solving the following discretized system of equations:
+
+\begin{equation}
+L^T_x g = 0
+\end{equation}
+where $L^T_x$ is the transpose of $L_x$ from \eqref{eq:L-descritized-defn} and $g$ is an $M$-vector whose element is $g(x_i)$ such that $\sum_{i=1}^M g(x_i) = 1$.
+
+\subsubsection{Full dynamics of distributions}
+One can also solve the full PDE in \eqref{eq:kfe}, given an initial distribution $g(x, 0)$. After discretization, note that \eqref{eq:kfe} can be rewritten as
+\begin{equation}\label{eq:kfe-discretized}
+\dot{g}(t) = L^T_x g(t)
+\end{equation}
+where $\dot{g}(t)$ is an $M$-vector whose $i$th element is $\partial_{t} g(x_i, t)$, which can be efficently solved by a number of differential equation solvers available in public, including \cite{rackauckas17}.
+
+\newpage
+
+\appendix
+\section{Derivation by substitution}
 \subsection{Regular grids}
 Suppose that the grids are regular, i.e., elements of $\text{diff}(x)$ are all identical with $\Delta$ for some $\Delta > 0$.
 
@@ -93,41 +901,41 @@ at the upper bound.
 The discretized central difference of second order under \eqref{eq:new-BC1} at the lower bound is, by substituting \eqref{eq:BC1-extrapolation-uniform} in,
 \begin{align}
 \dfrac{v ({x_{1}} + \Delta) - 2 v({x_{1}}) + v(x_{\min})}{\Delta^2} &=   \dfrac{v({x_{1}} + \Delta) - v({x_{1}})}{\Delta^2} - \dfrac{1}{\Delta}\dfrac{v ({x_{1}}) - v(x_{\min}) }{\Delta}  \\
-&= \dfrac{v({x_{1}} + \Delta) - v({x_{1}})}{\Delta^2} + \dfrac{1}{\Delta} \underline{\xi} v({x_{1}})  \\ 
-&= \dfrac{1}{\Delta^2}  (- 1 + \Delta \underline{\xi}) v({x_{1}})  + \dfrac{1}{\Delta^2}  v({x_{1}} + \Delta)  
+&= \dfrac{v({x_{1}} + \Delta) - v({x_{1}})}{\Delta^2} + \dfrac{1}{\Delta} \underline{\xi} v({x_{1}})  \\
+&= \dfrac{1}{\Delta^2}  (- 1 + \Delta \underline{\xi}) v({x_{1}})  + \dfrac{1}{\Delta^2}  v({x_{1}} + \Delta)
 \end{align}
 Similarly, by \eqref{eq:new-BC2}, we have
 \begin{align}
 \dfrac{v(x_{\max}) - 2 v({x_{M}} ) + v({x_{M}} -\Delta)}{\Delta^2} &=   \dfrac{v({x_{M}} - \Delta) - v({x_{M}})}{\Delta^2} + \dfrac{1}{\Delta}\dfrac{ v(x_{\max}) - v ({x_{M}}) }{\Delta}  \\
-&= \dfrac{v({x_{M}} - \Delta) - v({x_{M}})}{\Delta^2}  - \dfrac{1}{\Delta} \overline{\xi} v({x_{M}})  \\ 
-&= \dfrac{1}{\Delta^2}  (- 1 - \Delta \overline{\xi}) v({x_{M}})  + \dfrac{1}{\Delta^2}  v({x_{M}} - \Delta)  
+&= \dfrac{v({x_{M}} - \Delta) - v({x_{M}})}{\Delta^2}  - \dfrac{1}{\Delta} \overline{\xi} v({x_{M}})  \\
+&= \dfrac{1}{\Delta^2}  (- 1 - \Delta \overline{\xi}) v({x_{M}})  + \dfrac{1}{\Delta^2}  v({x_{M}} - \Delta)
 \end{align}
 at the upper bound.
 
-Thus, the corresponding discretized differential operator $L_{1-}$, $L_{1+}$, and $L_2$ are defined as 
+Thus, the corresponding discretized differential operator $L_{1-}$, $L_{1+}$, and $L_2$ are defined as
 
 \begin{align}
-L_{1-} &\equiv \frac{1}{\Delta}\begin{pmatrix}
+L_{1-}^B &\equiv \frac{1}{\Delta}\begin{pmatrix}
 1 - (1 + \underline{\xi} \Delta) &0&0&\dots&0&0&0\\
 -1&1&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-1&1&0\\
 0&0&0&\cdots&0&-1&1
-\end{pmatrix}_{M\times M}\label{eq:L-1-regular} \\
-L_{1+} &\equiv \frac{1}{\Delta}\begin{pmatrix}
+\end{pmatrix}_{M\times M} \\
+L_{1+}^B &\equiv \frac{1}{\Delta}\begin{pmatrix}
 -1&1&0&\dots&0&0&0\\
 0&-1&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&0&-1&1\\
 0&0&0&\cdots&0&0&-1+(1-\overline{\xi} \Delta)
-\end{pmatrix}_{M\times M}\label{eq:L-1-plus-regular} \\
-L_2 &\equiv \frac{1}{\Delta^2}\begin{pmatrix}
+\end{pmatrix}_{M\times M} \\
+L_2^B &\equiv \frac{1}{\Delta^2}\begin{pmatrix}
 -2 + (1 + \underline{\xi}\Delta) &1&0&\dots&0&0&0\\
 1&-2&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&1&-2&1\\
 0&0&0&\cdots&0&1&-2 + (1- \overline{\xi}\Delta)
-\end{pmatrix}_{M\times M}\label{eq:L-2-regular}
+\end{pmatrix}_{M\times M}
 \end{align}
 
 \subsection{Irregular grids}
@@ -149,50 +957,63 @@ v(x_{M+1}) = \frac{1}{1+\overline{\xi} \Delta_{M+1,-} } v(x_M)
 \end{align}
 at the upper bound.
 
-The discretized central difference of second order scheme at the lower bound under \eqref{eq:new-BC1}, by substituting \eqref{eq:BC2-extrapolation}, is 
+The discretized central difference of second order scheme at the lower bound under \eqref{eq:new-BC1}, by substituting \eqref{eq:BC2-extrapolation}, is
 \begin{align}
 &\dfrac{\Delta_{1,-} v( {x_{1}} + \Delta_{1,+}) - (\Delta_{1,+} + \Delta_{1,-}) v({x_{1}}) + \Delta_{1,+}  v( x_{\min})}{\frac{1}{2}(\Delta_{1,+} + \Delta_{1,-}) \Delta_{1,+} \Delta_{1,-} } \\
 &=
-\dfrac{v ({x_{1}}+\Delta_{1, +}) - 2 v({x_{1}}) + v(x_{\min})}{\Delta_{1, +}^2} \\ 
+\dfrac{v ({x_{1}}+\Delta_{1, +}) - 2 v({x_{1}}) + v(x_{\min})}{\Delta_{1, +}^2} \\
 &= \dfrac{v({x_{1}} + \Delta_{1, +}) - v({x_{1}})}{\Delta_{1, +}^2} - \dfrac{1}{\Delta_{1, +}}\dfrac{v({x_{1}}) - v(x_{\min}) }{\Delta_{1, +}}  \\
-&= \dfrac{v({x_{1}} + \Delta_{1, +}) - v({x_{1}})}{\Delta_{1, +}^2} + \dfrac{1}{\Delta_{i,+}} \underline{\xi} v({x_{1}})  \\ 
-&= \dfrac{1}{\Delta_{1, +}^2}  (- 1 + \Delta_{1, +} \underline{\xi}) v({x_{1}})  + \dfrac{1}{\Delta_{1, +}^2}  v({x_{1}} + \Delta_{1, +})  
+&= \dfrac{v({x_{1}} + \Delta_{1, +}) - v({x_{1}})}{\Delta_{1, +}^2} + \dfrac{1}{\Delta_{i,+}} \underline{\xi} v({x_{1}})  \\
+&= \dfrac{1}{\Delta_{1, +}^2}  (- 1 + \Delta_{1, +} \underline{\xi}) v({x_{1}})  + \dfrac{1}{\Delta_{1, +}^2}  v({x_{1}} + \Delta_{1, +})
 \end{align}
 Similarly, by \eqref{eq:new-BC2}, we have
 \begin{align}
 &\dfrac{\Delta_{M,-} v( x_{\max}) - (\Delta_{M,+} + \Delta_{M,-}) v({x_{M}} ) + \Delta_{M,+}  v( {x_{M}} - \Delta_{M,-})}{\frac{1}{2}(\Delta_{M,+} + \Delta_{M,-}) \Delta_{M,+} \Delta_{M,-} } \\
 &=\dfrac{v(x_{\max}) - 2 v({x_{M}} ) + v({x_{M}} -\Delta_{M,-})}{\Delta_{M,-}^2} \\
 &=   \dfrac{v({x_{M}} - \Delta_{M,-}) - v({x_{M}})}{\Delta_{M,-}^2} + \dfrac{1}{\Delta_{M,-}}\dfrac{ v(x_{\max}) - v ({x_{M}}) }{\Delta_{M,-}}  \\
-&= \dfrac{v({x_{M}} - \Delta_{M,-}) - v({x_{M}})}{\Delta_{M,-}^2}  - \dfrac{1}{\Delta_{M,-}} \overline{\xi} v({x_{M}})  \\ 
-&= \dfrac{1}{\Delta_{M,-}^2}  (- 1 - \Delta_{M,-} \overline{\xi}) v({x_{M}})  + \dfrac{1}{\Delta_{M,-}^2}  v({x_{M}} - \Delta_{M,-})  
+&= \dfrac{v({x_{M}} - \Delta_{M,-}) - v({x_{M}})}{\Delta_{M,-}^2}  - \dfrac{1}{\Delta_{M,-}} \overline{\xi} v({x_{M}})  \\
+&= \dfrac{1}{\Delta_{M,-}^2}  (- 1 - \Delta_{M,-} \overline{\xi}) v({x_{M}})  + \dfrac{1}{\Delta_{M,-}^2}  v({x_{M}} - \Delta_{M,-})
 \end{align}
 at the upper bound.
 
-Thus, the corresponding discretized differential operator $L_{1-}$, $L_{1+}$, and $L_2$ are defined as 
+Thus, the corresponding discretized differential operator $L_{1-}$, $L_{1+}$, and $L_2$ are defined as
 
 \begin{align}
-L_{1-} &\equiv \begin{pmatrix}
+L_{1-}^B &\equiv \begin{pmatrix}
 \Delta^{-1}_{1,-} [1 - (1 + \underline{\xi} \Delta_{1,-})] &0&0&\dots&0&0&0\\
 -\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-\Delta_{M-1,-}^{-1}&\Delta_{M-1,-}^{-1}&0\\
 0&0&0&\cdots&0&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}
 \end{pmatrix}_{M\times M}\label{eq:L-1} \\
-L_{1+} &\equiv \begin{pmatrix}
+L_{1+}^B &\equiv \begin{pmatrix}
 -\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&0&\dots&0&0&0\\
 0&-\Delta_{2,+}^{-1}&\Delta_{2,+}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\cdots&0&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}\\
 0&0&0&\dots&0&0&\Delta_{M,+}^{-1}  [-1 + (1 - \overline{\xi} \Delta_{M,+})]  \\
 \end{pmatrix}_{M\times M}\label{eq:L-1-plus} \\
-L_2 &\equiv \begin{psmallmatrix}
-\Delta_{1,+}^{-2}[-2 + (1+\underline{\xi} \Delta_{1,+})] &\Delta_{1,+}^{-2}&0&\cdots&0&0&0 \\
+L_2^B &\equiv 2 \begin{psmallmatrix}
+\Xi_1 &
+(\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{1,+}^{-1}
+&0&\cdots&0&0&0 \\
 \vdots&\ddots&\ddots&\ddots&\ddots&\vdots&\vdots\\
-0&\cdots&2(\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,-}^{-1} &-2\Delta_{i,-}^{-1} \Delta_{i,+}^{-1}  & 2 (\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,+}^{-1}&\cdots&0 \\
+0&\cdots&
+(\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,-}^{-1} &
+-\Delta_{i,-}^{-1} \Delta_{i,+}^{-1}  &
+(\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,+}^{-1}&\cdots&0 \\
 \vdots&\vdots&\vdots&\ddots&\ddots&\ddots&\vdots\\
-0&0&0&\cdots&0&\Delta_{M,-}^{-2}&\Delta_{M,-}^{-2} [-2 + (1- \overline{\xi}\Delta_{M,-})]
+0&0&0&\cdots&0&(\Delta_{M,+}+\Delta_{M,-})^{-1} \Delta_{M,-}^{-1}&\Xi_M
 \end{psmallmatrix}_{M\times M}\label{eq:L-2}
 \end{align}
+
+where
+
+\begin{align}
+\Xi_{1} &= -2\left[  \Delta_{1,-}^{-1} \Delta_{1,+}^{-1} + (-1 + \underline{\xi} \Delta_{1,-})^{-1} (\Delta_{1,+} + \Delta_{1,-})^{-1}  \Delta_{1,-}^{-1} \right] \\
+\Xi_{M} &= -2\left[  \Delta_{M,-}^{-1} \Delta_{M,+}^{-1} - (1 + \overline{\xi} \Delta_{M,+})^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1} \right]
+\end{align}
+
 \iffalse
 \subsection{Differential operators by basis}
 Define the following basis matrices:
@@ -247,17 +1068,17 @@ For notational brevity, for vectors with the same size, $x_1, x_2$, define $x_1 
 \begin{align}
 L_{1-} &= \text{diag}(\Delta_{-}^{\circ} )^{-1} U_1^{-} - B_1 \\
 L_{1+} &= \text{diag}(\Delta_{+}^{\circ} )^{-1} U_1^{+} + B_{M} \\
-L_2 &= \text{diag} \left[ \frac{1}{2} ( {\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}} ) {\Delta_{+}^{\circ}} \right]^{-1}  U_1^{+} - 
- \text{diag} \left[ \frac{1}{2} ( {\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}} ) {\Delta_{-}^{\circ}} \right]^{-1}  U_1^{-} 
-+ B_1 + B_{M} 
+L_2 &= \text{diag} \left[ \frac{1}{2} ( {\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}} ) {\Delta_{+}^{\circ}} \right]^{-1}  U_1^{+} -
+\text{diag} \left[ \frac{1}{2} ( {\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}} ) {\Delta_{-}^{\circ}} \right]^{-1}  U_1^{-}
++ B_1 + B_{M}
 \end{align}
 We can simplify this expression further by introducing a new notation. Let $x^{-1}$ be defined as the elementwise inverse of a vector $x$ that contains no zero element. Then, $L_2$ can be represented as
 \begin{align}
 L_2 &=
-2\left[ \text{diag} \left( ( {\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}} )^{-1} {\Delta_{+}^{\circ}}^{-1} \right) U_1^{+} - 
+2\left[ \text{diag} \left( ( {\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}} )^{-1} {\Delta_{+}^{\circ}}^{-1} \right) U_1^{+} -
 \text{diag} \left( ( {\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}} )^{-1} {\Delta_{-}^{\circ}}^{-1} \right) U_1^{-}  \right]
 + B_1 + B_{M} \\ \label{eq:L-2-by-basis}
-&= 2 \text{diag} \left( ( {\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}} )^{-1} \right) \left[ \text{diag} \left(  {\Delta_{+}^{\circ}}^{-1} \right) U_1^{+} - 
+&= 2 \text{diag} \left( ( {\Delta_{+}^{\circ}} + {\Delta_{-}^{\circ}} )^{-1} \right) \left[ \text{diag} \left(  {\Delta_{+}^{\circ}}^{-1} \right) U_1^{+} -
 \text{diag} \left(  {\Delta_{-}^{\circ}}^{-1} \right) U_1^{-}  \right]
 + B_1 + B_{M}
 \end{align}
@@ -271,445 +1092,9 @@ The diagonal elements of \eqref{eq:L-2-by-basis} are also identical with the one
 \end{align}
 which is identical with $\text{diag} (L_2)$ with $L_2$ from \eqref{eq:L-2} except the first row and last row that are affected by $B_1$ and $B_{M}$.
 
-\fi 
-
-\section{Boundary conditions with operators on extended grids}
-Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids. Define $v(\overline{x})$ as $(M+2)$-vector whose $i$th element is $v(\overline {x}_i)$. We can then define the following operators on $\overline{x}$:
+\fi
 
 
-\begin{equation}\label{eq:L-1-minus-extended}
-\overline{L}_{1-} \equiv\begin{pmatrix}
--\Delta_{1,-}^{-1}&\Delta_{1,-}^{-1}&0&\dots&0&0&0\\
-0&-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&\dots&0&0&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
-0&0&0&\dots&\Delta_{M-1,-}^{-1}&0&0\\
-0&0&0&\cdots&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}&0
-\end{pmatrix}_{M\times (M+2)}
-\end{equation}
-
-\begin{equation}\label{eq:L-1-plus-extended}
-\overline{L}_{1+} \equiv \begin{pmatrix}
-0&-\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&\dots&0&0&0\\
-0&0&-\Delta_{2,+}^{-1}&\dots&0&0&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
-0&0&0&\dots&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}&0\\
-0&0&0&\cdots&0&-\Delta_{M,+}^{-1}&\Delta_{M,+}^{-1}&
-\end{pmatrix}_{M\times (M+2)}
-\end{equation}
-
-
-\begin{equation}\label{eq:L-2-extended} \small
-\overline{L}_2 \equiv \begin{psmallmatrix}
-\Delta_{1,-}^{-2} &-2\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  & \Delta_{i,+}^{-2}&\dots&0&0&0\\
-0&2(\Delta_{2,+}+\Delta_{2,-})^{-1} \Delta_{2,-}^{-1} &-2\Delta_{2,-}^{-1} \Delta_{2,+}^{-1} &\dots&0&0&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
-0&0&0&\dots&-2\Delta_{M-1,-}^{-1} \Delta_{M-1,+}^{-1}  & 2 (\Delta_{M-1,+}+\Delta_{M-1,-})^{-1} \Delta_{M-1,+}^{-1}&0\\
-0&0&0&\cdots&\Delta_{M,-}^{-2} &-2\Delta_{M,-}^{-1} \Delta_{M,+}^{-1}  & \Delta_{M,+}^{-2}
-\end{psmallmatrix}_{M\times (M+2)}
-\end{equation}
-
-
-Suppose that we want to solve a system $L v({x}) = f(x) $ for $v(x)$ where $L$ is a linear combination of discretized differential operators for some $f(x)$ that represents the values of a function $f$ on discretized $x$. To solve the system under boundary conditions on $v$, one can construct and solve the following extended system:
-
-\begin{equation}\label{eq:reflecting-barrier-extended-system}
-\begin{bmatrix}
-\overline{L} \\
-B
-\end{bmatrix} 
-v(\overline{x}) = 
-\begin{bmatrix}
-f(x) \\
-b
-\end{bmatrix} 
-\end{equation}
-
-with $M_E$ by $(M+2)$ matrix $B$ and $M_E$-length vector $b$ that represent the current boundary conditions, where $M_E$ is the number of boundary conditions to be applied. The solution of \eqref{eq:reflecting-barrier-extended-system}, $v(\overline{x})$ can be decomposed into 
-\begin{align}
-v(\overline{x}) = \begin{bmatrix}
-v(x_{\min}) \\
-v(x) \\
-v(x_{\max})
-\end{bmatrix}
-\end{align}
-which also gives the solution for $v(x)$.
-
-\subsection{Reflecting barrier conditions}
-
-To apply reflecting barrier conditions $v'(x_{\min}) = v'(x_{\max}) = 0$, one can use
-
-\begin{equation}\label{eq:reflecting-barrier-matrix}
-B = \begin{bmatrix}
--1 & 1 & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & -1 & 1\\
-\end{bmatrix}_{2 \times (M+2)} \quad 
-b = \begin{bmatrix}
-0 \\
-0
-\end{bmatrix}
-\end{equation}
-
-\subsubsection{Gaussian elimination}
-Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value function $v(\overline{x})$ on the extended grid, one can perform Gaussian elimination to reduce the system and solve $v(x)$, which gives the identical solution as the interior of $v(\overline{x})$. 
-
-\begin{example}\label{ex:gaussian-elimination-reflecting-barrier}
-	 Consider $L = L_{2}$ to solve $L v = f(x)$ with $M = 3$ under uniform grids $\overline{x} = \{x_0, x_1, x_2, x_3, x_4\}$ and $\Delta = 1$, whose corresponding interior grid is $x = \{x_1, x_2, x_3\}$. This gives
-	 \begin{align}
-	 L = 	 \begin{bmatrix}
-	 -2 & 1 & 0 \\
-	 1 & -2 & 1 \\
-	 0 & 1 & -2 \\
-	 \end{bmatrix}
-	 \end{align}
-	 so $L v= f(x)$ on the grid $x$ results in the following system
-	 \begin{align} \label{eq:extended-system-reflecting-barrier-reduced-system}
-	 	 	 \begin{bmatrix}
-	 -1 & 1 & 0  \\
-	 1 & -2 & 1 \\
-	 0 & 1 & -1 \\
-	 \end{bmatrix} 	  \begin{bmatrix}
-	 v(x_1) \\
-	 v(x_2) \\
-	 v(x_3) 
-	 \end{bmatrix}
-	 = 
-	 \begin{bmatrix}
-	 f(x_1) \\
-	 f(x_2) \\
-	 f(x_3) 
-	 \end{bmatrix} 
-	 \end{align}
-	 
-	 
-	 For the extended system we have
-	 \begin{align}
-	 \overline{L} &= 
-	 \begin{bmatrix}
-	 1 & -2 & 1 & 0 & 0 \\
-	 0 & 1 & -2 & 1 & 0 \\
-	 0 & 0 & 1 & -2 & 1 \\
-	 \end{bmatrix} \\
-	 B &= \begin{bmatrix}
-  	-1 & 1  & 0 & 0 & 0 \\
-	0 & 0 & 0 & -1 & 1
-	 \end{bmatrix}
-	 \end{align}
-	 
-	  Constructing the stacked extended system \eqref{eq:reflecting-barrier-extended-system} gives
-	  \begin{align}\label{eq:extended-system-reflecting-barrier-before-gaussian-elimination}
- 	 \begin{bmatrix}
-	  1 & -2 & 1 & 0 & 0 \\
-      0 & 1 & -2 & 1 & 0 \\
-	  0 & 0 & 1 & -2 & 1 \\
-	  -1 & 1  & 0 & 0 & 0 \\
-	  0 & 0 & 0 & -1 & 1
-	  \end{bmatrix} 
-	  \begin{bmatrix}
-	  v(x_0) \\
-	  v(x_1) \\
-	  v(x_2) \\
-	  v(x_3) \\
-	  v(x_4) 
-	  \end{bmatrix}
-	  = 
- 		\begin{bmatrix}
-	  f(x_1) \\
-	  f(x_2) \\
-	  f(x_3) \\
-	  0 \\
-	  0 
-	  \end{bmatrix} 
-	  \end{align}
-	  
-	 Note that substracting the first row of $\overline{L}$ by $(-1)$ times the first row of $B$ returns an identical system as \eqref{eq:extended-system-reflecting-barrier-before-gaussian-elimination}. Likewise, substracting the last row of $\overline{L}$ by $(-1)$ times the last row of $B$ returns the identical system. Performing the two Gaussian elimination yields the following system:
-	 \begin{align}\label{eq:extended-system-reflecting-barrier-after-gaussian-elimination}
-	 \begin{bmatrix}
-	 0 & -1 & 1 & 0 & 0 \\
-     0 & 1 & -2 & 1 & 0 \\
-     0 & 0 & 1 & -1 & 0 \\
-	 1 & -1  & 0 & 0 & 0 \\
-	 0 & 0 & 0 & -1 & 1
-	 \end{bmatrix} 	  \begin{bmatrix}
-	 v(x_0) \\
-	 v(x_1) \\
-	 v(x_2) \\
-	 v(x_3) \\
-	 v(x_4)  \\
-	 \end{bmatrix}
-	 = 
-	 \begin{bmatrix}
-	 f(x_2) \\
-	 f(x_3) \\
-	 f(x_4) \\
-	 0 \\
-	 0 
-	 \end{bmatrix} 
-	 \end{align}
-	 Note that now we have the first three rows of the coefficient matrix with zero columns on the extended nodes, $v(x_1 - \Delta)$ and $v(x_3 + \Delta)$. Extracting the system corresponding to the first three rows returns the following system, which solves the interior of $v(\overline{x})$, i.e., $v(x)$:
-	 \begin{align}
-	 	 \begin{bmatrix}
-	 -1 & 1 & 0  \\
-	 1 & -2 & 1 \\
-	 0 & 1 & -1 \\
-	 \end{bmatrix} 	  \begin{bmatrix}
-	 v(x_1) \\
-	 v(x_2) \\
-	 v(x_3) 
-	 \end{bmatrix}
-	 = 
-	 \begin{bmatrix}
-	 f(x_1) \\
-	 f(x_2) \\
-	 f(x_3) 
-	 \end{bmatrix} 
-	 \end{align}
-	 which is identical as  \eqref{eq:extended-system-reflecting-barrier-reduced-system}.
-\end{example}
-
-
-\subsection{Mixed boundary conditions}
-
-To apply a mixed boundary condition $v'(x_{\min}) = - \underline{\xi} v(x_{\min}) $ for some $\xi \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$ and $\Delta_{1,-} = x_1 - x_0$ one can use
-
-\begin{equation}\label{eq:mixed-barrier-matrix-original}
-B = \begin{bmatrix}
-\dfrac{1}{\Delta_{0,+}} - \underline{\xi} & \dfrac{1}{\Delta_{0,+}} & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & -1 & 1\\
-\end{bmatrix}_{2 \times (M+2)} \quad 
-b = \begin{bmatrix}
-0 \\
-0
-\end{bmatrix}
-\end{equation}
-from the discretized scheme
-\begin{align}
-\dfrac{v(x_1) - v(x_0)}{\Delta_{0,+}} = - \underline{\xi} v(x_0)
-\end{align}
-for $v'(x_{\min}) = - \underline{\xi} v(x_{\min})$. Or equivalently,
-\begin{equation}\label{eq:mixed-barrier-matrix}
-B = \begin{bmatrix}
-1 - \underline{\xi} \Delta_{1,-} & \Delta_{1,-} & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & -1 & 1\\
-\end{bmatrix}_{2 \times (M+2)} \quad 
-b = \begin{bmatrix}
-0 \\
-0
-\end{bmatrix}
-\end{equation}
-
-Similarly, one can apply a mixed boundary condition $v'(x_{\min}) = - \underline{\xi} v(x_{\min}) $ for some $\xi \in \mathbb{R}$ on the upper bound, with one reflecting barrier condition on the lower bound $v'(x_{\min}) = 0$ and $\Delta_{M+1,-} = x_{M+1} - x_M$ with
-
-
-\begin{equation}\label{eq:mixed-barrier-matrix-ub}
-B = \begin{bmatrix}
--1 & 1 & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & -\Delta_{M+1,-} & 1 + \overline{\xi} \Delta_{M+1,-}   \\
-\end{bmatrix}_{2 \times (M+2)} \quad 
-b = \begin{bmatrix}
-0 \\
-S
-\end{bmatrix}
-\end{equation}
-
-
-
-\subsection{Absorbing barrier conditions}
-
-To apply an absorbing barrier condition $v(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
-
-\begin{equation}\label{eq:absorbing-barrier-matrix}
-B = \begin{bmatrix}
-1 & 0 & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & -1 & 1\\
-\end{bmatrix}_{2 \times (M+2)} \quad 
-b = \begin{bmatrix}
-S \\
-0
-\end{bmatrix}
-\end{equation}
-
-Similarly, one can apply an absorbing condition on the upper bound  $v(x_{\max}) =S$ for some $S \in \mathbb{R}$ and the 
-
-
-\begin{equation}\label{eq:absorbing-barrier-matrix-ub}
-B = \begin{bmatrix}
--1 & 1 & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & 0 & 1\\
-\end{bmatrix}_{2 \times (M+2)} \quad 
-b = \begin{bmatrix}
-0 \\
-S
-\end{bmatrix}
-\end{equation}
-
-\subsubsection{Gaussian elimination}
-
-\begin{example}
-	Consider solving \eqref{eq:extended-system-reflecting-barrier-reduced-system}, but this time with an absorbing barrier condition on the lower bound, $v(x_{\min}) = S$ with a boundary condition matrix 
-	\begin{align}
-	B &= \begin{bmatrix}
-			1 & 0  & 0 & 0 & 0 \\
-			0 & 0 & 0 & -1 & 1
-		\end{bmatrix}
-	\end{align}
-	The corresponding extended system is
-\begin{align}\label{eq:extended-system-absorbing-barrier-before-gaussian-elimination}
-\begin{bmatrix}
-1 & -2 & 1 & 0 & 0 \\
-0 & 1 & -2 & 1 & 0 \\
-0 & 0 & 1 & -2 & 1 \\
-1 & 0  & 0 & 0 & 0 \\
-0 & 0 & 0 & -1 & 1
-\end{bmatrix} 
-\begin{bmatrix}
-v(x_0) \\
-v(x_1) \\
-v(x_2) \\
-v(x_3) \\
-v(x_4) \\
-\end{bmatrix}
-= 
-\begin{bmatrix}
-f(x_1) \\
-f(x_2) \\
-f(x_3) \\
-S \\
-0 
-\end{bmatrix} 
-\end{align}
-
-Note that substracting the first row of $\overline{L}$ by $(-1)$ times the first row of $B$ returns an identical system as \eqref{eq:extended-system-absorbing-barrier-before-gaussian-elimination}. Likewise, substracting the last row of $\overline{L}$ by $(-1)$ times the last row of $B$ returns the identical system. Performing the two Gaussian elimination yields the following system:
-\begin{align}\label{eq:extended-system-absorbing-barrier-after-gaussian-elimination}
-\begin{bmatrix}
-0 & -2 & 1 & 0 & 0 \\
-0 & 1 & -2 & 1 & 0 \\
-0 & 0 & 1 & -1 & 0 \\
-1 & 0  & 0 & 0 & 0 \\
-0 & 0 & 0 & -1 & 1
-\end{bmatrix} 	  \begin{bmatrix}
-v(x_0) \\
-v(x_1) \\
-v(x_2) \\
-v(x_3) \\
-v(x_4) \\
-\end{bmatrix}
-= 
-\begin{bmatrix}
-f(x_1) - S \\
-f(x_2) \\
-f(x_3) \\
-0 \\
-0 
-\end{bmatrix} 
-\end{align}
-
-\end{example}
-
-Extracting the system corresponding to the first three rows returns the following system, which solves the interior of $v(\overline{x})$, i.e., $v(x)$:
-\begin{align}
-\begin{bmatrix}
--2 & 1 & 0  \\
-1 & -2 & 1 \\
-0 & 1 & -1 \\
-\end{bmatrix} 	  \begin{bmatrix}
-v(x_1) \\
-v(x_2) \\
-v(x_3) 
-\end{bmatrix}
-= 
-\begin{bmatrix}
-f(x_1) - S \\
-f(x_2) \\
-f(x_3) 
-\end{bmatrix} 
-\end{align}
-
-\section{Applications}
-
-\subsection{Hamilton–Jacobi–Bellman equations (HJBE)}
-Consider solving for $v$ from the following optimal control problem
-\begin{align}
-v(x_0) = \max_{ {\{\alpha(t) \} }_{t \geq 0} } \int_{0}^\infty e^{-\rho t} r( x(t), \alpha(t )) dt
-\end{align}
-
-with the law of motion for the state 
-\begin{align}
-dx = \mu dt + \sigma dW 
-\end{align}
-
-
-for some constant $\mu \geq 0$ and $\sigma \geq 0$ with $x(0) = x_0$.
-
-Let $\alpha^*(t)$ be the optimal solution. Suppose that $r$ under $\alpha^*(t)$ can be expressed in terms of state variables, $r^* (x)$. Then, the HJBE yields
-
-\begin{equation}\label{eq:hamilton-jacobi-bellman}
-\rho v(x) = r^*(x) +  \mu  \partial_{x} v(x) + \dfrac{\sigma^2}{2} \partial_{xx} v(x)
-\end{equation}
-
-In terms of differential operators, one can rewrite the equation as
-\begin{equation}\label{eq:hjbe-system-function}
-\tilde{L}  v(x) = r^*(x)
-\end{equation}
-
-with $\tilde{L} = \rho -  \tilde{L}_x$ where $\tilde{L}_x$ is defined as
-
-\begin{equation}\label{eq:L-defn}
-\tilde{L}_x = \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
-\end{equation}
-
-
-By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\partial_{x}$ ($L_{1+}$), $\partial_{xx}$ ($L_2$) on some grids of length $M$, $\{x_i\}_{i=1}^M$:
-\begin{align}\label{eq:L-descritized-defn}
-L_x = \mu L_{1+} + \dfrac{\sigma^2}{2} L_{2}
-\end{align}
-so that $v$ from \eqref{eq:hjbe-system-function} can be computed by solving the following discretized system of equations:
-\begin{align}
-L v &= r^*
-\end{align}
-where $v$ and $r^*$ are $M$-vectors whose $i$th elements are $v(x_i)$ and $r^*(x_i)$, respectively, and $L$ is defined as $L = \rho I - L_x$.
-
-
-
-\subsection{Kolmogorov forward equations (KFE) under diffusion process}
-Let $g(x, t)$ be the distribution of $x$ at time $t$ from the example above. By the Kolmogorov forward equation, the following PDE holds:
-
-\begin{equation}\label{eq:kfe}
-\partial_{t} g(x, t) = - \mu \partial_{x}  g(x,t) + \dfrac{\sigma^2}{2} \partial_{xx} g(x,t)
-\end{equation}
-
-\subsubsection{Stationary distributions}
-The stationary distribution $g^*(x)$ satisfies
-
-\begin{equation}\label{eq:kfe-stationary}
-0 = - \mu \partial_{x} g^*(x) + \dfrac{\sigma^2}{2} \partial_{xx} g^*(x)
-\end{equation}
-
-which can be rewritten as 
-
-\begin{equation}
-\tilde{L}^*_x g(x) = 0
-\end{equation}
-
-where 
-
-\begin{equation}\label{eq:L_star-defn}
-\tilde{L}^*_x =  - \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
-\end{equation}
-
-By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\tilde{L}^*_x$. Note that the operator for the KFE in \eqref{eq:L_star-defn} is the adjoint operator of the operator for the HJBE in \eqref{eq:L-defn}, and the correct discretization scheme for \eqref{eq:L_star-defn} can be, analogously, done by taking the transpose of the discretized operator for HJBE in \eqref{eq:L-descritized-defn} -- see \cite{gabaix16} and \cite{achdou17}. Hence, one can find the stationary distribution by solving the following discretized system of equations:
-
-\begin{equation}
-L^T_x g = 0 
-\end{equation}
-where $L^T_x$ is the transpose of $L_x$ from \eqref{eq:L-descritized-defn} and $g$ is an $M$-vector whose element is $g(x_i)$ such that $\sum_{i=1}^M g(x_i) = 1$.
-
-\subsubsection{Full dynamics of distributions}
-One can also solve the full PDE in \eqref{eq:kfe}, given an initial distribution $g(x, 0)$. After discretization, note that \eqref{eq:kfe} can be rewritten as
-\begin{equation}\label{eq:kfe-discretized}
-\dot{g}(t) = L^T_x g(t)
-\end{equation}
-where $\dot{g}(t)$ is an $M$-vector whose $i$th element is $\partial_{t} g(x_i, t)$, which can be efficently solved by a number of differential equation solvers available in public, including \cite{rackauckas17}.
-
-\newpage
 \bibliography{hact}
 % The notebook is based on my previous version that can be found at https://github.com/ubcecon/computing_and_datascience/blob/a33d14191afba2d13598b331b3623a9512dccc90/continuous_time_methods/notes/discretized-differential-operator-derivation.tex by @chiyahn
 \end{document}
