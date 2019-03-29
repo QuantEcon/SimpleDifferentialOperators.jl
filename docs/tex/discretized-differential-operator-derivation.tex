@@ -137,8 +137,8 @@ where $\text{tridiag}(x,y,z)$ is a matrix whose lower, main, upper diagonal vect
 
 \section{Discretizing Operators with a Irregular Grid}
 
-Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids. Define $v(\overline{x})$ as $(M+2)$-vector whose $i$th element is $v(\overline {x}_i)$.
 \subsection{Extension Operators}
+Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids. Define $\overline{v}$ as $(M+2)$-vector whose $i$th element is $v(\overline {x}_i)$.
 
 Suppose that we want to solve a system $L v({x}) = f(x) $ for $v(x)$ where $L$ is a linear combination of discretized differential operators for some $f(x)$ that represents the values of a function $f$ on discretized $x$. To solve the system under boundary conditions on $v$, one can construct and solve the following extended system:
 
@@ -147,7 +147,7 @@ Suppose that we want to solve a system $L v({x}) = f(x) $ for $v(x)$ where $L$ i
 {L} \\
 B
 \end{bmatrix}
-v(\overline{x}) =
+\overline{v} =
 \begin{bmatrix}
 f(x) \\
 b
@@ -156,13 +156,13 @@ b
 
 with $M_E$ by $(M+2)$ matrix $B$ and $M_E$-length vector $b$ that represent the current boundary conditions, where $M_E$ is the number of boundary conditions to be applied. The solution of \eqref{eq:reflecting-barrier-extended-system}, $v(\overline{x})$ can be decomposed into
 \begin{align}
-v(\overline{x}) = \begin{bmatrix}
-v(x_{\min}) \\
-v(x) \\
-v(x_{\max})
+\overline{v} = \begin{bmatrix}
+v(x_0) \\
+v \\
+v(x_{M+1})
 \end{bmatrix}
 \end{align}
-which also gives the solution for $v(x)$.
+which also gives the solution for $v$.
 
 \subsection{Applying Boundary Conditions}
 Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value function $v(\overline{x})$ on the extended grid, one can perform Gaussian elimination to reduce the system and solve $v(x)$, which gives the identical solution as the interior of $v(\overline{x})$.
