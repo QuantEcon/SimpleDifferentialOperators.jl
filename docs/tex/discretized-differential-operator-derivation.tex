@@ -115,6 +115,18 @@ L_2 &\equiv \frac{1}{\Delta^2}\begin{pmatrix}
 \end{pmatrix}_{M\times (M+2)}\label{eq:L-2-extended-regular}
 \end{align}
 
+which can be defined in more compact forms:
+\begin{align}
+L_{1-} &\equiv  \Delta^{-1} \begin{bmatrix}
+\text{tridiag}(\mathbf{0}_{M-1}, -\mathbf{1}_M, \mathbf{1}_{M} ) & \mathbf{0}_M
+\end{bmatrix} \\
+L_{1+} &\equiv \Delta^{-1} \begin{bmatrix}
+\mathbf{0}_M & \text{tridiag}(\mathbf{0}_{M-1}, -\mathbf{1}_M, \mathbf{1}_{M} )
+\end{bmatrix} \\
+L_2 &\equiv \frac{1}{\Delta^2} \text{tridiag}^+(\mathbf{1}_{M}, -2\mathbf{1}_M, \mathbf{1}_{M} )
+\end{align}
+
+where $\text{tridiag}(x,y,z)$ is a matrix whose lower, main, upper diagonal vectors are $x$, $y$, and $z$, respectively, and $\text{tridiag}^+(x,y,z)$ is a matrix whose main, upper, and second upper diagonal vectors $x$, $y$, and $z$, respectively.
 
 \subsection{Applying Boundary Conditions}
 \subsubsection{Mixed Boundary Conditions}
@@ -215,27 +227,26 @@ Alternatively, in a more compact form, using vectors distances for interior node
 \begin{align}
 {L}_{1-} \equiv
 \begin{bmatrix}
-\text{tridiag($\mathbf{0}_{M-1}$, $-(\Delta_-^\circ)^{-1}$, $(\Delta_-^\circ)^{-1}$) } & \vdots & \mathbf{0}_M
+\text{tridiag($\mathbf{0}_{M-1}$, $-(\Delta_-^\circ)^{-1}$, $(\Delta_-^\circ)^{-1}$) } &  \mathbf{0}_M
 \end{bmatrix}
 \end{align}
 \begin{align}
 {L}_{1+} \equiv
 \begin{bmatrix}
-\mathbf{0}_M & \vdots &
+\mathbf{0}_M & 
 \text{tridiag($\mathbf{0}_{M-1}$, $-(\Delta_-^\circ)^{-1}$, $(\Delta_-^\circ)^{-1}$) }
 \end{bmatrix}
 \end{align}
 \begin{align}
 {L}_{2} \equiv
-2 \odot \text{tridiag $\left[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, -(\Delta_-^\circ \odot \Delta_+^\circ)^{-1} , (\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \right]$  }
+2 \odot \text{tridiag}^+ \left[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, -(\Delta_-^\circ \odot \Delta_+^\circ)^{-1} , (\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \right]  
 \end{align}
 \begin{align}
 {I} \equiv
 \begin{bmatrix}
-\mathbf{0}_M & \vdots & \text{diag($\mathbf{1}_M$)} & \vdots & \mathbf{0}_M
+\mathbf{0}_M &  \text{diag($\mathbf{1}_M$)} &  \mathbf{0}_M
 \end{bmatrix}
 \end{align}
-where $\text{tridiag}(x,y,z)$ is a matrix whose lower, main, upper diagonal vectors are $x$, $y$, and $z$, respectively, and $\text{diag}(x)$ is a matrix whose diagonal vector is $x$.
 
 \subsubsection{Mixed boundary conditions}
 Mixed boundary conditions:
