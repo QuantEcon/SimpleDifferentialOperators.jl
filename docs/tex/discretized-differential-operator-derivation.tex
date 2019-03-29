@@ -336,7 +336,7 @@ since $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$
 
 The first columns of all the extension operators above, $\overline{L}_{1-}, \overline{L}_{1+}, \overline{L}_{2}, \overline{I}$, have non-zero element only in the first rows. Thus, a single Gaussian elimination for the first extension grid will suffice to remove the extended. Likewise, in the last columns of all the extension operators have non-zero element only in the last row.
 
-Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta_{1,-} )^{-1}\Delta_{1,-}^{-1}$ gives, with the corresponding row operation matrix $R$ for Gaussian elimination,
+Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta_{1,-} )^{-1}\Delta_{1,-}^{-1}$ gives, with the corresponding row operation matrix $R$,
 
 \begin{equation}
 R {L}_{1-} = \begin{pmatrix}
@@ -348,7 +348,7 @@ R {L}_{1-} = \begin{pmatrix}
 \end{pmatrix}_{M\times (M+2)}
 \end{equation}
 note that there is no zero element in the first and last column for nodes on boundaries. Hence, solving the corresponding extended system,
-\begin{equation}
+\begin{align}
 \begin{bmatrix}
 {L}\\
 B
@@ -356,22 +356,37 @@ B
 \begin{bmatrix}
 f(x) \\ b
 \end{bmatrix}
-\end{equation}
-limited to the interior, is identical as solving the following system with an operator $L^B$ on interior nodes
+\end{align}
+is identical as solving the following system
+\begin{align}
+R
+\begin{bmatrix}
+{L}\\
+B
+\end{bmatrix} &=
+R
+\begin{bmatrix}
+f(x) \\ b
+\end{bmatrix} \\
+&= \begin{bmatrix}
+f(x) \\ b
+\end{bmatrix}
+\end{align}
+as $b$ is a zero vector so that the row operations $R$ do not change anything on the RHS. Furthermore, limited to the interior, solving $v$ in the system above is identical as solving the following system with an operator $L^B$ on interior nodes:
 \begin{equation}
 L^B v(x) = f(x)
 \end{equation}
-instead of solving the full system with boundary conditions, where we have ${L} = {L}_{1-}$ and $L^B = L_{1-}^B$ with
+where we have ${L} = {L}_{1-}$ and $L^B = L_{1-}^B$ with
 \begin{equation}
-L_{1-}^B \equiv \frac{1}{\Delta}\begin{pmatrix}
-1 - (1 + \underline{\xi} \Delta) &0&0&\dots&0&0&0\\
--1&1&0&\dots&0&0&0\\
+L_{1-}^B \equiv \begin{pmatrix}
+\Delta_{1,-}^{-1} [1 - (1 + \underline{\xi} \Delta_{1,-})] &0&0&\dots&0&0&0\\
+-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
-0&0&0&\dots&-1&1&0\\
-0&0&0&\cdots&0&-1&1
+0&0&0&\dots&-\Delta_{M-1,-}^{-1}&\Delta_{M-1,-}^{-1}&0\\
+0&0&0&\cdots&0&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}
 \end{pmatrix}_{M\times M}
 \end{equation}
-Similarly, one can define differential operators on the interior as follows:
+instead of solving the full system with boundary conditions. Similarly, one can define differential operators on the interior as follows:
 
 \begin{align}
 L_{1-}^B &\equiv \begin{pmatrix}
