@@ -59,12 +59,7 @@
 	Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$.
 \end{itemize}
 
-Let $L_{1-}$, $L_{1+}$ be the discretized backward and forward first order differential operators and $L_2$ be the discretized central difference  second order differential operator, all subject to the Neumann boundary conditions in \cref{eq:new-BC1,eq:new-BC2}, such that $L_{1-} v(x), L_{1+} v(x)$ and $L_2 v(x)$ represent the first-order (backward and forward) and second-order derivatives of $v(x)$ respectively at $x$. For second derivatives, we use the following numerical scheme from \cite{achdou17}:
-
-\begin{equation}
-v''(x_i) \approx \dfrac{ \Delta_{i,-} v( x_i + \Delta_{i,+}) - (\Delta_{i,+} + \Delta_{i,-}) v( x_i ) + \Delta_{i,+} v( x_i - \Delta_{i,-})}{\frac{1}{2}(\Delta_{i,+} + \Delta_{i,-}) \Delta_{i,+} \Delta_{i,-} }, \text{for } i = 1, \ldots, M
-\end{equation}
-
+Let $L_{1-}$, $L_{1+}$ be the discretized backward and forward first order differential operators and $L_2$ be the discretized central difference  second order differential operator, all subject to the Neumann boundary conditions in \cref{eq:new-BC1,eq:new-BC2}, such that $L_{1-} v(x), L_{1+} v(x)$ and $L_2 v(x)$ represent the first-order (backward and forward) and second-order derivatives of $v(x)$ respectively at $x$. 
 \section{Discretizing Operators with a Regular Grid}
 In this section, we study discretization schemes under regular grids, i.e., grids such that $x_{i+1} - x_i = \Delta$ for all $i = 0,...,M$ for some fixed $\Delta > 0$. 
 \subsection{Extension Operators}
@@ -76,7 +71,7 @@ similarly, using forward differences,
 \begin{equation}\label{eq:first-order-fd}
 v'_{i,+} = \dfrac{v_{i+1} - v_{i}}{\Delta}
 \end{equation}
-and second-order derivatives:
+and second-order derivatives, 
 \begin{equation}\label{eq:second-order}
 v''_{i} = \dfrac{v_{i+1} - 2 v_{i} + v_{i-1} }{\Delta^2}
 \end{equation}
@@ -359,7 +354,13 @@ We can then define the following operators on $\overline{x}$:
 \end{psmallmatrix}_{M\times (M+2)}
 \end{equation}
 
-and one for identity matrix:
+Note that we use the following discretization scheme scheme from \cite{achdou17}:
+\begin{equation}
+v''(x_i) \approx \dfrac{ \Delta_{i,-} v( x_i + \Delta_{i,+}) - (\Delta_{i,+} + \Delta_{i,-}) v( x_i ) + \Delta_{i,+} v( x_i - \Delta_{i,-})}{\frac{1}{2}(\Delta_{i,+} + \Delta_{i,-}) \Delta_{i,+} \Delta_{i,-} }, \text{for } i = 1, \ldots, M
+\end{equation}
+for second-order derivatives. 
+
+And one for identity matrix:
 \begin{equation}\label{eq:I-extended}
 {I} \equiv \begin{pmatrix}
 0 & 1 & 0 & \cdots & 0 & 0 & 0\\
