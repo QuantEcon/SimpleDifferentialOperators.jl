@@ -36,7 +36,7 @@
 \begin{itemize}
 	\item Define an irregular grid $\set{x_i}_{i=0}^{M+1}$ with \textbf{boundary nodes}, $x_0 = {x_{\min}}$ and $x_{M+1} = {x_{\max}}$. Denote the \textbf{extended grid} as $\overline{x} \equiv \set{x_i}_{i=0}^{M+1}$ and the \textbf{interior grid}, a collection of nodes excluding the boundary nodes, as $x \equiv \set{x_i}_{i=1}^{M} $. 
 	
-	\item Define $v$ as a vector of a function of interest, $v(x)$, evaluated on the interior grid $x$, i.e., $v = \set{v(x_i)}_{i=1}^M$. Likewise, we define $\overline{v}$ as $\overline{v} = \set{v(\overline{x}_i)}_{i=0}^{M+1}$.
+	\item Define $v$ as a vector of a function of interest, $v(x)$, evaluated on the interior grid $x$, i.e., $v = \set{v(x_i)}_{i=1}^M$. Likewise, we define a vector of $v$ on the extended grid as $\overline{v} = \set{v(\overline{x}_i)}_{i=0}^{M+1}$.
 	\item Denote the backward and forward distance between the grid points as
 	\begin{align}
 	\Delta_{i,-} &\equiv x_i - x_{i-1},\, \text{for } i = 1,\ldots, M+1\\
