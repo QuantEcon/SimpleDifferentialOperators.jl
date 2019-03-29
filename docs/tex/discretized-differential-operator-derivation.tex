@@ -186,6 +186,83 @@ b = \begin{bmatrix}
 \end{bmatrix}
 \end{equation}
 
+Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta_{1,-} )^{-1}\Delta_{1,-}^{-1}$ gives, with the corresponding row operation matrix $R$,
+
+\begin{equation}
+R {L}_{1-} = \begin{pmatrix}
+1 - (1 + \underline{\xi}\Delta )&0&0&\dots&0&0&0\\
+-1&1&0&\ddots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-1&1&0\\
+0&0&0&\cdots&0&-1&1
+\end{pmatrix}_{M\times M}
+\end{equation}
+note that there is no zero element in the first and last column for nodes on boundaries. Hence, solving the corresponding extended system,
+\begin{align}
+\begin{bmatrix}
+{L}\\
+B
+\end{bmatrix} =
+\begin{bmatrix}
+f(x) \\ b
+\end{bmatrix}
+\end{align}
+is identical as solving the following system
+\begin{align}
+R
+\begin{bmatrix}
+{L}\\
+B
+\end{bmatrix} &=
+R
+\begin{bmatrix}
+f(x) \\ b
+\end{bmatrix} \\
+&= \begin{bmatrix}
+f(x) \\ b
+\end{bmatrix}
+\end{align}
+as $b$ is a zero vector so that the row operations $R$ do not change anything on the RHS. Furthermore, limited to the interior, solving $v$ in the system above is identical as solving the following system with an operator $L^B$ on interior nodes:
+\begin{equation}
+L^B v(x) = f(x)
+\end{equation}
+where we have ${L} = {L}_{1-}$ and $L^B = L_{1-}^B$ with
+\begin{equation}
+L_{1-}^B \equiv \frac{1}{\Delta}\begin{pmatrix}
+1 - (1 + \underline{\xi} \Delta) &0&0&\dots&0&0&0\\
+-1&1&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-1&1&0\\
+0&0&0&\cdots&0&-1&1
+\end{pmatrix}_{M\times M}
+\end{equation}
+instead of solving the full system with boundary conditions. Similarly, one can define differential operators on the interior as follows:
+
+\begin{align}
+L_{1-}^B &\equiv \frac{1}{\Delta}\begin{pmatrix}
+1 - (1 + \underline{\xi} \Delta) &0&0&\dots&0&0&0\\
+-1&1&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-1&1&0\\
+0&0&0&\cdots&0&-1&1
+\end{pmatrix}_{M\times M}\label{eq:L-1-regular} \\
+L_{1+}^B &\equiv \frac{1}{\Delta}\begin{pmatrix}
+-1&1&0&\dots&0&0&0\\
+0&-1&1&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&0&-1&1\\
+0&0&0&\cdots&0&0&-1+(1-\overline{\xi} \Delta)
+\end{pmatrix}_{M\times M}\label{eq:L-1-plus-regular} \\
+L_2^B &\equiv \frac{1}{\Delta^2}\begin{pmatrix}
+-2 + (1 + \underline{\xi}\Delta) &1&0&\dots&0&0&0\\
+1&-2&1&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&1&-2&1\\
+0&0&0&\cdots&0&1&-2 + (1- \overline{\xi}\Delta)
+\end{pmatrix}_{M\times M}\label{eq:L-2-regular}
+\end{align}
+
+
 \subsubsection{Absorbing Boundary Conditions}
 To apply an absorbing barrier condition $v(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
 
@@ -809,21 +886,21 @@ L_{1-} &\equiv \frac{1}{\Delta}\begin{pmatrix}
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-1&1&0\\
 0&0&0&\cdots&0&-1&1
-\end{pmatrix}_{M\times M}\label{eq:L-1-regular} \\
+\end{pmatrix}_{M\times M} \\
 L_{1+} &\equiv \frac{1}{\Delta}\begin{pmatrix}
 -1&1&0&\dots&0&0&0\\
 0&-1&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&0&-1&1\\
 0&0&0&\cdots&0&0&-1+(1-\overline{\xi} \Delta)
-\end{pmatrix}_{M\times M}\label{eq:L-1-plus-regular} \\
+\end{pmatrix}_{M\times M} \\
 L_2 &\equiv \frac{1}{\Delta^2}\begin{pmatrix}
 -2 + (1 + \underline{\xi}\Delta) &1&0&\dots&0&0&0\\
 1&-2&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&1&-2&1\\
 0&0&0&\cdots&0&1&-2 + (1- \overline{\xi}\Delta)
-\end{pmatrix}_{M\times M}\label{eq:L-2-regular}
+\end{pmatrix}_{M\times M}
 \end{align}
 
 \subsection{Irregular grids}
