@@ -156,9 +156,63 @@ v(x_{M+1})
 which also gives the solution for $v$.
 
 \subsubsection{Mixed Boundary Conditions}
+Recall mixed boundary conditions from \eqref{eq:new-BC1} and \eqref{eq:new-BC2}. Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$. Using forward difference and backward difference discretization scheme for the lower bound and upper bound respectively, we have
+\begin{align}
+&\frac{\overline{v}_1 - \overline{v}_0}{\Delta} - \underline{\xi} \overline{v}_0 = 0 \\
+&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta} - \overline{\xi} \overline{v}_{M+1} = 0
+\end{align}
+
+Thus, the corresponding boundary condition matrix $B$ is
+
+\begin{equation}\label{eq:mixed-barrier-matrix-original-regular}
+B = \begin{bmatrix}
+-\dfrac{1}{\Delta} + \underline{\xi} & \dfrac{1}{\Delta} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta} & \dfrac{1}{\Delta} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)} \quad
+b = \begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\end{equation}
+which provides the identical system as
+\begin{equation}\label{eq:mixed-barrier-matrix-regular}
+B = \begin{bmatrix}
+-1 +  \underline{\xi} \Delta & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi} \Delta\\
+\end{bmatrix}_{2 \times (M+2)} \quad
+b = \begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\end{equation}
+
 \subsubsection{Absorbing Boundary Conditions}
+To apply an absorbing barrier condition $v(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
+
+\begin{equation}\label{eq:absorbing-barrier-matrix-regular}
+B = \begin{bmatrix}
+1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1\\
+\end{bmatrix}_{2 \times (M+2)} \quad
+b = \begin{bmatrix}
+S \\
+0
+\end{bmatrix}
+\end{equation}
+
+Similarly, one can apply an absorbing condition on the upper bound  $v(x_{\max}) =S$ for some $S \in \mathbb{R}$ and the
 
 
+\begin{equation}\label{eq:absorbing-barrier-matrix-ub-regular}
+B = \begin{bmatrix}
+-1 & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & 0 & 1\\
+\end{bmatrix}_{2 \times (M+2)} \quad
+b = \begin{bmatrix}
+0 \\
+S
+\end{bmatrix}
+\end{equation}
 
 
 \section{Discretizing Operators with a Irregular Grid}
@@ -422,6 +476,7 @@ S
 \end{bmatrix}
 \end{equation}
 
+Note that the corresponding $B$ and $b$ are identical with regular grid cases.
 
 \subsection{Examples}
 
