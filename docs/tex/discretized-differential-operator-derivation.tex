@@ -64,8 +64,58 @@ v''(x_i) \approx \dfrac{ \Delta_{i,-} v( x_i + \Delta_{i,+}) - (\Delta_{i,+} + \
 \end{equation}
 
 \section{Discretizing Operators with a Regular Grid}
-In the case of regular grid, $\Delta \in \R$ is used.
+In this section, we study discretization schemes under regular grids, i.e., grids such that $x_{i+1} - x_i = \Delta$ for all $i = 0,...,M$ for some fixed $\Delta > 0$. 
 \subsection{Extension Operators}
+Consider constructing first-order derivatives by backward difference $i$th node:
+\begin{equation}\label{eq:first-order-bd}
+v'_{i,-} = \dfrac{v_{i} - v_{i-1}}{\Delta}
+\end{equation}
+similarly, using forward differences,
+\begin{equation}\label{eq:first-order-fd}
+v'_{i,+} = \dfrac{v_{i+1} - v_{i}}{\Delta}
+\end{equation}
+and second-order derivatives:
+\begin{equation}\label{eq:second-order}
+v''_{i} = \dfrac{v_{i+1} - 2 v_{i} + v_{i-1} }{\Delta^2}
+\end{equation}
+for $i \in \{1, ..., M\}$. Stacking over all first-order derivatives and second order derivatives as vectors, 
+\begin{align}
+v'_{-} &= \set{v'_{i,-}}_{i=1}^M \\
+v'_{+} &= \set{v'_{i,+}}_{i=1}^M \\
+v'' &= \set{v''_{i}}_{i=1}^M
+\end{align}
+using \eqref{eq:first-order-bd}, \eqref{eq:first-order-fd}, \eqref{eq:second-order}, one can represent the vectors of discretized derivatives as
+\begin{align}
+v'_{-} &= L_{1-} \overline{v} \\
+v'_{+} &= L_{1+} \overline{v} \\
+v'' &=  L_{2} \overline{v}
+\end{align}
+with the following \textbf{extension operators}:
+\begin{align}
+L_{1-} &\equiv \frac{1}{\Delta}\begin{pmatrix}
+-1 &1 &0&\dots&0&0&0\\
+0&-1&1&\ddots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-1&1&0\\
+0&0&0&\cdots&0&-1&1
+\end{pmatrix}_{M\times M}\label{eq:L-1-regular} \\
+L_{1+} &\equiv \frac{1}{\Delta}\begin{pmatrix}
+0&-1&1&0&\dots&0&0&0\\
+0&0&-1&1&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&0&\dots&-1&1&0\\
+0&0&0&0&\cdots&0&-1&1
+\end{pmatrix}_{M\times M}\label{eq:L-1-plus-regular} \\
+L_2 &\equiv \frac{1}{\Delta^2}\begin{pmatrix}
+1&-2  &1&0&\dots&0&0&0&0\\
+0&1&-2&1&\dots&0&0&0&0\\
+\vdots&\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots&\vdots\\
+0&0&0&0&\dots&1&-2&1&0\\
+0&0&0&0&\cdots&0&1&-2 &1
+\end{pmatrix}_{M\times M}\label{eq:L-2-regular}
+\end{align}
+
+
 \subsection{Applying Boundary Conditions}
 \subsubsection{Mixed Boundary Conditions}
 \subsubsection{Absorbing Boundary Conditions}
