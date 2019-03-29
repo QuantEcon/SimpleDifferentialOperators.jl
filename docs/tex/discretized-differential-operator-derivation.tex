@@ -336,10 +336,10 @@ since $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$
 
 The first columns of all the extension operators above, $\overline{L}_{1-}, \overline{L}_{1+}, \overline{L}_{2}, \overline{I}$, have non-zero element only in the first rows. Thus, a single Gaussian elimination for the first extension grid will suffice to remove the extended. Likewise, in the last columns of all the extension operators have non-zero element only in the last row.
 
-Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta_{1,-} )^{-1}\Delta_{1,-}^{-1}$ gives, with the corresponding Gaussian elimination operator $B_0$,
+Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta_{1,-} )^{-1}\Delta_{1,-}^{-1}$ gives, with the corresponding row operation matrix $R$ for Gaussian elimination,
 
 \begin{equation}
-B_0 {L}_{1-} = \begin{pmatrix}
+R {L}_{1-} = \begin{pmatrix}
 0&\Delta_{1,-}^{-1} \left[ 1 - (1+\underline{\xi} \Delta_{1,-} )\right] &0&\dots&0&0&0\\
 0&-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
