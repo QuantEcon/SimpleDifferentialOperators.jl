@@ -262,6 +262,22 @@ L_2^B &\equiv \frac{1}{\Delta^2}\begin{pmatrix}
 \end{pmatrix}_{M\times M}\label{eq:L-2-regular}
 \end{align}
 
+which can be defined in more compact forms:
+\begin{align}
+L_{1-}^B &\equiv   
+\text{tridiag}(-\mathbf{1}_{M-1}, \begin{bmatrix}
+1-(1+\underline{\xi} \Delta) & \mathbf{1}_{M-1}^T
+\end{bmatrix}^T, \mathbf{0}_{M-1} )  \\
+L_{1+}^B &\equiv \text{tridiag}(\mathbf{0}_{M-1}, \begin{bmatrix}
+ -\mathbf{1}_{M-1}^T & -1+(1-\overline{\xi} \Delta)
+\end{bmatrix}^T, \mathbf{1}_{M-1} ) \\
+L_2^B &\equiv \text{tridiag}(
+\mathbf{1}_{M-1}, 
+\begin{bmatrix}
+-2+(1+\underline{\xi} \Delta)& -2\mathbf{1}_{M-2}^T & -2+(1-\overline{\xi} \Delta)
+\end{bmatrix}^T, 
+\mathbf{1}_{M-1} )
+\end{align}
 
 \subsubsection{Absorbing Boundary Conditions}
 To apply an absorbing barrier condition $v(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
