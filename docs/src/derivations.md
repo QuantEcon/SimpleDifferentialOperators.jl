@@ -175,42 +175,6 @@ so that $v$ under the optimal plan can be computed by solving the following disc
 
 where $v$ and $r^*$ are $M$-vectors whose $i$th elements are $v(x_i)$ and $r^*(x_i)$, respectively.
 
-
-
-### Kolmogorov forward equations (KFE) under diffusion process
--------------
-Let $g(x, t)$ be the distribution of $x$ at time $t$ from the example above. By the Kolmogorov forward equation, the following PDE holds:
-
-```math
-\partial_{t} g(x, t) = - \mu \partial_{x}  g(x,t) + \dfrac{\sigma^2}{2} \partial_{xx} g(x,t)
-```
-
-#### Stationary distributions
-The stationary distribution $g^*(x)$ satisfies
-
-```math
-0 = - \mu \partial_{x} g^*(x) + \dfrac{\sigma^2}{2} \partial_{xx} g^*(x)
-```
-
-which can be rewritten as 
-
-```math
-\tilde{L}^* g(x) = 0
-```
-
-where 
-
-```math
-\tilde{L}^* =  - \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
-```
-
-By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\tilde{L}^*$. Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, $\tilde{L}$, and the correct discretization scheme for $\tilde{L}^*$ is, analogously, done by taking the transpose of the discretized operator for HJBE, $L$ (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569) and [Achdou et al., 2017](https://ideas.repec.org/p/nbr/nberwo/23732.html)). Hence, one can find the stationary distribution by solving the following discretized system of equations:
-
-```math
-L^T g = 0 
-```
-where $L^T$ is the transpose of $L$ and $g$ is an $M$-vector whose element is $g(x_i)$ such that $\sum_{i=1}^M g(x_i) = 1$.
-
 #### Full dynamics of distributions
 One can also solve the full PDE in KFE equation, given an initial distribution $g(x, 0)$. After discretization, note that the KFE can be rewritten as
 
