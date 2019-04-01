@@ -252,12 +252,12 @@ Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqr
 
 \begin{equation}
 R {L}_{1-} = \begin{pmatrix}
-1 - (1 + \underline{\xi}\Delta )&0&0&\dots&0&0&0\\
--1&1&0&\ddots&0&0&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
-0&0&0&\dots&-1&1&0\\
-0&0&0&\cdots&0&-1&1
-\end{pmatrix}_{M\times M}
+0&1 - (1 + \underline{\xi}\Delta )&0&0&\dots&0&0&0&0\\
+0&-1&1&0&\ddots&0&0&0&0\\
+\vdots&\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots&\vdots\\
+0&0&0&0&\dots&-1&1&0&0\\
+0&0&0&0&\cdots&0&-1&1&0
+\end{pmatrix}_{M\times (M+2)}
 \end{equation}
 note that there is no zero element in the first and last column for nodes on boundaries. Hence, solving the corresponding extended system,
 \begin{align}
