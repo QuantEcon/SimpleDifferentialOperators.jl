@@ -169,8 +169,8 @@ function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMe
     d = diff(x̄)
     ξ_lb = bc[1].ξ
     ξ_ub = bc[2].ξ
-    Δ_1p = x̄[2] - x̄[1]
-    Δ_1m = x̄[3] - x̄[2]
+    Δ_1p = x̄[3] - x̄[2]
+    Δ_1m = x̄[2] - x̄[1]
     Δ_Mp = x̄[end] - x̄[end-1]
     Δ_Mm = x̄[end-1] - x̄[end-2]
 
