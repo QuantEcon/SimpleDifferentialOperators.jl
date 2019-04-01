@@ -5,7 +5,6 @@ makedocs(sitename = "SimpleDifferentialOperators.jl",
 	pages = [
         "index.md",
         "notebooks.md",
-        "derivations.md",
         "api.md"
     ],
 	doctest = :fix)
