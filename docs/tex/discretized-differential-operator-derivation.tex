@@ -9,11 +9,9 @@
 \crefname{assumption}{Assumption}{Assumptions}
 \crefname{property}{Property}{Properties}
 \geometry{left=1in,right=1in,top=0.6in,bottom=1in}
-
-\newcommand{\D}[1][]{\ensuremath{\boldsymbol{\partial}_{#1}}}
-\newcommand{\R}{\ensuremath{\mathbb{R}}}
-\newcommand{\diff}{\ensuremath{\mathrm{d}}}
 \newcommand{\set}[1]{\ensuremath{\left\{{#1}\right\}}}
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\D}[1][]{\ensuremath{\partial_{#1}}}
 \newcommand{\indicator}[1]{\ensuremath{\mathds{1}\left\{{#1}\right\}}}
 \newcommand{\condexpec}[3][]{\ensuremath{\mathbb{E}_{#1}\left[{#2} \; \middle| \; {#3} \right]}}
 \newcommand{\expec}[2][]{\ensuremath{\mathbb{E}_{{#1}}\left[ {#2} \right]}}
@@ -32,18 +30,55 @@
 \maketitle
 
 \section{Overview and Notation}
-This package is intended to be a stop-gap while more complete and higher-performance solutions are implemented (in particular, the evolution of \url{https://github.com/JuliaDiffEq/DiffEqOperators.jl/}).  In the meantime, the package hopefully provides a solution for discretizing operators and solving ODEs/PDEs.\footnote{Another consideration here is that in the current form, composing operators as sparse matrices, as the package currently does, will take longer than a hand-tweaked model creating composed operators directly.  In many cases, this wouldn't be a problem, but in some algorithms where operators need to be redefined frequently in tight loops, it might be.  In those cases, use the output of this package for test-suites on hand-built discretizations.}
+This package is intended to be a stop-gap while more complete and higher-performance solutions are implemented (in particular, the evolution of \url{https://github.com/JuliaDiffEq/DiffEqOperators.jl/}).  In the meantime, the package hopefully provides a solution for discretizing operators and solving ODEs/PDEs.
 
 The focus is on discretizing linear (and, with some careful checks, affine) operators.  In the case of models where the process is non-linear, it is most appropriate for algorithms that iteratively solve linear ODEs/PDEs.
 
+Some notation used throughout the document
+\begin{itemize}
+\item Let $x \in R$ be a variable, and (in general) use a tilde to denote functions or operators on $\R$ whereas we will drop the tilde when discretizing (e.g. $\tilde{f}(\cdot)$ is a continuous function on $x$ while $f$ is a vector of the $\tilde{f}(\cdot)$ function applied to a grid.
+	\item Derivatives are denoted by the operator $\D$ and univariate derivatives such as $\D[x]\tilde{v}(x) \equiv \tilde{v}'(x)$.
+	\item Use the vertical bar to denote evaluation at a particular point.  That is if $\tilde{B} \equiv \partial_x\vert_{x = x_0}$ then $\tilde{B} \tilde{v}(x) = \partial_x \tilde{v}(x_0)$, and if $\tilde{B} \equiv \vert_{x = x_0}$ then $\tilde{B} \tilde{v}(x) = \tilde{v}(x_0)$.
+	\item Let $W_t$ be the Wiener process with the integral defined by the Ito interpretation
+\end{itemize}
+
+
 \subsection{Linear Differential Equations}
 
+
+\subsubsection{ODEs (e.g. Steady State)}
+To understand the class of models that this can support, first look at the sort of ODE that comes out of solving a stationary model.  The general pattern is a linear differential operator $\tilde{L}$, a boundary condition operator $\tilde{B}$, the function of interest $\tilde{v}(x)$, and the affine terms $\tilde{f}(\cdot)$ and $b$. The general problem to solve is to find the $\tilde{v}(x)$ such that.
+\begin{align}
+	\tilde{L} \tilde{v}(x) &= \tilde{f}(x)\label{eq:A-u-DE}\\
+	\tilde{B} \tilde{v}(x) &= b\label{eq:B-u-DE}
+\end{align}
+
+\paragraph{Motivating Example}
+As a simple example, let $x \in [x_{\min},x_{\max}]$, define $\tilde{v}(x)$ as the price of a stream of payoffs based on the state $\tilde{f}(x)$ discounted at rate $r > 0$, where the SDE for the $x$ is $\diff x_t = \mu X_t + \sigma W_t$, and $x$ is reflected at $x_{\min}$ and $x_{\max}$.  Then, the stationary ODE of the Bellman equation along with boundary conditions is
+\begin{align}
+	r \tilde{v}(x) &= \tilde{f}(x) + \mu \D[x] \tilde{v}(x) + \frac{\sigma^2}{2} \D[xx]\tilde{v}(x)\\
+	\D[x]\tilde{v}(x_{\min}) &= 0\\
+	\D[x] \tilde{v}(x_{\max}) &= 0
+\end{align}
+
+\noindent Mapping to the notation above,
+\begin{align}
+	\tilde{L} &\equiv r - \mu \D[x] - \frac{\sigma^2}{2}\D[xx]\\
+	\tilde{B} &\equiv \begin{bmatrix}
+	\partial_x\vert_{x = x_{\min}}\\
+	\partial_x\vert_{x = x_{\max}}
+\end{bmatrix}\\
+b &\equiv \begin{bmatrix} 0\\ 0 \end{bmatrix}
+\end{align}
 
 
 \paragraph{Boundary Conditions}
 The package supports some key boundary conditions used for stochastic processes and ODE/PDEs.
 
 As will become clear in the discretization, whether the boundary condition is homogenous or not (i.e. $=0$ or $=b > 0$) is important for the numerical methods.   To detail a few of the one-dimensional versions of the supported boundary conditions
+
+
+
 
 \begin{itemize}
 	\item Reflecting Barriers (i.e. a homogeneous Neumann Boundary Conditions)
@@ -90,7 +125,7 @@ This section defines the grids and other notation for the discretization.
 
 \end{itemize}
 
-Let $L_{1-}$, $L_{1+}$ be the discretized backward and forward first order differential operators and $L_2$ be the discretized central difference  second order differential operator, all subject to the Neumann boundary conditions in \cref{eq:mixed-BC1,eq:mixed-BC2}, such that $L_{1-} \bar{v}, L_{1+} \bar{v}$ and $L_2 \bar{v}$ represent the first-order (backward and forward) and second-order derivatives of $\tilde{v}(x)$ respectively at $x$.
+Let $L_{1-}$, $L_{1+}$ be the discretized backward and forward first order differential operators and $L_2$ be the discretized central difference  second order differential operator, all subject to the Neumann boundary conditions in \cref{eq:mixed-BC1,eq:mixed-BC2}, such that $L_{1-} \bar{v}, L_{1+} \bar{v}$ and $L_2 \bar{v}$ represent the first-order (backward and forward) and second-order derivatives of $\tilde{v}(x)$ respectively at $x$.\footnote{In the current form, the package composes operators as sparse matrices.  Depending on the circumstances, this code will execute slower than a hand-tweaked model creating composed operators directly.  In many cases, this wouldn't be a problem, but in some algorithms where operators need to be redefined frequently in tight loops, it might be.  In those cases, use the output of this package for test-suites on hand-built discretizations.}
 \section{Discretizing Operators with a Regular Grid}
 In this section, we study discretization schemes under regular grids, i.e., grids such that $x_{i+1} - x_i = \Delta$ for all $i = 0,...,M$ for some fixed $\Delta > 0$.
 \subsection{Extension Operators}
@@ -213,7 +248,7 @@ b = \begin{bmatrix}
 \end{bmatrix}
 \end{equation}
 
-Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta_{1,-} )^{-1}\Delta_{1,-}^{-1}$ gives, with the corresponding row operation matrix $R$,
+Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta )^{-1}\Delta^{-1}$ gives, with the corresponding row operation matrix $R$,
 
 \begin{equation}
 R {L}_{1-} = \begin{pmatrix}
@@ -815,92 +850,92 @@ Note that the corresponding $B$ and $b$ are identical with regular grid cases.
 	\end{bmatrix}
 	\end{align}
 \end{example}
-
-\section{Applications}
-
-\subsection{Hamilton–Jacobi–Bellman equations (HJBE)}
-Consider solving for $v$ from the following optimal control problem
-\begin{align}
-\tilde{v}(x_0) = \max_{ {\{\alpha(t) \} }_{t \geq 0} } \int_{0}^\infty e^{-\rho t} r( x(t), \alpha(t )) dt
-\end{align}
-
-with the law of motion for the state
-\begin{align}
-dx = \mu dt + \sigma dW
-\end{align}
-
-
-for some constant $\mu \geq 0$ and $\sigma \geq 0$ with $x(0) = x_0$.
-
-Let $\alpha^*(t)$ be the optimal solution. Suppose that $r$ under $\alpha^*(t)$ can be expressed in terms of state variables, $r^* (x)$. Then, the HJBE yields
-
-\begin{equation}\label{eq:hamilton-jacobi-bellman}
-\rho \tilde{v}(x) = r^*(x) +  \mu  \partial_{x} \tilde{v}(x) + \dfrac{\sigma^2}{2} \partial_{xx} \tilde{v}(x)
-\end{equation}
-
-In terms of differential operators, one can rewrite the equation as
-\begin{equation}\label{eq:hjbe-system-function}
-\tilde{L}  \tilde{v}(x) = r^*(x)
-\end{equation}
-
-with $\tilde{L} = \rho -  \tilde{L}_x$ where $\tilde{L}_x$ is defined as
-
-\begin{equation}\label{eq:L-defn}
-\tilde{L}_x = \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
-\end{equation}
-
-
-By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\partial_{x}$ ($L_{1+}$), $\partial_{xx}$ ($L_2$) on some grids of length $M$, $\{x_i\}_{i=1}^M$:
-\begin{align}\label{eq:L-descritized-defn}
-L_x = \mu L_{1+} + \dfrac{\sigma^2}{2} L_{2}
-\end{align}
-so that $v$ from \eqref{eq:hjbe-system-function} can be computed by solving the following discretized system of equations:
-\begin{align}
-L v &= r^*
-\end{align}
-where $v$ and $r^*$ are $M$-vectors whose $i$th elements are $\tilde{v}(x_i)$ and $r^*(x_i)$, respectively, and $L$ is defined as $L = \rho I - L_x$.
-
-
-
-\subsection{Kolmogorov forward equations (KFE) under diffusion process}
-Let $g(x, t)$ be the distribution of $x$ at time $t$ from the example above. By the Kolmogorov forward equation, the following PDE holds:
-
-\begin{equation}\label{eq:kfe}
-\partial_{t} g(x, t) = - \mu \partial_{x}  g(x,t) + \dfrac{\sigma^2}{2} \partial_{xx} g(x,t)
-\end{equation}
-
-\subsubsection{Stationary distributions}
-The stationary distribution $g^*(x)$ satisfies
-
-\begin{equation}\label{eq:kfe-stationary}
-0 = - \mu \partial_{x} g^*(x) + \dfrac{\sigma^2}{2} \partial_{xx} g^*(x)
-\end{equation}
-
-which can be rewritten as
-
-\begin{equation}
-\tilde{L}^*_x g(x) = 0
-\end{equation}
-
-where
-
-\begin{equation}\label{eq:L_star-defn}
-\tilde{L}^*_x =  - \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
-\end{equation}
-
-By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\tilde{L}^*_x$. Note that the operator for the KFE in \eqref{eq:L_star-defn} is the adjoint operator of the operator for the HJBE in \eqref{eq:L-defn}, and the correct discretization scheme for \eqref{eq:L_star-defn} can be, analogously, done by taking the transpose of the discretized operator for HJBE in \eqref{eq:L-descritized-defn} -- see \cite{gabaix16} and \cite{achdou17}. Hence, one can find the stationary distribution by solving the following discretized system of equations:
-
-\begin{equation}
-L^T_x g = 0
-\end{equation}
-where $L^T_x$ is the transpose of $L_x$ from \eqref{eq:L-descritized-defn} and $g$ is an $M$-vector whose element is $g(x_i)$ such that $\sum_{i=1}^M g(x_i) = 1$.
-
-\subsubsection{Full dynamics of distributions}
-One can also solve the full PDE in \eqref{eq:kfe}, given an initial distribution $g(x, 0)$. After discretization, note that \eqref{eq:kfe} can be rewritten as
-\begin{equation}\label{eq:kfe-discretized}
-\dot{g}(t) = L^T_x g(t)
-\end{equation}
-where $\dot{g}(t)$ is an $M$-vector whose $i$th element is $\partial_{t} g(x_i, t)$, which can be efficently solved by a number of differential equation solvers available in public, including \cite{rackauckas17}.
+%
+% \section{Applications}
+%
+% \subsection{Hamilton–Jacobi–Bellman equations (HJBE)}
+% Consider solving for $v$ from the following optimal control problem
+% \begin{align}
+% \tilde{v}(x_0) = \max_{ {\{\alpha(t) \} }_{t \geq 0} } \int_{0}^\infty e^{-\rho t} r( x(t), \alpha(t )) dt
+% \end{align}
+%
+% with the law of motion for the state
+% \begin{align}
+% dx = \mu dt + \sigma dW
+% \end{align}
+%
+%
+% for some constant $\mu \geq 0$ and $\sigma \geq 0$ with $x(0) = x_0$.
+%
+% Let $\alpha^*(t)$ be the optimal solution. Suppose that $r$ under $\alpha^*(t)$ can be expressed in terms of state variables, $r^* (x)$. Then, the HJBE yields
+%
+% \begin{equation}\label{eq:hamilton-jacobi-bellman}
+% \rho \tilde{v}(x) = r^*(x) +  \mu  \partial_{x} \tilde{v}(x) + \dfrac{\sigma^2}{2} \partial_{xx} \tilde{v}(x)
+% \end{equation}
+%
+% In terms of differential operators, one can rewrite the equation as
+% \begin{equation}\label{eq:hjbe-system-function}
+% \tilde{L}  \tilde{v}(x) = r^*(x)
+% \end{equation}
+%
+% with $\tilde{L} = \rho -  \tilde{L}_x$ where $\tilde{L}_x$ is defined as
+%
+% \begin{equation}\label{eq:L-defn}
+% \tilde{L}_x = \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
+% \end{equation}
+%
+%
+% By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\partial_{x}$ ($L_{1+}$), $\partial_{xx}$ ($L_2$) on some grids of length $M$, $\{x_i\}_{i=1}^M$:
+% \begin{align}\label{eq:L-descritized-defn}
+% L_x = \mu L_{1+} + \dfrac{\sigma^2}{2} L_{2}
+% \end{align}
+% so that $v$ from \eqref{eq:hjbe-system-function} can be computed by solving the following discretized system of equations:
+% \begin{align}
+% L v &= r^*
+% \end{align}
+% where $v$ and $r^*$ are $M$-vectors whose $i$th elements are $\tilde{v}(x_i)$ and $r^*(x_i)$, respectively, and $L$ is defined as $L = \rho I - L_x$.
+%
+%
+%
+% \subsection{Kolmogorov forward equations (KFE) under diffusion process}
+% Let $g(x, t)$ be the distribution of $x$ at time $t$ from the example above. By the Kolmogorov forward equation, the following PDE holds:
+%
+% \begin{equation}\label{eq:kfe}
+% \partial_{t} g(x, t) = - \mu \partial_{x}  g(x,t) + \dfrac{\sigma^2}{2} \partial_{xx} g(x,t)
+% \end{equation}
+%
+% \subsubsection{Stationary distributions}
+% The stationary distribution $g^*(x)$ satisfies
+%
+% \begin{equation}\label{eq:kfe-stationary}
+% 0 = - \mu \partial_{x} g^*(x) + \dfrac{\sigma^2}{2} \partial_{xx} g^*(x)
+% \end{equation}
+%
+% which can be rewritten as
+%
+% \begin{equation}
+% \tilde{L}^*_x g(x) = 0
+% \end{equation}
+%
+% where
+%
+% \begin{equation}\label{eq:L_star-defn}
+% \tilde{L}^*_x =  - \mu \partial_{x} + (\sigma^2/2) \partial_{xx}
+% \end{equation}
+%
+% By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for $\tilde{L}^*_x$. Note that the operator for the KFE in \eqref{eq:L_star-defn} is the adjoint operator of the operator for the HJBE in \eqref{eq:L-defn}, and the correct discretization scheme for \eqref{eq:L_star-defn} can be, analogously, done by taking the transpose of the discretized operator for HJBE in \eqref{eq:L-descritized-defn} -- see \cite{gabaix16} and \cite{achdou17}. Hence, one can find the stationary distribution by solving the following discretized system of equations:
+%
+% \begin{equation}
+% L^T_x g = 0
+% \end{equation}
+% where $L^T_x$ is the transpose of $L_x$ from \eqref{eq:L-descritized-defn} and $g$ is an $M$-vector whose element is $g(x_i)$ such that $\sum_{i=1}^M g(x_i) = 1$.
+%
+% \subsubsection{Full dynamics of distributions}
+% One can also solve the full PDE in \eqref{eq:kfe}, given an initial distribution $g(x, 0)$. After discretization, note that \eqref{eq:kfe} can be rewritten as
+% \begin{equation}\label{eq:kfe-discretized}
+% \dot{g}(t) = L^T_x g(t)
+% \end{equation}
+% where $\dot{g}(t)$ is an $M$-vector whose $i$th element is $\partial_{t} g(x_i, t)$, which can be efficently solved by a number of differential equation solvers available in public, including \cite{rackauckas17}.
 
 \newpage
 
