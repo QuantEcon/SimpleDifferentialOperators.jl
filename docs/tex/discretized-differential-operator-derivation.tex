@@ -252,8 +252,8 @@ b = \begin{bmatrix}
 Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta )^{-1}\Delta^{-1}$ gives, with the corresponding row operation matrix $R$,
 
 \begin{equation}
-R {L}_{1-} = \begin{pmatrix}
-0&1 - (1 + \underline{\xi}\Delta )^{-1}&0&0&\dots&0&0&0&0\\
+R {L}_{1-} = \dfrac{1}{\Delta} \begin{pmatrix}
+0&1 + (-1 + \underline{\xi}\Delta )^{-1}&0&0&\dots&0&0&0&0\\
 0&-1&1&0&\ddots&0&0&0&0\\
 \vdots&\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots&\vdots\\
 0&0&0&0&\dots&-1&1&0&0\\
@@ -292,7 +292,7 @@ L^B v = f
 where we have ${L} = {L}_{1-}$ and $L^B = L_{1-}^B$ with
 \begin{equation}
 L_{1-}^B \equiv \frac{1}{\Delta}\begin{pmatrix}
-1 - (1 + \underline{\xi} \Delta)^{-1} &0&0&\dots&0&0&0\\
+1 + (-1 + \underline{\xi} \Delta)^{-1} &0&0&\dots&0&0&0\\
 -1&1&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-1&1&0\\
@@ -303,7 +303,7 @@ instead of solving the full system with boundary conditions. Similarly, one can 
 
 \begin{align}
 L_{1-}^B &\equiv \frac{1}{\Delta}\begin{pmatrix}
-1 - (1 + \underline{\xi} \Delta)^{-1} &0&0&\dots&0&0&0\\
+1 + (-1 + \underline{\xi} \Delta)^{-1} &0&0&\dots&0&0&0\\
 -1&1&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-1&1&0\\
@@ -314,14 +314,14 @@ L_{1+}^B &\equiv \frac{1}{\Delta}\begin{pmatrix}
 0&-1&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&0&-1&1\\
-0&0&0&\cdots&0&0&-1+(1-\overline{\xi} \Delta)^{-1}
+0&0&0&\cdots&0&0&-1+(1+\overline{\xi} \Delta)^{-1}
 \end{pmatrix}_{M\times M}\label{eq:L-1-plus-regular} \\
 L_2^B &\equiv \frac{1}{\Delta^2}\begin{pmatrix}
--2 + (1 + \underline{\xi}\Delta)^{-1} &1&0&\dots&0&0&0\\
+-2 - (-1 + \underline{\xi}\Delta)^{-1} &1&0&\dots&0&0&0\\
 1&-2&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&1&-2&1\\
-0&0&0&\cdots&0&1&-2 + (1- \overline{\xi}\Delta)^{-1}
+0&0&0&\cdots&0&1&-2 + (1+ \overline{\xi}\Delta)^{-1}
 \end{pmatrix}_{M\times M}\label{eq:L-2-regular}
 \end{align}
 
@@ -329,17 +329,17 @@ which can be defined in more compact forms:
 \begin{align}
 L_{1-}^B &\equiv
 \text{tridiag}(-\mathbf{1}_{M-1}, \begin{bmatrix}
-1-(1+\underline{\xi} \Delta)^{-1} & \mathbf{1}_{M-1}^T
+1+(-1+\underline{\xi} \Delta)^{-1} & \mathbf{1}_{M-1}^T
 \end{bmatrix}^T, \mathbf{0}_{M-1} )  \\
 L_{1+}^B &\equiv \text{tridiag}(\mathbf{0}_{M-1}, \begin{bmatrix}
- -\mathbf{1}_{M-1}^T & -1+(1-\overline{\xi} \Delta)^{-1}
+ -\mathbf{1}_{M-1}^T & -1+(1+\overline{\xi} \Delta)^{-1}
 \end{bmatrix}^T, \mathbf{1}_{M-1} ) \\
 L_2^B &\equiv \text{tridiag}(
 \mathbf{1}_{M-1},
 \begin{bmatrix}
--2+(1+\underline{\xi} \Delta)^{-1}& 
+-2-(-1+\underline{\xi} \Delta)^{-1}& 
 -2\mathbf{1}_{M-2}^T & 
--2+(1-\overline{\xi} \Delta)^{-1}
+-2+(1+\overline{\xi} \Delta)^{-1}
 \end{bmatrix}^T,
 \mathbf{1}_{M-1} )
 \end{align}
@@ -505,7 +505,7 @@ Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqr
 
 \begin{equation}
 R {L}_{1-} = \begin{pmatrix}
-0&\Delta_{1,-}^{-1} \left[ 1 - (1+\underline{\xi} \Delta_{1,-} )^{-1} \right] &0&\dots&0&0&0\\
+0&\Delta_{1,-}^{-1} \left[ 1 + (-1+\underline{\xi} \Delta_{1,-} )^{-1} \right] &0&\dots&0&0&0\\
 0&-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&\Delta_{M-1,-}^{-1}&0&0\\
@@ -544,7 +544,7 @@ L^B v = f
 where we have ${L} = {L}_{1-}$ and $L^B = L_{1-}^B$ with
 \begin{equation}
 L_{1-}^B \equiv \begin{pmatrix}
-\Delta_{1,-}^{-1} [1 - (1 + \underline{\xi} \Delta_{1,-})]^{-1} &0&0&\dots&0&0&0\\
+\Delta_{1,-}^{-1} [1 + (-1 + \underline{\xi} \Delta_{1,-})]^{-1} &0&0&\dots&0&0&0\\
 -\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-\Delta_{M-1,-}^{-1}&\Delta_{M-1,-}^{-1}&0\\
@@ -556,7 +556,7 @@ instead of solving the full system with boundary conditions. Similarly, one can 
 
 \begin{align}
 L_{1-}^B &\equiv \begin{pmatrix}
-\Delta^{-1}_{1,-} [1 - (1 + \underline{\xi} \Delta_{1,-})^{-1}] &0&0&\dots&0&0&0\\
+\Delta^{-1}_{1,-} [1 + (-1 + \underline{\xi} \Delta_{1,-})^{-1}] &0&0&\dots&0&0&0\\
 -\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-\Delta_{M-1,-}^{-1}&\Delta_{M-1,-}^{-1}&0\\
@@ -567,7 +567,7 @@ L_{1+}^B &\equiv \begin{pmatrix}
 0&-\Delta_{2,+}^{-1}&\Delta_{2,+}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\cdots&0&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}\\
-0&0&0&\dots&0&0&\Delta_{M,+}^{-1}  [-1 + (1 - \overline{\xi} \Delta_{M,+})^{-1}]  \\
+0&0&0&\dots&0&0&\Delta_{M,+}^{-1}  [-1 + (1 + \overline{\xi} \Delta_{M,+})^{-1}]  \\
 \end{pmatrix}_{M\times M}\label{eq:L-1-plus} \\
 L_2^B &\equiv 2 \begin{psmallmatrix}
 \Xi_1 &
@@ -602,13 +602,13 @@ Or, alternatively, with vectorized differences:
 
 \begin{align}
 {L}_{1-}^B \equiv
-\text{tridiag} \left[-(\Delta_-^\circ)^{-1}[2:M], \begin{pmatrix}\Delta^{-1}_{1,-} [1 - (1 + \underline{\xi} \Delta_{1,-})^{-1}]; (\Delta_-^\circ )^{-1}[2:M] \end{pmatrix}, \mathbf{0}_{M-1}  \right]
+\text{tridiag} \left[-(\Delta_-^\circ)^{-1}[2:M], \begin{pmatrix}\Delta^{-1}_{1,-} [1 + (-1 + \underline{\xi} \Delta_{1,-})^{-1}]; (\Delta_-^\circ )^{-1}[2:M] \end{pmatrix}, \mathbf{0}_{M-1}  \right]
 \end{align}
 
 \begin{align}
 {L}_{1+}^B \equiv
 \text{tridiag} \left[  \mathbf{0}_{M-1},
-\begin{pmatrix}-(\Delta_-^\circ )^{-1}[1:M-1]; \Delta^{-1}_{M,+} [-1 + (1 - \overline{\xi} \Delta_{M,+})^{-1}] \end{pmatrix},
+\begin{pmatrix}-(\Delta_-^\circ )^{-1}[1:M-1]; \Delta^{-1}_{M,+} [-1 + (1 + \overline{\xi} \Delta_{M,+})^{-1}] \end{pmatrix},
 (\Delta_-^\circ)^{-1}[2:M]
  \right]
 \end{align}
@@ -984,7 +984,7 @@ Thus, the corresponding discretized differential operator $L_{1-}$, $L_{1+}$, an
 
 \begin{align}
 L_{1-}^B &\equiv \frac{1}{\Delta}\begin{pmatrix}
-1 - (1 + \underline{\xi} \Delta)^{-1} &0&0&\dots&0&0&0\\
+1 - (1 - \underline{\xi} \Delta)^{-1} &0&0&\dots&0&0&0\\
 -1&1&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-1&1&0\\
@@ -998,11 +998,11 @@ L_{1+}^B &\equiv \frac{1}{\Delta}\begin{pmatrix}
 0&0&0&\cdots&0&0&-1+(1-\overline{\xi} \Delta)^{-1}
 \end{pmatrix}_{M\times M} \\
 L_2^B &\equiv \frac{1}{\Delta^2}\begin{pmatrix}
--2 + (1 + \underline{\xi}\Delta)^{-1} &1&0&\dots&0&0&0\\
+-2 - (1 - \underline{\xi}\Delta)^{-1} &1&0&\dots&0&0&0\\
 1&-2&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&1&-2&1\\
-0&0&0&\cdots&0&1&-2 + (1- \overline{\xi}\Delta)
+0&0&0&\cdots&0&1&-2 + (1 + \overline{\xi}\Delta)^{-1}
 \end{pmatrix}_{M\times M}
 \end{align}
 
