@@ -111,15 +111,22 @@ julia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), CentralSecondDiff
 """
 function DifferentialOperator(x̄, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)
     T = eltype(x̄)
+    Δ_1m = x̄[2] - x̄[1]
+    Δ_1p = x̄[3] - x̄[2]
+    Δ_Mm = x̄[end-1] - x̄[end-2]
+    Δ_Mp = x̄[end] - x̄[end-1]
 
     # get basis operator on interior nodes
     L = get_basis_operator(x̄, method)
-
+    
+    Ξ_1 = -2*(1/(Δ_1m*Δ_1p)-1/((Δ_1p+Δ_1m)*(Δ_1m)))
+    Ξ_M = -2*(1/(Δ_Mm*Δ_Mp)-1/((Δ_Mp+Δ_Mm)*(Δ_Mp))) 
+   
     # apply boundary conditions
     L[1,1] = typeof(method) <: BackwardFirstDifference ? zero(T) : L[1,1]
-    L[1,1] = typeof(method) <: CentralSecondDifference ? (L[1,1] / 2) : L[1,1]
+    L[1,1] = typeof(method) <: CentralSecondDifference ? Ξ_1 : L[1,1]
     L[end,end] = typeof(method) <: ForwardFirstDifference ? zero(T) : L[end,end]
-    L[end,end] = typeof(method) <: CentralSecondDifference ? (L[end,end] / 2) : L[end,end]
+    L[end,end] = typeof(method) <: CentralSecondDifference ? Ξ_M : L[end,end]
 
     return L
 end
@@ -168,7 +175,7 @@ function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMe
     Δ_Mm = x̄[end-1] - x̄[end-2]
 
     # get extended operator with reflecting barrier conditions first
-    L = DifferentialOperator(x̄, (Reflecting(), Reflecting()), method)
+    L = get_basis_operator(x̄, method)
  
     Ξ_1 = -2*(1/(Δ_1m*Δ_1p)+1/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m)))
     Ξ_M = -2*(1/(Δ_Mm*Δ_Mp)-1/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp)))
