@@ -55,14 +55,8 @@ bc = (Reflecting(), Reflecting())
 L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋(x, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊(x, bc)
 
 # Define linear operator using upwind schemes
-L = L₁ - σ^2 / 2 * L₂(x,bc)
+L_x = L₁ - σ^2 / 2 * L₂(x,bc)
+L = I * ρ - L_x
 
 # solve the value function
-v = (I * ρ - L) \ f.(x) </code></pre><h3><a class="nav-anchor" id="Finding-stationary-distribution-from-the-Kolmogorov-forward-equation-(KFE)-1" href="#Finding-stationary-distribution-from-the-Kolmogorov-forward-equation-(KFE)-1">Finding stationary distribution from the Kolmogorov forward equation (KFE)</a></h3><hr/><p>One can also compute the stationary distribution of the state <code>x</code> above from the corresponding KFE:</p><div>\[\partial_{t} g(x,t) = - \mu(x) \partial_{x} g(x, t) + \frac{\sigma^2}{2} \partial_{xx} g(x,t)\]</div><p>by taking <span>$\partial_{t} g(x,t) = 0$</span>, i.e., solving <span>$g$</span> from the <span>$L^* g(x) = 0$</span> where</p><div>\[L^* = - \mu(x) \partial_{x} + \frac{\sigma^2}{2} \partial_{xx}\]</div><p>By descretizing the space of <span>$x$</span>, one can solve the corresponding system by using discretized operators for <span>${L}^*$</span>. Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, <span>${L}$</span>, and the correct discretization scheme for <span>$L^*$</span> is, analogously, done by taking the transpose of the discretized operator for HJBE, <span>$L$</span> (See <a href="https://doi.org/10.3982/ECTA13569">Gabaix et al., 2016</a> and <a href="https://ideas.repec.org/p/nbr/nberwo/23732.html">Achdou et al., 2017</a>). Hence, one can find the stationary distribution by solving the following discretized system of equations:</p><div>\[L^T g = 0\]</div><p>such that the sum of <span>$g$</span> is one. This can be found by finding a non-trivial eigenvector for <span>$L^T$</span>  associated with the eigenvalue of zero:</p><pre><code class="language-julia">using Arpack # library for extracting eigenvalues and eigenvectors
-
-# extract eigenvalues and eigenvectors, smallest eigenval in magintute first
-λ, ϕ = eigs(transpose(L), which = :SM); 
-# extract the very first eigenvector (associated with the smallest eigenvalue)
-g_ss = real.(ϕ[:,1]);
-# normalize it
-g_ss = g_ss / sum(g_ss)</code></pre><p>Using <code>L</code> from the state-dependent drift example above, this results in the following stationary distribution:</p><pre><code class="language-julia">plot(x, g_ss, lw = 4, label = &quot;g_ss&quot;)</code></pre><p><img src="assets/plot-stationary-dist.png" alt="plot-stationary-dist"/></p><footer><hr/><a class="next" href="notebooks/"><span class="direction">Next</span><span class="title">Notebooks</span></a></footer></article></body></html>
+v = L \ f.(x) </code></pre><footer><hr/><a class="next" href="notebooks/"><span class="direction">Next</span><span class="title">Notebooks</span></a></footer></article></body></html>
