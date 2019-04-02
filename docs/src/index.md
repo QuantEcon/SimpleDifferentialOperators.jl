@@ -130,46 +130,9 @@ bc = (Reflecting(), Reflecting())
 L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋(x, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊(x, bc)
 
 # Define linear operator using upwind schemes
-L = L₁ - σ^2 / 2 * L₂(x,bc)
+L_x = L₁ - σ^2 / 2 * L₂(x,bc)
+L = I * ρ - L_x
 
 # solve the value function
-v = (I * ρ - L) \ f.(x) 
+v = L \ f.(x) 
 ```
-
-### Finding stationary distribution from the Kolmogorov forward equation (KFE)
--------------
-One can also compute the stationary distribution of the state `x` above from the corresponding KFE:
-```math
-\partial_{t} g(x,t) = - \mu(x) \partial_{x} g(x, t) + \frac{\sigma^2}{2} \partial_{xx} g(x,t)
-```
-by taking $\partial_{t} g(x,t) = 0$, i.e., solving $g$ from the $L^* g(x) = 0$ where
-```math
-L^* = - \mu(x) \partial_{x} + \frac{\sigma^2}{2} \partial_{xx}
-```
-
-By descretizing the space of $x$, one can solve the corresponding system by using discretized operators for ${L}^*$. Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, ${L}$, and the correct discretization scheme for $L^*$ is, analogously, done by taking the transpose of the discretized operator for HJBE, $L$ (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569) and [Achdou et al., 2017](https://ideas.repec.org/p/nbr/nberwo/23732.html)). Hence, one can find the stationary distribution by solving the following discretized system of equations:
-
-```math
-L^T g = 0
-```
-
-such that the sum of $g$ is one. This can be found by finding a non-trivial eigenvector for $L^T$  associated with the eigenvalue of zero:
-
-```julia
-using Arpack # library for extracting eigenvalues and eigenvectors
-
-# extract eigenvalues and eigenvectors, smallest eigenval in magintute first
-λ, ϕ = eigs(transpose(L), which = :SM); 
-# extract the very first eigenvector (associated with the smallest eigenvalue)
-g_ss = real.(ϕ[:,1]);
-# normalize it
-g_ss = g_ss / sum(g_ss)
-```
-
-Using `L` from the state-dependent drift example above, this results in the following stationary distribution:
-
-```julia
-plot(x, g_ss, lw = 4, label = "g_ss")
-```
-
-![plot-stationary-dist](assets/plot-stationary-dist.png)
