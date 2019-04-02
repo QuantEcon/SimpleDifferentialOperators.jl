@@ -33,14 +33,14 @@
 \section{Overview}
 This package is intended to be a stop-gap while more complete and higher-performance solutions are implemented (in particular, the evolution of \url{https://github.com/JuliaDiffEq/DiffEqOperators.jl/}).  In the meantime, the package hopefully provides a solution for discretizing operators and solving ODEs/PDEs.
 
-The focus is on discretizing linear (and, with some careful checks, affine) operators.  In the case of models where the process is non-linear, it is most appropriate for algorithms that iteratively solve linear ODEs/PDEs.
-
-Some notation used throughout the document
+The focus is on discretizing linear (and, with some careful checks, affine) operators.  In the case of models where the process is non-linear, it is most appropriate for algorithms that iteratively solve linear ODEs/PDEs.  Some notation used throughout the document
 \begin{itemize}
-\item Let $x \in R$ be a variable, and (in general) use a tilde to denote functions or operators on $\R$ whereas we will drop the tilde when discretizing (e.g. $\tilde{f}(\cdot)$ is a continuous function on $x$ while $f$ is a vector of the $\tilde{f}(\cdot)$ function applied to a grid.
+	\item Let $x \in R$ is the general ``spatial'' state  variable
+
 	\item Derivatives are denoted by the operator $\D$ and univariate derivatives such as $\D[x]\tilde{v}(x) \equiv \tilde{v}'(x)$.
-	\item Use the vertical bar to denote evaluation at a particular point.  That is if $\tilde{B} \equiv \partial_x\vert_{x = x_0}$ then $\tilde{B} \tilde{v}(x) = \partial_x \tilde{v}(x_0)$, and if $\tilde{B} \equiv 1\vert_{x = x_0}$ then $\tilde{B} \tilde{v}(x) = \tilde{v}(x_0)$.  For the notation, the $1$ is simply the identity operator on the function instead of applying a derivative
+	\item Use the vertical bar to denote operator evaluation at a particular point.  That is if $\tilde{B} \equiv \partial_x\vert_{x = x_0}$ then $\tilde{B} \tilde{v}(x) = \partial_x \tilde{v}(x_0)$, and if $\tilde{B} \equiv 1 \vert_{x = x_0}$ then $\tilde{B} \tilde{v}(x) = \tilde{v}(x_0)$.  For the notation, the $1$ is simply the identity operator on the function instead of applying a derivative (i.e. $\tilde{B} \equiv 1 \vert_{x = x_0}$ then $\tilde{B} \tilde{v}(\cdot) = 1 \times \tilde{v}(x_0) $)
 	\item Let $W_t$ be the Wiener process with the integral defined by the Ito interpretation
+
 \end{itemize}
 
 
@@ -81,10 +81,49 @@ b &\equiv \begin{bmatrix} 0\\ 0 \end{bmatrix}
 \end{align}
 This package will allow you to define the $\tilde{L},\tilde{B},$ and $b$ to solve for a discretization of the $\tilde{v}(x)$ function.
 
+
+\paragraph{PDEs (i.e. Time-Varying)}
+The motivating example above has no time-variation in any of the parameters, payoffs, or boundary conditions. Consider that the operators, payoffs, and boundary conditions could change over time -- which we denote with a $t$ subscript. As a variation on \cref{eq:A-u-DE,eq:B-u-DE}
+\begin{align}
+	\D[t] \tilde{v}(t,x) &= \tilde{L}(t) \tilde{v}(t, x) - \tilde{f}(t, x)\label{eq:A-u-DE-t}\\
+	0 &= \tilde{B}(t) \tilde{v}(t, x) - b(t)\label{eq:B-u-DE-t}
+\end{align}
+Subsect to an initial condition, $\tilde{v}(0,x)$ given or potentially a boundary value, $\tilde{v}(T,x)$ for some $T$.
+
+This is a linear PDE where the operators, boundary conditions, and payoffs all may change over time.
+
+
+\paragraph{Motivating Example for Dynamics}
+Going back to the motivating example, consider an extension where   We will make the following assumptions
+\begin{itemize}
+	\item The discount rate, drift, and payoffs could be time varying. i.e. $r(t), \mu(t)$ and $\tilde{f}(t,x)$.
+	\item After some $T$ the system is stationary because $r(t) = r(T), \mu(t) = \mu(T)$ and $\tilde{f}(t,x) = \tilde{f}(T,x)$ for all $t \geq T$
+\end{itemize}
+
+\noindent Through standard arguments, the Bellman equation is
+\begin{align}
+	r \tilde{v}(t, x) &= \tilde{f}(t, x) + \mu(t) \D[x] \tilde{v}(x) + \frac{\sigma^2}{2} \D[xx]\tilde{v}(x) + \D[t] \tilde{v}(t, x)\\
+	\D[x]\tilde{v}(t, x_{\min}) &= 0\\
+	\D[x] \tilde{v}(t, x_{\max}) &= 0
+\end{align}
+
+\noindent Mapping to the notation of the PDE in \cref{eq:A-u-DE-t,eq:B-u-DE-t}
+\begin{align}
+	\tilde{L}(t) &\equiv r(t) - \mu(t) \D[x] - \frac{\sigma^2}{2}\D[xx]\\
+	\tilde{B} &\equiv \begin{bmatrix}
+	\partial_x\vert_{x = x_{\min}}\\
+	\partial_x\vert_{x = x_{\max}}
+\end{bmatrix}\\
+b &\equiv \begin{bmatrix} 0\\ 0 \end{bmatrix}
+\end{align}
+
+In order to find the steady state, we can solve the stationary equation with $\D[t] \tilde{v}(T, x) = 0$ (i.e. with $\tilde{L}(T)$ fixed to find $\tilde{v}(T,x)$) and then use the  $\tilde{v}(T,x)$ as a boundary value to solve for the $\tilde{v}(t,x)$ by solving the PDE in
+
+
 \paragraph{Boundary Conditions}
 The package supports some key boundary conditions used for stochastic processes and ODE/PDEs.
 
-As will become clear in the discretization, whether the boundary condition is homogenous or not (i.e. $=0$ or $=b > 0$) is important for the numerical methods.   To detail a few of the one-dimensional versions of the supported boundary conditions
+As will become clear in the discretization, whether the boundary condition is homogenous or not (i.e. $b>0$ or $b = 0$) is important for the numerical methods.  If the boundary conditions are inhomogeneous, then the setup is affine.  To detail a few of the one-dimensional versions of the supported boundary conditions
 
 \begin{itemize}
 	\item Reflecting Barriers (i.e. a homogeneous Neumann Boundary Conditions)
@@ -129,25 +168,14 @@ As will become clear in the discretization, whether the boundary condition is ho
 \end{itemize}
 Of course, many models would have different boundary conditions on different sides of the domain, which entails mixing and matching rows in the $B$ and $b$ matrices.
 
-\paragraph{PDEs (i.e. Time-Varying)}
-The motivating example above has no time-variation in any of the parameters, payoffs, or boundary conditions. Consider that the operators, payoffs, and boundary conditions could change over time -- which we denote with a $t$ subscript. As a variation on \cref{eq:A-u-DE,eq:B-u-DE}
-\begin{align}
-	\D[t] \tilde{v}(t,x) &= \tilde{L}(t) \tilde{v}(t, x) - \tilde{f}(t, x)\label{eq:A-u-DE-t}\\
-	0 &= \tilde{B}(t) \tilde{v}(t, x) - b(t)\label{eq:B-u-DE-t}
-\end{align}
-Subsect to an initial condition, $\tilde{v}(0,x)$ given or potentially a boundary value, $\tilde{v}(T,x)$ for some $T$.
-
-This is a linear PDE where the operators, boundary conditions, and payoffs all may change over time.
-
-\textbf{TODO} go back to the motivating example.
+%This package will allow you to define the $\tilde{L},\tilde{B},$ and $b$ to solve for a discretization of the $\tilde{v}(x)$ function.
 
 \section{Discretization}
 \subsection{Notation}
 This section defines the grids and other notation for the discretization.
 \begin{itemize}
 	\item Define an irregular grid $\set{x_i}_{i=0}^{M+1}$ with \textbf{boundary nodes}, $x_0 = {x_{\min}}$ and $x_{M+1} = {x_{\max}}$. Denote the \textbf{extended grid} as $\overline{x} \equiv \set{x_i}_{i=0}^{M+1}$ and the \textbf{interior grid}, a collection of nodes excluding the boundary nodes, as $x \equiv \set{x_i}_{i=1}^{M} $.
-
-	\item Define $v$ as a vector of a function of interest, $\tilde{v}(x)$, evaluated on the interior grid $x$, i.e., $v = \set{\tilde{v}(x_i)}_{i=1}^M$. Likewise, we define a vector of $v$ on the extended grid as $\overline{v} = \set{\tilde{v}(\overline{x}_i)}_{i=0}^{M+1}$.
+	\item Recall that the continuous functions, prior to discretization, are denoted like $\tilde{u}(x)$.  The discretization of $\tilde{u}(x)$ on the interior $x\in \R^M$ is denoted $u \equiv \set{\tilde{u}(x_i)}_{i=1}^M\in \R^M$ and the discretization of $\tilde{u}(x)$ on $\bar{x} \in \R^{M+2}$ is $\bar{u} \equiv \set{\tilde{u}(x_i)}_{i=0}^{M+1} \in \R^{\bar{M+2}}$.
 	\item Denote the backward and forward distance between the grid points as
 	\begin{align}
 	\Delta_{i,-} &\equiv x_i - x_{i-1},\, \text{for } i = 1,\ldots, M+1\\
@@ -162,7 +190,12 @@ This section defines the grids and other notation for the discretization.
 	0
 	\end{bmatrix}\in\R^{M+2}
 	\end{align}
-
+	\item Some special matrices to help in the composition notation:
+	\begin{itemize}
+		\item $\mathbf{I}_N$ is the $N\times N$ identity matrix.  Always drop the subscript when the dimensions are unambiguous, as it would be the same in the code
+		\item $\mathbf{0}_N$ is the column vector of $N$ $0$s, and $\mathbf{0}_N^{\top}$ a row vector
+		\item $\mathbf{0}_{N\times M}$ is the $N\times M$ matrix of $0$s
+	\end{itemize}
 \end{itemize}
 
 Let $L_{1-}$, $L_{1+}$ be the discretized backward and forward first order differential operators and $L_2$ be the discretized central difference  second order differential operator, all subject to the Neumann boundary conditions in \cref{eq:mixed-BC1,eq:mixed-BC2}, such that $L_{1-} \bar{v}, L_{1+} \bar{v}$ and $L_2 \bar{v}$ represent the first-order (backward and forward) and second-order derivatives of $\tilde{v}(x)$ respectively at $x$.\footnote{In the current form, the package composes operators as sparse matrices.  Depending on the circumstances, this code will execute slower than a hand-tweaked model creating composed operators directly.  In many cases, this wouldn't be a problem, but in some algorithms where operators need to be redefined frequently in tight loops, it might be.  In those cases, use the output of this package for test-suites on hand-built discretizations.}
