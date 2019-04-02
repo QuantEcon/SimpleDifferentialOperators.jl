@@ -59,32 +59,6 @@ L = I * ρ - L_x
 v = L \ f.(x)
 ```
 
-#### Kolmogorov forward equation
-Likewise, one can also compute the corresponding stationary distribution of `x` above by the Kolmogorov forward equation (KFE), i.e., finding `g(x)` that satisfies
-
-![Stationary distribution from KFE](https://quicklatex.com/cache3/b1/ql_4bcbeb92f8a76079935d5276637c69b1_l3.png)
-
-Written in operator form, define the differential operator
-
-![Operator for KFE](https://quicklatex.com/cache3/4d/ql_610ba8019c30240cf65ed7853af36c4d_l3.png)
-
-and the KFE for the stationary distribution can then be written as
-
-![KFE with Operator](https://quicklatex.com/cache3/74/ql_d6698f4d95a1227d01efafb4afff7474_l3.png)
-
-Note that the operator for the KFE in the original equation is the adjoint operator of the operator for the HJBE, `L_x`, and the correct discretization scheme for `L_x^*` is, analogously, done by taking the transpose of the discretized operator for HJBE, `L_x` (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569) and [Achdou et al., 2017](https://ideas.repec.org/p/nbr/nberwo/23732.html)). Hence, one can find the stationary distribution as follows:
-
-```julia
-using Arpack # library for extracting eigenvalues and eigenvectors
-
-# extract eigenvalues and eigenvectors, smallest eigenval in magintute first
-λ, ϕ = eigs(transpose(L_x), which = :SM);
-# extract the very first eigenvector (associated with the smallest eigenvalue)
-g_ss = real.(ϕ[:,1]);
-# normalize it
-g_ss = g_ss / sum(g_ss)
-```
-
 ## Documentation
 
 To install, run `] add SimpleDifferentialOperators` on Julia 1.1+.
