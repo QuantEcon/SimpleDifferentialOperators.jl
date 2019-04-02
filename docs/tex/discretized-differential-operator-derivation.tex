@@ -30,7 +30,7 @@
 \author{Chiyoung Ahn and Jesse Perla}
 \maketitle
 
-\section{Overview and Notation}
+\section{Overview}
 This package is intended to be a stop-gap while more complete and higher-performance solutions are implemented (in particular, the evolution of \url{https://github.com/JuliaDiffEq/DiffEqOperators.jl/}).  In the meantime, the package hopefully provides a solution for discretizing operators and solving ODEs/PDEs.
 
 The focus is on discretizing linear (and, with some careful checks, affine) operators.  In the case of models where the process is non-linear, it is most appropriate for algorithms that iteratively solve linear ODEs/PDEs.
@@ -39,7 +39,7 @@ Some notation used throughout the document
 \begin{itemize}
 \item Let $x \in R$ be a variable, and (in general) use a tilde to denote functions or operators on $\R$ whereas we will drop the tilde when discretizing (e.g. $\tilde{f}(\cdot)$ is a continuous function on $x$ while $f$ is a vector of the $\tilde{f}(\cdot)$ function applied to a grid.
 	\item Derivatives are denoted by the operator $\D$ and univariate derivatives such as $\D[x]\tilde{v}(x) \equiv \tilde{v}'(x)$.
-	\item Use the vertical bar to denote evaluation at a particular point.  That is if $\tilde{B} \equiv \partial_x\vert_{x = x_0}$ then $\tilde{B} \tilde{v}(x) = \partial_x \tilde{v}(x_0)$, and if $\tilde{B} \equiv \vert_{x = x_0}$ then $\tilde{B} \tilde{v}(x) = \tilde{v}(x_0)$.
+	\item Use the vertical bar to denote evaluation at a particular point.  That is if $\tilde{B} \equiv \partial_x\vert_{x = x_0}$ then $\tilde{B} \tilde{v}(x) = \partial_x \tilde{v}(x_0)$, and if $\tilde{B} \equiv 1\vert_{x = x_0}$ then $\tilde{B} \tilde{v}(x) = \tilde{v}(x_0)$.  For the notation, the $1$ is simply the identity operator on the function instead of applying a derivative
 	\item Let $W_t$ be the Wiener process with the integral defined by the Ito interpretation
 \end{itemize}
 
@@ -47,22 +47,30 @@ Some notation used throughout the document
 \subsection{Linear Differential Equations}
 
 
-\subsubsection{ODEs (e.g. Steady State)}
+\paragraph{ODEs (e.g. Steady State)}
 To understand the class of models that this can support, first look at the sort of ODE that comes out of solving a stationary model.  The general pattern is a linear differential operator $\tilde{L}$, a boundary condition operator $\tilde{B}$, the function of interest $\tilde{v}(x)$, and the affine terms $\tilde{f}(\cdot)$ and $b$. The general problem to solve is to find the $\tilde{v}(x)$ such that.
 \begin{align}
-	\tilde{L} \tilde{v}(x) &= \tilde{f}(x)\label{eq:A-u-DE}\\
-	\tilde{B} \tilde{v}(x) &= b\label{eq:B-u-DE}
+	0 &= \tilde{L} \tilde{v}(x) - \tilde{f}(x)\label{eq:A-u-DE}\\
+	0 &= \tilde{B} \tilde{v}(x) - b\label{eq:B-u-DE}
 \end{align}
 
 \paragraph{Motivating Example}
-As a simple example, let $x \in [x_{\min},x_{\max}]$, define $\tilde{v}(x)$ as the price of a stream of payoffs based on the state $\tilde{f}(x)$ discounted at rate $r > 0$, where the SDE for the $x$ is $\diff x_t = \mu X_t + \sigma W_t$, and $x$ is reflected at $x_{\min}$ and $x_{\max}$.  Then, the stationary ODE of the Bellman equation along with boundary conditions is
+As a simple example, let
+\begin{itemize}
+	\item $x \in [x_{\min},x_{\max}]$ be a state variable on a domain following the SDE
+	$$d x_t = \mu d t + \sigma d W_t$$
+	where the variable $x_t$ is reflected at $x_{\min}$ and $x_{\max}$
+	\item The payoffs for state $x$ are a function $\tilde{f}(x)$ defines on the domain
+	\item $\tilde{v}(x)$ as the value of the the stream of payoffs discounted at rate $r > 0$
+\end{itemize}
+Then, through standard arguments, the stationary Bellman equation along with boundary conditions is
 \begin{align}
 	r \tilde{v}(x) &= \tilde{f}(x) + \mu \D[x] \tilde{v}(x) + \frac{\sigma^2}{2} \D[xx]\tilde{v}(x)\\
 	\D[x]\tilde{v}(x_{\min}) &= 0\\
 	\D[x] \tilde{v}(x_{\max}) &= 0
 \end{align}
 
-\noindent Mapping to the notation above,
+\noindent Mapping to the notation of \cref{eq:A-u-DE,eq:B-u-DE}
 \begin{align}
 	\tilde{L} &\equiv r - \mu \D[x] - \frac{\sigma^2}{2}\D[xx]\\
 	\tilde{B} &\equiv \begin{bmatrix}
@@ -71,15 +79,12 @@ As a simple example, let $x \in [x_{\min},x_{\max}]$, define $\tilde{v}(x)$ as t
 \end{bmatrix}\\
 b &\equiv \begin{bmatrix} 0\\ 0 \end{bmatrix}
 \end{align}
-
+This package will allow you to define the $\tilde{L},\tilde{B},$ and $b$ to solve for a discretization of the $\tilde{v}(x)$ function.
 
 \paragraph{Boundary Conditions}
 The package supports some key boundary conditions used for stochastic processes and ODE/PDEs.
 
 As will become clear in the discretization, whether the boundary condition is homogenous or not (i.e. $=0$ or $=b > 0$) is important for the numerical methods.   To detail a few of the one-dimensional versions of the supported boundary conditions
-
-
-
 
 \begin{itemize}
 	\item Reflecting Barriers (i.e. a homogeneous Neumann Boundary Conditions)
@@ -87,23 +92,57 @@ As will become clear in the discretization, whether the boundary condition is ho
 		\D[x]\tilde{v}({x_{\min}} ) &= 0\label{eq:reflecting-BC1}\\
 		\D[x]\tilde{v}({x_{\max}}) &= 0\label{eq:reflecting-BC2}
 	\end{align}
+	or in operator form
+	\begin{align}
+		\tilde{B} &\equiv \begin{bmatrix}
+		\partial_x\vert_{x = x_{\min}}\\
+		\partial_x\vert_{x = x_{\max}}
+		\end{bmatrix}\\
+		b &\equiv \begin{bmatrix} 0\\ 0 \end{bmatrix}
+	\end{align}
 	\item Mixed boundary conditions (i.e a homogeneous Robin Boundary Conditions):
 	\begin{align}
 	\underline{\xi} \tilde{v}({x_{\min}}) + \D[x]\tilde{v}({x_{\min}} ) &= 0\label{eq:mixed-BC1}\\
 	\overline{\xi} \tilde{v}({x_{\max}}) + \D[x]\tilde{v}({x_{\max}}) &= 0\label{eq:mixed-BC2}
 	\end{align}
-	Note that when $\underline{\xi} = \overline{\xi} = 0$, this nests the reflecting barriers
+	Note that when $\underline{\xi} = \overline{\xi} = 0$, this nests the reflecting barriers.  In operator form,
+	\begin{align}
+		\tilde{B} &\equiv \begin{bmatrix}
+		\partial_x\vert_{x = x_{\min}} + \underline{\xi}\,1 \vert_{x = x_{\min}}\\
+		\partial_x\vert_{x = x_{\max}} + \bar{\xi}\,1 \vert_{x = x_{\max}}
+		\end{bmatrix}\\
+		b &\equiv \begin{bmatrix} 0\\ 0 \end{bmatrix}
+	\end{align}
 	\item Absorbing Barriers (i.e. a homogenous or inhomogeneous Dirichlet Boundary Conditions)
 	\begin{align}
 		\tilde{v}({x_{\min}} ) &= b_1\label{eq:absorbing-BC1}\\
 		\tilde{v}({x_{\max}}) &= b_2\label{eq:absorbing-BC2}
 	\end{align}
-	In the case of $b_1 = b_2 = 0$, this is homogeneous
+	In the case of $b_1 = b_2 = 0$, this is homogeneous. In operator form,
+	\begin{align}
+		\tilde{B} &\equiv \begin{bmatrix}
+		1 \vert_{x = x_{\min}}\\
+		1 \vert_{x = x_{\max}}
+		\end{bmatrix}\\
+		b &\equiv \begin{bmatrix} b_0\\ b_2 \end{bmatrix}
+	\end{align}
 \end{itemize}
-Of course, many models would have different boundary conditions on different sides of the domain.
+Of course, many models would have different boundary conditions on different sides of the domain, which entails mixing and matching rows in the $B$ and $b$ matrices.
 
+\paragraph{PDEs (i.e. Time-Varying)}
+The motivating example above has no time-variation in any of the parameters, payoffs, or boundary conditions. Consider that the operators, payoffs, and boundary conditions could change over time -- which we denote with a $t$ subscript. As a variation on \cref{eq:A-u-DE,eq:B-u-DE}
+\begin{align}
+	\D[t] \tilde{v}(t,x) &= \tilde{L}(t) \tilde{v}(t, x) - \tilde{f}(t, x)\label{eq:A-u-DE-t}\\
+	0 &= \tilde{B}(t) \tilde{v}(t, x) - b(t)\label{eq:B-u-DE-t}
+\end{align}
+Subsect to an initial condition, $\tilde{v}(0,x)$ given or potentially a boundary value, $\tilde{v}(T,x)$ for some $T$.
 
-\subsection{Discretization Notation}
+This is a linear PDE where the operators, boundary conditions, and payoffs all may change over time.
+
+\textbf{TODO} go back to the motivating example.
+
+\section{Discretization}
+\subsection{Notation}
 This section defines the grids and other notation for the discretization.
 \begin{itemize}
 	\item Define an irregular grid $\set{x_i}_{i=0}^{M+1}$ with \textbf{boundary nodes}, $x_0 = {x_{\min}}$ and $x_{M+1} = {x_{\max}}$. Denote the \textbf{extended grid} as $\overline{x} \equiv \set{x_i}_{i=0}^{M+1}$ and the \textbf{interior grid}, a collection of nodes excluding the boundary nodes, as $x \equiv \set{x_i}_{i=1}^{M} $.
@@ -337,8 +376,8 @@ L_{1+}^B &\equiv \text{tridiag}(\mathbf{0}_{M-1}, \begin{bmatrix}
 L_2^B &\equiv \text{tridiag}(
 \mathbf{1}_{M-1},
 \begin{bmatrix}
--2-(-1+\underline{\xi} \Delta)^{-1}& 
--2\mathbf{1}_{M-2}^T & 
+-2-(-1+\underline{\xi} \Delta)^{-1}&
+-2\mathbf{1}_{M-2}^T &
 -2+(1+\overline{\xi} \Delta)^{-1}
 \end{bmatrix}^T,
 \mathbf{1}_{M-1} )
