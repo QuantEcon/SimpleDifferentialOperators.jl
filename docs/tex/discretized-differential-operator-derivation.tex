@@ -11,7 +11,10 @@
 \geometry{left=1in,right=1in,top=0.6in,bottom=1in}
 \newcommand{\set}[1]{\ensuremath{\left\{{#1}\right\}}}
 \newcommand{\R}{\ensuremath{\mathbb{R}}}
-\newcommand{\diff}{\ensuremath{\text{diff}}}
+\newcommand{\diff}{\ensuremath{\mathrm{diff}}}
+\newcommand{\band}{\ensuremath{\mathrm{band}}}
+\newcommand{\toep}{\ensuremath{\mathrm{toep}}}
+\newcommand{\tridiag}{\ensuremath{\mathrm{tridiag}}}
 \newcommand{\D}[1][]{\ensuremath{\partial_{#1}}}
 \newcommand{\indicator}[1]{\ensuremath{\mathds{1}\left\{{#1}\right\}}}
 \newcommand{\condexpec}[3][]{\ensuremath{\mathbb{E}_{#1}\left[{#2} \; \middle| \; {#3} \right]}}
@@ -37,7 +40,7 @@ The focus is on discretizing linear (and, with some careful checks, affine) oper
 \begin{itemize}
 	\item Let $x \in R$ is the general ``spatial'' state  variable
 
-	\item Derivatives are denoted by the operator $\D$ and univariate derivatives such as $\D[x]\tilde{v}(x) \equiv \tilde{v}'(x)$.
+	\item Derivatives are denoted by the operator $\D[x]$ and univariate derivatives such as $\D[x]\tilde{v}(x) \equiv \tilde{v}'(x)$.
 	\item Use the vertical bar to denote operator evaluation at a particular point.  That is if $\tilde{B} \equiv \partial_x\vert_{x = x_0}$ then $\tilde{B} \tilde{v}(x) = \partial_x \tilde{v}(x_0)$, and if $\tilde{B} \equiv 1 \vert_{x = x_0}$ then $\tilde{B} \tilde{v}(x) = \tilde{v}(x_0)$.  For the notation, the $1$ is simply the identity operator on the function instead of applying a derivative (i.e. $\tilde{B} \equiv 1 \vert_{x = x_0}$ then $\tilde{B} \tilde{v}(\cdot) = 1 \times \tilde{v}(x_0) $)
 	\item Let $W_t$ be the Wiener process with the integral defined by the Ito interpretation
 
@@ -206,6 +209,9 @@ In order to discretize these operators with finite-differences, we need to choos
 \end{itemize}
 For first-derivatives, the choice of $L_{1-}$ vs. $L_{1+}$ or a combination of them, will use upwind finite differences.
 
+
+
+
 \section{Discretizing Operators with a Regular Grid}
 In this section, we study discretization schemes under regular grids, i.e., grids such that $x_{i+1} - x_i = \Delta$ for all $i = 0,...,M$ for some fixed $\Delta > 0$.
 
@@ -286,7 +292,9 @@ L_0 &\equiv \begin{bmatrix}
 \end{align}
 This operator trivially maps from the $\bar{v}$ to extract the interior $v$ and ignoring the boundaries $\bar{v}_0$ and $\bar{v}_{P+1}$.  Its primary role will be when composing operators rather than being used directly.
 
-\subsection{Representation with Banded Matrices}
+\subsection{Representation with Special Matrices}
+See \cref{sec:specialmatrices} for more details on the notation of special matrices (e.g. Toeplitz, Tridiagonal, and Banded)
+
 These can be defined in more compact forms as banded matrices
 \begin{align}
 L_{1-} &\equiv  \frac{1}{\Delta}\begin{bmatrix}
@@ -1052,6 +1060,66 @@ Note that the corresponding $B$ and $b$ are identical with regular grid cases.
 \newpage
 
 \appendix
+
+\section{Special Matrices and Notation}\label{sec:specialmatrices}
+In the code and algebra, a number of the matrices for discretization have special structure.
+\paragraph{Toeplitz Matrices}
+First, a Toeplitz matrix is one in which every descending diagonal is constant.  See \url{https://en.wikipedia.org/wiki/Toeplitz_matrix} for more examples and theory. To create, you need to specify the lower off-diagonals (ordered by rows) and the upper off-diagonals (ordered by columns).  They are square only if the number of rows and columns passed in is identical.\footnote{This notation is intended to match Matlab's and Julia's notation.  See \url{https://www.mathworks.com/help/matlab/ref/toeplitz.html} and \url{https://github.com/JuliaMatrices/ToeplitzMatrices.jl}.  Note that with this interface design, if $vr_1 \neq vr_1$ there is an error.  }   As an example, to construct
+\begin{align}
+ vr &= \begin{bmatrix} a & f & g & h\end{bmatrix} \in \R^4\\
+ vc &= \begin{bmatrix} a & b & c & d & e\end{bmatrix} \in \R^5\\
+ \toep(vr,vc) &= \begin{bmatrix}
+a & b & c & d & e \\
+f & a & b & c & d \\
+g & f & a & b & c \\
+h & g & f & a & b
+\end{bmatrix} \in \R^{4 \times 5}
+ \end{align}
+
+\paragraph{Banded Matrices}
+Next, consider a banded matrix (\url{https://en.wikipedia.org/wiki/Band_matrix}).  This is a sparse matrix where only a ``small'' number of diagonals below and/or above the main diagonal are non-zero.  Unlike a Toeplitz matrix, the diagonals need not be constant.\footnote{In principle there could be banded Toeplitz matrices (i.e., only a certain bandwidth of off diagonals are non-zero), but at this point we are unaware of software packages along those lines.}
+
+To denote a banded matrix, one needs to specify (1) how many lower and upper diagonals are in the matrix; and (2) the values of those diagonals.  For example, a diagonal matrix has $0$ lower and $0$ upper diagonals while a tridiagonal matrix has $1$ of each.
+
+As an example of the notation, first define vectors of diagonals
+\begin{align}
+B_{-1} &\equiv \begin{bmatrix} B_{21} & B_{32} & B_{43} & B_{54} \end{bmatrix}\in\R^4\\
+B_{0} &\equiv \begin{bmatrix} B_{11} & B_{22} & B_{33} & B_{44} & B_{55} \end{bmatrix}\in\R^5\\
+B_{+1} &\equiv \begin{bmatrix} B_{12} & B_{23} & B_{34} & B_{45} & B_{56} \end{bmatrix}\in\R^5\\
+B_{+2} &\equiv \begin{bmatrix} B_{13} & B_{24} & B_{35} & B_{46} \end{bmatrix}\in\R^4\\
+\intertext{The $\band_{\ell,u}(\cdot)$ function is used to define a banded matrix given diagonals where the $\ell$ is number of bands below the diagonal and $u$ is the number of bands above the diagonal.  The function then takes a list of the diagonals in order (i.e. lower ones, diagonal bands, then upper band)}
+\band_{1,1}(B_{-1}, B_{0}, B_{+1}) &= \begin{bmatrix}
+ B_{11} & B_{12} & 0      & \cdots & \cdots & 0 \\
+ B_{21} & B_{22} & B_{23} & \ddots & \ddots & \vdots \\
+  0     & B_{32} & B_{33} & B_{34} & \ddots & \vdots \\
+ \vdots & \ddots & B_{43} & B_{44} & B_{45} & 0 \\
+ \vdots & \ddots & \ddots & B_{54} & B_{55} & B_{56}
+\end{bmatrix}\in \R^{5\times 6}\\
+\intertext{And other with a variation on the columns with no sub-diagonals and two super-diagonals}
+\band_{0,2}(B_{0}, B_{+1}, B_{+2}) &= \begin{bmatrix}
+ B_{11} & B_{12} & B_{13} & 0      & \cdots & 0 \\
+ 0 & B_{22} & B_{23} & B_{24} &0 & \vdots \\
+  \vdots      & 0 & B_{33} & B_{34} & B_{35} & 0 \\
+ \vdots & \ddots & 0 & B_{44} & B_{45} & B_{46} \\
+ \vdots & \ddots & \ddots & 0 & B_{55} & B_{56}
+\end{bmatrix}\in \R^{5\times 6}
+\end{align}
+Note that a Topelitz matrix where many of the diagonals are $0$ can be written as a banded matrix
+\begin{align}
+\band_{1,2}\left(f \mathbf{1}_3, a \mathbf{1}_4, b \mathbf{1}_4, c \mathbf{1}_3\right)
+   &= \toep(\begin{bmatrix}a & f & 0 & 0 \end{bmatrix},\begin{bmatrix}a & b & c & 0 & 0 \end{bmatrix}) \\
+   &= \begin{bmatrix}
+	a & b & c & 0 & 0 \\
+	f & a & b & c & 0 \\
+	0 & f & a & b & c \\
+	0 & 0 & f & a & b
+	\end{bmatrix} \in \R^{4 \times 5}\\
+\end{align}
+
+\paragraph{Tridiagonal Matrices}
+A final set of matrices are sparse, tridiagonal matrices.  This is a particular type of square banded matrix with a single off-diagonal in each direction.  As always, the extra structure leads to specialized operations
+\textbf{TODO: START HERE AND CONNECT TO BOTH}
+
 \section{Derivation by substitution}
 One can also derive the formula for $L_{1-}^B, L_{1+}^B, L_2^B$ in \eqref{eq:L-1-regular}, \eqref{eq:L-1-plus-regular}, \eqref{eq:L-2-regular} by substitution. For simplicity, here we focus on the case when we have regular grids, i.e., $x_{i+1} - x_i = \Delta$ for some $\Delta > 0$ for all $i = 0, ..., M$.
 
