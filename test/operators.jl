@@ -17,7 +17,7 @@ using Test, LinearAlgebra, DualNumbers
         @test Array(L₂) == [-1. 1. 0.; 1. -2. 1.; 0. 1. -1.]
         @test Array(x) == [1; 2; 3]
 
-        # Irregular grid
+        # Irregular grid (with Δ_1m = Δ_1p and Δ_Mp = Δ_Mm)
         x̄ = [0.0; 1.0; 2.0; 4.0; 6.0]
         L₁₋, L₁₊, L₂, x = diffusionoperators(x̄, (Reflecting(), Reflecting()))
         @test @inferred(diffusionoperators(x̄,(Reflecting(), Reflecting()))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x = x)
@@ -25,6 +25,26 @@ using Test, LinearAlgebra, DualNumbers
         @test Array(L₁₋) == [0. 0. 0.; -1. 1. 0.; 0. -1/2 1/2]
         @test Array(L₁₊) == [-1. 1. 0.; 0. -1/2 1/2; 0. 0. 0.]
         @test Array(L₂) == [-1. 1. 0.; 2/((2.0+1.0)*1.0) -2/(2.0*1.0) 2/((2.0+1.0)*2.0); 0. 1/4 -1/4]
+        @test Array(x) == [1.0; 2.0; 4.0]
+
+        # Irregular grid (with Δ_1m != Δ_1p and Δ_Mp != Δ_Mm)
+        x̄ = [-1.0; 1.0; 2.0; 4.0; 7.0]
+
+        Δ_1m = x̄[2] - x̄[1]
+        Δ_1p = x̄[3] - x̄[2]
+        Δ_Mm = x̄[end-1] - x̄[end-2]
+        Δ_Mp = x̄[end] - x̄[end-1]
+        L₁₋, L₁₊, L₂, x = diffusionoperators(x̄, (Reflecting(), Reflecting()))
+        @test @inferred(diffusionoperators(x̄,(Reflecting(), Reflecting()))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x = x)
+        @test @inferred(diffusionoperators(x̄,(Mixed(0.), Mixed(0.)))) == diffusionoperators(x̄,(Reflecting(), Reflecting())) # test that the mixed case properly nests the reflecting case
+        @test Array(L₁₋) == [0. 0. 0.; -1. 1. 0.; 0. -1/2 1/2]
+        @test Array(L₁₊) == [-1. 1. 0.; 0. -1/2 1/2; 0. 0. 0.]
+        Ξ_1 = -2*(1/(Δ_1m*Δ_1p)-1/((Δ_1p+Δ_1m)*(Δ_1m)))
+        Ξ_M = -2*(1/(Δ_Mm*Δ_Mp)-1/((Δ_Mp+Δ_Mm)*(Δ_Mp)))
+       
+        @test Array(L₂) == [Ξ_1 2/(Δ_1p*(Δ_1m+Δ_1p)) 0.; 
+                            2/((2.0+1.0)*1.0) -2/(2.0*1.0) 2/((2.0+1.0)*2.0); 
+                            0. 2/(Δ_Mm*(Δ_Mm+Δ_Mp)) Ξ_M]
         @test Array(x) == [1.0; 2.0; 4.0]
     end
 
@@ -48,25 +68,42 @@ end
     @testset "Accuracy & regression test" begin
         # Uniform grid
         x̄ = 0:4
-        ξ_lb, ξ_ub = (1., 2.)
+        ξ_lb, ξ_ub = (-1., -2.)
 
         L₁₋, L₁₊, L₂, x = diffusionoperators(x̄, (Mixed(ξ_lb), Mixed(ξ_ub)))
         @test @inferred(diffusionoperators(x̄, (Mixed(ξ_lb), Mixed(ξ_ub)))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x = x)
-        @test Array(L₁₋) == [-ξ_lb 0. 0.; -1. 1. 0.; 0. -1. 1.]
-        @test Array(L₁₊) == [-1. 1. 0.; 0. -1. 1.; 0. 0. -ξ_ub]
-        @test Array(L₂) == [(-1. + ξ_lb) 1. 0.; 1. -2. 1.; 0. 1. (-1. - ξ_ub)]
+        @test Array(L₁₋) == [1+1/(-1+ξ_lb) 0. 0.; -1. 1. 0.; 0. -1. 1.]
+        @test Array(L₁₊) == [-1. 1. 0.; 0. -1. 1.; 0. 0. -1+1/(1+ξ_ub)]
+        @test Array(L₂) == [-2-1/(-1+ξ_lb) 1. 0.; 1. -2. 1.; 0. 1. -2+1/(1+ξ_ub)]
         @test Array(x) == [1; 2; 3]
 
-        # Irregular grid
+        # Irregular grid (with Δ_1m = Δ_1p and Δ_Mp = Δ_Mm)
         x̄ = [0.0; 1.0; 2.0; 4.0; 6.0]
-        ξ_lb, ξ_ub = (1., 2.)
+        ξ_lb, ξ_ub = (-1., -2.)
+        Δ_Mm = x̄[end-1] - x̄[end-2]
+        Δ_Mp = x̄[end] - x̄[end-1]
 
         L₁₋, L₁₊, L₂, x = diffusionoperators(x̄, (Mixed(ξ_lb), Mixed(ξ_ub)))
         @test @inferred(diffusionoperators(x̄, (Mixed(ξ_lb), Mixed(ξ_ub)))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x = x)
-        @test Array(L₁₋) == [-ξ_lb 0. 0.; -1. 1. 0.; 0. -1/2 1/2]
-        @test Array(L₁₊) == [-1. 1. 0.; 0. -1/2 1/2; 0. 0. -ξ_ub]
-        @test Array(L₂) == [(-1. + ξ_lb) 1. 0.; 2/((2.0+1.0)*1.0) -2/(2.0*1.0) 2/((2.0+1.0)*2.0); 0. 1/4 (-1. - ξ_ub*2.0)/4]
+        @test Array(L₁₋) == [1+1/(-1+ξ_lb) 0. 0.; -1. 1. 0.; 0. -1/2 1/2]
+        @test Array(L₁₊) == [-1. 1. 0.; 0. -1/2 1/2; 0. 0. (-1+1/(1+ξ_ub*Δ_Mp))/Δ_Mp]
+        @test Array(L₂) == [-1.5 1. 0.; 2/((2.0+1.0)*1.0) -2/(2.0*1.0) 2/((2.0+1.0)*2.0); 0. 1/4 -2*(1/(Δ_Mm*Δ_Mp)-1/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp)))]
         @test Array(x) == [1.0; 2.0; 4.0]
+
+        # Irregular grid (with Δ_1m != Δ_1p and Δ_Mp != Δ_Mm)
+        x̄ = [-1.0; 1.0; 2.0; 4.0; 7.0]
+        ξ_lb, ξ_ub = (-1., -2.)
+        Δ_1m = x̄[2] - x̄[1]
+        Δ_1p = x̄[3] - x̄[2]
+        Δ_Mm = x̄[end-1] - x̄[end-2]
+        Δ_Mp = x̄[end] - x̄[end-1]
+
+        L₁₋, L₁₊, L₂, x = diffusionoperators(x̄, (Mixed(ξ_lb), Mixed(ξ_ub)))
+        @test @inferred(diffusionoperators(x̄, (Mixed(ξ_lb), Mixed(ξ_ub)))) == (L₁₋ = L₁₋, L₁₊ = L₁₊, L₂ = L₂, x = x)
+        @test Array(L₁₋) ≈ [1/3 0. 0.; -1. 1. 0.; 0. -1/2 1/2]
+        @test Array(L₁₊) ≈ [-1. 1. 0.; 0. -1/2 1/2; 0. 0. -0.4]
+        @test Array(L₂) ≈ [-8/9 2/3 0.; 2/3 -1. 1/3; 0. 0.2 -0.36]
+        @test Array(x) ≈ [1.0; 2.0; 4.0]
     end
 
     @testset "Consistency" begin
@@ -128,9 +165,9 @@ end
     L₁₋_cache, L₁₊_cache, L₂_cache = diffusionoperators(irregularGrid, (Reflecting(), Reflecting()))
     @test @inferred(diffusionoperators(irregularGrid, (Reflecting(), Reflecting()))) == (L₁₋ = L₁₋_cache, L₁₊ =  L₁₊_cache, L₂ = L₂_cache)
     L₁₋_cache, L₁₊_cache, L₂_cache = diffusionoperators(uniformGrid, (Mixed(one(Float32)), Mixed(one(Float32))))
-    @test @inferred(diffusionoperators(uniformGrid, (Mixed(one(BigFloat)), Mixed(one(BigFloat))))) == (L₁₋ = L₁₋_cache, L₁₊ = L₁₊_cache, L₂ = L₂_cache)
+    @test @inferred(diffusionoperators(uniformGrid, (Mixed(one(Float32)), Mixed(one(Float32))))) == (L₁₋ = L₁₋_cache, L₁₊ = L₁₊_cache, L₂ = L₂_cache)
     L₁₋_cache, L₁₊_cache, L₂_cache = diffusionoperators(irregularGrid, (Mixed(one(Float32)), Mixed(one(Float32))))
-    @test @inferred(diffusionoperators(irregularGrid, (Mixed(one(BigFloat)), Mixed(one(BigFloat))))) == (L₁₋ = L₁₋_cache, L₁₊ = L₁₊_cache, L₂ = L₂_cache)
+    @test @inferred(diffusionoperators(irregularGrid, (Mixed(one(Float32)), Mixed(one(Float32))))) == (L₁₋ = L₁₋_cache, L₁₊ = L₁₊_cache, L₂ = L₂_cache)
 
     # Duals
     uniformGrid = range(Dual(0.0), Dual(1.0), length = 100)
