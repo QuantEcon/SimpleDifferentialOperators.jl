@@ -46,7 +46,7 @@ One can alternatively use differential operators on interior nodes and stack the
 using SparseArrays
 
 # differential operators on extended nodes
-L̄ₓ = μ*L̄₁₋(x) + σ^2 / 2 * L̄₂(x)
+L̄ₓ = μ*L₁₋(x) + σ^2 / 2 * L₂(x)
 
 # boundary conditions (i.e. B v̄ = b)
 B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]])

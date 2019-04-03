@@ -259,7 +259,7 @@ julia> L₂bc(x̄, (Reflecting(), Reflecting()))
 L₂bc(x̄, bc) = DifferentialOperator(x̄, bc, CentralSecondDifference())
 
 """
-    L̄₁₋(x̄)
+    L₁₋(x̄)
 
 Returns a discretized first-order differential operator of `length(x̄)` by `length(x̄) + 2` matrix
 using backward difference under no boundary condition.
@@ -271,15 +271,15 @@ The first and last columns are applied to the ghost nodes just before `x̄[1]` a
 julia> x̄ = 1:3
 1:3
 
-julia> Array(L̄₁₋(x̄))
+julia> Array(L₁₋(x̄))
 1×3 Array{Float64,2}:
  -1.0  1.0  0.0
 ```
 """
-L̄₁₋(x̄) = ExtensionDifferentialOperator(x̄, BackwardFirstDifference())
+L₁₋(x̄) = ExtensionDifferentialOperator(x̄, BackwardFirstDifference())
 
 """
-    L̄₁₊(x̄)
+    L₁₊(x̄)
 
 Returns a discretized first-order differential operator of `length(x̄)` by `length(x̄) + 2` matrix using
 forward difference under no boundary condition.
@@ -291,7 +291,7 @@ The first and last columns are applied to the ghost nodes just before `x̄[1]` a
 julia> x̄ = 0:5
 0:5
 
-julia> Array(L̄₁₊(x̄))
+julia> Array(L₁₊(x̄))
 4×6 Array{Float64,2}:
  0.0  -1.0   1.0   0.0   0.0  0.0
  0.0   0.0  -1.0   1.0   0.0  0.0
@@ -299,10 +299,10 @@ julia> Array(L̄₁₊(x̄))
  0.0   0.0   0.0   0.0  -1.0  1.0
 ```
 """
-L̄₁₊(x̄) = ExtensionDifferentialOperator(x̄, ForwardFirstDifference())
+L₁₊(x̄) = ExtensionDifferentialOperator(x̄, ForwardFirstDifference())
 
 """
-    L̄₂(x̄)
+    L₂(x̄)
 
 Returns a discretized second-order differential operator of `length(x̄)` by `length(x̄) + 2` matrix
 using central difference under no boundary condition.
@@ -314,7 +314,7 @@ The first and last columns are applied to the ghost nodes just before `x̄[1]` a
 julia> x̄ = 0:5
 0:5 
 
-julia> Array(L̄₂(x̄))
+julia> Array(L₂(x̄))
 4×6 Array{Float64,2}:
  1.0  -2.0   1.0   0.0   0.0  0.0
  0.0   1.0  -2.0   1.0   0.0  0.0
@@ -322,7 +322,7 @@ julia> Array(L̄₂(x̄))
  0.0   0.0   0.0   1.0  -2.0  1.0
 ```
 """
-L̄₂(x̄)  = ExtensionDifferentialOperator(x̄, CentralSecondDifference())
+L₂(x̄)  = ExtensionDifferentialOperator(x̄, CentralSecondDifference())
 
 """
     interiornodes(x̄)

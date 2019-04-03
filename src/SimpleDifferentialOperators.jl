@@ -30,8 +30,8 @@ export DifferentialOperator,
         L₁₊bc,
         L₂bc,
         interiornodes,
-        L̄₁₊,
-        L̄₁₋,
-        L̄₂
+        L₁₊,
+        L₁₋,
+        L₂
 
 end # module
