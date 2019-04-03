@@ -191,7 +191,7 @@ end
 
 # Convenience calls
 """
-    L₁₋(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
+    L₁₋bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
 
 Returns a discretized first-order differential operator of `length(x̄)` by `length(x̄)` matrix
 using backward difference under boundary conditions specified by `bc`.
@@ -203,7 +203,7 @@ The first element of `bc` is applied to the lower bound, and second element of `
 julia> x̄ = 0:5
 0:5
 
-julia> L₁₋(x̄, (Reflecting(), Reflecting()))
+julia> L₁₋bc(x̄, (Reflecting(), Reflecting()))
 4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
   0.0   0.0    ⋅    ⋅
  -1.0   1.0   0.0   ⋅
@@ -211,10 +211,10 @@ julia> L₁₋(x̄, (Reflecting(), Reflecting()))
    ⋅     ⋅   -1.0  1.0
 ```
 """
-L₁₋(x̄, bc) = DifferentialOperator(x̄, bc, BackwardFirstDifference())
+L₁₋bc(x̄, bc) = DifferentialOperator(x̄, bc, BackwardFirstDifference())
 
 """
-    L₁₊(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
+    L₁₊bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
 
 Returns a discretized first-order differential operator of `length(x̄)` by `length(x̄)` matrix
 using forward difference under boundary conditions specified by `bc`.
@@ -226,7 +226,7 @@ The first element of `bc` is applied to the lower bound, and second element of `
 julia> x̄ = 0:5
 0:5
 
-julia> L₁₊(x̄, (Reflecting(), Reflecting()))
+julia> L₁₊bc(x̄, (Reflecting(), Reflecting()))
 4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
  -1.0   1.0    ⋅    ⋅
   0.0  -1.0   1.0   ⋅
@@ -234,10 +234,10 @@ julia> L₁₊(x̄, (Reflecting(), Reflecting()))
    ⋅     ⋅    0.0  0.0
 ```
 """
-L₁₊(x̄, bc) = DifferentialOperator(x̄, bc, ForwardFirstDifference())
+L₁₊bc(x̄, bc) = DifferentialOperator(x̄, bc, ForwardFirstDifference())
 
 """
-    L₂(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
+    L₂bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
 
 Returns a discretized second-order differential operator of `length(x̄)` by `length(x̄)` matrix
 using central difference under boundary conditions specified by `bc`.
@@ -248,7 +248,7 @@ The first element of `bc` is applied to the lower bound, and second element of `
 julia> x̄ = 0:5
 0:5
 
-julia> L₂(x̄, (Reflecting(), Reflecting()))
+julia> L₂bc(x̄, (Reflecting(), Reflecting()))
 4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
  -1.0   1.0    ⋅     ⋅
   1.0  -2.0   1.0    ⋅
@@ -256,7 +256,7 @@ julia> L₂(x̄, (Reflecting(), Reflecting()))
    ⋅     ⋅    1.0  -1.0
 ```
 """
-L₂(x̄, bc) = DifferentialOperator(x̄, bc, CentralSecondDifference())
+L₂bc(x̄, bc) = DifferentialOperator(x̄, bc, CentralSecondDifference())
 
 """
     L̄₁₋(x̄)

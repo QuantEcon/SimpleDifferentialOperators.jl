@@ -6,11 +6,11 @@ function get_basis_L₁₋(x̄::AbstractRange)
     Δ = step(x̄)
     M = length(x̄) - 2
 
-    # define L₁₋
+    # define L₁₋bc
     dl_m1 = -ones(T, M-1)
     d_m1 = ones(T, M)
     du_m1 = zeros(T, M-1)
-    L₁₋ = Tridiagonal(dl_m1, d_m1, du_m1)/Δ
+    L₁₋bc = Tridiagonal(dl_m1, d_m1, du_m1)/Δ
 end
 
 function get_basis_L₁₊(x̄::AbstractRange)
@@ -18,11 +18,11 @@ function get_basis_L₁₊(x̄::AbstractRange)
     Δ = step(x̄)
     M = length(x̄) - 2
 
-    # define L₁₊
+    # define L₁₊bc
     dl_1 = zeros(T, M-1)
     d_1 = -ones(T, M)
     du_1 = ones(T, M-1)
-    L₁₊ = Tridiagonal(dl_1, d_1, du_1)/Δ
+    L₁₊bc = Tridiagonal(dl_1, d_1, du_1)/Δ
 end
 
 function get_basis_L₂(x̄::AbstractRange)
@@ -30,11 +30,11 @@ function get_basis_L₂(x̄::AbstractRange)
     Δ = step(x̄)
     M = length(x̄) - 2
 
-    # define L₂
+    # define L₂bc
     dl_2 = ones(T, M-1)
     d_2 = -2 * ones(T, M)
     du_2 = ones(T, M-1)
-    L₂ = Tridiagonal(dl_2, d_2, du_2)/(Δ^2)
+    L₂bc = Tridiagonal(dl_2, d_2, du_2)/(Δ^2)
 end
 
 function get_basis_L₁₋(x̄::AbstractArray)
@@ -44,11 +44,11 @@ function get_basis_L₁₋(x̄::AbstractArray)
     Δ₋ = d[1:end-1]
     Δ₊ = d[2:end]
 
-    # define L₁₋
+    # define L₁₋bc
     dl_m1 = -ones(T, M-1)./Δ₋[2:end]
     d_m1 = ones(T, M)./Δ₋
     du_m1 = zeros(T, M-1)./Δ₊[1:end-1]
-    L₁₋ = Tridiagonal(dl_m1, d_m1, du_m1)
+    L₁₋bc = Tridiagonal(dl_m1, d_m1, du_m1)
 end
 
 function get_basis_L₁₊(x̄::AbstractArray)
@@ -58,11 +58,11 @@ function get_basis_L₁₊(x̄::AbstractArray)
     Δ₋ = d[1:end-1]
     Δ₊ = d[2:end]
 
-    # define L₁₊
+    # define L₁₊bc
     dl_p1 = zeros(T, M-1)./Δ₋[2:end]
     d_p1 = -ones(T, M)./Δ₊
     du_p1 = ones(T, M-1)./Δ₊[1:end-1]
-    L₁₊ = Tridiagonal(dl_p1, d_p1, du_p1)
+    L₁₊bc = Tridiagonal(dl_p1, d_p1, du_p1)
 end
 
 function get_basis_L₂(x̄::AbstractArray)
@@ -72,12 +72,12 @@ function get_basis_L₂(x̄::AbstractArray)
     Δ₋ = d[1:end-1]
     Δ₊ = d[2:end]
     
-    # define L₂
+    # define L₂bc
     Δ=Δ₊+Δ₋
     dl_2 = 2*ones(T, M-1)./(Δ₋[2:end].*Δ[2:end])
     d_2 = -2*ones(T, M)./(Δ₊.*Δ₋)
     du_2 = 2*ones(T, M-1)./(Δ₊[1:end-1].*Δ[1:end-1])
-    L₂ = Tridiagonal(dl_2, d_2, du_2)
+    L₂bc = Tridiagonal(dl_2, d_2, du_2)
 end
 
 # convenience functions that returns basis corresponding to discretization method given by `method`

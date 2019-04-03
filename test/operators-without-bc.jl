@@ -49,7 +49,7 @@ end
         bc = (Reflecting(), Reflecting()) # specify BC (reflecting barrier)
 
         # operators with reflecting boundary conditions
-        L = μ*L₁₋(x̄, bc) + σ^2 / 2 * L₂(x̄, bc)
+        L = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc)
         ## solve the value function
         v = (I * ρ - L) \ f.(x)
 
