@@ -43,7 +43,7 @@ v = L \ f.(x)
 ```
 
 Note that the code above uses differential operators with reflecting boundary conditions applied.
-One can alternatively use differential operators on interior nodes and stack them with matrices for boundary conditions to compute `v`:
+One can alternatively use operators on extended nodes (extended operators) and stack them with matrices for boundary conditions to compute `v`:
 ```julia
 # import SparseArrays package (for identity matrix and spzeros)
 using SparseArrays
