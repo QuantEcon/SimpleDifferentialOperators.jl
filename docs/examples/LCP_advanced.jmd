@@ -12,7 +12,13 @@ As before, we run some setup code
 # install if required,
 # ] add SimpleDifferentialOperators Plots Suppressor BenchmarkTools
 
-using SimpleDifferentialOperators, Plots, LinearAlgebra, Suppressor, BenchmarkTools
+using SimpleDifferentialOperators
+
+
+# use TOML for other packages 
+using Pkg 
+pkg"activate ."
+using Plots, LinearAlgebra, Suppressor, BenchmarkTools
 ```
 
 And define a set of model objects

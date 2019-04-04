@@ -155,7 +155,12 @@ This is a commercial solver due to Dirkse, Ferris, and Munson, who have generous
 # install if required,
 # ] add SimpleDifferentialOperators PATHSolver Plots Suppressor
 
-using SimpleDifferentialOperators, PATHSolver, Plots, LinearAlgebra, Suppressor
+using SimpleDifferentialOperators
+
+# use TOML for other packages 
+using Pkg 
+pkg"activate ."
+using PATHSolver, Plots, LinearAlgebra, Suppressor
 ```
 
 Next, define the necessary parameters and equations
