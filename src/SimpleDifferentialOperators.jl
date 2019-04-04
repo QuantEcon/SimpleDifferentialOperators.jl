@@ -26,12 +26,12 @@ export DifferenceMethod,
 # Functions
 export DifferentialOperator,
         ExtensionDifferentialOperator,
-        L₁₋,
-        L₁₊,
-        L₂,
+        L₁₋bc,
+        L₁₊bc,
+        L₂bc,
         interiornodes,
-        L̄₁₊,
-        L̄₁₋,
-        L̄₂
+        L₁₊,
+        L₁₋,
+        L₂
 
 end # module

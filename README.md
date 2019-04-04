@@ -53,7 +53,7 @@ x = interiornodes(x̄) # interior grid
 # discretize L = ρ - μ D_x - σ^2 / 2 D_xx on the interior
 # subject to reflecting barriers at 0 and 1
 bc = (Reflecting(), Reflecting())
-L_x = μ*L₁₋(x̄, bc) - σ^2 / 2 * L₂(x̄, bc)
+L_x = μ*L₁₋bc(x̄, bc) - σ^2 / 2 * L₂bc(x̄, bc)
 L = I * ρ - L_x
 ## solve the value function on the interior
 v = L \ f.(x)

@@ -5,33 +5,33 @@ using Test, LinearAlgebra, DualNumbers
     regular_grid = 0:3
     irregular_grid = [0.0; 1.0; 2.0; 4.0; 6.0]
     ## regular grids
-    L̄₁₋_regular = L̄₁₋(regular_grid)
-    L̄₁₊_regular = L̄₁₊(regular_grid)
-    L̄₂_regular = L̄₂(regular_grid)
+    L₁₋_regular = L₁₋(regular_grid)
+    L̄₁₊_regular = L₁₊(regular_grid)
+    L̄₂_regular = L₂(regular_grid)
     x_regular = interiornodes(regular_grid)
-    @test Array(L̄₁₋_regular) == [-1. 1. 0. 0.; 0. -1. 1. 0.]
+    @test Array(L₁₋_regular) == [-1. 1. 0. 0.; 0. -1. 1. 0.]
     @test Array(L̄₁₊_regular) == [0. -1. 1. 0.; 0. 0. -1. 1.]
     @test Array(L̄₂_regular) == [1. -2. 1. 0.; 0. 1. -2. 1.]
     @test Array(x_regular) == [1; 2]
 
-    @test @inferred(L̄₁₋(regular_grid)) == L̄₁₋_regular
-    @test @inferred(L̄₁₊(regular_grid)) == L̄₁₊_regular
-    @test @inferred(L̄₂(regular_grid)) == L̄₂_regular
+    @test @inferred(L₁₋(regular_grid)) == L₁₋_regular
+    @test @inferred(L₁₊(regular_grid)) == L̄₁₊_regular
+    @test @inferred(L₂(regular_grid)) == L̄₂_regular
     @test @inferred(interiornodes(regular_grid)) == x_regular
 
     ## irregular grids
-    L̄₁₋_irregular = L̄₁₋(irregular_grid)
-    L̄₁₊_irregular = L̄₁₊(irregular_grid)
-    L̄₂_irregular = L̄₂(irregular_grid)
+    L₁₋_irregular = L₁₋(irregular_grid)
+    L̄₁₊_irregular = L₁₊(irregular_grid)
+    L̄₂_irregular = L₂(irregular_grid)
     x_irregular = interiornodes(irregular_grid)
-    @test Array(L̄₁₋_irregular) == [-1. 1. 0. 0. 0.; 0. -1. 1. 0. 0.; 0. 0. -1/2 1/2 0.]
+    @test Array(L₁₋_irregular) == [-1. 1. 0. 0. 0.; 0. -1. 1. 0. 0.; 0. 0. -1/2 1/2 0.]
     @test Array(L̄₁₊_irregular) == [0. -1. 1. 0. 0.; 0. 0. -1/2 1/2 0.; 0. 0. 0. -1/2 1/2]
     @test Array(L̄₂_irregular) == [1. -2. 1. 0. 0.; 0 2/((1+2)*1) -2/(2*1) 2/((1+2)*2) 0; 0. 0. 1/4 -2/(2*2) 1/4]
     @test Array(x_irregular) == [1; 2; 4]
 
-    @test @inferred(L̄₁₋(irregular_grid)) == L̄₁₋_irregular
-    @test @inferred(L̄₁₊(irregular_grid)) == L̄₁₊_irregular
-    @test @inferred(L̄₂(irregular_grid)) == L̄₂_irregular
+    @test @inferred(L₁₋(irregular_grid)) == L₁₋_irregular
+    @test @inferred(L₁₊(irregular_grid)) == L̄₁₊_irregular
+    @test @inferred(L₂(irregular_grid)) == L̄₂_irregular
     @test @inferred(interiornodes(irregular_grid)) == x_irregular
 end
 
@@ -49,12 +49,12 @@ end
         bc = (Reflecting(), Reflecting()) # specify BC (reflecting barrier)
 
         # operators with reflecting boundary conditions
-        L = μ*L₁₋(x̄, bc) + σ^2 / 2 * L₂(x̄, bc)
+        L = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc)
         ## solve the value function
         v = (I * ρ - L) \ f.(x)
 
         # operators without boundary conditions, adding extra two rows for boundary conditions
-        L̄ = μ*L̄₁₋(x̄) + σ^2 / 2 * L̄₂(x̄)
+        L̄ = μ*L₁₋(x̄) + σ^2 / 2 * L₂(x̄)
         B = transpose([[-1; 1; zeros(N)] [zeros(N); -1; 1]])
         L = [([zeros(N) Diagonal(ones(N,N)) zeros(N)] * ρ - L̄); B]
 

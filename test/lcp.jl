@@ -21,7 +21,7 @@ function LCP_objects(sp)
   u(x) = x^γ
   σ = σ_bar
 # construct operator
-  L = μ * L₁₋(grid_extended, (Reflecting(), Reflecting())) + σ^2/2 * L₂(grid_extended, (Reflecting(), Reflecting()))
+  L = μ * L₁₋bc(grid_extended, (Reflecting(), Reflecting())) + σ^2/2 * L₂bc(grid_extended, (Reflecting(), Reflecting()))
 # construct/return LCP objects
   B = ρ*I - L
   S_vec = S.(grid)
@@ -65,9 +65,9 @@ function LCP_split(S)
     x = range(-5., 5., length = M)
     x̄ = [x[1] - diff(x)[1]; x; x[end] + diff(x)[end]]
     bc = (Reflecting(), Reflecting())
-    L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋(x̄, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊(x̄, bc)
+    L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋bc(x̄, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊bc(x̄, bc)
   # operator construction
-    L = L₁+ σ^2/2 * L₂(x̄, bc)
+    L = L₁+ σ^2/2 * L₂bc(x̄, bc)
   # LCP stuff
     B = ρ*I - L
     S_vec = S * ones(M)
