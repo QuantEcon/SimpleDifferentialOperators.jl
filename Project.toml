@@ -1,6 +1,6 @@
 name = "SimpleDifferentialOperators"
 uuid = "7ccca996-40d6-5c2f-be7f-4eb2934af9c4"
-version = "0.4.0"
+version = "0.4.1"
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
