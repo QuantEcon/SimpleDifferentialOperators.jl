@@ -1,62 +1,66 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>﻿SimpleDifferentialOperators.jl · SimpleDifferentialOperators.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="assets/documenter.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link href="assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>SimpleDifferentialOperators.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li class="current"><a class="toctext" href>﻿SimpleDifferentialOperators.jl</a><ul class="internal"><li><a class="toctext" href="#Installation-1">Installation</a></li><li><a class="toctext" href="#Usage-1">Usage</a></li></ul></li><li><a class="toctext" href="notebooks/">Notebooks</a></li><li><a class="toctext" href="api/">API</a></li></ul></nav><article id="docs"><header><nav><ul><li><a href>﻿SimpleDifferentialOperators.jl</a></li></ul><a class="edit-page" href="https://github.com/QuantEcon/SimpleDifferentialOperators.jl/blob/master/docs/src/index.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>﻿SimpleDifferentialOperators.jl</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="[SimpleDifferentialOperators.jl](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/)-1" href="#[SimpleDifferentialOperators.jl](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/)-1">﻿<a href="https://github.com/QuantEcon/SimpleDifferentialOperators.jl/">SimpleDifferentialOperators.jl</a></a></h1><h2><a class="nav-anchor" id="Installation-1" href="#Installation-1">Installation</a></h2><p>To install, run</p><pre><code class="language-julia">] add SimpleDifferentialOperators</code></pre><p>Note that this requires Julia 1.1 or later.</p><h2><a class="nav-anchor" id="Usage-1" href="#Usage-1">Usage</a></h2><h3><a class="nav-anchor" id="Solving-HJBE-with-constant-drifts-1" href="#Solving-HJBE-with-constant-drifts-1">Solving HJBE with constant drifts</a></h3><hr/><p>Consider solving for <code>v</code> from the following equation by the Hamilton-Jacobi-Bellman equation (HJBE):</p><div>\[\rho v(x) = f(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)\]</div><p>for some constant <span>$\rho, \sigma &gt; 0$</span> and <span>$\mu \leq 0$</span>. To solve <code>v</code> under the reflecting barrier conditions <span>$v&#39;(0) = v&#39;(1) = 0$</span> on <code>M</code>-size discretized grids, one can run the following code:</p><pre><code class="language-julia"># import LinearAlgebra package (for diagonal and identity matrices)
-using LinearAlgebra 
-# setup 
-f(x) = x^2 
+using LinearAlgebra
+# setup
+f(x) = x^2
 μ = -0.1 # constant negative drift
 σ = 0.1
 ρ = 0.05
-M = 100 # size of grid
-x = range(0.0, 1.0, length = (M+2)) # grid
+M = 100 # size of grid (interior points)
+
+x̄ = range(0.0, 1.0, length = (M+2))
+x = x̄[2:end-1]
 
 # discretize L = ρ - μ D_x - σ^2 / 2 D_xx
 # subject to reflecting barriers at 0 and 1
 bc = (Reflecting(), Reflecting())
-L = I * ρ - μ*L₁₋bc(x, bc) - σ^2 / 2 * L₂bc(̄, bc)
+L = I * ρ - μ*L₁₋bc(x̄, bc) - σ^2 / 2 * L₂bc(x̄, bc)
 ## solve the value function
-v = L \ f.(x) </code></pre><p>Note that the code above uses differential operators with reflecting boundary conditions applied.  One can alternatively use differential operators on interior nodes and stack them with matrices for boundary conditions to compute <code>v</code>:</p><pre><code class="language-julia"># import SparseArrays package (for identity matrix and spzeros)
+v = L \ f.(x)</code></pre><p>Note that the code above uses differential operators with reflecting boundary conditions applied. One can alternatively use operators on extended nodes (extended operators) and stack them with matrices for boundary conditions to compute <code>v</code>:</p><pre><code class="language-julia"># import SparseArrays package (for identity matrix and spzeros)
 using SparseArrays
 
 # differential operators on extended nodes
-L̄ₓ = μ*L₁₋(x) + σ^2 / 2 * L₂(x)
+Lₓ = μ*L₁₋(x̄) + σ^2 / 2 * L₂(x̄)
 
 # boundary conditions (i.e. B v̄ = b)
 B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]])
-b = [0.0; 0.0] 
+b = [0.0; 0.0]
 
 # form bellman equation on extension
-L̄ = [spzeros(M) ρ*I spzeros(M)] - L̄ₓ
+L = [spzeros(M) ρ*I spzeros(M)] - Lₓ
 
 # stack the systems of bellman and boundary conditions, and solve
-v̄ =  [L̄; B] \ [f.(x); b]
+v̄ =  [L; B] \ [f.(x); b]
 
 # extract the interior (is identical with `v` above)
-v =  v̄[2:end-1] </code></pre><p>Here is a plot for <code>v</code>:</p><pre><code class="language-julia">using Plots
+v =  v̄[2:end-1]</code></pre><p>Here is a plot for <code>v</code>:</p><pre><code class="language-julia">using Plots
 plot(x, v, lw = 4, label = &quot;v&quot;)</code></pre><p><img src="assets/plot-hjbe-both-reflecting.png" alt="plot-hjbe-both-reflecting"/></p><h3><a class="nav-anchor" id="Solving-HJBE-with-absorbing-barrier-conditions-1" href="#Solving-HJBE-with-absorbing-barrier-conditions-1">Solving HJBE with absorbing barrier conditions</a></h3><p>Instead of having the reflecting barrier conditions on both lower bound and upper bound <span>$v&#39;(0) = v&#39;(1) = 0$</span> as above, one can impose an absorbing barrier condition as well. To solve <code>v</code> under the reflecting barrier conditions <span>$v(0) = S$</span> (absorbing barrier on lower bound) for some S and <span>$v&#39;(1) = 0$</span> (reflecting barrier on upper bound), one can construct <code>B</code> and <code>b</code> for the boundary conditions as follows:</p><pre><code class="language-julia"># define S
-S = 3.0 
+S = 3.0
 
 # boundary conditions (i.e. B v̄ = b)
 B = transpose([[0; 1; zeros(M)] [zeros(M); -1; 1]])
 b = [S; 0.0];</code></pre><p>and solve <code>v</code>:</p><pre><code class="language-julia"># stack the systems of bellman and boundary conditions, and solve
-v̄ =  [L̄; B] \ [f.(x); b]
+v̄ =  [L; B] \ [f.(x); b]
 
 # extract the interior (is identical with `v` above)
-v =  v̄[2:end-1] </code></pre><p>Note that this can be alternatively done by </p><p>Here is a plot for <code>v</code>:</p><pre><code class="language-julia">plot(x, v, lw = 4, label = &quot;v&quot;)</code></pre><p><img src="assets/plot-hjbe-lb-absorbing-ub-reflecting.png" alt="plot-hjbe-lb-absorbing-ub-reflecting"/></p><h3><a class="nav-anchor" id="Solving-HJBE-with-state-dependent-drifts-1" href="#Solving-HJBE-with-state-dependent-drifts-1">Solving HJBE with state-dependent drifts</a></h3><hr/><p>One can also deploy upwind schemes when drift variable is not constant. Consider solving for <code>v</code> from the following Bellman equation:</p><div>\[\rho v(x) = f(x) + \mu(x) \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)\]</div><p>associated with the diffusion process</p><div>\[dx = \mu(x) dt + \sigma dW\]</div><p>for some constant <span>$\rho, \sigma &gt; 0$</span> and <span>$\mu(x) = -x$</span>. Note that <span>$\mu(x)$</span> depends on states. The following code will solve <code>v</code> using upwind schemes, with the reflecting barrier conditions <span>$v&#39;(0) = v&#39;(1) = 0$</span> applied:</p><pre><code class="language-julia"># setup 
-f(x) = x^2 
+v =  v̄[2:end-1]</code></pre><p>Note that this can be alternatively done by</p><p>Here is a plot for <code>v</code>:</p><pre><code class="language-julia">plot(x, v, lw = 4, label = &quot;v&quot;)</code></pre><p><img src="assets/plot-hjbe-lb-absorbing-ub-reflecting.png" alt="plot-hjbe-lb-absorbing-ub-reflecting"/></p><h3><a class="nav-anchor" id="Solving-HJBE-with-state-dependent-drifts-1" href="#Solving-HJBE-with-state-dependent-drifts-1">Solving HJBE with state-dependent drifts</a></h3><hr/><p>One can also deploy upwind schemes when drift variable is not constant. Consider solving for <code>v</code> from the following Bellman equation:</p><div>\[\rho v(x) = f(x) + \mu(x) \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)\]</div><p>associated with the diffusion process</p><div>\[dx = \mu(x) dt + \sigma dW\]</div><p>for some constant <span>$\rho, \sigma &gt; 0$</span> and <span>$\mu(x) = -x$</span>. Note that <span>$\mu(x)$</span> depends on states. The following code will solve <code>v</code> using upwind schemes, with the reflecting barrier conditions <span>$v&#39;(0) = v&#39;(1) = 0$</span> applied:</p><pre><code class="language-julia"># setup
+f(x) = x^2
 μ(x) = -x # drift depends on state
 σ = 1.0
 ρ = 0.05
 M = 100 # size of grid
-x = range(-1.0, 1.0, length = (M+2))
+
+x̄ = range(-1., 1., length = M + 2)
+x = interiornodes(x̄) # i.e., x̄[2:end-1]
 
 bc = (Reflecting(), Reflecting())
 
 # Define first order differential operator using upwind scheme
-L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋bc(x, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊bc(x, bc)
+L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋bc(x̄, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊bc(x̄, bc)
 
 # Define linear operator using upwind schemes
-L_x = L₁ - σ^2 / 2 * L₂bc(x,bc)
+L_x = L₁ - σ^2 / 2 * L₂bc(x̄, bc)
 L = I * ρ - L_x
 
 # solve the value function
-v = L \ f.(x) </code></pre><footer><hr/><a class="next" href="notebooks/"><span class="direction">Next</span><span class="title">Notebooks</span></a></footer></article></body></html>
+v = L \ f.(x)</code></pre><footer><hr/><a class="next" href="notebooks/"><span class="direction">Next</span><span class="title">Notebooks</span></a></footer></article></body></html>
