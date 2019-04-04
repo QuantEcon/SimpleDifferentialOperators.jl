@@ -42,6 +42,8 @@ mv docs/examples/*.ipynb SimpleDifferentialOperators.jl/$target/generated/ # mov
 echo "Copied example notebooks."
 mv docs/examples/*.html SimpleDifferentialOperators.jl/$target/generated/ # move notebooks
 echo "Copied example HTML."
+mv docs/examples/*.toml SimpleDifferentialOperators.jl/$target/generated/ # move TOML 
+echo "Copied TOML"
 
 # Git operations
 (cd SimpleDifferentialOperators.jl; git add -A; git commit -m "Add generated objects to $target docs"; git push)
