@@ -22,8 +22,7 @@ Consider solving for `v` from the following equation by the Hamilton-Jacobi-Bell
 for some constant $\rho, \sigma > 0$ and $\mu \leq 0$. To solve `v` under the reflecting barrier conditions $v'(0) = v'(1) = 0$ on `M`-size discretized grids, one can run the following code:
 
 ```julia
-# import LinearAlgebra package (for diagonal and identity matrices)
-using LinearAlgebra
+using LinearAlgebra, SimpleDifferentialOperators
 # setup
 f(x) = x^2
 μ = -0.1 # constant negative drift
@@ -37,9 +36,10 @@ x = x̄[2:end-1]
 # discretize L = ρ - μ D_x - σ^2 / 2 D_xx
 # subject to reflecting barriers at 0 and 1
 bc = (Reflecting(), Reflecting())
-L = I * ρ - μ*L₁₋bc(x̄, bc) - σ^2 / 2 * L₂bc(x̄, bc)
-## solve the value function
-v = L \ f.(x)
+L_bc = I * ρ - μ*L₁₋bc(x̄, bc) - σ^2 / 2 * L₂bc(x̄, bc)
+
+# solve the value function
+v = L_bc \ f.(x)
 ```
 
 Note that the code above uses differential operators with reflecting boundary conditions applied.
@@ -138,8 +138,8 @@ L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋bc(x̄, bc) + Diagonal(max.(μ.(x), 
 
 # Define linear operator using upwind schemes
 L_x = L₁ - σ^2 / 2 * L₂bc(x̄, bc)
-L = I * ρ - L_x
+L_bc = I * ρ - L_x
 
 # solve the value function
-v = L \ f.(x)
+v = L_bc \ f.(x)
 ```
