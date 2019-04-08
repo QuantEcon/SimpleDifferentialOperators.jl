@@ -366,7 +366,7 @@ b = \begin{bmatrix}
 \end{bmatrix}
 \end{equation}
 
-Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta )^{-1}\Delta^{-1}$ gives, with the corresponding row operation matrix $R$,
+Adding the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta )^{-1}\Delta^{-1}$ gives, with the corresponding row operation matrix $R$,
 
 \begin{equation}
 R {L}_{1-} = \dfrac{1}{\Delta} \begin{bmatrix}
@@ -414,25 +414,20 @@ L_{1-}^B \equiv \frac{1}{\Delta}\begin{bmatrix}
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-1&1&0\\
 0&0&0&\cdots&0&-1&1
-\end{bmatrix}_{M\times M}
+\end{bmatrix}_{M\times M} \label{eq:L-1-regular}
 \end{equation}
-instead of solving the full system with boundary conditions. Similarly, one can define differential operators on the interior as follows:
-
+instead of solving the full system with boundary conditions. Similarly, subtracting the first row of $\overline{L}_{1+}$ by the second row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(1 + \overline{\xi} \Delta )^{-1} \Delta^{-1}$ gives the following differential operator with the boundary condition $B$ applied:
 \begin{align}
-L_{1-}^B &\equiv \frac{1}{\Delta}\begin{bmatrix}
-1 + (-1 + \underline{\xi} \Delta)^{-1} &0&0&\dots&0&0&0\\
--1&1&0&\dots&0&0&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
-0&0&0&\dots&-1&1&0\\
-0&0&0&\cdots&0&-1&1
-\end{bmatrix}_{M\times M}\label{eq:L-1-regular} \\
 L_{1+}^B &\equiv \frac{1}{\Delta}\begin{bmatrix}
 -1&1&0&\dots&0&0&0\\
 0&-1&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&0&-1&1\\
 0&0&0&\cdots&0&0&-1+(1+\overline{\xi} \Delta)^{-1}
-\end{bmatrix}_{M\times M}\label{eq:L-1-plus-regular} \\
+\end{bmatrix}_{M\times M}\label{eq:L-1-plus-regular} 
+\end{align}
+And likewise for $L_2^B$:
+\begin{align}
 L_2^B &\equiv \frac{1}{\Delta^2}\begin{bmatrix}
 -2 - (-1 + \underline{\xi}\Delta)^{-1} &1&0&\dots&0&0&0\\
 1&-2&1&\dots&0&0&0\\
@@ -618,7 +613,7 @@ since $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$
 The first columns of all the extension operators above, $\overline{L}_{1-}, \overline{L}_{1+}, \overline{L}_{2}, \overline{I}$, have non-zero element only in the first rows. Thus, a single Gaussian elimination for the first extension grid will suffice to remove the extended. Likewise, in the last columns of all the extension operators have non-zero element only in the last row.
 
 
-Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta_{1,-} )^{-1}\Delta_{1,-}^{-1}$ gives, with the corresponding row operation matrix $R$ for Gaussian elimination,
+Adding the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta_{1,-} )^{-1}\Delta_{1,-}^{-1}$ gives, with the corresponding row operation matrix $R$ for Gaussian elimination,
 
 \begin{equation}
 R {L}_{1-} = \begin{bmatrix}
@@ -668,24 +663,18 @@ L_{1-}^B \equiv \begin{bmatrix}
 0&0&0&\cdots&0&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}
 \end{bmatrix}_{M\times M}
 \end{equation}
-instead of solving the full system with boundary conditions. Similarly, one can define differential operators on the interior as follows:
-
-
+instead of solving the full system with boundary conditions. Similarly, subtracting the first row of $\overline{L}_{1+}$ by the second row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(1 + \overline{\xi} \Delta_{M,+})^{-1} \Delta_{M,+}^{-1}$ gives the following differential operator with the boundary condition $B$ applied:
 \begin{align}
-L_{1-}^B &\equiv \begin{bmatrix}
-\Delta^{-1}_{1,-} [1 + (-1 + \underline{\xi} \Delta_{1,-})^{-1}] &0&0&\dots&0&0&0\\
--\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
-0&0&0&\dots&-\Delta_{M-1,-}^{-1}&\Delta_{M-1,-}^{-1}&0\\
-0&0&0&\cdots&0&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}
-\end{bmatrix}_{M\times M}\label{eq:L-1} \\
 L_{1+}^B &\equiv \begin{bmatrix}
 -\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&0&\dots&0&0&0\\
 0&-\Delta_{2,+}^{-1}&\Delta_{2,+}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\cdots&0&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}\\
 0&0&0&\dots&0&0&\Delta_{M,+}^{-1}  [-1 + (1 + \overline{\xi} \Delta_{M,+})^{-1}]  \\
-\end{bmatrix}_{M\times M}\label{eq:L-1-plus} \\
+\end{bmatrix}_{M\times M}\label{eq:L-1-plus} 
+\end{align}
+And likewise for $L_2^B$:
+\begin{align}
 L_2^B &\equiv 2 \begin{psmallmatrix}
 \Xi_1 &
 (\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{1,+}^{-1}
