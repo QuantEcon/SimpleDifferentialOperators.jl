@@ -7,6 +7,7 @@ using LinearAlgebra, SparseArrays
 include("types.jl")
 include("basis.jl")
 include("operators.jl")
+include("utilities/extrapolatetoboundary.jl")
 
 # Exports
 # Boundary Conditions
@@ -32,6 +33,7 @@ export DifferentialOperator,
         interiornodes,
         L₁₊,
         L₁₋,
-        L₂
+        L₂,
+        extrapolatetoboundary
 
 end # module
