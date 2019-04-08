@@ -8,7 +8,6 @@ This notebook is a computational appendix to the [earlier notebook](../generated
 
 As before, we run some setup code
 
-
 ```julia
 # if you are running locally for the first time, run ] add InstantiateFromURL
 using InstantiateFromURL 
