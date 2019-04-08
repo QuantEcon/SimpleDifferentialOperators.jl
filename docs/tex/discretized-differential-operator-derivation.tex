@@ -309,7 +309,7 @@ L_0 &\equiv \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmat
 
 where $\text{tridiag}(x,y,z)$ is a matrix whose lower, main, upper diagonal vectors are $x$, $y$, and $z$, respectively, and $\text{tridiag}^+(x,y,z)$ is a matrix whose main, upper, and second upper diagonal vectors $x$, $y$, and $z$, respectively.
 
-\subsection{Applying Boundary Conditions}
+\subsection{Applying Boundary Conditions}\label{subsec:applying-bc}
 Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids.
 Suppose that we want to solve a system $\tilde{L} \tilde{v}({x}) = \tilde{f}(x) $ for $\tilde{v}(x)$ where $L$ is a linear combination of discretized differential operators for some $f$ that represents the values of a function $\tilde{f}(\cdot)$ on discretized interior $x$. To solve the system under boundary conditions on $v$, one can construct and solve the following extended system:
 
@@ -403,7 +403,7 @@ f \\ b
 \end{bmatrix}
 \end{align}
 as $b$ is a zero vector so that the row operations $R$ do not change anything on the RHS. Furthermore, limited to the interior, solving $v$ in the system above is identical as solving the following system with an operator $L^B$ on interior nodes:
-\begin{equation}
+\begin{equation}\label{eq:system-on-interior}
 L^B v = f
 \end{equation}
 where we have ${L} = {L}_{1-}$ and $L^B = L_{1-}^B$ with
@@ -582,11 +582,11 @@ Alternatively, in a more compact form, using vectors distances for interior node
 \end{bmatrix}
 \end{align}
 
-\subsubsection{Mixed boundary conditions}
+\subsubsection{Mixed boundary conditions}\label{subsubsec-irregular-grids-mixed-boundary-conditions}
 Recall mixed boundary conditions from \eqref{eq:mixed-BC1} and \eqref{eq:mixed-BC2}. Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$. Using forward difference and backward difference discretization scheme for the lower bound and upper bound respectively, we have
 \begin{align}
-&\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} - \underline{\xi} \overline{v}_0 = 0 \\
-&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} - \overline{\xi} \overline{v}_{M+1} = 0
+&\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_0 = 0 \\
+&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M+1} = 0
 \end{align}
 
 Thus, the corresponding boundary condition matrix $B$ is
@@ -1119,6 +1119,41 @@ Note that a Topelitz matrix where many of the diagonals are $0$ can be written a
 \paragraph{Tridiagonal Matrices}
 A final set of matrices are sparse, tridiagonal matrices.  This is a particular type of square banded matrix with a single off-diagonal in each direction.  As always, the extra structure leads to specialized operations
 \textbf{TODO: START HERE AND CONNECT TO BOTH}
+
+
+
+\section{Boundary extrapolation under mixed boundary conditions}
+Consider solving $v$ on an irregular extended grid $\overline{x} = \set{x_i}_{i=0}^{M+1}$ with the corresponding interior grid $x = \set{x_i}_{i=1}^M $ such that mixed boundary conditions \eqref{eq:mixed-BC1} and \eqref{eq:mixed-BC2} are applied. As described in \ref{subsec:applying-bc}, differential operators with boundary conditions $B$ applied, $L^B$, can be used to solve the system $L^B v = f$ in \eqref{eq:system-on-interior} to find $v$ on the interior grid without stacking up the boundary conditions manually. Note that the resulting interior solution $v$ does not contain the value of $v$ on the boundary, $\overline{v}_1 = v(x_0)$ and $\overline{v}_{M+1} = v(x_{M+1})$. 
+
+To retrieve $\overline{v}_1 $ and $\overline{v}_{M+1}$ to construct $\overline{v}$ from $v$, first note that the mixed boundary conditions can be discretized as follows:
+\begin{align}
+&\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_0 = 0 \label{eq:mixed-discretized-lb} \\
+&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M+1} = 0 \label{eq:mixed-discretized-ub}
+\end{align}
+as shown in \ref{subsubsec-irregular-grids-mixed-boundary-conditions}, using forward difference and backward difference scheme for the lower bound and upper bound respecitvely. Rearranging \eqref{eq:mixed-discretized-lb} and \eqref{eq:mixed-discretized-ub} gives
+\begin{align}
+\overline{v}_0 = \frac{1}{1-\underline{\xi} \Delta_{0,+} } \overline{v}_1 \\
+\overline{v}_{M+1} = \frac{1}{1+\overline{\xi} \Delta_{M+1,-} } \overline{v}_M
+\end{align}
+Note that $\overline{v}_1 = v_1$ and $\overline{v}_M = v_M$ as the resulting solutions on the interior nodes are identical. Also, by the definition, we have $\Delta_{0,+} = x_1 - x_0 = \Delta_{1,-}$ and $\Delta_{M+1,-} = x_{M+1} - x_M = \Delta_{M, +}$, which yields the following boundary extrapolation scheme
+\begin{align}
+\overline{v}_0 = \frac{1}{1-\underline{\xi} \Delta_{1,-} } {v}_1 \\
+\overline{v}_{M+1} = \frac{1}{1+\overline{\xi} \Delta_{M,+} } {v}_M
+\end{align}
+to construct
+\begin{align}
+\overline{v} &= \begin{bmatrix}
+\overline{v}_0 \\
+v  \\
+\overline{v}_{M+1}
+\end{bmatrix} \\ &=
+\begin{bmatrix}
+\dfrac{1}{1-\underline{\xi} \Delta_{1,-} } {v}_1 \\
+v  \\
+\dfrac{1}{1+\overline{\xi} \Delta_{M,+} } {v}_M
+\end{bmatrix} 
+\end{align}
+from $v$.
 
 \section{Derivation by substitution}
 One can also derive the formula for $L_{1-}^B, L_{1+}^B, L_2^B$ in \eqref{eq:L-1-regular}, \eqref{eq:L-1-plus-regular}, \eqref{eq:L-2-regular} by substitution. For simplicity, here we focus on the case when we have regular grids, i.e., $x_{i+1} - x_i = \Delta$ for some $\Delta > 0$ for all $i = 0, ..., M$.
