@@ -199,6 +199,7 @@ This section defines the grids and other notation for the discretization.
 		\item $\mathbf{I}_N$ is the $N\times N$ identity matrix.  Always drop the subscript when the dimensions are unambiguous, as it would be the same in the code
 		\item $\mathbf{0}_N$ is the column vector of $N$ $0$s, and $\mathbf{0}_N^{\top}$ a row vector
 		\item $\mathbf{0}_{N\times M}$ is the $N\times M$ matrix of $0$s
+		\item See \cref{sec:special-matrices} for the definitions of $\toep(\cdot), \band^{n,m}_{l,u}(\cdot)$ and $\tridiag(\cdot)$ matrices
 	\end{itemize}
 \end{itemize}
 
@@ -241,6 +242,7 @@ L_{1-} &\equiv \frac{1}{\Delta}\begin{bmatrix}
 0&0&0&\dots&-1&1&0&0\\
 0&0&0&\cdots&0&-1&1&0
 \end{bmatrix}_{M\times (M+2)}\label{eq:L-1-m-extended-regular} \\
+&= \band^{M,M+2}_{0,1}(-\mathbf{1}_M, \mathbf{1}_M)
 \intertext{And similarly define $L_{1+}$ from applying \cref{eq:first-order-fd} to the $\bar{v}$ vector for all $i = 1,\ldots M$ }
 L_{1+} &\equiv \frac{1}{\Delta}\begin{bmatrix}
 0&-1&1&0&\dots&0&0&0\\
@@ -249,6 +251,7 @@ L_{1+} &\equiv \frac{1}{\Delta}\begin{bmatrix}
 0&0&0&0&\dots&-1&1&0\\
 0&0&0&0&\cdots&0&-1&1
 \end{bmatrix}_{M\times( M+2)}\label{eq:L-1-plus-extended-regular} \\
+&= \band^{M,M+2}_{0,2}(\mathbf{0}_M, -\mathbf{1}_M, \mathbf{1}_M)
 \end{align}
 It is important to note that while these operators map the $\bar{v}$ (i.e. including the boundary points), the operator only maps to points on the interior i.e. $i = 1, \ldots M$.
 
@@ -270,7 +273,8 @@ In order to calculate the derivatives for all $i = 1, \ldots M$ (i.e. in the int
 	\vdots&\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots&\vdots\\
 	0&0&0&0&\dots&1&-2&1&0\\
 	0&0&0&0&\cdots&0&1&-2 &1
-	\end{bmatrix}_{M\times (M+2)}\label{eq:L-2-extended-regular}
+	\end{bmatrix}_{M\times (M+2)}\label{eq:L-2-extended-regular}\\
+	&= \band_{0,2}^{M,M+2}(\mathbf{1}_M, -2\times\mathbf{1}_M, \mathbf{1}_M)
 \end{align}
 
 \paragraph{Identity Operators}
@@ -288,7 +292,8 @@ L_0 &\equiv \begin{bmatrix}
 \vdots&\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots&\vdots\\
 0 & 0 & 0 & 0 &\dots & 0 & 1 & 0 &0\\
 0 & 0 & 0 & 0 &\dots & 0 & 0 & 1 &0
-\end{bmatrix}_{M\times (M+2)}
+\end{bmatrix}_{M\times (M+2)}\\
+&= \band_{0,1}^{M,M+2}(\mathbf{0}_M, \mathbf{1}_M)
 \end{align}
 This operator trivially maps from the $\bar{v}$ to extract the interior $v$ and ignoring the boundaries $\bar{v}_0$ and $\bar{v}_{P+1}$.  Its primary role will be when composing operators rather than being used directly.
 
@@ -1050,7 +1055,7 @@ Note that the corresponding $B$ and $b$ are identical with regular grid cases.
 
 \appendix
 
-\section{Special Matrices and Notation}\label{sec:specialmatrices}
+\section{Special Matrices and Notation}\label{sec:special-matrices}
 In the code and algebra, a number of the matrices for discretization have special structure.
 \paragraph{Toeplitz Matrices}
 First, a Toeplitz matrix is one in which every descending diagonal is constant.  See \url{https://en.wikipedia.org/wiki/Toeplitz_matrix} for more examples and theory. To create, you need to specify the lower off-diagonals (ordered by rows) and the upper off-diagonals (ordered by columns).  They are square only if the number of rows and columns passed in is identical.\footnote{This notation is intended to match Matlab's and Julia's notation.  See \url{https://www.mathworks.com/help/matlab/ref/toeplitz.html} and \url{https://github.com/JuliaMatrices/ToeplitzMatrices.jl}.  Note that with this interface design, if $vr_1 \neq vr_1$ there is an error.  }   As an example, to construct
@@ -1076,8 +1081,8 @@ B_{-1} &\equiv \begin{bmatrix} B_{21} & B_{32} & B_{43} & B_{54} \end{bmatrix}\i
 B_{0} &\equiv \begin{bmatrix} B_{11} & B_{22} & B_{33} & B_{44} & B_{55} \end{bmatrix}\in\R^5\\
 B_{+1} &\equiv \begin{bmatrix} B_{12} & B_{23} & B_{34} & B_{45} & B_{56} \end{bmatrix}\in\R^5\\
 B_{+2} &\equiv \begin{bmatrix} B_{13} & B_{24} & B_{35} & B_{46} \end{bmatrix}\in\R^4\\
-\intertext{The $\band_{\ell,u}(\cdot)$ function is used to define a banded matrix given diagonals where the $\ell$ is number of bands below the diagonal and $u$ is the number of bands above the diagonal.  The function then takes a list of the diagonals in order (i.e. lower ones, diagonal bands, then upper band)}
-\band_{1,1}(B_{-1}, B_{0}, B_{+1}) &= \begin{bmatrix}
+\intertext{The $\band^{n,m}_{\ell,u}(\cdot)$ function is used to define a banded matrix given diagonals where the $\ell$ is number of bands below the diagonal and $u$ is the number of bands above the diagonal.  The function then takes a list of the diagonals in order (i.e. lower ones, diagonal bands, then upper band)}
+\band^{5,6}_{1,1}(B_{-1}, B_{0}, B_{+1}) &= \begin{bmatrix}
  B_{11} & B_{12} & 0      & \cdots & \cdots & 0 \\
  B_{21} & B_{22} & B_{23} & \ddots & \ddots & \vdots \\
   0     & B_{32} & B_{33} & B_{34} & \ddots & \vdots \\
@@ -1085,17 +1090,25 @@ B_{+2} &\equiv \begin{bmatrix} B_{13} & B_{24} & B_{35} & B_{46} \end{bmatrix}\i
  \vdots & \ddots & \ddots & B_{54} & B_{55} & B_{56}
 \end{bmatrix}\in \R^{5\times 6}\\
 \intertext{And other with a variation on the columns with no sub-diagonals and two super-diagonals}
-\band_{0,2}(B_{0}, B_{+1}, B_{+2}) &= \begin{bmatrix}
+\band_{0,2}^{5,6}(B_{0}, B_{+1}, B_{+2}) &= \begin{bmatrix}
  B_{11} & B_{12} & B_{13} & 0      & \cdots & 0 \\
  0 & B_{22} & B_{23} & B_{24} &0 & \vdots \\
   \vdots      & 0 & B_{33} & B_{34} & B_{35} & 0 \\
  \vdots & \ddots & 0 & B_{44} & B_{45} & B_{46} \\
  \vdots & \ddots & \ddots & 0 & B_{55} & B_{56}
 \end{bmatrix}\in \R^{5\times 6}
+\intertext{The reason that the $(n,m)$ and $(l,u)$ are both needed is the possibility of additional zeros.  For example, simply adding another column }
+\band_{0,2}^{5,7}(B_{0}, B_{+1}, B_{+2}) &= \begin{bmatrix}
+ B_{11} & B_{12} & B_{13} & 0      & \cdots & 0  & 0 \\
+ 0 & B_{22} & B_{23} & B_{24} &0 & \vdots & \vdots \\
+  \vdots      & 0 & B_{33} & B_{34} & B_{35} & 0 & 0 \\
+ \vdots & \ddots & 0 & B_{44} & B_{45} & B_{46} & 0\\
+ \vdots & \ddots & \ddots & 0 & B_{55} & B_{56} & 0
+\end{bmatrix}\in \R^{5\times 7}
 \end{align}
 Note that a Topelitz matrix where many of the diagonals are $0$ can be written as a banded matrix, albeit by dropping the extra structure
 \begin{align}
-\band_{1,2}\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_4, c\times \mathbf{1}_3\right)
+\band_{1,2}^{4,5}\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_4, c\times \mathbf{1}_3\right)
    &= \toep(\begin{bmatrix}a & f & 0 & 0 \end{bmatrix},\begin{bmatrix}a & b & c & 0 & 0 \end{bmatrix}) \\
    &= \begin{bmatrix}
 	a & b & c & 0 & 0 \\
@@ -1121,7 +1134,7 @@ B_{+1} &\equiv \begin{bmatrix} B_{12} & B_{23} & B_{34} & B_{45} \end{bmatrix}\i
  \vdots & \ddots & \ddots & B_{54} & B_{55}
 \end{bmatrix}\in \R^{5\times 5}\\
 \intertext{Which is a banded square matrix}
-&= \band_{1,1}(B_{-1}, B_{0}, B_{+1})
+&= \band_{1,1}^{5,5}(B_{-1}, B_{0}, B_{+1})
 \end{align}
   If the diagonals and off-diagonals are all constant, then it is also a Toeplitz matrix,
 \begin{align}
@@ -1132,7 +1145,7 @@ B_{+1} &\equiv \begin{bmatrix} B_{12} & B_{23} & B_{34} & B_{45} \end{bmatrix}\i
 	0 & 0 & f & a
 	\end{bmatrix} \in \R^{4 \times 4}\\
 	&= \toep(\begin{bmatrix}a & f & 0 & 0 \end{bmatrix},\begin{bmatrix}a & b & 0 & 0 \end{bmatrix})\\
-	&=\band_{1,1}\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_3)
+	&=\band_{1,1}^{4,4}\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_3)
 \end{align}
 
 
