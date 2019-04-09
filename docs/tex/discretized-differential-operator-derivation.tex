@@ -1152,16 +1152,17 @@ B_{+1} &\equiv \begin{bmatrix} B_{12} & B_{23} & B_{34} & B_{45} \end{bmatrix}\i
 &= \band_{1,1}^{5,5}(B_{-1}, B_{0}, B_{+1})
 \end{align}
   If the diagonals and off-diagonals are all constant, then it is also a Toeplitz matrix,
-% \begin{align}
-% \tridiag\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_3\right) &= \begin{bmatrix}
-% 	a & b & 0 & 0 \\
-% 	f & a & b & 0 \\
-% 	0 & f & a & b \\
-% 	0 & 0 & f & a
-% 	\end{bmatrix} \in \R^{4 \times 4}\\
-% 	&= \toep(\begin{bmatrix}a & f & 0 & 0 \end{bmatrix},\begin{bmatrix}a & b & 0 & 0 \end{bmatrix})\\
-% 	&=\band_{1,1}^{4,4}\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_3)
-% \end{align}
+
+\begin{align}
+\tridiag\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_3\right) &= \begin{bmatrix}
+	a & b & 0 & 0 \\
+	f & a & b & 0 \\
+	0 & f & a & b \\
+	0 & 0 & f & a
+	\end{bmatrix} \in \R^{4 \times 4}\\
+	&= \toep(\begin{bmatrix}a & f & 0 & 0 \end{bmatrix},\begin{bmatrix}a & b & 0 & 0 \end{bmatrix})\\
+	&=\band_{1,1}^{4,4}\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_3 \right)
+\end{align}
 
 
 \section{Derivation by substitution}
