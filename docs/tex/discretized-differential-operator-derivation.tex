@@ -242,7 +242,7 @@ L_{1-} &\equiv \frac{1}{\Delta}\begin{bmatrix}
 0&0&0&\dots&-1&1&0&0\\
 0&0&0&\cdots&0&-1&1&0
 \end{bmatrix}_{M\times (M+2)}\label{eq:L-1-m-extended-regular} \\
-&= \band^{M,M+2}_{0,1}(-\mathbf{1}_M, \mathbf{1}_M)
+&= \frac{1}{\Delta}\band^{M,M+2}_{0,1}(-\mathbf{1}_M, \mathbf{1}_M)
 \intertext{And similarly define $L_{1+}$ from applying \cref{eq:first-order-fd} to the $\bar{v}$ vector for all $i = 1,\ldots M$ }
 L_{1+} &\equiv \frac{1}{\Delta}\begin{bmatrix}
 0&-1&1&0&\dots&0&0&0\\
@@ -251,7 +251,7 @@ L_{1+} &\equiv \frac{1}{\Delta}\begin{bmatrix}
 0&0&0&0&\dots&-1&1&0\\
 0&0&0&0&\cdots&0&-1&1
 \end{bmatrix}_{M\times( M+2)}\label{eq:L-1-plus-extended-regular} \\
-&= \band^{M,M+2}_{0,2}(\mathbf{0}_M, -\mathbf{1}_M, \mathbf{1}_M)
+&= \frac{1}{\Delta}\band^{M,M+2}_{0,2}(\mathbf{0}_M, -\mathbf{1}_M, \mathbf{1}_M)
 \end{align}
 It is important to note that while these operators map the $\bar{v}$ (i.e. including the boundary points), the operator only maps to points on the interior i.e. $i = 1, \ldots M$.
 
@@ -274,7 +274,7 @@ In order to calculate the derivatives for all $i = 1, \ldots M$ (i.e. in the int
 	0&0&0&0&\dots&1&-2&1&0\\
 	0&0&0&0&\cdots&0&1&-2 &1
 	\end{bmatrix}_{M\times (M+2)}\label{eq:L-2-extended-regular}\\
-	&= \band_{0,2}^{M,M+2}(\mathbf{1}_M, -2\times\mathbf{1}_M, \mathbf{1}_M)
+	&= \frac{1}{\Delta^2}\band_{0,2}^{M,M+2}(\mathbf{1}_M, -2\times\mathbf{1}_M, \mathbf{1}_M)
 \end{align}
 
 \paragraph{Identity Operators}
@@ -293,30 +293,73 @@ L_0 &\equiv \begin{bmatrix}
 0 & 0 & 0 & 0 &\dots & 0 & 1 & 0 &0\\
 0 & 0 & 0 & 0 &\dots & 0 & 0 & 1 &0
 \end{bmatrix}_{M\times (M+2)}\\
+&= \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}\\
 &= \band_{0,1}^{M,M+2}(\mathbf{0}_M, \mathbf{1}_M)
 \end{align}
-This operator trivially maps from the $\bar{v}$ to extract the interior $v$ and ignoring the boundaries $\bar{v}_0$ and $\bar{v}_{P+1}$.  Its primary role will be when composing operators rather than being used directly.
+This operator trivially maps from the $\bar{v}$ to extract the interior $v$ and ignoring the boundaries $\bar{v}_0$ and $\bar{v}_{M+1}$.  Its primary role will be when composing operators rather than being used directly.
 
-\subsection{Representation with Special Matrices}
-See \cref{sec:specialmatrices} for more details on the notation of special matrices (e.g. Toeplitz, Tridiagonal, and Banded)
-
-These can be defined in more compact forms as banded matrices
+\subsection{Boundary Conditions}
+While boundary conditions can be mixed and matches, for notational simplicity here, we will apply the same boundaries at each corner.  In general, boundaries are of the form
 \begin{align}
-L_{1-} &\equiv  \frac{1}{\Delta}\begin{bmatrix}
-\text{tridiag}(\mathbf{0}_{M-1}, -\mathbf{1}_M, \mathbf{1}_{M} ) & \mathbf{0}_M
-\end{bmatrix} \\
-L_{1+} &\equiv \frac{1}{\Delta}\begin{bmatrix}
-\mathbf{0}_M & \text{tridiag}(\mathbf{0}_{M-1}, -\mathbf{1}_M, \mathbf{1}_{M} )
-\end{bmatrix} \\
-L_2 &\equiv \frac{1}{\Delta^2} \text{tridiag}^+(\mathbf{1}_{M}, -2\mathbf{1}_M, \mathbf{1}_{M} )\\
-L_0 &\equiv \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}
+\tilde{B} \tilde{v}(x) &= b\label{eq:BC-system}
+\end{align}
+For some operator $\tilde{B}$ (typically involving evaluation at the boundaries) and $b\in R^2$.  In the case of $b = \textbf{0}_2$, the boundary conditions are called homogenous.
+
+\paragraph{Mixed Boundary Conditions}
+Recall mixed boundary conditions from \cref{eq:mixed-BC1,eq:mixed-BC2}. Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$.  In operator form, the boundaries are
+
+\begin{align}
+\tilde{B} &\equiv \begin{bmatrix}
+\partial_x\vert_{x = x_{\min}} + \underline{\xi}\,1 \vert_{x = x_{\min}}\\
+\partial_x\vert_{x = x_{\max}} + \bar{\xi}\,1 \vert_{x = x_{\max}}
+\end{bmatrix}\label{eq:mixed}\\
+b &\equiv \begin{bmatrix} 0\\ 0 \end{bmatrix}\in \R^2
 \end{align}
 
-where $\text{tridiag}(x,y,z)$ is a matrix whose lower, main, upper diagonal vectors are $x$, $y$, and $z$, respectively, and $\text{tridiag}^+(x,y,z)$ is a matrix whose main, upper, and second upper diagonal vectors $x$, $y$, and $z$, respectively.
+Use forward difference and backward differences respectively to discretize the first derivatives at the lower and upper bound of \cref{eq:mixed} gives the system \cref{eq:BC-system} as
+\begin{align}
+\frac{\overline{v}_1 - \overline{v}_0}{\Delta} + \underline{\xi} \overline{v}_0 &= 0\label{eq:regular-mixed-1} \\
+\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta} + \overline{\xi} \overline{v}_{M+1} &= 0\label{eq:regular-mixed-2}
+\end{align}
+
+Define
+\begin{align}
+B &\equiv \begin{bmatrix}
+-\dfrac{1}{\Delta} + \underline{\xi} & \dfrac{1}{\Delta} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta} & \dfrac{1}{\Delta} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)}\label{eq:mixed-barrier-matrix-original-regular}\\
+b &= \begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\end{align}
+
+Then, multiplying by $\Delta$, the system has the same $b$ and \cref{eq:mixed-barrier-matrix-original-regular} is equivalent to
+\begin{equation}
+B = \begin{bmatrix}
+-1 +  \underline{\xi} \Delta & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi} \Delta\\
+\end{bmatrix}_{2 \times (M+2)}\label{eq:B-mixed}
+\end{equation}
+
+\subsubsection{Reflecting Barriers}
+Since a reflecting barrier (i.e. a Neumann boundary condition) is a special case of the mixed when  $\underline{\xi} = \bar{\xi} = 0$, the $B$ matrix for a reflecting barrier follows \cref{eq:B-mixed}
+\begin{equation}
+	B = \begin{bmatrix}
+	-1& 1 & 0 & \dots & 0 & 0 & 0 \\
+	0 & 0 & 0 & \dots & 0 & -1 & 1\\
+	\end{bmatrix}_{2 \times (M+2)}
+	\end{equation}
+with the same $b = \begin{bmatrix}	0&	0\end{bmatrix}$
+
+	\subsubsection{Absorbing Barriers}
+
+
 
 \subsection{Applying Boundary Conditions}
-Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids.
-Suppose that we want to solve a system $\tilde{L} \tilde{v}({x}) = \tilde{f}(x) $ for $\tilde{v}(x)$ where $L$ is a linear combination of discretized differential operators for some $f$ that represents the values of a function $\tilde{f}(\cdot)$ on discretized interior $x$. To solve the system under boundary conditions on $v$, one can construct and solve the following extended system:
+Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids.  Suppose we want to solve the system $\tilde{L} \tilde{v}(x) = \tilde{f}(x)$ and $\tilde{B} \tilde{v}(x) - b$ from \cref{eq:A-u-D,eq:B-u-DE}
+
+To solve the system under boundary conditions on $v$, one can construct and solve the following extended system:
 
 \begin{equation}\label{eq:reflecting-barrier-extended-system}
 \begin{bmatrix}
@@ -341,35 +384,7 @@ v \\
 which also gives the solution for $v$.
 
 \subsubsection{Mixed Boundary Conditions}
-Recall mixed boundary conditions from \eqref{eq:mixed-BC1} and \eqref{eq:mixed-BC2}. Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$. Using forward difference and backward difference discretization scheme for the lower bound and upper bound respectively, we have
-\begin{align}
-&\frac{\overline{v}_1 - \overline{v}_0}{\Delta} + \underline{\xi} \overline{v}_0 = 0 \\
-&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta} + \overline{\xi} \overline{v}_{M+1} = 0
-\end{align}
-
-Thus, the corresponding boundary condition matrix $B$ is
-
-\begin{equation}\label{eq:mixed-barrier-matrix-original-regular}
-B = \begin{bmatrix}
--\dfrac{1}{\Delta} + \underline{\xi} & \dfrac{1}{\Delta} & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta} & \dfrac{1}{\Delta} + \overline{\xi}\\
-\end{bmatrix}_{2 \times (M+2)} \quad
-b = \begin{bmatrix}
-0 \\
-0
-\end{bmatrix}
-\end{equation}
-which provides the identical system as
-\begin{equation}\label{eq:mixed-barrier-matrix-regular}
-B = \begin{bmatrix}
--1 +  \underline{\xi} \Delta & 1 & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi} \Delta\\
-\end{bmatrix}_{2 \times (M+2)} \quad
-b = \begin{bmatrix}
-0 \\
-0
-\end{bmatrix}
-\end{equation}
+Using the $B$ from ....
 
 Adding the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta )^{-1}\Delta^{-1}$ gives, with the corresponding row operation matrix $R$,
 
@@ -1137,16 +1152,16 @@ B_{+1} &\equiv \begin{bmatrix} B_{12} & B_{23} & B_{34} & B_{45} \end{bmatrix}\i
 &= \band_{1,1}^{5,5}(B_{-1}, B_{0}, B_{+1})
 \end{align}
   If the diagonals and off-diagonals are all constant, then it is also a Toeplitz matrix,
-\begin{align}
-\tridiag\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_3) &= \begin{bmatrix}
-	a & b & 0 & 0 \\
-	f & a & b & 0 \\
-	0 & f & a & b \\
-	0 & 0 & f & a
-	\end{bmatrix} \in \R^{4 \times 4}\\
-	&= \toep(\begin{bmatrix}a & f & 0 & 0 \end{bmatrix},\begin{bmatrix}a & b & 0 & 0 \end{bmatrix})\\
-	&=\band_{1,1}^{4,4}\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_3)
-\end{align}
+% \begin{align}
+% \tridiag\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_3\right) &= \begin{bmatrix}
+% 	a & b & 0 & 0 \\
+% 	f & a & b & 0 \\
+% 	0 & f & a & b \\
+% 	0 & 0 & f & a
+% 	\end{bmatrix} \in \R^{4 \times 4}\\
+% 	&= \toep(\begin{bmatrix}a & f & 0 & 0 \end{bmatrix},\begin{bmatrix}a & b & 0 & 0 \end{bmatrix})\\
+% 	&=\band_{1,1}^{4,4}\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_3)
+% \end{align}
 
 
 \section{Derivation by substitution}
