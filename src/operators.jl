@@ -57,8 +57,11 @@ julia> ExtensionDifferentialOperator(x̄, CentralSecondDifference())
 function ExtensionDifferentialOperator(x̄, method::DifferenceMethod)
     T = eltype(x̄)
     d = diff(x̄)
-    Δ_1 = d[1]
-    Δ_M = d[end]
+    Δ_1m = x̄[2] - x̄[1]
+    Δ_1p = x̄[3] - x̄[2]
+    Δ_Mm = x̄[end-1] - x̄[end-2]
+    Δ_Mp = x̄[end] - x̄[end-1]
+
     M = length(x̄) - 2
 
     # get basis operator on interior nodes
@@ -67,10 +70,10 @@ function ExtensionDifferentialOperator(x̄, method::DifferenceMethod)
     # add columns for ghost nodes next to boundaries
     col_lb = zeros(T, M)
     col_ub = zeros(T, M)
-    col_lb[1] = typeof(method) <: BackwardFirstDifference ? -(one(T) / Δ_1) : zero(T)
-    col_lb[1] = typeof(method) <: CentralSecondDifference ? (one(T) / (Δ_1*Δ_1)) : col_lb[1]
-    col_ub[end] = typeof(method) <: ForwardFirstDifference ? (one(T) / Δ_M) : zero(T)
-    col_ub[end] = typeof(method) <: CentralSecondDifference ? (one(T) / (Δ_M*Δ_M)) : col_ub[end]
+    col_lb[1] = typeof(method) <: BackwardFirstDifference ? -(one(T) / Δ_1m) : zero(T)
+    col_lb[1] = typeof(method) <: CentralSecondDifference ? 2*(one(T) / (Δ_1m*(Δ_1m+Δ_1p))) : col_lb[1]
+    col_ub[end] = typeof(method) <: ForwardFirstDifference ? (one(T) / Δ_Mp) : zero(T)
+    col_ub[end] = typeof(method) <: CentralSecondDifference ? 2*(one(T) / (Δ_Mp*(Δ_Mm+Δ_Mp))) : col_ub[end]
 
     L = sparse([col_lb L_basis col_ub])
 end
@@ -119,14 +122,14 @@ function DifferentialOperator(x̄, bc::Tuple{Reflecting, Reflecting}, method::Di
     # get basis operator on interior nodes
     L = get_basis_operator(x̄, method)
     
-    Ξ_1 = -2*(1/(Δ_1m*Δ_1p)-1/((Δ_1p+Δ_1m)*(Δ_1m)))
-    Ξ_M = -2*(1/(Δ_Mm*Δ_Mp)-1/((Δ_Mp+Δ_Mm)*(Δ_Mp))) 
+    Ξ_1 = -(1/(Δ_1m*Δ_1p)-1/((Δ_1p+Δ_1m)*(Δ_1m)))
+    Ξ_M = -(1/(Δ_Mm*Δ_Mp)-1/((Δ_Mp+Δ_Mm)*(Δ_Mp))) 
    
     # apply boundary conditions
     L[1,1] = typeof(method) <: BackwardFirstDifference ? zero(T) : L[1,1]
-    L[1,1] = typeof(method) <: CentralSecondDifference ? Ξ_1 : L[1,1]
+    L[1,1] = typeof(method) <: CentralSecondDifference ? 2*Ξ_1 : L[1,1]
     L[end,end] = typeof(method) <: ForwardFirstDifference ? zero(T) : L[end,end]
-    L[end,end] = typeof(method) <: CentralSecondDifference ? Ξ_M : L[end,end]
+    L[end,end] = typeof(method) <: CentralSecondDifference ? 2*Ξ_M : L[end,end]
 
     return L
 end
@@ -177,14 +180,14 @@ function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMe
     # get extended operator with reflecting barrier conditions first
     L = get_basis_operator(x̄, method)
  
-    Ξ_1 = -2*(1/(Δ_1m*Δ_1p)+1/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m)))
-    Ξ_M = -2*(1/(Δ_Mm*Δ_Mp)-1/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp)))
+    Ξ_1 = -(1/(Δ_1m*Δ_1p)+1/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m)))
+    Ξ_M = -(1/(Δ_Mm*Δ_Mp)-1/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp)))
    
     # apply boundary conditions
     L[1,1] = typeof(method) <: BackwardFirstDifference ? (1+1/(-1+ξ_lb*Δ_1m))/Δ_1m : L[1,1]
-    L[1,1] = typeof(method) <: CentralSecondDifference ? Ξ_1 : L[1,1]
+    L[1,1] = typeof(method) <: CentralSecondDifference ? 2*Ξ_1 : L[1,1]
     L[end,end] = typeof(method) <: ForwardFirstDifference ? (-1+1/(1+ξ_ub*Δ_Mp))/Δ_Mp : L[end,end]
-    L[end,end] = typeof(method) <: CentralSecondDifference ? Ξ_M : L[end,end]
+    L[end,end] = typeof(method) <: CentralSecondDifference ? 2*Ξ_M : L[end,end]
 
     return L
 end

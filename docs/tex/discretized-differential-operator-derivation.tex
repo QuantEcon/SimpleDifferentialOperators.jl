@@ -199,6 +199,7 @@ This section defines the grids and other notation for the discretization.
 		\item $\mathbf{I}_N$ is the $N\times N$ identity matrix.  Always drop the subscript when the dimensions are unambiguous, as it would be the same in the code
 		\item $\mathbf{0}_N$ is the column vector of $N$ $0$s, and $\mathbf{0}_N^{\top}$ a row vector
 		\item $\mathbf{0}_{N\times M}$ is the $N\times M$ matrix of $0$s
+		\item See \cref{sec:special-matrices} for the definitions of $\toep(\cdot), \band^{n,m}_{l,u}(\cdot)$ and $\tridiag(\cdot)$ matrices
 	\end{itemize}
 \end{itemize}
 
@@ -241,6 +242,7 @@ L_{1-} &\equiv \frac{1}{\Delta}\begin{bmatrix}
 0&0&0&\dots&-1&1&0&0\\
 0&0&0&\cdots&0&-1&1&0
 \end{bmatrix}_{M\times (M+2)}\label{eq:L-1-m-extended-regular} \\
+&= \frac{1}{\Delta}\band^{M,M+2}_{0,1}(-\mathbf{1}_M, \mathbf{1}_M)
 \intertext{And similarly define $L_{1+}$ from applying \cref{eq:first-order-fd} to the $\bar{v}$ vector for all $i = 1,\ldots M$ }
 L_{1+} &\equiv \frac{1}{\Delta}\begin{bmatrix}
 0&-1&1&0&\dots&0&0&0\\
@@ -249,6 +251,7 @@ L_{1+} &\equiv \frac{1}{\Delta}\begin{bmatrix}
 0&0&0&0&\dots&-1&1&0\\
 0&0&0&0&\cdots&0&-1&1
 \end{bmatrix}_{M\times( M+2)}\label{eq:L-1-plus-extended-regular} \\
+&= \frac{1}{\Delta}\band^{M,M+2}_{0,2}(\mathbf{0}_M, -\mathbf{1}_M, \mathbf{1}_M)
 \end{align}
 It is important to note that while these operators map the $\bar{v}$ (i.e. including the boundary points), the operator only maps to points on the interior i.e. $i = 1, \ldots M$.
 
@@ -270,7 +273,8 @@ In order to calculate the derivatives for all $i = 1, \ldots M$ (i.e. in the int
 	\vdots&\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots&\vdots\\
 	0&0&0&0&\dots&1&-2&1&0\\
 	0&0&0&0&\cdots&0&1&-2 &1
-	\end{bmatrix}_{M\times (M+2)}\label{eq:L-2-extended-regular}
+	\end{bmatrix}_{M\times (M+2)}\label{eq:L-2-extended-regular}\\
+	&= \frac{1}{\Delta^2}\band_{0,2}^{M,M+2}(\mathbf{1}_M, -2\times\mathbf{1}_M, \mathbf{1}_M)
 \end{align}
 
 \paragraph{Identity Operators}
@@ -288,30 +292,74 @@ L_0 &\equiv \begin{bmatrix}
 \vdots&\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots&\vdots\\
 0 & 0 & 0 & 0 &\dots & 0 & 1 & 0 &0\\
 0 & 0 & 0 & 0 &\dots & 0 & 0 & 1 &0
-\end{bmatrix}_{M\times (M+2)}
+\end{bmatrix}_{M\times (M+2)}\\
+&= \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}\\
+&= \band_{0,1}^{M,M+2}(\mathbf{0}_M, \mathbf{1}_M)
 \end{align}
-This operator trivially maps from the $\bar{v}$ to extract the interior $v$ and ignoring the boundaries $\bar{v}_0$ and $\bar{v}_{P+1}$.  Its primary role will be when composing operators rather than being used directly.
+This operator trivially maps from the $\bar{v}$ to extract the interior $v$ and ignoring the boundaries $\bar{v}_0$ and $\bar{v}_{M+1}$.  Its primary role will be when composing operators rather than being used directly.
 
-\subsection{Representation with Special Matrices}
-See \cref{sec:specialmatrices} for more details on the notation of special matrices (e.g. Toeplitz, Tridiagonal, and Banded)
-
-These can be defined in more compact forms as banded matrices
+\subsection{Boundary Conditions}
+While boundary conditions can be mixed and matches, for notational simplicity here, we will apply the same boundaries at each corner.  In general, boundaries are of the form
 \begin{align}
-L_{1-} &\equiv  \frac{1}{\Delta}\begin{bmatrix}
-\text{tridiag}(\mathbf{0}_{M-1}, -\mathbf{1}_M, \mathbf{1}_{M} ) & \mathbf{0}_M
-\end{bmatrix} \\
-L_{1+} &\equiv \frac{1}{\Delta}\begin{bmatrix}
-\mathbf{0}_M & \text{tridiag}(\mathbf{0}_{M-1}, -\mathbf{1}_M, \mathbf{1}_{M} )
-\end{bmatrix} \\
-L_2 &\equiv \frac{1}{\Delta^2} \text{tridiag}^+(\mathbf{1}_{M}, -2\mathbf{1}_M, \mathbf{1}_{M} )\\
-L_0 &\equiv \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}
+\tilde{B} \tilde{v}(x) &= b\label{eq:BC-system}
+\end{align}
+For some operator $\tilde{B}$ (typically involving evaluation at the boundaries) and $b\in R^2$.  In the case of $b = \textbf{0}_2$, the boundary conditions are called homogenous.
+
+\paragraph{Mixed Boundary Conditions}
+Recall mixed boundary conditions from \cref{eq:mixed-BC1,eq:mixed-BC2}. Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$.  In operator form, the boundaries are
+
+\begin{align}
+\tilde{B} &\equiv \begin{bmatrix}
+\partial_x\vert_{x = x_{\min}} + \underline{\xi}\,1 \vert_{x = x_{\min}}\\
+\partial_x\vert_{x = x_{\max}} + \bar{\xi}\,1 \vert_{x = x_{\max}}
+\end{bmatrix}\label{eq:mixed}\\
+b &\equiv \begin{bmatrix} 0\\ 0 \end{bmatrix}\in \R^2
 \end{align}
 
-where $\text{tridiag}(x,y,z)$ is a matrix whose lower, main, upper diagonal vectors are $x$, $y$, and $z$, respectively, and $\text{tridiag}^+(x,y,z)$ is a matrix whose main, upper, and second upper diagonal vectors $x$, $y$, and $z$, respectively.
+Use forward difference and backward differences respectively to discretize the first derivatives at the lower and upper bound of \cref{eq:mixed} gives the system \cref{eq:BC-system} as
+\begin{align}
+\frac{\overline{v}_1 - \overline{v}_0}{\Delta} + \underline{\xi} \overline{v}_0 &= 0\label{eq:regular-mixed-1} \\
+\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta} + \overline{\xi} \overline{v}_{M+1} &= 0\label{eq:regular-mixed-2}
+\end{align}
+
+Define
+\begin{align}
+B &\equiv \begin{bmatrix}
+-\dfrac{1}{\Delta} + \underline{\xi} & \dfrac{1}{\Delta} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta} & \dfrac{1}{\Delta} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)}\label{eq:mixed-barrier-matrix-original-regular}\\
+b &= \begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\end{align}
+
+Then, multiplying by $\Delta$, the system has the same $b$ and \cref{eq:mixed-barrier-matrix-original-regular} is equivalent to
+\begin{equation}
+B = \begin{bmatrix}
+-1 +  \underline{\xi} \Delta & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi} \Delta\\
+\end{bmatrix}_{2 \times (M+2)}\label{eq:B-mixed}
+\end{equation}
+
+\subsubsection{Reflecting Barriers}
+Since a reflecting barrier (i.e. a Neumann boundary condition) is a special case of the mixed when  $\underline{\xi} = \bar{\xi} = 0$, the $B$ matrix for a reflecting barrier follows \cref{eq:B-mixed}
+\begin{equation}
+	B = \begin{bmatrix}
+	-1& 1 & 0 & \dots & 0 & 0 & 0 \\
+	0 & 0 & 0 & \dots & 0 & -1 & 1\\
+	\end{bmatrix}_{2 \times (M+2)}
+	\end{equation}
+with the same $b = \begin{bmatrix}	0&	0\end{bmatrix}$
+
+	\subsubsection{Absorbing Barriers}
+
+
 
 \subsection{Applying Boundary Conditions}\label{subsec:applying-bc}
-Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids.
-Suppose that we want to solve a system $\tilde{L} \tilde{v}({x}) = \tilde{f}(x) $ for $\tilde{v}(x)$ where $L$ is a linear combination of discretized differential operators for some $f$ that represents the values of a function $\tilde{f}(\cdot)$ on discretized interior $x$. To solve the system under boundary conditions on $v$, one can construct and solve the following extended system:
+Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids.  Suppose we want to solve the system $\tilde{L} \tilde{v}(x) = \tilde{f}(x)$ and $\tilde{B} \tilde{v}(x) - b$ from \cref{eq:A-u-D,eq:B-u-DE}
+
+To solve the system under boundary conditions on $v$, one can construct and solve the following extended system:
 
 \begin{equation}\label{eq:reflecting-barrier-extended-system}
 \begin{bmatrix}
@@ -336,37 +384,9 @@ v \\
 which also gives the solution for $v$.
 
 \subsubsection{Mixed Boundary Conditions}
-Recall mixed boundary conditions from \eqref{eq:mixed-BC1} and \eqref{eq:mixed-BC2}. Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$. Using forward difference and backward difference discretization scheme for the lower bound and upper bound respectively, we have
-\begin{align}
-&\frac{\overline{v}_1 - \overline{v}_0}{\Delta} + \underline{\xi} \overline{v}_0 = 0 \\
-&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta} + \overline{\xi} \overline{v}_{M+1} = 0
-\end{align}
+Using the $B$ from ....
 
-Thus, the corresponding boundary condition matrix $B$ is
-
-\begin{equation}\label{eq:mixed-barrier-matrix-original-regular}
-B = \begin{bmatrix}
--\dfrac{1}{\Delta} + \underline{\xi} & \dfrac{1}{\Delta} & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta} & \dfrac{1}{\Delta} + \overline{\xi}\\
-\end{bmatrix}_{2 \times (M+2)} \quad
-b = \begin{bmatrix}
-0 \\
-0
-\end{bmatrix}
-\end{equation}
-which provides the identical system as
-\begin{equation}\label{eq:mixed-barrier-matrix-regular}
-B = \begin{bmatrix}
--1 +  \underline{\xi} \Delta & 1 & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi} \Delta\\
-\end{bmatrix}_{2 \times (M+2)} \quad
-b = \begin{bmatrix}
-0 \\
-0
-\end{bmatrix}
-\end{equation}
-
-Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta )^{-1}\Delta^{-1}$ gives, with the corresponding row operation matrix $R$,
+Adding the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta )^{-1}\Delta^{-1}$ gives, with the corresponding row operation matrix $R$,
 
 \begin{equation}
 R {L}_{1-} = \dfrac{1}{\Delta} \begin{bmatrix}
@@ -414,25 +434,20 @@ L_{1-}^B \equiv \frac{1}{\Delta}\begin{bmatrix}
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-1&1&0\\
 0&0&0&\cdots&0&-1&1
-\end{bmatrix}_{M\times M}
+\end{bmatrix}_{M\times M} \label{eq:L-1-regular}
 \end{equation}
-instead of solving the full system with boundary conditions. Similarly, one can define differential operators on the interior as follows:
-
+instead of solving the full system with boundary conditions. Similarly, subtracting the first row of $\overline{L}_{1+}$ by the second row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(1 + \overline{\xi} \Delta )^{-1} \Delta^{-1}$ gives the following differential operator with the boundary condition $B$ applied:
 \begin{align}
-L_{1-}^B &\equiv \frac{1}{\Delta}\begin{bmatrix}
-1 + (-1 + \underline{\xi} \Delta)^{-1} &0&0&\dots&0&0&0\\
--1&1&0&\dots&0&0&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
-0&0&0&\dots&-1&1&0\\
-0&0&0&\cdots&0&-1&1
-\end{bmatrix}_{M\times M}\label{eq:L-1-regular} \\
 L_{1+}^B &\equiv \frac{1}{\Delta}\begin{bmatrix}
 -1&1&0&\dots&0&0&0\\
 0&-1&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&0&-1&1\\
 0&0&0&\cdots&0&0&-1+(1+\overline{\xi} \Delta)^{-1}
-\end{bmatrix}_{M\times M}\label{eq:L-1-plus-regular} \\
+\end{bmatrix}_{M\times M}\label{eq:L-1-plus-regular}
+\end{align}
+And by substracting the first row of $L_2$ by the first row of $B$ multiplied by $(-1 + \underline{\xi} \Delta )^{-1}$ and the last row of $L_2$ by the second row of $B$ multiplied by $(1 + \overline{\xi} \Delta)^{-1}$, we have the following differential operator with the boundary condition $B$ applied for $L_2$:
+\begin{align}
 L_2^B &\equiv \frac{1}{\Delta^2}\begin{bmatrix}
 -2 - (-1 + \underline{\xi}\Delta)^{-1} &1&0&\dots&0&0&0\\
 1&-2&1&\dots&0&0&0\\
@@ -618,7 +633,7 @@ since $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$
 The first columns of all the extension operators above, $\overline{L}_{1-}, \overline{L}_{1+}, \overline{L}_{2}, \overline{I}$, have non-zero element only in the first rows. Thus, a single Gaussian elimination for the first extension grid will suffice to remove the extended. Likewise, in the last columns of all the extension operators have non-zero element only in the last row.
 
 
-Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta_{1,-} )^{-1}\Delta_{1,-}^{-1}$ gives, with the corresponding row operation matrix $R$ for Gaussian elimination,
+Adding the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta_{1,-} )^{-1}\Delta_{1,-}^{-1}$ gives, with the corresponding row operation matrix $R$ for Gaussian elimination,
 
 \begin{equation}
 R {L}_{1-} = \begin{bmatrix}
@@ -668,24 +683,18 @@ L_{1-}^B \equiv \begin{bmatrix}
 0&0&0&\cdots&0&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}
 \end{bmatrix}_{M\times M}
 \end{equation}
-instead of solving the full system with boundary conditions. Similarly, one can define differential operators on the interior as follows:
-
-
+instead of solving the full system with boundary conditions. Similarly, subtracting the first row of $\overline{L}_{1+}$ by the second row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(1 + \overline{\xi} \Delta_{M,+})^{-1} \Delta_{M,+}^{-1}$ gives the following differential operator with the boundary condition $B$ applied:
 \begin{align}
-L_{1-}^B &\equiv \begin{bmatrix}
-\Delta^{-1}_{1,-} [1 + (-1 + \underline{\xi} \Delta_{1,-})^{-1}] &0&0&\dots&0&0&0\\
--\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
-0&0&0&\dots&-\Delta_{M-1,-}^{-1}&\Delta_{M-1,-}^{-1}&0\\
-0&0&0&\cdots&0&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}
-\end{bmatrix}_{M\times M}\label{eq:L-1} \\
 L_{1+}^B &\equiv \begin{bmatrix}
 -\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&0&\dots&0&0&0\\
 0&-\Delta_{2,+}^{-1}&\Delta_{2,+}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\cdots&0&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}\\
 0&0&0&\dots&0&0&\Delta_{M,+}^{-1}  [-1 + (1 + \overline{\xi} \Delta_{M,+})^{-1}]  \\
-\end{bmatrix}_{M\times M}\label{eq:L-1-plus} \\
+\end{bmatrix}_{M\times M}\label{eq:L-1-plus}
+\end{align}
+And by substracting the first row of $L_2$ by the first row of $B$ multiplied by $2(-1 + \underline{\xi} \Delta_{1,-} )^{-1} (\Delta_{1,+} + \Delta_{1,-})^{-1}  \Delta_{1,-}^{-1} $ and the last row of $L_2$ by the second row of $B$ multiplied by $2(1 + \overline{\xi} \Delta_{M,+} )^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1}$, we have the following differential operator with the boundary condition $B$ applied for $L_2$:
+\begin{align}
 L_2^B &\equiv 2 \begin{psmallmatrix}
 \Xi_1 &
 (\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{1,+}^{-1}
@@ -709,8 +718,8 @@ I^B &\equiv \begin{bmatrix}
 where
 
 \begin{align}
-\Xi_{1} &= -2\left[  \Delta_{1,-}^{-1} \Delta_{1,+}^{-1} + (-1 + \underline{\xi} \Delta_{1,-})^{-1} (\Delta_{1,+} + \Delta_{1,-})^{-1}  \Delta_{1,-}^{-1} \right] \\
-\Xi_{M} &= -2\left[  \Delta_{M,-}^{-1} \Delta_{M,+}^{-1} - (1 + \overline{\xi} \Delta_{M,+})^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1} \right]
+\Xi_{1} &= -\left[  \Delta_{1,-}^{-1} \Delta_{1,+}^{-1} + (-1 + \underline{\xi} \Delta_{1,-})^{-1} (\Delta_{1,+} + \Delta_{1,-})^{-1}  \Delta_{1,-}^{-1} \right] \\
+\Xi_{M} &= -\left[  \Delta_{M,-}^{-1} \Delta_{M,+}^{-1} - (1 + \overline{\xi} \Delta_{M,+})^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1} \right]
 \end{align}
 
 
@@ -1061,7 +1070,7 @@ Note that the corresponding $B$ and $b$ are identical with regular grid cases.
 
 \appendix
 
-\section{Special Matrices and Notation}\label{sec:specialmatrices}
+\section{Special Matrices and Notation}\label{sec:special-matrices}
 In the code and algebra, a number of the matrices for discretization have special structure.
 \paragraph{Toeplitz Matrices}
 First, a Toeplitz matrix is one in which every descending diagonal is constant.  See \url{https://en.wikipedia.org/wiki/Toeplitz_matrix} for more examples and theory. To create, you need to specify the lower off-diagonals (ordered by rows) and the upper off-diagonals (ordered by columns).  They are square only if the number of rows and columns passed in is identical.\footnote{This notation is intended to match Matlab's and Julia's notation.  See \url{https://www.mathworks.com/help/matlab/ref/toeplitz.html} and \url{https://github.com/JuliaMatrices/ToeplitzMatrices.jl}.  Note that with this interface design, if $vr_1 \neq vr_1$ there is an error.  }   As an example, to construct
@@ -1087,8 +1096,8 @@ B_{-1} &\equiv \begin{bmatrix} B_{21} & B_{32} & B_{43} & B_{54} \end{bmatrix}\i
 B_{0} &\equiv \begin{bmatrix} B_{11} & B_{22} & B_{33} & B_{44} & B_{55} \end{bmatrix}\in\R^5\\
 B_{+1} &\equiv \begin{bmatrix} B_{12} & B_{23} & B_{34} & B_{45} & B_{56} \end{bmatrix}\in\R^5\\
 B_{+2} &\equiv \begin{bmatrix} B_{13} & B_{24} & B_{35} & B_{46} \end{bmatrix}\in\R^4\\
-\intertext{The $\band_{\ell,u}(\cdot)$ function is used to define a banded matrix given diagonals where the $\ell$ is number of bands below the diagonal and $u$ is the number of bands above the diagonal.  The function then takes a list of the diagonals in order (i.e. lower ones, diagonal bands, then upper band)}
-\band_{1,1}(B_{-1}, B_{0}, B_{+1}) &= \begin{bmatrix}
+\intertext{The $\band^{n,m}_{\ell,u}(\cdot)$ function is used to define a banded matrix given diagonals where the $\ell$ is number of bands below the diagonal and $u$ is the number of bands above the diagonal.  The function then takes a list of the diagonals in order (i.e. lower ones, diagonal bands, then upper band)}
+\band^{5,6}_{1,1}(B_{-1}, B_{0}, B_{+1}) &= \begin{bmatrix}
  B_{11} & B_{12} & 0      & \cdots & \cdots & 0 \\
  B_{21} & B_{22} & B_{23} & \ddots & \ddots & \vdots \\
   0     & B_{32} & B_{33} & B_{34} & \ddots & \vdots \\
@@ -1096,17 +1105,25 @@ B_{+2} &\equiv \begin{bmatrix} B_{13} & B_{24} & B_{35} & B_{46} \end{bmatrix}\i
  \vdots & \ddots & \ddots & B_{54} & B_{55} & B_{56}
 \end{bmatrix}\in \R^{5\times 6}\\
 \intertext{And other with a variation on the columns with no sub-diagonals and two super-diagonals}
-\band_{0,2}(B_{0}, B_{+1}, B_{+2}) &= \begin{bmatrix}
+\band_{0,2}^{5,6}(B_{0}, B_{+1}, B_{+2}) &= \begin{bmatrix}
  B_{11} & B_{12} & B_{13} & 0      & \cdots & 0 \\
  0 & B_{22} & B_{23} & B_{24} &0 & \vdots \\
   \vdots      & 0 & B_{33} & B_{34} & B_{35} & 0 \\
  \vdots & \ddots & 0 & B_{44} & B_{45} & B_{46} \\
  \vdots & \ddots & \ddots & 0 & B_{55} & B_{56}
 \end{bmatrix}\in \R^{5\times 6}
+\intertext{The reason that the $(n,m)$ and $(l,u)$ are both needed is the possibility of additional zeros.  For example, simply adding another column }
+\band_{0,2}^{5,7}(B_{0}, B_{+1}, B_{+2}) &= \begin{bmatrix}
+ B_{11} & B_{12} & B_{13} & 0      & \cdots & 0  & 0 \\
+ 0 & B_{22} & B_{23} & B_{24} &0 & \vdots & \vdots \\
+  \vdots      & 0 & B_{33} & B_{34} & B_{35} & 0 & 0 \\
+ \vdots & \ddots & 0 & B_{44} & B_{45} & B_{46} & 0\\
+ \vdots & \ddots & \ddots & 0 & B_{55} & B_{56} & 0
+\end{bmatrix}\in \R^{5\times 7}
 \end{align}
-Note that a Topelitz matrix where many of the diagonals are $0$ can be written as a banded matrix
+Note that a Topelitz matrix where many of the diagonals are $0$ can be written as a banded matrix, albeit by dropping the extra structure
 \begin{align}
-\band_{1,2}\left(f \mathbf{1}_3, a \mathbf{1}_4, b \mathbf{1}_4, c \mathbf{1}_3\right)
+\band_{1,2}^{4,5}\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_4, c\times \mathbf{1}_3\right)
    &= \toep(\begin{bmatrix}a & f & 0 & 0 \end{bmatrix},\begin{bmatrix}a & b & c & 0 & 0 \end{bmatrix}) \\
    &= \begin{bmatrix}
 	a & b & c & 0 & 0 \\
@@ -1117,8 +1134,36 @@ Note that a Topelitz matrix where many of the diagonals are $0$ can be written a
 \end{align}
 
 \paragraph{Tridiagonal Matrices}
-A final set of matrices are sparse, tridiagonal matrices.  This is a particular type of square banded matrix with a single off-diagonal in each direction.  As always, the extra structure leads to specialized operations
-\textbf{TODO: START HERE AND CONNECT TO BOTH}
+A final set of matrices are sparse, tridiagonal matrices.  This is a particular type of square banded matrix with a single off-diagonal in each direction.  As always, the extra structure leads to specialized operations.  For example,
+\begin{align}
+B_{-1} &\equiv \begin{bmatrix} B_{21} & B_{32} & B_{43} & B_{54} \end{bmatrix}\in\R^4\\
+B_{0} &\equiv \begin{bmatrix} B_{11} & B_{22} & B_{33} & B_{44} & B_{55} \end{bmatrix}\in\R^5\\
+B_{+1} &\equiv \begin{bmatrix} B_{12} & B_{23} & B_{34} & B_{45} \end{bmatrix}\in\R^4\\
+\intertext{Note in the above that we redefined the $B_{+1}$ vector since otherwise the matrix would not be square.  Collecting,}
+\tridiag(B_{-1}, B_0, B_{+1})&=
+\begin{bmatrix}
+ B_{11} & B_{12} & 0      & \cdots & 0 \\
+ B_{21} & B_{22} & B_{23} & \ddots & \vdots \\
+  0     & B_{32} & B_{33} & B_{34} & \vdots \\
+ \vdots & \ddots & B_{43} & B_{44} & B_{45}\\
+ \vdots & \ddots & \ddots & B_{54} & B_{55}
+\end{bmatrix}\in \R^{5\times 5}\\
+\intertext{Which is a banded square matrix}
+&= \band_{1,1}^{5,5}(B_{-1}, B_{0}, B_{+1})
+\end{align}
+  If the diagonals and off-diagonals are all constant, then it is also a Toeplitz matrix,
+
+\begin{align}
+\tridiag\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_3\right) &= \begin{bmatrix}
+	a & b & 0 & 0 \\
+	f & a & b & 0 \\
+	0 & f & a & b \\
+	0 & 0 & f & a
+	\end{bmatrix} \in \R^{4 \times 4}\\
+	&= \toep(\begin{bmatrix}a & f & 0 & 0 \end{bmatrix},\begin{bmatrix}a & b & 0 & 0 \end{bmatrix})\\
+	&=\band_{1,1}^{4,4}\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_3 \right)
+\end{align}
+
 
 
 

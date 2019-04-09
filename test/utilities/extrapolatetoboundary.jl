@@ -35,14 +35,7 @@
             v̄ = [L; B] \ [f.(x); b]
 
             # test if extrapolated solutions are identical
-
-            # currently broken on L₂bc on irregular grids 
-            # seems like L₂bc on irregular grids is wrong
-            if (L_bc_generator == L₂bc && x̄ in irregular_grids)
-                @test_broken extrapolatetoboundary(v_bc, x̄, bc) ≈ v̄ 
-            else
-                @test extrapolatetoboundary(v_bc, x̄, bc) ≈ v̄ 
-            end
+            @test extrapolatetoboundary(v_bc, x̄, bc) ≈ v̄ 
             
         end
     end
