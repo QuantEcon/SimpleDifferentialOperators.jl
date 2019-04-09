@@ -424,7 +424,7 @@ L_{1+}^B &\equiv \frac{1}{\Delta}\begin{bmatrix}
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&0&-1&1\\
 0&0&0&\cdots&0&0&-1+(1+\overline{\xi} \Delta)^{-1}
-\end{bmatrix}_{M\times M}\label{eq:L-1-plus-regular} 
+\end{bmatrix}_{M\times M}\label{eq:L-1-plus-regular}
 \end{align}
 And by substracting the first row of $L_2$ by the first row of $B$ multiplied by $(-1 + \underline{\xi} \Delta )^{-1}$ and the last row of $L_2$ by the second row of $B$ multiplied by $(1 + \overline{\xi} \Delta)^{-1}$, we have the following differential operator with the boundary condition $B$ applied for $L_2$:
 \begin{align}
@@ -671,7 +671,7 @@ L_{1+}^B &\equiv \begin{bmatrix}
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\cdots&0&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}\\
 0&0&0&\dots&0&0&\Delta_{M,+}^{-1}  [-1 + (1 + \overline{\xi} \Delta_{M,+})^{-1}]  \\
-\end{bmatrix}_{M\times M}\label{eq:L-1-plus} 
+\end{bmatrix}_{M\times M}\label{eq:L-1-plus}
 \end{align}
 And by substracting the first row of $L_2$ by the first row of $B$ multiplied by $2(-1 + \underline{\xi} \Delta_{1,-} )^{-1} (\Delta_{1,+} + \Delta_{1,-})^{-1}  \Delta_{1,-}^{-1} $ and the last row of $L_2$ by the second row of $B$ multiplied by $2(1 + \overline{\xi} \Delta_{M,+} )^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1}$, we have the following differential operator with the boundary condition $B$ applied for $L_2$:
 \begin{align}
@@ -1093,9 +1093,9 @@ B_{+2} &\equiv \begin{bmatrix} B_{13} & B_{24} & B_{35} & B_{46} \end{bmatrix}\i
  \vdots & \ddots & \ddots & 0 & B_{55} & B_{56}
 \end{bmatrix}\in \R^{5\times 6}
 \end{align}
-Note that a Topelitz matrix where many of the diagonals are $0$ can be written as a banded matrix
+Note that a Topelitz matrix where many of the diagonals are $0$ can be written as a banded matrix, albeit by dropping the extra structure
 \begin{align}
-\band_{1,2}\left(f \mathbf{1}_3, a \mathbf{1}_4, b \mathbf{1}_4, c \mathbf{1}_3\right)
+\band_{1,2}\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_4, c\times \mathbf{1}_3\right)
    &= \toep(\begin{bmatrix}a & f & 0 & 0 \end{bmatrix},\begin{bmatrix}a & b & c & 0 & 0 \end{bmatrix}) \\
    &= \begin{bmatrix}
 	a & b & c & 0 & 0 \\
@@ -1106,8 +1106,35 @@ Note that a Topelitz matrix where many of the diagonals are $0$ can be written a
 \end{align}
 
 \paragraph{Tridiagonal Matrices}
-A final set of matrices are sparse, tridiagonal matrices.  This is a particular type of square banded matrix with a single off-diagonal in each direction.  As always, the extra structure leads to specialized operations
-\textbf{TODO: START HERE AND CONNECT TO BOTH}
+A final set of matrices are sparse, tridiagonal matrices.  This is a particular type of square banded matrix with a single off-diagonal in each direction.  As always, the extra structure leads to specialized operations.  For example,
+\begin{align}
+B_{-1} &\equiv \begin{bmatrix} B_{21} & B_{32} & B_{43} & B_{54} \end{bmatrix}\in\R^4\\
+B_{0} &\equiv \begin{bmatrix} B_{11} & B_{22} & B_{33} & B_{44} & B_{55} \end{bmatrix}\in\R^5\\
+B_{+1} &\equiv \begin{bmatrix} B_{12} & B_{23} & B_{34} & B_{45} \end{bmatrix}\in\R^4\\
+\intertext{Note in the above that we redefined the $B_{+1}$ vector since otherwise the matrix would not be square.  Collecting,}
+\tridiag(B_{-1}, B_0, B_{+1})&=
+\begin{bmatrix}
+ B_{11} & B_{12} & 0      & \cdots & 0 \\
+ B_{21} & B_{22} & B_{23} & \ddots & \vdots \\
+  0     & B_{32} & B_{33} & B_{34} & \vdots \\
+ \vdots & \ddots & B_{43} & B_{44} & B_{45}\\
+ \vdots & \ddots & \ddots & B_{54} & B_{55}
+\end{bmatrix}\in \R^{5\times 5}\\
+\intertext{Which is a banded square matrix}
+&= \band_{1,1}(B_{-1}, B_{0}, B_{+1})
+\end{align}
+  If the diagonals and off-diagonals are all constant, then it is also a Toeplitz matrix,
+\begin{align}
+\tridiag\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_3) &= \begin{bmatrix}
+	a & b & 0 & 0 \\
+	f & a & b & 0 \\
+	0 & f & a & b \\
+	0 & 0 & f & a
+	\end{bmatrix} \in \R^{4 \times 4}\\
+	&= \toep(\begin{bmatrix}a & f & 0 & 0 \end{bmatrix},\begin{bmatrix}a & b & 0 & 0 \end{bmatrix})\\
+	&=\band_{1,1}\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_3)
+\end{align}
+
 
 \section{Derivation by substitution}
 One can also derive the formula for $L_{1-}^B, L_{1+}^B, L_2^B$ in \eqref{eq:L-1-regular}, \eqref{eq:L-1-plus-regular}, \eqref{eq:L-2-regular} by substitution. For simplicity, here we focus on the case when we have regular grids, i.e., $x_{i+1} - x_i = \Delta$ for some $\Delta > 0$ for all $i = 0, ..., M$.
