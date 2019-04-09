@@ -119,14 +119,14 @@ function DifferentialOperator(x̄, bc::Tuple{Reflecting, Reflecting}, method::Di
     # get basis operator on interior nodes
     L = get_basis_operator(x̄, method)
     
-    Ξ_1 = -2*(1/(Δ_1m*Δ_1p)-1/((Δ_1p+Δ_1m)*(Δ_1m)))
-    Ξ_M = -2*(1/(Δ_Mm*Δ_Mp)-1/((Δ_Mp+Δ_Mm)*(Δ_Mp))) 
+    Ξ_1 = -(1/(Δ_1m*Δ_1p)-1/((Δ_1p+Δ_1m)*(Δ_1m)))
+    Ξ_M = -(1/(Δ_Mm*Δ_Mp)-1/((Δ_Mp+Δ_Mm)*(Δ_Mp))) 
    
     # apply boundary conditions
     L[1,1] = typeof(method) <: BackwardFirstDifference ? zero(T) : L[1,1]
-    L[1,1] = typeof(method) <: CentralSecondDifference ? Ξ_1 : L[1,1]
+    L[1,1] = typeof(method) <: CentralSecondDifference ? 2*Ξ_1 : L[1,1]
     L[end,end] = typeof(method) <: ForwardFirstDifference ? zero(T) : L[end,end]
-    L[end,end] = typeof(method) <: CentralSecondDifference ? Ξ_M : L[end,end]
+    L[end,end] = typeof(method) <: CentralSecondDifference ? 2*Ξ_M : L[end,end]
 
     return L
 end
@@ -177,14 +177,14 @@ function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMe
     # get extended operator with reflecting barrier conditions first
     L = get_basis_operator(x̄, method)
  
-    Ξ_1 = -2*(1/(Δ_1m*Δ_1p)+1/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m)))
-    Ξ_M = -2*(1/(Δ_Mm*Δ_Mp)-1/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp)))
+    Ξ_1 = -(1/(Δ_1m*Δ_1p)+1/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m)))
+    Ξ_M = -(1/(Δ_Mm*Δ_Mp)-1/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp)))
    
     # apply boundary conditions
     L[1,1] = typeof(method) <: BackwardFirstDifference ? (1+1/(-1+ξ_lb*Δ_1m))/Δ_1m : L[1,1]
-    L[1,1] = typeof(method) <: CentralSecondDifference ? Ξ_1 : L[1,1]
+    L[1,1] = typeof(method) <: CentralSecondDifference ? 2*Ξ_1 : L[1,1]
     L[end,end] = typeof(method) <: ForwardFirstDifference ? (-1+1/(1+ξ_ub*Δ_Mp))/Δ_Mp : L[end,end]
-    L[end,end] = typeof(method) <: CentralSecondDifference ? Ξ_M : L[end,end]
+    L[end,end] = typeof(method) <: CentralSecondDifference ? 2*Ξ_M : L[end,end]
 
     return L
 end
