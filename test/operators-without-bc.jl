@@ -64,10 +64,6 @@ end
         v̄ = L \ [f.(x); 0.0; 0.0]
 
         # currently broken on regular grids
-        if (x̄ in regular_grids)
-            @test v ≈ v̄[2:end-1]
-        else
-            @test_broken v ≈ v̄[2:end-1] 
-        end
+        @test v ≈ v̄[2:end-1]
     end
 end
