@@ -166,7 +166,7 @@ As will become clear in the discretization, whether the boundary condition is ho
 		1 \vert_{x = x_{\min}}\\
 		1 \vert_{x = x_{\max}}
 		\end{bmatrix}\\
-		b &\equiv \begin{bmatrix} b_0\\ b_2 \end{bmatrix}
+		b &\equiv \begin{bmatrix} b_1\\ b_2 \end{bmatrix}
 	\end{align}
 \end{itemize}
 Of course, many models would have different boundary conditions on different sides of the domain, which entails mixing and matching rows in the $B$ and $b$ matrices.
@@ -354,14 +354,37 @@ with the same $b = \begin{bmatrix}	0&	0\end{bmatrix}$
 
 	\subsubsection{Absorbing Barriers}
 
+With the homogenous or inhomogeneous Dirichlet Boundary Conditions in \cref{eq:absorbing-BC1,eq:absorbing-BC2}, in operator form,
+\begin{align}
+	\tilde{B} &\equiv \begin{bmatrix}
+	1 \vert_{x = x_{\min}}\\
+	1 \vert_{x = x_{\max}}
+	\end{bmatrix}
+\end{align}
 
+Implementing this for the system in \cref{eq:BC-system} gives,
 
-\subsection{Applying Boundary Conditions}\label{subsec:applying-bc}
-Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids.  Suppose we want to solve the system $\tilde{L} \tilde{v}(x) = \tilde{f}(x)$ and $\tilde{B} \tilde{v}(x) - b$ from \cref{eq:A-u-D,eq:B-u-DE}
+\begin{align}
+B &= \begin{bmatrix}
+1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & 0 & 1\\
+\end{bmatrix}_{2 \times (M+2)}\label{eq:absorbing-barrier-matrix-regular}\\
+b &= \begin{bmatrix}
+b_1 \\
+b_2
+\end{bmatrix}
+\end{align}
 
-To solve the system under boundary conditions on $v$, one can construct and solve the following extended system:
+\subsection{Solving ODEs and PDEs}
+Going back to the motivation, a typical scenario might be to solve the stationary problem \cref{eq:A-u-DE,eq:B-u-DE}
+\begin{align}
+	\tilde{L} \tilde{v}(x) &= \tilde{f}(x)\\
+	\tilde{B} \tilde{v}(x) &= b
+\end{align}
 
-\begin{equation}\label{eq:reflecting-barrier-extended-system}
+Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids.  First, apply $\tilde{f}(x)$ to the interior, $x$ to get  $f$ then solve the system of $M+2$ equations
+
+\begin{align}
 \begin{bmatrix}
 L \\
 B
@@ -370,18 +393,38 @@ B
 \begin{bmatrix}
 f \\
 b
-\end{bmatrix}
-\end{equation}
+\end{bmatrix}\label{eq:reflecting-barrier-extended-system}
+\end{align}
 
-with $M_E$ by $(M+2)$ matrix $B$ and $M_E$-length vector $b$ that represent the current boundary conditions, where $M_E$ is the number of boundary conditions to be applied. The solution of \eqref{eq:reflecting-barrier-extended-system}, $\tilde{v}(\overline{x})$ can be decomposed into
+To get the $v\in \R^M$ in the interior, we can just take the interior of the resulting $\bar{v}$
 \begin{align}
-\overline{v} = \begin{bmatrix}
-\tilde{v}(x_0) \\
-v \\
-\tilde{v}(x_{M+1})
-\end{bmatrix}
+	\overline{v} = \begin{bmatrix}
+	\tilde{v}(x_0) \\
+	v \\
+	\tilde{v}(x_{M+1})
+	\end{bmatrix}
 \end{align}
 which also gives the solution for $v$.
+
+\paragraph{Discretizing PDEs to DAEs}
+The PDEs that come out of these operators are more of an issue.  A common setup becomes (with $\tilde{L}(t)$ and $\tilde{B}(t)$ time varying operators)
+
+\begin{align}
+	\D[t] \tilde{v}(t,x) &= \tilde{L}(t) \tilde{v}(t,x) - \tilde{f}(t,x)  \\
+	0 &= \tilde{B}(t) \tilde{v}(t,x) - b(t)
+\end{align}
+
+Now, if you were able to discretize this to find a time varying $\bar{v}(t)$, you could potentially discretize the setup as
+\begin{align}
+	\D[t] \bar{v}(t) &= L(t) \bar{v}(t) - f(t)\\
+	0 &= B(t) \bar{v}(t) - b(t)
+\end{align}
+i.e. a system of $M+2$ differential-algebraic equations given time varying matrices $L(t), B(t)$ and vectors $f(t) \in R^M$ and $b \in \R^2$.
+
+
+\subsection{Applying Boundary Conditions to Operators}
+
+An alternative approach to solving the systems of $M+2$ equations or DAEs above is to apply the boundary conditions directly to the $L$ operators and solve for the $v$ or $v(t)$ directly.  In effect, the methods are identical to applying Gaussian elimination twice to the above systems.
 
 \subsubsection{Mixed Boundary Conditions}
 Using the $B$ from ....

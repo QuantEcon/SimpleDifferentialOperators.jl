@@ -83,7 +83,7 @@ Instead of having the reflecting barrier conditions on both lower bound and uppe
 S = 3.0
 
 # boundary conditions (i.e. B v̄ = b)
-B = transpose([[0; 1; zeros(M)] [zeros(M); -1; 1]])
+B = transpose([[1; 0; zeros(M)] [zeros(M); -1; 1]])
 b = [S; 0.0];
 ```
 
