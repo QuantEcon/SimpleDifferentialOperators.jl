@@ -544,7 +544,7 @@ L_2^B \equiv  \Delta^{-2}
 \subsubsection{Absorbing Boundary Conditions}
 To apply an absorbing barrier condition $\tilde{v}(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
 
-\begin{equation}\label{eq:absorbing-barrier-matrix-regular}
+\begin{equation}
 B = \begin{bmatrix}
 1 & 0 & 0 & \dots & 0 & 0 & 0 \\
 0 & 0 & 0 & \dots & 0 & -1 & 1\\
@@ -571,12 +571,7 @@ S
 
 
 \section{Discretizing Operators with a Irregular Grid}
-
-\subsection{Applying Boundary Conditions}
-Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value function $\tilde{v}(\overline{x})$ on the extended grid, one can perform Gaussian elimination to reduce the system and solve $\tilde{v}(x)$, which gives the identical solution as the interior of $\tilde{v}(\overline{x})$.
-
-
-\subsection{Irregular grids}
+\subsection{Discretized Operators}
 
 Define the vectors of backward and forward distance for interior nodes as follows:
 \begin{align}
@@ -640,8 +635,9 @@ Alternatively, in a more compact form, using vectors distances for interior node
 2 \odot \band_{0,2}^{M,M+2} \left[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, -(\Delta_-^\circ \odot \Delta_+^\circ)^{-1} , (\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \right]
 \end{align}
 
+\subsection{Boundary Conditions}
 
-\subsubsection{Mixed boundary conditions}\label{subsubsec-irregular-grids-mixed-boundary-conditions}
+\paragraph{Mixed boundary conditions}
 Recall mixed boundary conditions from \eqref{eq:mixed-BC1} and \eqref{eq:mixed-BC2}. Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$. Using forward difference and backward difference discretization scheme for the lower bound and upper bound respectively, we have
 \begin{align}
 &\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_0 = 0 \\
@@ -671,8 +667,48 @@ b = \begin{bmatrix}
 0
 \end{bmatrix}
 \end{equation}
-since $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$
+since $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$.
 
+\subsubsection{Reflecting Barriers}
+Since a reflecting barrier (i.e. a Neumann boundary condition) is a special case of the mixed when  $\underline{\xi} = \bar{\xi} = 0$, the $B$ matrix for a reflecting barrier follows \cref{eq:B-mixed}
+\begin{equation}
+B = \begin{bmatrix}
+-1& 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1\\
+\end{bmatrix}_{2 \times (M+2)}
+\end{equation}
+with the same $b = \begin{bmatrix}	0&	0\end{bmatrix}$
+
+\subsubsection{Absorbing Barriers}
+
+With the homogenous or inhomogeneous Dirichlet Boundary Conditions in \cref{eq:absorbing-BC1,eq:absorbing-BC2}, in operator form,
+\begin{align}
+\tilde{B} &\equiv \begin{bmatrix}
+1 \vert_{x = x_{\min}}\\
+1 \vert_{x = x_{\max}}
+\end{bmatrix}
+\end{align}
+
+Implementing this for the system in \cref{eq:BC-system} gives,
+
+\begin{align}
+B &= \begin{bmatrix}
+1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & 0 & 1\\
+\end{bmatrix}_{2 \times (M+2)}\\
+b &= \begin{bmatrix}
+b_1 \\
+b_2
+\end{bmatrix}
+\end{align}
+which is identical as \eqref{eq:absorbing-barrier-matrix-regular} for regular grids.
+
+\subsection{Applying Boundary Conditions to Operators}
+Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value function $\tilde{v}(\overline{x})$ on the extended grid, one can perform Gaussian elimination to reduce the system and solve $\tilde{v}(x)$, which gives the identical solution as the interior of $\tilde{v}(\overline{x})$.
+
+
+
+\subsubsection{Mixed boundary conditions}\label{subsubsec-irregular-grids-mixed-boundary-conditions}
 
 The first columns of all the extension operators above, ${L}_{1-}, {L}_{1+}, {L}_{2}, {I}$, have non-zero element only in the first rows. Thus, a single Gaussian elimination for the first extension grid will suffice to remove the extended. Likewise, in the last columns of all the extension operators have non-zero element only in the last row.
 
