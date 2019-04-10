@@ -38,7 +38,7 @@ plot(x, v, lw = 4, label = &quot;v&quot;)</code></pre><p><img src="assets/plot-h
 S = 3.0
 
 # boundary conditions (i.e. B v̄ = b)
-B = transpose([[0; 1; zeros(M)] [zeros(M); -1; 1]])
+B = transpose([[1; 0; zeros(M)] [zeros(M); -1; 1]])
 b = [S; 0.0];</code></pre><p>and solve <code>v</code>:</p><pre><code class="language-julia"># stack the systems of bellman and boundary conditions, and solve
 v̄ =  [L; B] \ [f.(x); b]
 
