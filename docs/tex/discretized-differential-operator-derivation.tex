@@ -15,6 +15,7 @@
 \newcommand{\band}{\ensuremath{\mathrm{band}}}
 \newcommand{\toep}{\ensuremath{\mathrm{toep}}}
 \newcommand{\tridiag}{\ensuremath{\mathrm{tridiag}}}
+\newcommand{\diag}{\ensuremath{\mathrm{diag}}}
 \newcommand{\D}[1][]{\ensuremath{\partial_{#1}}}
 \newcommand{\indicator}[1]{\ensuremath{\mathds{1}\left\{{#1}\right\}}}
 \newcommand{\condexpec}[3][]{\ensuremath{\mathbb{E}_{#1}\left[{#2} \; \middle| \; {#3} \right]}}
@@ -503,20 +504,38 @@ L_2^B &\equiv \frac{1}{\Delta^2}\begin{bmatrix}
 which can be defined in more compact forms:
 \begin{align}
 L_{1-}^B &\equiv \Delta^{-1}
-\text{tridiag}(-\mathbf{1}_{M-1}, \begin{bmatrix}
-1+(-1+\underline{\xi} \Delta)^{-1} & \mathbf{1}_{M-1}^T
-\end{bmatrix}^T, \mathbf{0}_{M-1} )  \\
-L_{1+}^B &\equiv  \Delta^{-1} \text{tridiag}(\mathbf{0}_{M-1}, \begin{bmatrix}
- -\mathbf{1}_{M-1}^T & -1+(1+\overline{\xi} \Delta)^{-1}
-\end{bmatrix}^T, \mathbf{1}_{M-1} ) \\
-L_2^B &\equiv  \Delta^{-2} \text{tridiag}(
+\left[ 
+\text{tridiag}(-\mathbf{1}_{M-1}, 
+\mathbf{1}_{M}, \mathbf{0}_{M-1} ) + \diag \left( \begin{bmatrix}
+(-1+\underline{\xi} \Delta)^{-1} &
+\mathbf{0}_{M-1}^T 
+\end{bmatrix}^T
+\right)
+\right]
+   \\
+L_{1+}^B &\equiv 
+\Delta^{-1}
+\left[ 
+\text{tridiag}(-\mathbf{0}_{M-1}, 
+\mathbf{-1}_{M}, \mathbf{1}_{M-1} ) + \diag \left( \begin{bmatrix}
+\mathbf{0}_{M-1}^T &
+(1+\overline{\xi} \Delta)^{-1}
+\end{bmatrix}^T
+\right)
+\right]\\
+L_2^B &\equiv  \Delta^{-2} 
+\left[ 
+\text{tridiag}(
 \mathbf{1}_{M-1},
-\begin{bmatrix}
--2-(-1+\underline{\xi} \Delta)^{-1}&
--2\mathbf{1}_{M-2}^T &
--2+(1+\overline{\xi} \Delta)^{-1}
-\end{bmatrix}^T,
+\mathbf{-2}_M,
 \mathbf{1}_{M-1} )
++
+\diag \left( \begin{bmatrix}
+-2-(-1+\underline{\xi} \Delta)^{-1}&
+\mathbf{0}_{M-2}^T &
+-2+(1+\overline{\xi} \Delta)^{-1}
+\end{bmatrix}^T \right)
+\right]
 \end{align}
 
 \subsubsection{Absorbing Boundary Conditions}
