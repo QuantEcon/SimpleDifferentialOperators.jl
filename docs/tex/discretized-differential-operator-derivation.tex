@@ -502,14 +502,14 @@ L_2^B &\equiv \frac{1}{\Delta^2}\begin{bmatrix}
 
 which can be defined in more compact forms:
 \begin{align}
-L_{1-}^B &\equiv
+L_{1-}^B &\equiv \Delta^{-1}
 \text{tridiag}(-\mathbf{1}_{M-1}, \begin{bmatrix}
 1+(-1+\underline{\xi} \Delta)^{-1} & \mathbf{1}_{M-1}^T
 \end{bmatrix}^T, \mathbf{0}_{M-1} )  \\
-L_{1+}^B &\equiv \text{tridiag}(\mathbf{0}_{M-1}, \begin{bmatrix}
+L_{1+}^B &\equiv  \Delta^{-1} \text{tridiag}(\mathbf{0}_{M-1}, \begin{bmatrix}
  -\mathbf{1}_{M-1}^T & -1+(1+\overline{\xi} \Delta)^{-1}
 \end{bmatrix}^T, \mathbf{1}_{M-1} ) \\
-L_2^B &\equiv \text{tridiag}(
+L_2^B &\equiv  \Delta^{-2} \text{tridiag}(
 \mathbf{1}_{M-1},
 \begin{bmatrix}
 -2-(-1+\underline{\xi} \Delta)^{-1}&
