@@ -37,7 +37,7 @@ var documenterSearchIndex = {"docs": [
     "page": "﻿SimpleDifferentialOperators.jl",
     "title": "Solving HJBE with constant drifts",
     "category": "section",
-    "text": "Consider solving for v from the following equation by the Hamilton-Jacobi-Bellman equation (HJBE):rho v(x) = f(x) + mu partial_x v(x) + fracsigma^22 partial_xx v(x)for some constant rho sigma  0 and mu leq 0. To solve v under the reflecting barrier conditions v(0) = v(1) = 0 on M-size discretized grids, one can run the following code:using LinearAlgebra, SimpleDifferentialOperators\n# setup\nf(x) = x^2\nμ = -0.1 # constant negative drift\nσ = 0.1\nρ = 0.05\nM = 100 # size of grid (interior points)\n\nx̄ = range(0.0, 1.0, length = (M+2))\nx = x̄[2:end-1]\n\n# discretize L = ρ - μ D_x - σ^2 / 2 D_xx\n# subject to reflecting barriers at 0 and 1\nbc = (Reflecting(), Reflecting())\nL_bc = I * ρ - μ*L₁₋bc(x̄, bc) - σ^2 / 2 * L₂bc(x̄, bc)\n\n# solve the value function\nv = L_bc \\ f.(x)Note that the code above uses differential operators with reflecting boundary conditions applied. One can alternatively use operators on extended nodes (extended operators) and stack them with matrices for boundary conditions to compute v:# import SparseArrays package (for identity matrix and spzeros)\nusing SparseArrays\n\n# differential operators on extended nodes\nLₓ = μ*L₁₋(x̄) + σ^2 / 2 * L₂(x̄)\n\n# boundary conditions (i.e. B v̄ = b)\nB = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]])\nb = [0.0; 0.0]\n\n# form bellman equation on extension\nL = [spzeros(M) ρ*I spzeros(M)] - Lₓ\n\n# stack the systems of bellman and boundary conditions, and solve\nv̄ =  [L; B] \\ [f.(x); b]\n\n# extract the interior (is identical with `v` above)\nv =  v̄[2:end-1]Here is a plot for v:using Plots\nplot(x, v, lw = 4, label = \"v\")(Image: plot-hjbe-both-reflecting)"
+    "text": "Consider solving for v from the following equation by the Hamilton-Jacobi-Bellman equation (HJBE):rho v(x) = f(x) + mu partial_x v(x) + fracsigma^22 partial_xx v(x)for some constant rho sigma  0 and mu leq 0. To solve v under the reflecting barrier conditions v(0) = v(1) = 0 on M-size discretized grids, one can run the following code:using LinearAlgebra, SimpleDifferentialOperators\n# setup\nf(x) = x^2\nμ = -0.1 # constant negative drift\nσ = 0.1\nρ = 0.05\nM = 100 # size of grid (interior points)\n\nx̄ = range(0.0, 1.0, length = (M+2))\nx = x̄[2:end-1]\n\n# discretize L = ρ - μ D_x - σ^2 / 2 D_xx\n# subject to reflecting barriers at 0 and 1\nbc = (Reflecting(), Reflecting())\nL_bc = I * ρ - μ*L₁₋bc(x̄, bc) - σ^2 / 2 * L₂bc(x̄, bc)\n\n# solve the value function\nv = L_bc \\ f.(x)Note that the interior solution v does not the values of v at the boundary, i.e., v(0) and v(1). To extend the interior solution to the boundary points, one can call extrapolatetoboundary as follows:̄v = extrapolatetoboundary(x̄, v, bc);Here is a complete plot for v:using Plots\nplot(x̄, v̄, lw = 4, label = \"v\")(Image: plot-hjbe-both-reflecting)Note that the code above uses differential operators on the interior nodes with reflecting boundary conditions applied. One can alternatively use operators on extended nodes (extended operators) and stack them with matrices for boundary conditions to compute v:# import SparseArrays package (for identity matrix and spzeros)\nusing SparseArrays\n\n# differential operators on extended nodes\nLₓ = μ*L₁₋(x̄) + σ^2 / 2 * L₂(x̄)\n\n# boundary conditions (i.e. B v̄ = b)\nB = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]])\nb = [0.0; 0.0]\n\n# form bellman equation on extension\nL = [spzeros(M) ρ*I spzeros(M)] - Lₓ\n\n# stack the systems of bellman and boundary conditions, and solve\nv̄ =  [L; B] \\ [f.(x); b]\n\n# extract the interior (is identical with `v` above)\nv =  v̄[2:end-1]"
 },
 
 {
@@ -45,7 +45,7 @@ var documenterSearchIndex = {"docs": [
     "page": "﻿SimpleDifferentialOperators.jl",
     "title": "Solving HJBE with absorbing barrier conditions",
     "category": "section",
-    "text": "Instead of having the reflecting barrier conditions on both lower bound and upper bound v(0) = v(1) = 0 as above, one can impose an absorbing barrier condition as well. To solve v under the reflecting barrier conditions v(0) = S (absorbing barrier on lower bound) for some S and v(1) = 0 (reflecting barrier on upper bound), one can construct B and b for the boundary conditions as follows:# define S\nS = 3.0\n\n# boundary conditions (i.e. B v̄ = b)\nB = transpose([[1; 0; zeros(M)] [zeros(M); -1; 1]])\nb = [S; 0.0];and solve v:# stack the systems of bellman and boundary conditions, and solve\nv̄ =  [L; B] \\ [f.(x); b]\n\n# extract the interior (is identical with `v` above)\nv =  v̄[2:end-1]Note that this can be alternatively done byHere is a plot for v:plot(x, v, lw = 4, label = \"v\")(Image: plot-hjbe-lb-absorbing-ub-reflecting)"
+    "text": "Instead of having the reflecting barrier conditions on both lower bound and upper bound v(0) = v(1) = 0 as above, one can impose an absorbing barrier condition as well. To solve v under the reflecting barrier conditions v(0) = S (absorbing barrier on lower bound) for some S and v(1) = 0 (reflecting barrier on upper bound), one can construct B and b for the boundary conditions as follows:# define S\nS = 3.0\n\n# boundary conditions (i.e. B v̄ = b)\nB = transpose([[1; 0; zeros(M)] [zeros(M); -1; 1]])\nb = [S; 0.0];and solve v:# stack the systems of bellman and boundary conditions, and solve\nv̄ =  [L; B] \\ [f.(x); b]Note that this can be alternatively done byHere is a plot for v:plot(x̄, v̄, lw = 4, label = \"v\")(Image: plot-hjbe-lb-absorbing-ub-reflecting)"
 },
 
 {
@@ -150,6 +150,22 @@ var documenterSearchIndex = {"docs": [
     "title": "SimpleDifferentialOperators.L₂bc",
     "category": "method",
     "text": "L₂bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})\n\nReturns a discretized second-order differential operator of length(x̄) by length(x̄) matrix using central difference under boundary conditions specified by bc.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> L₂bc(x̄, (Reflecting(), Reflecting()))\n4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅     ⋅\n  1.0  -2.0   1.0    ⋅\n   ⋅    1.0  -2.0   1.0\n   ⋅     ⋅    1.0  -1.0\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#SimpleDifferentialOperators.extrapolatetoboundary-Tuple{Any,Any,Tuple{Mixed,Mixed}}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.extrapolatetoboundary",
+    "category": "method",
+    "text": "extrapolatetoboundary(v, x̄, bc::Tuple{Mixed, Mixed})\n\nReturns a length(x̄)-vector whose 2:(length(x̄)-1) elements are v, the first and last element are extrapolated v on the boundaries of x̄ according to boundary conditions bc given.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> x = x̄[2:length(x̄)]\n1:5\n\njulia> v = (x -> x^2).(x)\n5-element Array{Int64,1}:\n  1\n  4\n  9\n 16\n 25\n\njulia> extrapolatetoboundary(v, x̄, (Mixed(1), Mixed(1)))\n7-element Array{Float64,1}:\n Inf\n   1.0\n   4.0\n   9.0\n  16.0\n  25.0\n  12.5\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#SimpleDifferentialOperators.extrapolatetoboundary-Tuple{Any,Any,Tuple{Reflecting,Reflecting}}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.extrapolatetoboundary",
+    "category": "method",
+    "text": "extrapolatetoboundary(v, x̄, bc::Tuple{Reflecting, Reflecting})\n\nReturns a length(x̄)-vector whose 2:(length(x̄)-1) elements are v, the first and last element are extrapolated v on the boundaries of x̄ according to boundary conditions bc given.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> x = x̄[2:length(x̄)]\n1:5\n\njulia> v = (x -> x^2).(x)\n5-element Array{Int64,1}:\n  1\n  4\n  9\n 16\n 25\n\njulia> extrapolatetoboundary(v, x̄, (Reflecting(), Reflecting()))\n7-element Array{Int64,1}:\n  1\n  1\n  4\n  9\n 16\n 25\n 25\n\n\n\n\n\n"
 },
 
 {
