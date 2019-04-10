@@ -512,7 +512,8 @@ L_{1-}^B &\equiv \Delta^{-1}
 \end{bmatrix}^T
 \right)
 \right]
-   \\
+\end{align}
+\begin{align}
 L_{1+}^B &\equiv 
 \Delta^{-1}
 \left[ 
@@ -522,20 +523,22 @@ L_{1+}^B &\equiv
 (1+\overline{\xi} \Delta)^{-1}
 \end{bmatrix}^T
 \right)
-\right]\\
-L_2^B &\equiv  \Delta^{-2} 
-\left[ 
-\text{tridiag}(
+\right]
+\end{align}
+\begin{align}
+L_2^B \equiv  \Delta^{-2} 
+\Big[ 
+&\text{tridiag}(
 \mathbf{1}_{M-1},
-\mathbf{-2}_M,
+-2 \times \mathbf{1}_M,
 \mathbf{1}_{M-1} )
-+
-\diag \left( \begin{bmatrix}
++ \\
+&\diag \left( \begin{bmatrix}
 -2-(-1+\underline{\xi} \Delta)^{-1}&
 \mathbf{0}_{M-2}^T &
 -2+(1+\overline{\xi} \Delta)^{-1}
 \end{bmatrix}^T \right)
-\right]
+\Big]
 \end{align}
 
 \subsubsection{Absorbing Boundary Conditions}
