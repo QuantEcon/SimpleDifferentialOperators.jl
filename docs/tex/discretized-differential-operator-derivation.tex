@@ -636,21 +636,16 @@ And one for identity matrix:
 
 Alternatively, in a more compact form, using vectors distances for interior nodes:
 \begin{align}
-{L}_{1-} \equiv
-\begin{bmatrix}
-\text{tridiag($\mathbf{0}_{M-1}$, $-(\Delta_-^\circ)^{-1}$, $(\Delta_-^\circ)^{-1}$) } &  \mathbf{0}_M
-\end{bmatrix}
+{L}_{1-} \equiv 
+\band^{M,M+2}_{0,1}(-(\Delta_-^\circ)^{-1}, (\Delta_-^\circ)^{-1})
 \end{align}
 \begin{align}
 {L}_{1+} \equiv
-\begin{bmatrix}
-\mathbf{0}_M &
-\text{tridiag($\mathbf{0}_{M-1}$, $-(\Delta_-^\circ)^{-1}$, $(\Delta_-^\circ)^{-1}$) }
-\end{bmatrix}
+\band^{M,M+2}_{0,2}(\mathbf{0}_M, -(\Delta_+^\circ)^{-1}, (\Delta_+^\circ)^{-1})
 \end{align}
 \begin{align}
 {L}_{2} \equiv
-2 \odot \text{tridiag}^+ \left[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, -(\Delta_-^\circ \odot \Delta_+^\circ)^{-1} , (\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \right]
+2 \odot \band_{0,2}^{M,M+2} \left[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, -(\Delta_-^\circ \odot \Delta_+^\circ)^{-1} , (\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \right]
 \end{align}
 \begin{align}
 {I} \equiv
