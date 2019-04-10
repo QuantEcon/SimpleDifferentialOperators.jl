@@ -623,17 +623,6 @@ v''(x_i) \approx \dfrac{ \Delta_{i,-} \tilde{v}( x_i + \Delta_{i,+}) - (\Delta_{
 \end{equation}
 for second-order derivatives.
 
-And one for identity matrix:
-\begin{equation}\label{eq:I-extended}
-{I} \equiv \begin{bmatrix}
-0 & 1 & 0 & \cdots & 0 & 0 & 0\\
-0 & 0 & 1 & \cdots & 0 & 0 & 0\\
-\vdots & \vdots  & \ddots & \ddots &  \vdots  & \vdots  & \vdots  \\
-0 & 0 & 0 & \cdots & 1 & 0 & 0 \\
-0 & 0 & 0 & \cdots & 0 & 1 & 0
-\end{bmatrix}_{M\times (M+2)}
-\end{equation}
-
 Alternatively, in a more compact form, using vectors distances for interior nodes:
 \begin{align}
 {L}_{1-} \equiv 
@@ -647,12 +636,7 @@ Alternatively, in a more compact form, using vectors distances for interior node
 {L}_{2} \equiv
 2 \odot \band_{0,2}^{M,M+2} \left[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, -(\Delta_-^\circ \odot \Delta_+^\circ)^{-1} , (\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \right]
 \end{align}
-\begin{align}
-{I} \equiv
-\begin{bmatrix}
-\mathbf{0}_M &  \text{diag($\mathbf{1}_M$)} &  \mathbf{0}_M
-\end{bmatrix}
-\end{align}
+
 
 \subsubsection{Mixed boundary conditions}\label{subsubsec-irregular-grids-mixed-boundary-conditions}
 Recall mixed boundary conditions from \eqref{eq:mixed-BC1} and \eqref{eq:mixed-BC2}. Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$. Using forward difference and backward difference discretization scheme for the lower bound and upper bound respectively, we have
