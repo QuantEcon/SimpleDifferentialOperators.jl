@@ -42,7 +42,22 @@ L_bc = I * ρ - μ*L₁₋bc(x̄, bc) - σ^2 / 2 * L₂bc(x̄, bc)
 v = L_bc \ f.(x)
 ```
 
-Note that the code above uses differential operators with reflecting boundary conditions applied.
+Note that the interior solution `v` does not the values of $v$ at the boundary, i.e., $v(0)$ and $v(1)$. To extend the interior solution to the boundary points, one can call `extrapolatetoboundary` as follows:
+
+```julia
+̄v = extrapolatetoboundary(x̄, v, bc);
+```
+
+Here is a complete plot for `v`:
+
+```julia
+using Plots
+plot(x̄, v̄, lw = 4, label = "v")
+```
+
+![plot-hjbe-both-reflecting](assets/plot-hjbe-both-reflecting.png)
+
+Note that the code above uses differential operators on the interior nodes with reflecting boundary conditions applied.
 One can alternatively use operators on extended nodes (extended operators) and stack them with matrices for boundary conditions to compute `v`:
 ```julia
 # import SparseArrays package (for identity matrix and spzeros)
@@ -65,16 +80,6 @@ v̄ =  [L; B] \ [f.(x); b]
 v =  v̄[2:end-1]
 ```
 
-
-Here is a plot for `v`:
-
-```julia
-using Plots
-plot(x, v, lw = 4, label = "v")
-```
-
-![plot-hjbe-both-reflecting](assets/plot-hjbe-both-reflecting.png)
-
 ### Solving HJBE with absorbing barrier conditions
 Instead of having the reflecting barrier conditions on both lower bound and upper bound $v'(0) = v'(1) = 0$ as above, one can impose an absorbing barrier condition as well. To solve `v` under the reflecting barrier conditions $v(0) = S$ (absorbing barrier on lower bound) for some S and $v'(1) = 0$ (reflecting barrier on upper bound), one can construct `B` and `b` for the boundary conditions as follows:
 
@@ -91,9 +96,6 @@ and solve `v`:
 ```julia
 # stack the systems of bellman and boundary conditions, and solve
 v̄ =  [L; B] \ [f.(x); b]
-
-# extract the interior (is identical with `v` above)
-v =  v̄[2:end-1]
 ```
 
 Note that this can be alternatively done by
@@ -101,7 +103,7 @@ Note that this can be alternatively done by
 Here is a plot for `v`:
 
 ```julia
-plot(x, v, lw = 4, label = "v")
+plot(x̄, v̄, lw = 4, label = "v")
 ```
 
 ![plot-hjbe-lb-absorbing-ub-reflecting](assets/plot-hjbe-lb-absorbing-ub-reflecting.png)

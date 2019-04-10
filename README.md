@@ -59,6 +59,12 @@ L = I * ρ - L_x
 v = L \ f.(x)
 ```
 
+To extrapolate the interior solution to the boundary, one can call `extrapolatetoboundary` as follows:
+
+```julia
+v̄ = extrapolatetoboundary(x̄, v, bc) 
+```
+
 ## Documentation
 
 To install, run `] add SimpleDifferentialOperators` on Julia 1.1+.
