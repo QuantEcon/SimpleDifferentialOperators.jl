@@ -573,12 +573,6 @@ S
 \section{Discretizing Operators with a Irregular Grid}
 \subsection{Discretized Operators}
 
-Define the vectors of backward and forward distance for interior nodes as follows:
-\begin{align}
-\Delta_{-}^\circ &= \set{\Delta_{i,-}}_{i=1}^M \\
-\Delta_{+}^\circ &= \set{\Delta_{i,+}}_{i=1}^M
-\end{align}
-
 
 We can then define the following operators on $\overline{x}$:
 
@@ -621,7 +615,14 @@ v''(x_i) \approx \dfrac{ \Delta_{i,-} \tilde{v}( x_i + \Delta_{i,+}) - (\Delta_{
 \end{equation}
 for second-order derivatives.
 
-Alternatively, in a more compact form, using vectors distances for interior nodes:
+
+Define the vectors of backward and forward distance for interior nodes as follows:
+\begin{align}
+\Delta_{-}^\circ &= \set{\Delta_{i,-}}_{i=1}^M \\
+\Delta_{+}^\circ &= \set{\Delta_{i,+}}_{i=1}^M
+\end{align}
+
+Then, using the vectors of distances, the extended operators can be represented in a more compact form:
 \begin{align}
 {L}_{1-} \equiv 
 \band^{M,M+2}_{0,1}(-(\Delta_-^\circ)^{-1}, (\Delta_-^\circ)^{-1})
