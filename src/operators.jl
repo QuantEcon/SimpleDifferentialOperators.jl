@@ -34,13 +34,14 @@ julia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), CentralSecondDiff
 """
 function DifferentialOperator(x̄, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)
     T = eltype(x̄)
+    M = length(x̄) - 2
     Δ_1m = x̄[2] - x̄[1]
     Δ_1p = x̄[3] - x̄[2]
     Δ_Mm = x̄[end-1] - x̄[end-2]
     Δ_Mp = x̄[end] - x̄[end-1]
 
-    # get basis operator on interior nodes
-    L = get_basis_operator(x̄, method)
+    # get the corresponding extension operator and extract the interior nodes  
+    L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
     
     Ξ_1 = -(1/(Δ_1m*Δ_1p)-1/((Δ_1p+Δ_1m)*(Δ_1m)))
     Ξ_M = -(1/(Δ_Mm*Δ_Mp)-1/((Δ_Mp+Δ_Mm)*(Δ_Mp))) 
@@ -89,6 +90,7 @@ julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), CentralSecondDifferen
 """
 function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)
     T = eltype(x̄)
+    M = length(x̄) - 2
     d = diff(x̄)
     ξ_lb = bc[1].ξ
     ξ_ub = bc[2].ξ
@@ -97,8 +99,8 @@ function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMe
     Δ_Mp = x̄[end] - x̄[end-1]
     Δ_Mm = x̄[end-1] - x̄[end-2]
 
-    # get extended operator with reflecting barrier conditions first
-    L = get_basis_operator(x̄, method)
+    # get the corresponding extension operator and extract the interior nodes 
+    L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
  
     Ξ_1 = -(1/(Δ_1m*Δ_1p)+1/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m)))
     Ξ_M = -(1/(Δ_Mm*Δ_Mp)-1/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp)))

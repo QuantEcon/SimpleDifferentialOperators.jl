@@ -105,7 +105,7 @@ end
   exit_code, sol_z, sol_f = @suppress solveLCP(f, lb, ub);
 
   # tests
-  @test exit_code == :Solved
+  @test exit_code == :StationaryPointFound
   @test sol_z[3] ≈ 8.888461348456772 atol = 1e-5
   @test sol_z[76] ≈ 2.279767804635279 atol = 1e-5
   @test sol_z[150] ≈ 0.005770703117189083 atol = 1e-5
