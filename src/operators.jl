@@ -32,27 +32,10 @@ julia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), CentralSecondDiff
    ⋅     ⋅    1.0  -1.0
 ```
 """
-function DifferentialOperator(x̄, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)
-    T = eltype(x̄)
-    M = length(x̄) - 2
-    Δ_1m = x̄[2] - x̄[1]
-    Δ_1p = x̄[3] - x̄[2]
-    Δ_Mm = x̄[end-1] - x̄[end-2]
-    Δ_Mp = x̄[end] - x̄[end-1]
-
-    # get the corresponding extension operator and extract the interior nodes  
-    L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
-    
-    Ξ_1 = -(1/(Δ_1m*Δ_1p)-1/((Δ_1p+Δ_1m)*(Δ_1m)))
-    Ξ_M = -(1/(Δ_Mm*Δ_Mp)-1/((Δ_Mp+Δ_Mm)*(Δ_Mp))) 
-   
-    # apply boundary conditions
-    L[1,1] = typeof(method) <: BackwardFirstDifference ? zero(T) : L[1,1]
-    L[1,1] = typeof(method) <: CentralSecondDifference ? 2*Ξ_1 : L[1,1]
-    L[end,end] = typeof(method) <: ForwardFirstDifference ? zero(T) : L[end,end]
-    L[end,end] = typeof(method) <: CentralSecondDifference ? 2*Ξ_M : L[end,end]
-
-    return L
+function DifferentialOperator(x̄, bc::Tuple{Reflecting, Reflecting}, method)
+    # since reflecting boundary conditions are special cases of
+    # mixed boundary conditions with ξ_lb = ξ_ub = 0
+    DifferentialOperator(x̄, (Mixed(0), Mixed(0)), method)
 end
 
 """
@@ -88,10 +71,36 @@ julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), CentralSecondDifferen
   ⋅     ⋅    1.0  -2.0
 ```
 """
-function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)
-    T = eltype(x̄)
-    M = length(x̄) - 2
-    d = diff(x̄)
+function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::BackwardFirstDifference)
+    # setup 
+    ξ_lb = bc[1].ξ
+    Δ_1m = x̄[2] - x̄[1]
+
+    # get the corresponding extension operator and extract the interior nodes 
+    L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
+
+    # apply boundary conditions
+    L[1,1] = (1+1/(-1+ξ_lb*Δ_1m))/Δ_1m
+
+    return L
+end
+
+function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::ForwardFirstDifference)
+    # setup 
+    ξ_ub = bc[2].ξ
+    Δ_Mp = x̄[end] - x̄[end-1]
+
+    # get the corresponding extension operator and extract the interior nodes 
+    L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
+
+    # apply boundary conditions
+    L[end,end] = (-1+1/(1+ξ_ub*Δ_Mp))/Δ_Mp
+
+    return L
+end
+
+function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::CentralSecondDifference)
+    # setup
     ξ_lb = bc[1].ξ
     ξ_ub = bc[2].ξ
     Δ_1p = x̄[3] - x̄[2]
@@ -101,15 +110,12 @@ function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMe
 
     # get the corresponding extension operator and extract the interior nodes 
     L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
- 
+
+    # apply boundary conditions
     Ξ_1 = -(1/(Δ_1m*Δ_1p)+1/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m)))
     Ξ_M = -(1/(Δ_Mm*Δ_Mp)-1/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp)))
-   
-    # apply boundary conditions
-    L[1,1] = typeof(method) <: BackwardFirstDifference ? (1+1/(-1+ξ_lb*Δ_1m))/Δ_1m : L[1,1]
-    L[1,1] = typeof(method) <: CentralSecondDifference ? 2*Ξ_1 : L[1,1]
-    L[end,end] = typeof(method) <: ForwardFirstDifference ? (-1+1/(1+ξ_ub*Δ_Mp))/Δ_Mp : L[end,end]
-    L[end,end] = typeof(method) <: CentralSecondDifference ? 2*Ξ_M : L[end,end]
+    L[1,1] = 2*Ξ_1
+    L[end,end] = 2*Ξ_M
 
     return L
 end
