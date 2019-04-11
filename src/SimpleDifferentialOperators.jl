@@ -7,6 +7,7 @@ using LinearAlgebra, SparseArrays
 include("types.jl")
 include("basis.jl")
 include("operators.jl")
+include("extensionoperators.jl")
 include("utilities/extrapolatetoboundary.jl")
 
 # Exports
