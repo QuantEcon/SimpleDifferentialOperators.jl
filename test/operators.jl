@@ -126,7 +126,7 @@ end
     ρ = 0.05
     M = 100 # size of grid
     x̄ = range(-1.0, 1.0, length = M+2) # grid
-    x = x̄[2:end-1]
+    x = interiornodes(x̄)
     bc = (Reflecting(), Reflecting()) # specify BC (reflecting barrier)
     ## M-vector of drifts stacked according to the states
     μs = μ.(x)

@@ -11,7 +11,7 @@ The first element of `bc` is applied to the lower bound, and second element of `
 julia> x̄ = 0:5
 0:5
 
-julia> x = x̄[2:length(x̄)]
+julia> x = interiornodes(x̄)
 1
 2
 3
@@ -58,7 +58,7 @@ The first element of `bc` is applied to the lower bound, and second element of `
 julia> x̄ = 0:5
 0:5
 
-julia> x = x̄[2:length(x̄)]
+julia> x = interiornodes(x̄)
 1
 2
 3

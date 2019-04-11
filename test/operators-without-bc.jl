@@ -46,7 +46,7 @@ end
         σ = 0.1
         ρ = 0.05
         
-        x = x̄[2:end-1]
+        x = interiornodes(x̄)
         M = length(x)
         bc = (Reflecting(), Reflecting()) # specify BC (reflecting barrier)
 
