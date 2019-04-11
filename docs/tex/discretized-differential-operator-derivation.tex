@@ -573,32 +573,59 @@ S
 \section{Discretizing Operators with a Irregular Grid}
 \subsection{Discretized Operators}
 
+Define the vectors of backward and forward distance for interior nodes as follows:
+\begin{align}
+\Delta_{-}^\circ &= \set{\Delta_{i,-}}_{i=1}^M \\
+\Delta_{+}^\circ &= \set{\Delta_{i,+}}_{i=1}^M
+\end{align}
 
-We can then define the following operators on $\overline{x}$:
+\paragraph{First Derivative Operators}
+To discretize the $\tilde{L}_1$ operator, we can use a backward difference approximation
+\begin{align}
+\tilde{L}_1 \tilde{v}(x_i) &\equiv \D[x] \tilde{v}(x_i) \approx \frac{\bar{v}_i - \bar{v}_{i-1}}{\Delta_{i,-}},\, \text{ for } i = 1,\ldots M\label{eq:first-order-bd-irregular}\\
+\intertext{And with forward differences}
+\tilde{L}_1 \tilde{v}(x_i) &\equiv \D[x] \tilde{v}(x_i) \approx \frac{\bar{v}_{i+1} - \bar{v}_i}{\Delta_{i,+}},\, \text{ for } i = 1,\ldots M\label{eq:first-order-fd-irregular}
+\end{align}
 
-
-\begin{equation}\label{eq:L-1-minus-extended}
-{L}_{1-} \equiv\begin{bmatrix}
+In order to calculate the derivatives for all $i = 1, \ldots M$ (i.e. in the interior) we can stack these up and apply to the extension $\bar{v}$.
+\begin{align}\label{eq:L-1-minus-extended}
+{L}_{1-} &\equiv\begin{bmatrix}
 -\Delta_{1,-}^{-1}&\Delta_{1,-}^{-1}&0&\dots&0&0&0\\
 0&-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&\Delta_{M-1,-}^{-1}&0&0\\
 0&0&0&\cdots&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}&0
-\end{bmatrix}_{M\times (M+2)}
-\end{equation}
+\end{bmatrix}_{M\times (M+2)} \\
+&= 
+\band^{M,M+2}_{0,2}(\mathbf{0}_M, -(\Delta_+^\circ)^{-1}, (\Delta_+^\circ)^{-1})
+\end{align}
 
-\begin{equation}\label{eq:L-1-plus-extended}
-{L}_{1+} \equiv \begin{bmatrix}
+\begin{align}\label{eq:L-1-plus-extended}
+{L}_{1+} &\equiv \begin{bmatrix}
 0&-\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&\dots&0&0&0\\
 0&0&-\Delta_{2,+}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}&0\\
 0&0&0&\cdots&0&-\Delta_{M,+}^{-1}&\Delta_{M,+}^{-1}&
-\end{bmatrix}_{M\times (M+2)}
+\end{bmatrix}_{M\times (M+2)} \\
+&= 
+\band^{M,M+2}_{0,1}(-(\Delta_-^\circ)^{-1}, (\Delta_-^\circ)^{-1})
+\end{align}
+
+It is important to note that while these operators map the $\bar{v}$ (i.e. including the boundary points), the operator only maps to points on the interior i.e. $i = 1, \ldots M$.
+
+
+
+\paragraph{Second Derivative Operators}
+To discretize the $\tilde{L}_2$ second order operator, we can use the following discretization scheme scheme from \cite{achdou17}:
+\begin{equation}
+v''(x_i) \approx \dfrac{ \Delta_{i,-} \tilde{v}( x_i + \Delta_{i,+}) - (\Delta_{i,+} + \Delta_{i,-}) \tilde{v}( x_i ) + \Delta_{i,+} \tilde{v}( x_i - \Delta_{i,-})}{\frac{1}{2}(\Delta_{i,+} + \Delta_{i,-}) \Delta_{i,+} \Delta_{i,-} }, \text{for } i = 1, \ldots, M
 \end{equation}
+for second-order derivatives.
 
 
-\begin{equation}\label{eq:L-2-extended} \small
+In order to calculate the derivatives for all $i = 1, \ldots M$ (i.e. in the interior) we can stack these up and apply to the extension $\bar{v}$.
+\begin{align}\label{eq:L-2-extended} \small
 {L}_2 \equiv 2 \begin{psmallmatrix}
 (\Delta_{1,+}+\Delta_{1,-})^{-1}\Delta_{1,-}^{-1} &-\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  & (\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{i,+}^{-1}&\dots&0&0\\
 0 & \ddots & \ddots &\ddots & 0 & 0\\
@@ -606,34 +633,11 @@ We can then define the following operators on $\overline{x}$:
 0&0&\cdots&
 (\Delta_{M,+}+\Delta_{M,-})^{-1}\Delta_{M,-}^{-1} &-\Delta_{M,-}^{-1} \Delta_{M,+}^{-1}  &
 (\Delta_{M,+}+\Delta_{M,-})^{-1}\Delta_{M,+}^{-1}
-\end{psmallmatrix}_{M\times (M+2)}
-\end{equation}
-
-Note that we use the following discretization scheme scheme from \cite{achdou17}:
-\begin{equation}
-v''(x_i) \approx \dfrac{ \Delta_{i,-} \tilde{v}( x_i + \Delta_{i,+}) - (\Delta_{i,+} + \Delta_{i,-}) \tilde{v}( x_i ) + \Delta_{i,+} \tilde{v}( x_i - \Delta_{i,-})}{\frac{1}{2}(\Delta_{i,+} + \Delta_{i,-}) \Delta_{i,+} \Delta_{i,-} }, \text{for } i = 1, \ldots, M
-\end{equation}
-for second-order derivatives.
-
-
-Define the vectors of backward and forward distance for interior nodes as follows:
-\begin{align}
-\Delta_{-}^\circ &= \set{\Delta_{i,-}}_{i=1}^M \\
-\Delta_{+}^\circ &= \set{\Delta_{i,+}}_{i=1}^M
+\end{psmallmatrix}_{M\times (M+2)} 
 \end{align}
-
-Then, using the vectors of distances, the extended operators can be represented in a more compact form:
+which is identical as
 \begin{align}
-{L}_{1-} \equiv 
-\band^{M,M+2}_{0,1}(-(\Delta_-^\circ)^{-1}, (\Delta_-^\circ)^{-1})
-\end{align}
-\begin{align}
-{L}_{1+} \equiv
-\band^{M,M+2}_{0,2}(\mathbf{0}_M, -(\Delta_+^\circ)^{-1}, (\Delta_+^\circ)^{-1})
-\end{align}
-\begin{align}
-{L}_{2} \equiv
-2 \odot \band_{0,2}^{M,M+2} \left[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, -(\Delta_-^\circ \odot \Delta_+^\circ)^{-1} , (\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \right]
+L_2 &= 2 \odot \band_{0,2}^{M,M+2} \left[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, -(\Delta_-^\circ \odot \Delta_+^\circ)^{-1} , (\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \right]
 \end{align}
 
 \subsection{Boundary Conditions}
