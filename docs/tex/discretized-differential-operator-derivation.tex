@@ -640,6 +640,28 @@ which is identical as
 L_2 &= 2 \odot \band_{0,2}^{M,M+2} \left[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, -(\Delta_-^\circ \odot \Delta_+^\circ)^{-1} , (\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \right]
 \end{align}
 
+
+\paragraph{Identity Operators}
+Define the identity operator as the $0$-th order operator $\tilde{L}_0 \equiv I$ so that $\tilde{L}_0 \tilde{v}(x) = \tilde{v}(x)$.
+
+With this, the operator applied to the $\bar{v}$ vector is trivial
+\begin{align}
+\tilde{L}_0 \tilde{v}(x_i) &\equiv \tilde{v}(x_i) = \bar{v}_i,\, \text{ for } i = 1,\ldots M\
+\intertext{And stacking it up for all $i = 1, \ldots M$,}
+\set{\tilde{v}(x_i)}_{i=1}^M &\approx L_0 \cdot \bar{v}
+\intertext{Where}
+L_0 &\equiv \begin{bmatrix}
+0 & 1 & 0 & 0 &\dots & 0 & 0 & 0 &0\\
+0 & 0 & 1 & 0 &\dots & 0 & 0 & 0 &0\\
+\vdots&\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots&\vdots\\
+0 & 0 & 0 & 0 &\dots & 0 & 1 & 0 &0\\
+0 & 0 & 0 & 0 &\dots & 0 & 0 & 1 &0
+\end{bmatrix}_{M\times (M+2)}\\
+&= \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}\\
+&= \band_{0,1}^{M,M+2}(\mathbf{0}_M, \mathbf{1}_M)
+\end{align}
+which is identical as the identity operator for regular grids.
+
 \subsection{Boundary Conditions}
 
 \paragraph{Mixed boundary conditions}
