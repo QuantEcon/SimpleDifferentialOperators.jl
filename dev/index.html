@@ -8,7 +8,7 @@ f(x) = x^2
 M = 100 # size of grid (interior points)
 
 x̄ = range(0.0, 1.0, length = (M+2))
-x = x̄[2:end-1]
+x = interiornodes(x̄) # i.e., x̄[2:end-1]
 
 # discretize L = ρ - μ D_x - σ^2 / 2 D_xx
 # subject to reflecting barriers at 0 and 1
