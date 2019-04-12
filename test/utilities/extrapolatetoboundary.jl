@@ -12,7 +12,7 @@
 
             # grid setup
             # x̄ = 0:4
-            x = x̄[2:end-1]
+            x = interiornodes(x̄)
             M = length(x)
             Δ_0p = x̄[2] - x̄[1] 
             Δ_Mp = x̄[end] - x̄[end-1]
