@@ -29,7 +29,7 @@ var documenterSearchIndex = {"docs": [
     "page": "﻿SimpleDifferentialOperators.jl",
     "title": "Usage",
     "category": "section",
-    "text": ""
+    "text": "Detailed derivations and more applications can be found here."
 },
 
 {
