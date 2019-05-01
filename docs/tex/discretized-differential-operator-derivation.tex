@@ -821,7 +821,7 @@ b_2
 \end{align}
 which is identical as \eqref{eq:absorbing-barrier-matrix-regular} for regular grids.
 
-\subsection{Applying Boundary Conditions to Operators}
+\subsection{Applying Boundary Conditions to Operators}\label{subsec:applying-bc}
 Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value function $\tilde{v}(\overline{x})$ on the extended grid, one can perform Gaussian elimination to reduce the system and solve $\tilde{v}(x)$, which gives the identical solution as the interior of $\tilde{v}(\overline{x})$.
 
 
@@ -1460,7 +1460,7 @@ B_{+1} &\equiv \begin{bmatrix} B_{12} & B_{23} & B_{34} & B_{45} \end{bmatrix}\i
 
 
 \section{Boundary extrapolation under mixed boundary conditions}
-Consider solving $v$ on an irregular extended grid $\overline{x} = \set{x_i}_{i=0}^{M+1}$ with the corresponding interior grid $x = \set{x_i}_{i=1}^M $ such that mixed boundary conditions \eqref{eq:mixed-BC1} and \eqref{eq:mixed-BC2} are applied. As described in \ref{subsec:applying-bc}, differential operators with boundary conditions $B$ applied, $L^B$, can be used to solve the system $L^B v = f$ in \eqref{eq:system-on-interior} to find $v$ on the interior grid without stacking up the boundary conditions manually. Note that the resulting interior solution $v$ does not contain the value of $v$ on the boundary, $\overline{v}_0 = v(x_0)$ and $\overline{v}_{M+1} = v(x_{M+1})$. 
+Consider solving $v$ on an irregular extended grid $\overline{x} = \set{x_i}_{i=0}^{M+1}$ with the corresponding interior grid $x = \set{x_i}_{i=1}^M $ such that mixed boundary conditions \eqref{eq:mixed-BC1} and \eqref{eq:mixed-BC2} are applied. As described in Section \ref{subsec:applying-bc}, differential operators with boundary conditions $B$ applied, $L^B$, can be used to solve the system $L^B v = f$ in \eqref{eq:system-on-interior} to find $v$ on the interior grid without stacking up the boundary conditions manually. Note that the resulting interior solution $v$ does not contain the value of $v$ on the boundary, $\overline{v}_0 = v(x_0)$ and $\overline{v}_{M+1} = v(x_{M+1})$. 
 
 To retrieve $\overline{v}_0 $ and $\overline{v}_{M+1}$ to construct $\overline{v}$ from $v$, first note that the mixed boundary conditions can be discretized as follows:
 \begin{align}
