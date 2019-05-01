@@ -12,6 +12,8 @@ Note that this requires Julia 1.1 or later.
 
 ## Usage
 
+Detailed derivations and more applications can be found [here](https://quantecon.github.io/SimpleDifferentialOperators.jl/stable/generated/discretized-differential-operator-derivation.pdf).
+
 ### Solving HJBE with constant drifts
 -------------
 Consider solving for `v` from the following equation by the Hamilton-Jacobi-Bellman equation (HJBE):
