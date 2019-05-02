@@ -12,11 +12,12 @@ Note that this requires Julia 1.1 or later.
 
 ## Usage
 
-Detailed derivations and more applications can be found [here](https://quantecon.github.io/SimpleDifferentialOperators.jl/stable/generated/discretized-differential-operator-derivation.pdf).
+Detailed derivations and more applications can be found [here](../generated/discretized-differential-operator-derivation.pdf).
 
 ### Solving HJBE with constant drifts
 -------------
 Consider solving for `v` from the following equation by the Hamilton-Jacobi-Bellman equation (HJBE):
+
 ```math
 \rho v(x) = f(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
 ```
