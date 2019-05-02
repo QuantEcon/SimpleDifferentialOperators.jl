@@ -671,15 +671,22 @@ div.title {text-align: center;}
 
 
 <pre class='hljl'>
-<span class='hljl-cs'># install if required,</span><span class='hljl-t'>
-</span><span class='hljl-cs'># ] add SimpleDifferentialOperators Plots Suppressor BenchmarkTools</span><span class='hljl-t'>
+<span class='hljl-cs'># if you are running locally for the first time, run ] add InstantiateFromURL</span><span class='hljl-t'>
+</span><span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>InstantiateFromURL</span><span class='hljl-t'> 
+</span><span class='hljl-nf'>activate_github_path</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;QuantEcon/SimpleDifferentialOperators.jl&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>path</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;docs/examples&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>activate</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-kc'>true</span><span class='hljl-p'>)</span>
+</pre>
 
-</span><span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>SimpleDifferentialOperators</span><span class='hljl-t'>
+
+<pre class="output">
+Updating registry at &#96;~/.julia/registries/General&#96;
+  Updating git-repo &#96;https://github.com/JuliaRegistries/General.git&#96;
+piling project...
+</pre>
 
 
-</span><span class='hljl-cs'># use TOML for other packages </span><span class='hljl-t'>
-</span><span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>Pkg</span><span class='hljl-t'> 
-</span><span class='hljl-so'>pkg&quot;activate .&quot;</span><span class='hljl-t'>
+
+<pre class='hljl'>
+<span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>SimpleDifferentialOperators</span><span class='hljl-t'>
 </span><span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>Plots</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>LinearAlgebra</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>Suppressor</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>BenchmarkTools</span>
 </pre>
 
@@ -742,7 +749,7 @@ div.title {text-align: center;}
 
 
 <pre class="output">
-5.516 ms &#40;356 allocations: 2.44 MiB&#41;
+5.461 ms &#40;356 allocations: 2.44 MiB&#41;
 </pre>
 
 
@@ -762,7 +769,7 @@ div.title {text-align: center;}
 
 
 <pre class="output">
-20.798 ms &#40;1944 allocations: 33.55 MiB&#41;
+23.856 ms &#40;1944 allocations: 33.55 MiB&#41;
 </pre>
 
 
@@ -813,7 +820,7 @@ div.title {text-align: center;}
 
 
 <pre class="output">
-202.217 ms &#40;9519 allocations: 51.24 MiB&#41;
+203.362 ms &#40;9519 allocations: 51.24 MiB&#41;
 </pre>
 
 
@@ -905,10 +912,10 @@ BenchmarkTools.Trial:
   memory estimate:  3.61 MiB
   allocs estimate:  57669
   --------------
-  minimum time:     103.064 ms &#40;0.00&#37; GC&#41;
-  median time:      122.755 ms &#40;0.00&#37; GC&#41;
-  mean time:        123.614 ms &#40;0.87&#37; GC&#41;
-  maximum time:     152.002 ms &#40;5.53&#37; GC&#41;
+  minimum time:     103.205 ms &#40;0.00&#37; GC&#41;
+  median time:      121.977 ms &#40;0.00&#37; GC&#41;
+  mean time:        123.279 ms &#40;0.91&#37; GC&#41;
+  maximum time:     138.994 ms &#40;5.32&#37; GC&#41;
   --------------
   samples:          41
   evals/sample:     1
@@ -987,12 +994,12 @@ BenchmarkTools.Trial:
   memory estimate:  4.14 MiB
   allocs estimate:  61518
   --------------
-  minimum time:     47.389 ms &#40;0.00&#37; GC&#41;
-  median time:      52.539 ms &#40;0.00&#37; GC&#41;
-  mean time:        53.276 ms &#40;2.28&#37; GC&#41;
-  maximum time:     64.100 ms &#40;10.73&#37; GC&#41;
+  minimum time:     48.092 ms &#40;0.00&#37; GC&#41;
+  median time:      55.280 ms &#40;0.00&#37; GC&#41;
+  mean time:        56.038 ms &#40;2.47&#37; GC&#41;
+  maximum time:     69.130 ms &#40;0.00&#37; GC&#41;
   --------------
-  samples:          94
+  samples:          90
   evals/sample:     1
 </pre>
 

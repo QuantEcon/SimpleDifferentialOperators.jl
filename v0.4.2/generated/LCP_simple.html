@@ -788,14 +788,11 @@ div.title {text-align: center;}
 
 
 <pre class='hljl'>
-<span class='hljl-cs'># install if required,</span><span class='hljl-t'>
-</span><span class='hljl-cs'># ] add SimpleDifferentialOperators PATHSolver Plots Suppressor</span><span class='hljl-t'>
+<span class='hljl-cs'># if you are running locally for the first time, run ] add InstantiateFromURL</span><span class='hljl-t'>
+</span><span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>InstantiateFromURL</span><span class='hljl-t'> 
+</span><span class='hljl-nf'>activate_github_path</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;QuantEcon/SimpleDifferentialOperators.jl&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>path</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;docs/examples&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>activate</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-kc'>true</span><span class='hljl-p'>)</span><span class='hljl-t'>
 
 </span><span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>SimpleDifferentialOperators</span><span class='hljl-t'>
-
-</span><span class='hljl-cs'># use TOML for other packages </span><span class='hljl-t'>
-</span><span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>Pkg</span><span class='hljl-t'> 
-</span><span class='hljl-so'>pkg&quot;activate .&quot;</span><span class='hljl-t'>
 </span><span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>PATHSolver</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>Plots</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>LinearAlgebra</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>Suppressor</span>
 </pre>
 
