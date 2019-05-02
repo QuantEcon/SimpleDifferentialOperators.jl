@@ -15,5 +15,8 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Suppressor = "fd094767-a336-5f1f-9728-57cf17d0bbfb"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
+[compat]
+julia = "1.1"
+
 [targets]
 test = ["Test", "DualNumbers", "BenchmarkTools", "PATHSolver", "Suppressor", "Parameters", "Random"]
