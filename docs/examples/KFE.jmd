@@ -1,0 +1,138 @@
+# Discretizing Kolmogorov Forward Equations 
+## Kolmogorov Forward Equations (KFE)
+The KFE equation is
+$$
+\partial_t v(x,t) = -\mu \partial_{x} v(x,t) + \frac{\sigma^2}{2} \partial_{xx} v(x,t)
+$$
+for $x \in (x_{\min}, x_{\max})$. The corresponding reflecting barrier conditions are
+$$
+\begin{equation}
+\begin{align}
+-\mu v(x_{\min}, t) +\frac{\sigma^2}{2} \partial_{x} v(x_{\min}, t) &= 0 \\
+-\mu v(x_{\max}, t) +\frac{\sigma^2}{2} \partial_{x} v(x_{\max}, t) &= 0
+\end{align}
+$$
+
+Let $\tilde L$ be a differential operator such that $\tilde L v(x)$ represents $\partial_t v(x,t)$, i.e., $\tilde L v (x) = -\mu v'(x) + (\sigma^2/2) v''(x) $. 
+Discretize the domain by $\{x_i \}_{i=0}^{M+1}$ with $x_0 = x_{\min}$ and $x_{M+1} = x_{\max}$; 
+
+```julia
+using SimpleDifferentialOperators, Test
+μ = -1.0 # constant negative drift
+σ = 1.
+M = 3 # size of grid (interior points)
+@assert μ <= 0 # make sure we are using negative drifts
+x̄ = range(0.0, 1.0, length = (M+2))
+Δ = step(x̄)
+x = interiornodes(x̄); # i.e., x̄[2:end-1]
+```
+
+The corresponding discretized operator $L$ can be constructed as follows:
+
+```julia
+L = Array(-μ*L₁₊(x̄) + σ^2 / 2 * L₂(x̄))
+```
+
+Under upwind scheme with the current negative drift term $\mu \leq 0$, the boundary condition matrices are
+
+$$
+B =
+\begin{bmatrix}
+-\frac{\sigma^{2}}{2 \Delta} & {-\mu+\frac{\sigma^{2}}{2 \Delta}} & {0} & {\ldots} & {0} & {0} & {0}\\
+{0} & {0} & {0} & {\ldots} & {0} & {-\frac{\sigma^{2}}{2 \Delta}} & {-\mu+\frac{\sigma^{2}}{2 \Delta}}
+\end{bmatrix}_{2 \times(M+2)}
+$$
+
+$$
+b = 
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix}
+$$
+
+```julia
+B = transpose([[- σ^2/(2*Δ); -μ + σ^2/(2*Δ); zeros(M)] [zeros(M); -σ^2/(2*Δ); -μ+σ^2/(2*Δ)]])
+```
+
+```julia
+b = [0; 0];
+```
+
+such that the discretized solution $v$ satisfies the following system:
+
+$$
+\begin{bmatrix}
+L \\
+B
+\end{bmatrix} 
+= 
+\begin{bmatrix}
+v \\
+b
+\end{bmatrix} 
+$$
+
+```julia
+[L; B]
+```
+
+
+It is also worth mentioning that for $\mu \geq 0$, the corresponding boundary condition matrix $B$ would have been
+
+$$
+B =
+\begin{bmatrix}
+-\mu-\frac{\sigma^{2}}{2 \Delta} & {\frac{\sigma^{2}}{2 \Delta}} & {0} & {\ldots} & {0} & {0} & {0}\\
+{0} & {0} & {0} & {\ldots} & {0} & {-\mu-\frac{\sigma^{2}}{2 \Delta}} & {\frac{\sigma^{2}}{2 \Delta}}
+\end{bmatrix}_{2 \times(M+2)}
+$$
+
+Now perform Gaussian elimination once -- substract the first row of $L$ by a multiple of the first row of $B$ to make the first column of the resulting matrix have zeros only:
+
+```julia
+L_KFE = copy(L)
+L_KFE[1,:] -= (L[1,1] / B[1,1])*B[1,:]
+[L_KFE; B]
+```
+
+Likewise, perform another Gaussian elimination by substracting the last row of the resulting $L$ by a multiple of the second row of $B$ to make the last column of the resulting matrix have zeros only:
+
+```julia
+L_KFE[end,:] -= (L[end,end] / B[end,end])*B[end,:]
+[L_KFE; B]
+```
+
+Note that the most left and right columns corresponding to $L$ are all zeros. Extracting the interior yields
+```julia
+L_KFE = L_KFE[:,2:end-1] 
+```
+
+## Infinitesimal generator for Brownian motions
+The infinitesimal generator for Brownian motions is defined as $\tilde L$ such that
+$$
+\tilde{L}_B v = \mu v'(x) + \frac{\sigma^2}{2} v''(x)
+$$
+for $x \in (x_{\min}, x_{\max})$. Assume that reflecting barrier conditions are applied on both lower bound and upper bound, i.e.,
+$$
+\begin{align}
+v'(x_{\min}) &= 0 \\
+v'(x_{\max}) &= 0 \\
+\end{align}
+$$
+
+Using `SimpleDifferentialOperators.jl`, one can construct a discretized operator $L_B$ for $\tilde{L}_B$ under the reflecting boundary conditions:
+
+```julia
+# define boundary conditions
+bc = (Reflecting(), Reflecting())
+# define discretized operator
+L_B = Array(μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))
+```
+
+### Duality of $L$
+Note that the operator for the KFE $\tilde{L}$ is the adjoint operator of the infinitesimal generator $\tilde{L}_B$, and the correct discretization scheme for $L$ is, analogously, done by taking the transpose of the discretized operator for $L_B$ (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569) and [Achdou et al., 2017](https://ideas.repec.org/p/nbr/nberwo/23732.html)). 
+In fact, the transpose of $L_B$ is identical with $L$:
+
+```julia
+@test L_KFE ≈ transpose(L_B)
+```
