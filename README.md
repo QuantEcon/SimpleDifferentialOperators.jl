@@ -4,7 +4,6 @@
 [![Codecov](https://codecov.io/gh/QuantEcon/SimpleDifferentialOperators.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/QuantEcon/SimpleDifferentialOperators.jl)
 
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://QuantEcon.github.io/SimpleDifferentialOperators.jl/stable)
-[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://QuantEcon.github.io/SimpleDifferentialOperators.jl/dev)
 
 
 ## Overview
