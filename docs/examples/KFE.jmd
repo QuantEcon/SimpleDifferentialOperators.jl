@@ -6,7 +6,6 @@ $$
 $$
 for $x \in (x_{\min}, x_{\max})$. The corresponding reflecting barrier conditions are
 $$
-\begin{equation}
 \begin{align}
 -\mu v(x_{\min}, t) +\frac{\sigma^2}{2} \partial_{x} v(x_{\min}, t) &= 0 \\
 -\mu v(x_{\max}, t) +\frac{\sigma^2}{2} \partial_{x} v(x_{\max}, t) &= 0
