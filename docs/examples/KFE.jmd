@@ -40,7 +40,7 @@ $$
 \end{align}
 $$
 
-Note that $-\mu$ appears on the second column, not the first column for the lower bound. The corresponding boundary condition matrices are
+Note that $-\mu$ appears on the second column, not the first column for the lower bound as the drift is negative. The corresponding boundary condition matrices are
 
 $$
 B =
@@ -129,6 +129,44 @@ And the corresponding eigenvalues are:
 ```julia
 using LinearAlgebra
 LinearAlgebra.eigvals(L_KFE)
+```
+
+### Alternative: ignoring upwind scheme for boundary conditions
+As mentioned above, $-\mu$ appears on the second column, not the first column for the lower bound. Suppose that it were not the case, i.e., $B$ is constructed as
+
+$$
+B =
+\begin{bmatrix}
+-\mu-\frac{\sigma^{2}}{2 \Delta} & {\frac{\sigma^{2}}{2 \Delta}} & {0} & {\ldots} & {0} & {0} & {0}\\
+{0} & {0} & {0} & {\ldots} & {0} & {-\frac{\sigma^{2}}{2 \Delta}} & {-\mu+\frac{\sigma^{2}}{2 \Delta}}
+\end{bmatrix}_{2 \times(M+2)}
+$$
+
+Then the corresponding discretized operator `L_KFE_try` is:
+
+```julia
+# construct boundary condition matrix
+B = transpose([[-μ- σ^2/(2*Δ); σ^2/(2*Δ); zeros(M)] [zeros(M); -σ^2/(2*Δ); -μ+σ^2/(2*Δ)]])
+
+# copy L
+L_KFE_try = copy(L)
+
+# Gaussian elimination on the first row 
+L_KFE_try[1,:] -= (L[1,1] / B[1,1])*B[1,:]
+
+# Gaussian elimination on the last row
+L_KFE_try[end,:] -= (L[end,end] / B[end,end])*B[end,:]
+
+# extract the interior, as the first and last columns are all zeros
+L_KFE_try = L_KFE_try[:,2:end-1]
+
+L_KFE_try
+```
+
+The eigenvalues for `L_KFE_try` are:
+
+```julia
+LinearAlgebra.eigvals(L_KFE_try)
 ```
 
 ## Infinitesimal generator for Brownian motions
