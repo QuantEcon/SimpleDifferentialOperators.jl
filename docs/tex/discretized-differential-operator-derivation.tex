@@ -337,13 +337,65 @@ b &= \begin{bmatrix}
 \end{bmatrix}
 \end{align}
 
-Then, multiplying by $\Delta$, the system has the same $b$ and \cref{eq:mixed-barrier-matrix-original-regular} is equivalent to
+Then, multiplying by $\Delta$, the system has the same $b$ and \cref{eq:mixed-barrier-matrix-original-regular}  equivalent to
 \begin{equation}
 B = \begin{bmatrix}
 -1 +  \underline{\xi} \Delta & 1 & 0 & \dots & 0 & 0 & 0 \\
 0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi} \Delta\\
 \end{bmatrix}_{2 \times (M+2)}\label{eq:B-mixed}
 \end{equation}
+
+Depending on the direction of the drift, by upwind schemes, the locations of $\overline{\xi}$ and $\underline{\xi}$ have to be different:
+ 
+\begin{align}
+B^{--} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta} & \dfrac{1}{\Delta}  + \underline{\xi} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta} & \dfrac{1}{\Delta} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{+-} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta} + \underline{\xi} & \dfrac{1}{\Delta} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta} & \dfrac{1}{\Delta} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{-+} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta}  & \dfrac{1}{\Delta} + \underline{\xi} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta}+ \overline{\xi} & \dfrac{1}{\Delta}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{++} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta} + \underline{\xi} & \dfrac{1}{\Delta} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta}+ \overline{\xi} & \dfrac{1}{\Delta} \\
+\end{bmatrix}_{2 \times (M+2)}
+\end{align}
+
+Multiplying all rows by $\Delta$, the resulting system has the same $b$ and the following $B^{--}, B^{+-}, B^{-+}, B^{++}$:
+ 
+\begin{align}
+B^{--} &\equiv 
+\begin{bmatrix}
+-1 & 1  + \underline{\xi}\Delta & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi}\Delta\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{+-} &\equiv 
+\begin{bmatrix}
+-1 + \underline{\xi}\Delta & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi}\Delta\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{-+} &\equiv 
+\begin{bmatrix}
+-1  & 1 + \underline{\xi}\Delta & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1+ \overline{\xi}\Delta & 1\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{++} &\equiv 
+\begin{bmatrix}
+-1 + \underline{\xi}\Delta & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1+ \overline{\xi}\Delta & 1 \\
+\end{bmatrix}_{2 \times (M+2)}
+\end{align}
+
+
 
 \subsubsection{Reflecting Barriers}
 Since a reflecting barrier (i.e. a Neumann boundary condition) is a special case of the mixed boundary condition when  $\underline{\xi} = \bar{\xi} = 0$, the $B$ matrix for a reflecting barrier follows \cref{eq:B-mixed}
@@ -792,6 +844,58 @@ b = \begin{bmatrix}
 \end{bmatrix}
 \end{equation}
 since $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$.
+
+
+Depending on the direction of the drift, by upwind schemes, the locations of $\overline{\xi}$ and $\underline{\xi}$ have to be different:
+
+\begin{align}
+B^{--} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta_{0,+}} & \dfrac{1}{\Delta_{0,+}}  + \underline{\xi} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta_{M+1,-}} & \dfrac{1}{\Delta_{M+1,-}} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{+-} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta_{0,+}} + \underline{\xi} & \dfrac{1}{\Delta_{0,+}} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta_{M+1,-}} & \dfrac{1}{\Delta_{M+1,-}} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{-+} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta_{0,+}}  & \dfrac{1}{\Delta_{0,+}} + \underline{\xi} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta_{M+1,-}}+ \overline{\xi} & \dfrac{1}{\Delta_{M+1,-}}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{++} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta_{0,+}} + \underline{\xi} & \dfrac{1}{\Delta_{0,+}} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta_{M+1,-}}+ \overline{\xi} & \dfrac{1}{\Delta_{M+1,-}} \\
+\end{bmatrix}_{2 \times (M+2)}
+\end{align}
+
+Multiplying the first rows by $\Delta_{1,-} = \Delta_{0,+}$ and second rows by $\Delta_{M,+} = \Delta_{M+1,-} $, the resulting system has the same $b$ and the following $B^{--}, B^{+-}, B^{-+}, B^{++}$:
+
+\begin{align}
+B^{--} &\equiv 
+\begin{bmatrix}
+-1 & 1  + \underline{\xi}\Delta_{1,-} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi}\Delta_{M,+}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{+-} &\equiv 
+\begin{bmatrix}
+-1 + \underline{\xi}\Delta_{1,-} & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi}\Delta_{M,+}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{-+} &\equiv 
+\begin{bmatrix}
+-1  & 1 + \underline{\xi}\Delta_{1,-} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1+ \overline{\xi}\Delta_{M,+} & 1\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{++} &\equiv 
+\begin{bmatrix}
+-1 + \underline{\xi}\Delta_{1,-} & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1+ \overline{\xi}\Delta_{M,+} & 1 \\
+\end{bmatrix}_{2 \times (M+2)}
+\end{align}
+
 
 \subsubsection{Reflecting Barriers}
 Since a reflecting barrier (i.e. a Neumann boundary condition) is a special case of the mixed when  $\underline{\xi} = \bar{\xi} = 0$, the $B$ matrix for a reflecting barrier follows \cref{eq:B-mixed}
