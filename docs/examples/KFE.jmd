@@ -60,10 +60,8 @@ b =
 $$
 
 ```julia
+# construct boundary condition matrices
 B = transpose([[- σ^2/(2*Δ); -μ + σ^2/(2*Δ); zeros(M)] [zeros(M); -σ^2/(2*Δ); -μ+σ^2/(2*Δ)]])
-```
-
-```julia
 b = [0; 0];
 ```
 
@@ -107,7 +105,10 @@ $$
 Now perform Gaussian elimination once -- substract the first row of $L$ by a multiple of the first row of $B$ to make the first column of the resulting matrix have zeros only:
 
 ```julia
+# copy L from the original system
 L_KFE = copy(L)
+
+# Gaussian elimination on the first row 
 L_KFE[1,:] -= (L[1,1] / B[1,1])*B[1,:]
 [L_KFE; B]
 ```
@@ -115,12 +116,14 @@ L_KFE[1,:] -= (L[1,1] / B[1,1])*B[1,:]
 Likewise, perform another Gaussian elimination by substracting the last row of the resulting $L$ by a multiple of the second row of $B$ to make the last column of the resulting matrix have zeros only:
 
 ```julia
+# Gaussian elimination on the last row
 L_KFE[end,:] -= (L[end,end] / B[end,end])*B[end,:]
 [L_KFE; B]
 ```
 
 Note that the most left and right columns corresponding to $L$ are all zeros. Extracting the interior yields
 ```julia
+# extract the interior, as the first and last columns are all zeros
 L_KFE = L_KFE[:,2:end-1] 
 ```
 
@@ -148,7 +151,7 @@ Then the corresponding discretized operator `L_KFE_try` is:
 # construct boundary condition matrix
 B = transpose([[-μ- σ^2/(2*Δ); σ^2/(2*Δ); zeros(M)] [zeros(M); -σ^2/(2*Δ); -μ+σ^2/(2*Δ)]])
 
-# copy L
+# copy L from the original system
 L_KFE_try = copy(L)
 
 # Gaussian elimination on the first row 
