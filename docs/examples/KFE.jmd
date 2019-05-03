@@ -13,7 +13,7 @@ $$
 $$
 
 Let $\tilde L$ be a differential operator such that $\tilde L v(x)$ represents $\partial_t v(x,t)$, i.e., $\tilde L v (x) = -\mu v'(x) + (\sigma^2/2) v''(x) $. 
-Discretize the domain by $\{x_i \}_{i=0}^{M+1}$ with $x_0 = x_{\min}$ and $x_{M+1} = x_{\max}$; 
+Discretize the domain by $\{x_i \}_{i=0}^{M+1}$ with $x_0 = x_{\min}$ and $x_{M+1} = x_{\max}$ uniformly with the grid size of $\Delta$. Let $v_i$ represent $v(x_i)$ accordingly for all $i = 0, ..., M+1$.
 
 ```julia
 using SimpleDifferentialOperators, Test
@@ -32,7 +32,15 @@ The corresponding discretized operator $L$ can be constructed as follows:
 L = Array(-μ*L₁₊(x̄) + σ^2 / 2 * L₂(x̄))
 ```
 
-Under upwind scheme with the current negative drift term $\mu \leq 0$, the boundary condition matrices are
+Under upwind scheme with the current negative drift term $\mu \leq 0$, the discretized boundary conditions are
+$$
+\begin{align}
+-\mu v_1 +\frac{\sigma^2}{2} \frac{v_1 - v_0}{\Delta} &= 0 \\
+-\mu v_{M+1} +\frac{\sigma^2}{2} \frac{v_{M+1} - v_M}{\Delta} &= 0
+\end{align}
+$$
+
+Note that $-\mu$ appears on the second column, not the first column for the lower bound. The corresponding boundary condition matrices are
 
 $$
 B =
@@ -78,7 +86,15 @@ $$
 ```
 
 
-It is also worth mentioning that for $\mu \geq 0$, the corresponding boundary condition matrix $B$ would have been
+It is also worth mentioning that for $\mu \geq 0$, the discretized boundary conditions are 
+$$
+\begin{align}
+-\mu v_0 +\frac{\sigma^2}{2} \frac{v_1 - v_0}{\Delta} &= 0 \\
+-\mu v_{M} +\frac{\sigma^2}{2} \frac{v_{M+1} - v_M}{\Delta} &= 0
+\end{align}
+$$
+
+and the corresponding boundary condition matrix $B$ would have been
 
 $$
 B =
