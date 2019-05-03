@@ -124,6 +124,13 @@ Note that the most left and right columns corresponding to $L$ are all zeros. Ex
 L_KFE = L_KFE[:,2:end-1] 
 ```
 
+And the corresponding eigenvalues are:
+
+```julia
+using LinearAlgebra
+LinearAlgebra.eigvals(L_KFE)
+```
+
 ## Infinitesimal generator for Brownian motions
 The infinitesimal generator for Brownian motions is defined as $\tilde L$ such that
 $$
