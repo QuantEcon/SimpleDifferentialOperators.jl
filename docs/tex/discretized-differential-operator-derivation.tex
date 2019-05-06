@@ -491,7 +491,7 @@ An alternative approach to solving the systems of $M+2$ equations or DAEs above 
 
 \subsubsection{Mixed Boundary Conditions}
 
-Adding the first row of $L_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta )^{-1}\Delta^{-1}$ gives, with the corresponding row operation matrix $R$,
+Adding the first row of $L_{1-}$ by the first row of $B$ in \eqref{eq:B-mixed} multiplied by $(-1 + \underline{\xi} \Delta )^{-1}\Delta^{-1}$ gives, with the corresponding row operation matrix $R$,
 
 \begin{equation}
 R {L}_{1-} = \dfrac{1}{\Delta} \begin{bmatrix}
@@ -545,7 +545,7 @@ L_{1-}^B \equiv \frac{1}{\Delta}\begin{bmatrix}
 0&0&0&\cdots&0&-1&1
 \end{bmatrix}_{M\times M} \label{eq:L-1-regular}
 \end{equation}
-instead of solving the full system with boundary conditions. Similarly, subtracting the first row of $L_{1+}$ by the second row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(1 + \overline{\xi} \Delta )^{-1} \Delta^{-1}$ gives the following differential operator with the boundary condition $B$ applied:
+instead of solving the full system with boundary conditions. Similarly, subtracting the first row of $L_{1+}$ by the second row of $B$ in \eqref{eq:B-mixed} multiplied by $(1 + \overline{\xi} \Delta )^{-1} \Delta^{-1}$ gives the following differential operator with the boundary condition $B$ applied:
 \begin{align}
 L_{1+}^B &\equiv \frac{1}{\Delta}\begin{bmatrix}
 -1&1&0&\dots&0&0&0\\
