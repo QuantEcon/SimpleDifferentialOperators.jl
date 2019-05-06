@@ -606,6 +606,71 @@ L_2^B \equiv  \Delta^{-2}
 \Big]
 \end{align}
 
+\paragraph{Directional changes}
+Adding the first row of $B^{--}$ or $B^{-+}$ multiplied by $\Delta^{-1}$ on the first row of $L_{1-}$ and extracting the interior yields
+
+\begin{equation}
+L_{1-}^{B-} \equiv \frac{1}{\Delta}\begin{bmatrix}
+-\underline{\xi} \Delta &0&0&\dots&0&0&0\\
+-1&1&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-1&1&0\\
+0&0&0&\cdots&0&-1&1
+\end{bmatrix}_{M\times M} \label{eq:L-1-regular-left}
+\end{equation}
+
+Likewise,
+Adding the first row of $B^{-+}$ or $B^{++}$ multiplied by $\Delta^{-1}$ on the first row of $L_{1+}$ and extracting the interior yields
+
+\begin{equation}
+L_{1+}^{B+} \equiv \frac{1}{\Delta}\begin{bmatrix}
+-1 &1&0&\dots&0&0&0\\
+0&-1&1&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&0&-1&1\\
+0&0&0&\cdots&0&0&-\overline{\xi} \Delta
+\end{bmatrix}_{M\times M} \label{eq:L-1p-regular-right}
+\end{equation}
+
+For $L_2$, directions on both boundaries affect the interior. Here we study the two upper and lower boundaries separately. For the lower boundary, suppose first that the drift is positive. Substracting the first row of $L_2$ by the first row of $B^{+-}$ or $B^{++}$ multiplied by $(-1 + \underline{\xi} \Delta )^{-1} \Delta^{-2}$ and extracting the interior and first row gives
+\begin{align}
+\frac{1}{\Delta^2}\begin{bmatrix}
+-2 - (-1 + \underline{\xi}\Delta)^{-1} &1&0&\dots&0&0&0
+\end{bmatrix}_{1\times M}
+\end{align}
+
+Suppose that we have a negative drift at the lower boundary. Adding the first row of $L_2$ by the first row of $B^{--}$ or $B^{-+}$ multiplied by $\Delta^2$ and extracting the interior and first row gives
+\begin{align}
+\frac{1}{\Delta^2}\begin{bmatrix}
+-1 + \underline{\xi}\Delta &1&0&\dots&0&0&0
+\end{bmatrix}_{1\times M}
+\end{align}
+
+Now consider the upper boundary. Suppose first that the drift is negative. Substracting the last row of $L_2$ by the second row of $B^{--}$ or $B^{+-}$ multiplied by $(1 + \overline{\xi} \Delta)^{-1} \Delta^{-2}$ and extracting the interior and last row gives 
+\begin{align}
+\frac{1}{\Delta^2}\begin{bmatrix}
+0&0&0&\cdots&0&1&-2 +(1+ \overline{\xi}\Delta)^{-1}
+\end{bmatrix}_{1\times M}
+\end{align}
+
+Suppose that we have a positive drift at the upper boundary. Subtracting the second row of $L_2$ by the first row of $B^{-+}$ or $B^{++}$ multiplied by $\Delta^2$ and extracting the interior and last row gives
+\begin{align}
+\frac{1}{\Delta^2}\begin{bmatrix}
+0&0&0&\cdots&0&1&-1 - \overline{\xi}\Delta
+\end{bmatrix}_{1\times M}
+\end{align}
+
+This provides the complete combination of all possible drift directions on both boundaries for $L_2$. For instance, $L_2^{B-+}$ is defined as
+\begin{align}
+L_2^{-+} &\equiv \frac{1}{\Delta^2}\begin{bmatrix}
+-1 + \underline{\xi}\Delta &1&0&\dots&0&0&0\\
+1&-2&1&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&1&-2&1\\
+0&0&0&\cdots&0&1&-1 - \overline{\xi}\Delta
+\end{bmatrix}_{M\times M}
+\end{align}
+
 \subsubsection{Absorbing Boundary Conditions}
 To apply an absorbing barrier condition $\tilde{v}(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
 
