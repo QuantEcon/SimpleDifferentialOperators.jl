@@ -1328,6 +1328,60 @@ L_2^{B-+} &\equiv  2 \begin{psmallmatrix}
 \end{psmallmatrix}_{M\times M}
 \end{align}
 
+
+
+Using banded matrices, these operators can be definied in the following compact forms:
+
+
+\begin{align}
+{L}_{1-}^{B-} &\equiv
+\tridiag \left(-(\Delta_-^\circ)^{-1}[2:M], (\Delta_-^\circ )^{-1}, \mathbf{0}_{M-1}  \right) +
+\diag\left( 
+\begin{bmatrix}
+(-\Delta^{-1}_{1,-} - \underline{\xi} \Delta_{1,-}) &
+\mathbf{0}_{M-1}^T
+\end{bmatrix}^T
+\right) \\
+{L}_{1-}^{B+} &\equiv
+\tridiag \left(-(\Delta_-^\circ)^{-1}[2:M], (\Delta_-^\circ )^{-1}, \mathbf{0}_{M-1}  \right) +
+\diag\left( 
+\begin{bmatrix}
+\Delta^{-1}_{1,-} (-1 + \underline{\xi} \Delta_{1,-})^{-1} &
+\mathbf{0}_{M-1}^T
+\end{bmatrix}^T
+\right)
+\end{align}
+\begin{align}
+{L}_{1+}^{B-} &\equiv
+\tridiag \left(\mathbf{0}_{M-1}, -(\Delta_+^\circ )^{-1}, (\Delta_+^\circ)^{-1}[2:M]  \right) +
+\diag\left( 
+\begin{bmatrix}
+\mathbf{0}_{M-1}^T &
+\Delta^{-1}_{M,+} (1 + \overline{\xi} \Delta_{M,+})^{-1}
+\end{bmatrix}^T
+\right) \\
+{L}_{1+}^{B+} &\equiv
+\tridiag \left(\mathbf{0}_{M-1}, -(\Delta_+^\circ )^{-1}, (\Delta_+^\circ)^{-1}[2:M]  \right) +
+\diag\left( 
+\begin{bmatrix}
+\mathbf{0}_{M-1}^T &
+(\Delta^{-1}_{M,+} - \overline{\xi} \Delta_{M,+})
+\end{bmatrix}^T
+\right) 
+\end{align}
+\begin{align}
+{L}_{2}^{B \circ_1 \circ_M } \equiv
+2 \odot \Big[ & \text{tridiag} \Big[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, 
+-(\Delta_-^\circ \odot \Delta_+^\circ)^{-1},
+(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \Big] + \\ & \diag\left(  
+\begin{bmatrix} \
+\Xi_{1 \circ_1} & \mathbf{0}_{M-2} & \Xi_{M \circ_M}
+\end{bmatrix}
+\right) \Big]
+\end{align}
+where $\circ_1, \circ_M \in \{-, +\}$ denote the drift directions on the lower and upper boundaries respectively.
+
+
 \subsubsection{Absorbing barrier conditions}
 
 To apply an absorbing barrier condition $\tilde{v}(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
