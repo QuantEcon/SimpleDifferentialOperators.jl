@@ -24,7 +24,7 @@ julia> v = (x -> x^2).(x)
  16
  25
 
-julia> extrapolatetoboundary(v, x̄, (Mixed(1), Mixed(1)))
+julia> extrapolatetoboundary(v, x̄, (Mixed(ξ = 1), Mixed(ξ = 1)))
 7-element Array{Int64,1}:
   1
   1

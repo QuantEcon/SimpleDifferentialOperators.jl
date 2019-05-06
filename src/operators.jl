@@ -35,7 +35,7 @@ julia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), CentralSecondDiff
 function DifferentialOperator(x̄, bc::Tuple{Reflecting, Reflecting}, method)
     # since reflecting boundary conditions are special cases of
     # mixed boundary conditions with ξ_lb = ξ_ub = 0
-    DifferentialOperator(x̄, (Mixed(0), Mixed(0)), method)
+    DifferentialOperator(x̄, (Mixed(ξ = 0), Mixed(ξ = 0)), method)
 end
 
 """
@@ -49,21 +49,21 @@ under mixed boundary conditions from `bc` using finite difference method specifi
 julia> x̄ = 0:5
 0:5
 
-julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), BackwardFirstDifference())
+julia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), BackwardFirstDifference())
 4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
  -1.0   0.0    ⋅    ⋅
  -1.0   1.0   0.0   ⋅
    ⋅   -1.0   1.0  0.0
    ⋅     ⋅   -1.0  1.0
 
-julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), ForwardFirstDifference())
+julia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), ForwardFirstDifference())
 4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
  -1.0   1.0    ⋅     ⋅
   0.0  -1.0   1.0    ⋅
    ⋅    0.0  -1.0   1.0
    ⋅     ⋅    0.0  -1.0
 
-julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), CentralSecondDifference())
+julia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), CentralSecondDifference())
 4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
  0.0   1.0    ⋅     ⋅
  1.0  -2.0   1.0    ⋅
@@ -296,7 +296,7 @@ julia> x̄ = [1.0; 1.5; 1.7]
  1.5
  1.7
 
-julia> interiornodes(x̄, (Mixed(1.0), Mixed(1.0)))
+julia> interiornodes(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)))
 1-element Array{Float64,1}:
  1.5
 ```
