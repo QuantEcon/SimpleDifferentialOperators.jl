@@ -671,6 +671,105 @@ L_2^{B-+} &\equiv \frac{1}{\Delta^2}\begin{bmatrix}
 \end{bmatrix}_{M\times M}
 \end{align}
 
+Using banded matrices, these operators can be definied in the following compact forms:
+
+\begin{align}
+L_{1-}^{B-} &\equiv \Delta^{-1}
+\left[ 
+\text{tridiag}(-\mathbf{1}_{M-1}, 
+\mathbf{1}_{M}, \mathbf{0}_{M-1} ) + \diag \left( \begin{bmatrix}
+1 - \underline{\xi} \Delta &
+\mathbf{0}_{M-1}^T 
+\end{bmatrix}^T
+\right)
+\right] \\
+L_{1-}^{B+} &\equiv \Delta^{-1}
+\left[ 
+\text{tridiag}(-\mathbf{1}_{M-1}, 
+\mathbf{1}_{M}, \mathbf{0}_{M-1} ) + \diag \left( \begin{bmatrix}
+(-1+\underline{\xi} \Delta)^{-1} &
+\mathbf{0}_{M-1}^T 
+\end{bmatrix}^T
+\right)
+\right] 
+\end{align}
+\begin{align}
+L_{1+}^{B-} &\equiv 
+\Delta^{-1}
+\left[ 
+\text{tridiag}(-\mathbf{0}_{M-1}, 
+\mathbf{-1}_{M}, \mathbf{1}_{M-1} ) + \diag \left( \begin{bmatrix}
+\mathbf{0}_{M-1}^T &
+(1+\overline{\xi} \Delta)^{-1}
+\end{bmatrix}^T
+\right)
+\right] \\
+L_{1+}^{B+} &\equiv 
+\Delta^{-1}
+\left[ 
+\text{tridiag}(-\mathbf{0}_{M-1}, 
+\mathbf{-1}_{M}, \mathbf{1}_{M-1} ) + \diag \left( \begin{bmatrix}
+\mathbf{0}_{M-1}^T &
+1- \overline{\xi} \Delta
+\end{bmatrix}^T
+\right)
+\right]
+\end{align}
+\begin{align}
+L_2^{B--} \equiv  \Delta^{-2} 
+\Big[ 
+&\text{tridiag}(
+\mathbf{1}_{M-1},
+-2 \times \mathbf{1}_M,
+\mathbf{1}_{M-1} )
++ \\
+&\diag \left( \begin{bmatrix}
+-2 + \underline{\xi}\Delta &
+\mathbf{0}_{M-2}^T &
+(1+\overline{\xi} \Delta)^{-1}
+\end{bmatrix}^T \right)
+\Big] \\
+L_2^{B-+} \equiv  \Delta^{-2} 
+\Big[ 
+&\text{tridiag}(
+\mathbf{1}_{M-1},
+-2 \times \mathbf{1}_M,
+\mathbf{1}_{M-1} )
++  \\
+&\diag \left( \begin{bmatrix}
+-2 + \underline{\xi}\Delta &
+\mathbf{0}_{M-2}^T &
+-2 - \overline{\xi}\Delta
+\end{bmatrix}^T \right)
+\Big] \\
+L_2^{B+-} \equiv  \Delta^{-2} 
+\Big[ 
+&\text{tridiag}(
+\mathbf{1}_{M-1},
+-2 \times \mathbf{1}_M,
+\mathbf{1}_{M-1} )
++ \\
+&\diag \left( \begin{bmatrix}
+-(-1+\underline{\xi} \Delta)^{-1}&
+\mathbf{0}_{M-2}^T &
+(1+\overline{\xi} \Delta)^{-1}
+\end{bmatrix}^T \right)
+\Big] \\
+L_2^{B++} \equiv  \Delta^{-2} 
+\Big[ 
+&\text{tridiag}(
+\mathbf{1}_{M-1},
+-2 \times \mathbf{1}_M,
+\mathbf{1}_{M-1} )
++  \\
+&\diag \left( \begin{bmatrix}
+-(-1+\underline{\xi} \Delta)^{-1}&
+\mathbf{0}_{M-2}^T &
+-2 - \overline{\xi}\Delta
+\end{bmatrix}^T \right)
+\Big]
+\end{align}
+
 \subsubsection{Absorbing Boundary Conditions}
 To apply an absorbing barrier condition $\tilde{v}(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
 
