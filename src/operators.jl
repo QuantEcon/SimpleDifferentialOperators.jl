@@ -35,7 +35,7 @@ julia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), CentralSecondDiff
 function DifferentialOperator(x̄, bc::Tuple{Reflecting, Reflecting}, method)
     # since reflecting boundary conditions are special cases of
     # mixed boundary conditions with ξ_lb = ξ_ub = 0
-    DifferentialOperator(x̄, (Mixed(0), Mixed(0)), method)
+    DifferentialOperator(x̄, (Mixed(ξ = 0), Mixed(ξ = 0)), method)
 end
 
 """
@@ -49,21 +49,21 @@ under mixed boundary conditions from `bc` using finite difference method specifi
 julia> x̄ = 0:5
 0:5
 
-julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), BackwardFirstDifference())
+julia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), BackwardFirstDifference())
 4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
  -1.0   0.0    ⋅    ⋅
  -1.0   1.0   0.0   ⋅
    ⋅   -1.0   1.0  0.0
    ⋅     ⋅   -1.0  1.0
 
-julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), ForwardFirstDifference())
+julia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), ForwardFirstDifference())
 4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
  -1.0   1.0    ⋅     ⋅
   0.0  -1.0   1.0    ⋅
    ⋅    0.0  -1.0   1.0
    ⋅     ⋅    0.0  -1.0
 
-julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), CentralSecondDifference())
+julia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), CentralSecondDifference())
 4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
  0.0   1.0    ⋅     ⋅
  1.0  -2.0   1.0    ⋅
@@ -80,7 +80,7 @@ function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::BackwardFirs
     L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
 
     # apply boundary conditions
-    L[1,1] += 1/(-1+ξ_lb*Δ_1m)/Δ_1m
+    L[1,1] += (bc[1].direction == :backward) ? (-1/Δ_1m - ξ_lb*Δ_1m) : 1/(-1+ξ_lb*Δ_1m)/Δ_1m
 
     return L
 end
@@ -94,7 +94,7 @@ function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::ForwardFirst
     L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
 
     # apply boundary conditions
-    L[end,end] += 1/(1+ξ_ub*Δ_Mp)/Δ_Mp
+    L[end,end] += (bc[2].direction == :forward) ? (1/Δ_Mp - ξ_ub*Δ_Mp) : 1/(1+ξ_ub*Δ_Mp)/Δ_Mp
 
     return L
 end
@@ -112,11 +112,13 @@ function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::CentralSecon
     L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
 
     # apply boundary conditions
-    Ξ_1 = -1/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m))
-    Ξ_M = 1/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp))
-    L[1,1] += 2*Ξ_1
-    L[end,end] += 2*Ξ_M
+    Ξ_1p = L[1,1] - 2/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m))
+    Ξ_Mm = L[end,end] + 2/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp))
+    Ξ_1m = 2*(-1/(Δ_1p*Δ_1m) + (1+ξ_lb*Δ_1m)/(Δ_1p+Δ_1m)/Δ_1m)
+    Ξ_Mp = 2*(-1/(Δ_Mp*Δ_Mm) - (-1+ξ_ub*Δ_Mp)/(Δ_Mp+Δ_Mm)/Δ_Mp)
 
+    L[1,1] = (bc[1].direction == :backward) ? Ξ_1m : Ξ_1p
+    L[end,end] = (bc[2].direction == :forward) ? Ξ_Mp : Ξ_Mm
     return L
 end
 
@@ -296,7 +298,7 @@ julia> x̄ = [1.0; 1.5; 1.7]
  1.5
  1.7
 
-julia> interiornodes(x̄, (Mixed(1.0), Mixed(1.0)))
+julia> interiornodes(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)))
 1-element Array{Float64,1}:
  1.5
 ```
