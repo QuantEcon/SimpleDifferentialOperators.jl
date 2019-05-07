@@ -129,8 +129,8 @@ for some constant $\rho, \sigma > 0$ and $\mu(x) = -x$. Note that $\mu(x)$ depen
 # setup
 f(x) = x^2
 μ(x) = -x # drift depends on state
-σ = 0.1
-ρ = 0.1
+σ = 1.0
+ρ = 0.05
 M = 100 # size of grid
 
 x̄ = range(-1., 1., length = M + 2)
