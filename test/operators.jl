@@ -113,9 +113,9 @@ end
 
         L₁₋bc, L₁₊bc, L₂bc, x = diffusionoperators(x̄, (Mixed(ξ = ξ_lb, direction = :backward), Mixed(ξ = ξ_ub, direction = :forward)))
         @test @inferred(diffusionoperators(x̄, (Mixed(ξ = ξ_lb, direction = :backward), Mixed(ξ = ξ_ub, direction = :forward)))) == (L₁₋bc = L₁₋bc, L₁₊bc = L₁₊bc, L₂bc = L₂bc, x = x)
-        @test_broken Array(L₁₋bc) == [1+1/(-1+ξ_lb) 0. 0.; -1. 1. 0.; 0. -1. 1.]
-        @test_broken Array(L₁₊bc) == [-1. 1. 0.; 0. -1. 1.; 0. 0. -1+1/(1+ξ_ub)]
-        @test_broken Array(L₂bc) == [-2-1/(-1+ξ_lb) 1. 0.; 1. -2. 1.; 0. 1. -2+1/(1+ξ_ub)]
+        @test Array(L₁₋bc) == [1.0 0. 0.; -1. 1. 0.; 0. -1. 1.]
+        @test Array(L₁₊bc) == [-1. 1. 0.; 0. -1. 1.; 0. 0. 2.0]
+        @test Array(L₂bc) == [-2.0 1. 0.; 1. -2. 1.; 0. 1. 1.0]
         @test Array(x) == [1; 2; 3]
 
         # Irregular grid (with Δ_1m = Δ_1p and Δ_Mp = Δ_Mm)
@@ -126,9 +126,9 @@ end
 
         L₁₋bc, L₁₊bc, L₂bc, x = diffusionoperators(x̄, (Mixed(ξ = ξ_lb, direction = :backward), Mixed(ξ = ξ_ub, direction = :forward)))
         @test @inferred(diffusionoperators(x̄, (Mixed(ξ = ξ_lb, direction = :backward), Mixed(ξ = ξ_ub, direction = :forward)))) == (L₁₋bc = L₁₋bc, L₁₊bc = L₁₊bc, L₂bc = L₂bc, x = x)
-        @test_broken Array(L₁₋bc) == [1+1/(-1+ξ_lb) 0. 0.; -1. 1. 0.; 0. -1/2 1/2]
-        @test_broken Array(L₁₊bc) == [-1. 1. 0.; 0. -1/2 1/2; 0. 0. (-1+1/(1+ξ_ub*Δ_Mp))/Δ_Mp]
-        @test_broken Array(L₂bc) == [-1.5 1. 0.; 2/((2.0+1.0)*1.0) -2/(2.0*1.0) 2/((2.0+1.0)*2.0); 0. 1/4 -2*(1/(Δ_Mm*Δ_Mp)-1/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp)))]
+        @test Array(L₁₋bc) == [1.0 0. 0.; -1. 1. 0.; 0. -1/2 1/2]
+        @test Array(L₁₊bc) == [-1. 1. 0.; 0. -1/2 1/2; 0. 0. 4.0]
+        @test Array(L₂bc) == [-2.0 1. 0.; 2/((2.0+1.0)*1.0) -2/(2.0*1.0) 2/((2.0+1.0)*2.0); 0. 1/4 3/4]
         @test Array(x) == [1.0; 2.0; 4.0]
 
         # Irregular grid (with Δ_1m != Δ_1p and Δ_Mp != Δ_Mm)
@@ -141,9 +141,9 @@ end
 
         L₁₋bc, L₁₊bc, L₂bc, x = diffusionoperators(x̄, (Mixed(ξ = ξ_lb, direction = :backward), Mixed(ξ = ξ_ub, direction = :forward)))
         @test @inferred(diffusionoperators(x̄, (Mixed(ξ = ξ_lb, direction = :backward), Mixed(ξ = ξ_ub, direction = :forward)))) == (L₁₋bc = L₁₋bc, L₁₊bc = L₁₊bc, L₂bc = L₂bc, x = x)
-        @test_broken Array(L₁₋bc) ≈ [1/3 0. 0.; -1. 1. 0.; 0. -1/2 1/2]
-        @test_broken Array(L₁₊bc) ≈ [-1. 1. 0.; 0. -1/2 1/2; 0. 0. -0.4]
-        @test_broken Array(L₂bc) ≈ [-8/9 2/3 0.; 2/3 -1. 1/3; 0. 0.2 -0.36]
+        @test Array(L₁₋bc) ≈ [2.0 0. 0.; -1. 1. 0.; 0. -1/2 1/2]
+        @test Array(L₁₊bc) ≈ [-1. 1. 0.; 0. -1/2 1/2; 0. 0. 6.0]
+        @test Array(L₂bc) ≈ [-4/3 2/3 0.; 2/3 -1. 1/3; 0. 0.2 0.6]
         @test Array(x) ≈ [1.0; 2.0; 4.0]
     end
 
