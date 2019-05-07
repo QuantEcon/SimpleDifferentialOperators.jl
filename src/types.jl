@@ -16,3 +16,4 @@
         ξ::Real = 0.0
         direction = :auto # :forward/:backward/:auto
     end
+    struct Absorbing <: HomogeneousBoundaryCondition end
