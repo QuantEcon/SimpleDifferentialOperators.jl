@@ -185,7 +185,9 @@ The following code constructs $L^*$:
 μ = -1.0 # constant negative drift
 σ = 1.0
 M = 100 # size of grid (interior points)
-x̄ = range(0.0, 1.0, length = (M+2))
+x_min = 0.0
+x_max = 1.0
+x̄ = range(x_min, x_max, length = (M+2))
 
 # ξ values for mixed boundary conditions
 ξ_lb = ξ_ub = -2μ/σ^2
