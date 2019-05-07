@@ -18,7 +18,7 @@
             Δ_Mp = x̄[end] - x̄[end-1]
 
             # boundary condition
-            bc = (Mixed(ξ_lb), Mixed(ξ_ub))
+            bc = (Mixed(ξ = ξ_lb), Mixed(ξ = ξ_ub))
 
             # corresponding boundary condition matrix
             B = transpose([[-1+ξ_lb*Δ_0p; 1; zeros(M)] [zeros(M); -1; 1+ξ_ub*Δ_Mp]])
