@@ -140,6 +140,35 @@ using LinearAlgebra
 LinearAlgebra.eigvals(L_KFE)
 ```
 
+### Constructing with operators with `SimpleDifferentialOperators.jl`
+Or, using `SimpleDifferentialOperators.jl`, this can be defined using mixed boundary conditions as well; note that multiplying both sides by $2/\sigma^2$ on the boundary condition equations above, we have the following equivalent equations:
+$$
+\begin{align}
+-\frac{2\mu}{\sigma^2} v(x_{\min}, t) +\partial_{x} v(x_{\min}, t) &= 0 \\
+-\frac{2\mu}{\sigma^2} v(x_{\max}, t) +\partial_{x} v(x_{\max}, t) &= 0
+\end{align}
+$$
+which gives mixed boundary conditions with $\overline{\xi} = \underline{\xi} = -\frac{2\mu}{\sigma^2}$:
+
+```julia
+# ξ values for mixed boundary conditions
+ξ_lb = ξ_ub = -2μ/σ^2
+
+# define the corresponding mixed boundary conditions
+# note that the direction on the lower bound is backward (default is forward)
+bc = (Mixed(ξ = ξ_lb, direction = :backward), Mixed(ξ = ξ_ub))
+
+# use SimpleDifferentialOperators.jl to construct the operator on the interior
+L_KFE_SDO = Array(-μ*L₁₊bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))
+```
+
+which returns an identical operator as `L_KFE` we just have constructed.
+
+```julia
+# confirm it returns an identical operator
+@test L_KFE ≈ L_KFE_SDO
+```
+
 ### Alternative: ignoring upwind scheme for boundary conditions
 As mentioned above, $-\mu$ appears on the second column, not the first column for the lower bound. Suppose that it were not the case, i.e., $B$ is constructed as
 
