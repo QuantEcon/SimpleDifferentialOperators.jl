@@ -80,7 +80,7 @@ function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::BackwardFirs
     L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
 
     # apply boundary conditions
-    L[1,1] += 1/(-1+ξ_lb*Δ_1m)/Δ_1m
+    L[1,1] += (bc[1].direction == :backward) ? (-1/Δ_1m - ξ_lb*Δ_1m) : 1/(-1+ξ_lb*Δ_1m)/Δ_1m
 
     return L
 end
@@ -94,7 +94,7 @@ function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::ForwardFirst
     L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
 
     # apply boundary conditions
-    L[end,end] += 1/(1+ξ_ub*Δ_Mp)/Δ_Mp
+    L[end,end] += (bc[2].direction == :forward) ? (1/Δ_Mp - ξ_ub*Δ_Mp) : 1/(1+ξ_ub*Δ_Mp)/Δ_Mp
 
     return L
 end
@@ -112,11 +112,13 @@ function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::CentralSecon
     L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
 
     # apply boundary conditions
-    Ξ_1 = -1/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m))
-    Ξ_M = 1/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp))
-    L[1,1] += 2*Ξ_1
-    L[end,end] += 2*Ξ_M
+    Ξ_1p = L[1,1] - 2/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m))
+    Ξ_Mm = L[end,end] + 2/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp))
+    Ξ_1m = 2*(-1/(Δ_1p*Δ_1m) + (1+ξ_lb*Δ_1m)/(Δ_1p+Δ_1m)/Δ_1m)
+    Ξ_Mp = 2*(-1/(Δ_Mp*Δ_Mm) - (-1+ξ_ub*Δ_Mp)/(Δ_Mp+Δ_Mm)/Δ_Mp)
 
+    L[1,1] = (bc[1].direction == :backward) ? Ξ_1m : Ξ_1p
+    L[end,end] = (bc[2].direction == :forward) ? Ξ_Mp : Ξ_Mm
     return L
 end
 
