@@ -85,7 +85,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "SimpleDifferentialOperators.DifferentialOperator",
     "category": "method",
-    "text": "DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)\n\nReturns a discretized differential operator of length(x̄) by length(x̄) matrix under mixed boundary conditions from bc using finite difference method specified by method.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), BackwardFirstDifference())\n4×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 7 stored entries:\n  [1, 1]  =  Inf\n  [2, 1]  =  -1.0\n  [2, 2]  =  1.0\n  [3, 2]  =  -1.0\n  [3, 3]  =  1.0\n  [4, 3]  =  -1.0\n  [4, 4]  =  1.0\n\njulia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), ForwardFirstDifference())\n4×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 7 stored entries:\n  [1, 1]  =  -1.0\n  [1, 2]  =  1.0\n  [2, 2]  =  -1.0\n  [2, 3]  =  1.0\n  [3, 3]  =  -1.0\n  [3, 4]  =  1.0\n  [4, 4]  =  -0.5\n\njulia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), CentralSecondDifference())\n4×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 10 stored entries:\n  [1, 1]  =  -Inf\n  [2, 1]  =  1.0\n  [1, 2]  =  1.0\n  [2, 2]  =  -2.0\n  [3, 2]  =  1.0\n  [2, 3]  =  1.0\n  [3, 3]  =  -2.0\n  [4, 3]  =  1.0\n  [3, 4]  =  1.0\n  [4, 4]  =  -1.5\n\n\n\n\n\n"
+    "text": "DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)\n\nReturns a discretized differential operator of length(x̄) by length(x̄) matrix under mixed boundary conditions from bc using finite difference method specified by method.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), BackwardFirstDifference())\n4×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 7 stored entries:\n  [1, 1]  =  Inf\n  [2, 1]  =  -1.0\n  [2, 2]  =  1.0\n  [3, 2]  =  -1.0\n  [3, 3]  =  1.0\n  [4, 3]  =  -1.0\n  [4, 4]  =  1.0\n\njulia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), ForwardFirstDifference())\n4×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 7 stored entries:\n  [1, 1]  =  -1.0\n  [1, 2]  =  1.0\n  [2, 2]  =  -1.0\n  [2, 3]  =  1.0\n  [3, 3]  =  -1.0\n  [3, 4]  =  1.0\n  [4, 4]  =  -0.5\n\njulia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), CentralSecondDifference())\n4×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 10 stored entries:\n  [1, 1]  =  -Inf\n  [2, 1]  =  1.0\n  [1, 2]  =  1.0\n  [2, 2]  =  -2.0\n  [3, 2]  =  1.0\n  [2, 3]  =  1.0\n  [3, 3]  =  -2.0\n  [4, 3]  =  1.0\n  [3, 4]  =  1.0\n  [4, 4]  =  -1.5\n\n\n\n\n\n"
 },
 
 {
@@ -157,7 +157,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "SimpleDifferentialOperators.extrapolatetoboundary",
     "category": "method",
-    "text": "extrapolatetoboundary(v, x̄, bc::Tuple{Mixed, Mixed})\n\nReturns a length(x̄)-vector whose 2:(length(x̄)-1) elements are v, the first and last element are extrapolated v on the boundaries of x̄ according to boundary conditions bc given.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> x = interiornodes(x̄)\n1:4\n\njulia> v = (x -> x^2).(x)\n4-element Array{Int64,1}:\n  1\n  4\n  9\n 16\n\njulia> extrapolatetoboundary(v, x̄, (Mixed(1), Mixed(1)))\n6-element Array{Float64,1}:\n Inf\n   1.0\n   4.0\n   9.0\n  16.0\n   8.0\n\n\n\n\n\n"
+    "text": "extrapolatetoboundary(v, x̄, bc::Tuple{Mixed, Mixed})\n\nReturns a length(x̄)-vector whose 2:(length(x̄)-1) elements are v, the first and last element are extrapolated v on the boundaries of x̄ according to boundary conditions bc given.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> x = interiornodes(x̄)\n1:4\n\njulia> v = (x -> x^2).(x)\n4-element Array{Int64,1}:\n  1\n  4\n  9\n 16\n\njulia> extrapolatetoboundary(v, x̄, (Mixed(ξ = 1), Mixed(ξ = 1)))\n6-element Array{Float64,1}:\n Inf\n   1.0\n   4.0\n   9.0\n  16.0\n   8.0\n\n\n\n\n\n"
 },
 
 {
@@ -173,7 +173,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "SimpleDifferentialOperators.interiornodes",
     "category": "method",
-    "text": "interiornodes(x̄, bc)\n\nReturns an interior grid corresponding to the boundary condition bc given extended grid x̄.\n\njulia> x̄ = 0:5\n0:5\n\njulia> interiornodes(x̄, (Reflecting(), Reflecting()))\n1:4\n\njulia> x̄ = [1.0; 1.5; 1.7]\n3-element Array{Float64,1}:\n 1.0\n 1.5\n 1.7\n\njulia> interiornodes(x̄, (Mixed(1.0), Mixed(1.0)))\n1-element Array{Float64,1}:\n 1.5\n\n\n\n\n\n"
+    "text": "interiornodes(x̄, bc)\n\nReturns an interior grid corresponding to the boundary condition bc given extended grid x̄.\n\njulia> x̄ = 0:5\n0:5\n\njulia> interiornodes(x̄, (Reflecting(), Reflecting()))\n1:4\n\njulia> x̄ = [1.0; 1.5; 1.7]\n3-element Array{Float64,1}:\n 1.0\n 1.5\n 1.7\n\njulia> interiornodes(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)))\n1-element Array{Float64,1}:\n 1.5\n\n\n\n\n\n"
 },
 
 {
