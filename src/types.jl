@@ -2,7 +2,6 @@
     # Abstracts
     abstract type BoundaryCondition end
     abstract type HomogeneousBoundaryCondition <: BoundaryCondition end
-    abstract type InhomogeneousBoundaryCondition <: BoundaryCondition end
 
 # Types for Differences
     abstract type DifferenceMethod{N} end
