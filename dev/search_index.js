@@ -89,19 +89,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api/#SimpleDifferentialOperators.DifferentialOperator-Tuple{Any,Tuple{Mixed,Mixed},BackwardFirstDifference}",
+    "location": "api/#SimpleDifferentialOperators.DifferentialOperator-Tuple{Any,Tuple{BoundaryCondition,BoundaryCondition},BackwardFirstDifference}",
     "page": "API",
     "title": "SimpleDifferentialOperators.DifferentialOperator",
     "category": "method",
-    "text": "DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)\n\nReturns a discretized differential operator of length(x̄) by length(x̄) matrix under mixed boundary conditions from bc using finite difference method specified by method.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), BackwardFirstDifference())\n4×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 7 stored entries:\n  [1, 1]  =  Inf\n  [2, 1]  =  -1.0\n  [2, 2]  =  1.0\n  [3, 2]  =  -1.0\n  [3, 3]  =  1.0\n  [4, 3]  =  -1.0\n  [4, 4]  =  1.0\n\njulia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), ForwardFirstDifference())\n4×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 7 stored entries:\n  [1, 1]  =  -1.0\n  [1, 2]  =  1.0\n  [2, 2]  =  -1.0\n  [2, 3]  =  1.0\n  [3, 3]  =  -1.0\n  [3, 4]  =  1.0\n  [4, 4]  =  -0.5\n\njulia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), CentralSecondDifference())\n4×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 10 stored entries:\n  [1, 1]  =  -Inf\n  [2, 1]  =  1.0\n  [1, 2]  =  1.0\n  [2, 2]  =  -2.0\n  [3, 2]  =  1.0\n  [2, 3]  =  1.0\n  [3, 3]  =  -2.0\n  [4, 3]  =  1.0\n  [3, 4]  =  1.0\n  [4, 4]  =  -1.5\n\n\n\n\n\n"
-},
-
-{
-    "location": "api/#SimpleDifferentialOperators.DifferentialOperator-Tuple{Any,Tuple{Reflecting,Reflecting},Any}",
-    "page": "API",
-    "title": "SimpleDifferentialOperators.DifferentialOperator",
-    "category": "method",
-    "text": "DifferentialOperator(x̄, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)\n\nReturns a discretized differential operator of length(x̄) by length(x̄) matrix under reflecting boundary conditions from bc using finite difference method specified by method.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), BackwardFirstDifference())\n4×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 7 stored entries:\n  [1, 1]  =  0.0\n  [2, 1]  =  -1.0\n  [2, 2]  =  1.0\n  [3, 2]  =  -1.0\n  [3, 3]  =  1.0\n  [4, 3]  =  -1.0\n  [4, 4]  =  1.0\n\njulia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), ForwardFirstDifference())\n4×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 7 stored entries:\n  [1, 1]  =  -1.0\n  [1, 2]  =  1.0\n  [2, 2]  =  -1.0\n  [2, 3]  =  1.0\n  [3, 3]  =  -1.0\n  [3, 4]  =  1.0\n  [4, 4]  =  0.0\n\njulia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), CentralSecondDifference())\n4×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 10 stored entries:\n  [1, 1]  =  -1.0\n  [2, 1]  =  1.0\n  [1, 2]  =  1.0\n  [2, 2]  =  -2.0\n  [3, 2]  =  1.0\n  [2, 3]  =  1.0\n  [3, 3]  =  -2.0\n  [4, 3]  =  1.0\n  [3, 4]  =  1.0\n  [4, 4]  =  -1.0\n\n\n\n\n\n"
+    "text": "DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::DifferenceMethod)\n\nReturns a discretized differential operator of length(x̄) by length(x̄) matrix under mixed boundary conditions from bc using finite difference method specified by method.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), BackwardFirstDifference())\n4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n  0.0   0.0    ⋅    ⋅\n -1.0   1.0   0.0   ⋅\n   ⋅   -1.0   1.0  0.0\n   ⋅     ⋅   -1.0  1.0\n\njulia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), ForwardFirstDifference())\n4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅    ⋅\n  0.0  -1.0   1.0   ⋅\n   ⋅    0.0  -1.0  1.0\n   ⋅     ⋅    0.0  0.0\n\njulia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), CentralSecondDifference())\n4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅     ⋅\n  1.0  -2.0   1.0    ⋅\n   ⋅    1.0  -2.0   1.0\n   ⋅     ⋅    1.0  -1.0\n\njulia> x̄ = 0:5\n0:5\n\njulia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), BackwardFirstDifference())\n4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n Inf     0.0    ⋅    ⋅\n  -1.0   1.0   0.0   ⋅\n    ⋅   -1.0   1.0  0.0\n    ⋅     ⋅   -1.0  1.0\n\njulia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), ForwardFirstDifference())\n4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅     ⋅\n  0.0  -1.0   1.0    ⋅\n   ⋅    0.0  -1.0   1.0\n   ⋅     ⋅    0.0  -0.5\n\njulia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), CentralSecondDifference())\n4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n -Inf     1.0    ⋅     ⋅\n    1.0  -2.0   1.0    ⋅\n     ⋅    1.0  -2.0   1.0\n     ⋅     ⋅    1.0  -1.5\n\n\n\n\n\n"
 },
 
 {
@@ -125,7 +117,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "SimpleDifferentialOperators.L₁₊bc",
     "category": "method",
-    "text": "L₁₊bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})\n\nReturns a discretized first-order differential operator of length(x̄) by length(x̄) matrix using forward difference under boundary conditions specified by bc.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> L₁₊bc(x̄, (Reflecting(), Reflecting()))\n4×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 7 stored entries:\n  [1, 1]  =  -1.0\n  [1, 2]  =  1.0\n  [2, 2]  =  -1.0\n  [2, 3]  =  1.0\n  [3, 3]  =  -1.0\n  [3, 4]  =  1.0\n  [4, 4]  =  0.0\n\n\n\n\n\n"
+    "text": "L₁₊bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})\n\nReturns a discretized first-order differential operator of length(x̄) by length(x̄) matrix using forward difference under boundary conditions specified by bc.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> L₁₊bc(x̄, (Reflecting(), Reflecting()))\n4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅    ⋅\n  0.0  -1.0   1.0   ⋅\n   ⋅    0.0  -1.0  1.0\n   ⋅     ⋅    0.0  0.0\n\n\n\n\n\n"
 },
 
 {
@@ -141,7 +133,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "SimpleDifferentialOperators.L₁₋bc",
     "category": "method",
-    "text": "L₁₋bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})\n\nReturns a discretized first-order differential operator of length(x̄) by length(x̄) matrix using backward difference under boundary conditions specified by bc.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> L₁₋bc(x̄, (Reflecting(), Reflecting()))\n4×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 7 stored entries:\n  [1, 1]  =  0.0\n  [2, 1]  =  -1.0\n  [2, 2]  =  1.0\n  [3, 2]  =  -1.0\n  [3, 3]  =  1.0\n  [4, 3]  =  -1.0\n  [4, 4]  =  1.0\n\n\n\n\n\n"
+    "text": "L₁₋bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})\n\nReturns a discretized first-order differential operator of length(x̄) by length(x̄) matrix using backward difference under boundary conditions specified by bc.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> L₁₋bc(x̄, (Reflecting(), Reflecting()))\n4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n  0.0   0.0    ⋅    ⋅\n -1.0   1.0   0.0   ⋅\n   ⋅   -1.0   1.0  0.0\n   ⋅     ⋅   -1.0  1.0\n\n\n\n\n\n"
 },
 
 {
@@ -157,7 +149,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "SimpleDifferentialOperators.L₂bc",
     "category": "method",
-    "text": "L₂bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})\n\nReturns a discretized second-order differential operator of length(x̄) by length(x̄) matrix using central difference under boundary conditions specified by bc.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> L₂bc(x̄, (Reflecting(), Reflecting()))\n4×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 10 stored entries:\n  [1, 1]  =  -1.0\n  [2, 1]  =  1.0\n  [1, 2]  =  1.0\n  [2, 2]  =  -2.0\n  [3, 2]  =  1.0\n  [2, 3]  =  1.0\n  [3, 3]  =  -2.0\n  [4, 3]  =  1.0\n  [3, 4]  =  1.0\n  [4, 4]  =  -1.0\n\n\n\n\n\n"
+    "text": "L₂bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})\n\nReturns a discretized second-order differential operator of length(x̄) by length(x̄) matrix using central difference under boundary conditions specified by bc.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> L₂bc(x̄, (Reflecting(), Reflecting()))\n4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅     ⋅\n  1.0  -2.0   1.0    ⋅\n   ⋅    1.0  -2.0   1.0\n   ⋅     ⋅    1.0  -1.0\n\n\n\n\n\n"
 },
 
 {
