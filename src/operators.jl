@@ -72,12 +72,18 @@ julia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), CentralSeco
 ```
 """
 function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::BackwardFirstDifference)
-    # setup 
+    # setup for operator
+    M = length(x̄) - 2
+    d = diff(x̄)
+    Δ₋⁻¹ = 1 ./ d[1:end-1] # (1 ./ Δ₋)
+    T = eltype(Δ₋⁻¹)
+
+    # construct the operator
+    L = Tridiagonal(-Δ₋⁻¹[2:M], Δ₋⁻¹, zeros(T, M-1)) 
+
+    # setup for boundary conditions
     ξ_lb = bc[1].ξ
     Δ_1m = x̄[2] - x̄[1]
-
-    # get the corresponding extension operator and extract the interior nodes 
-    L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
 
     # apply boundary conditions
     L[1,1] += (bc[1].direction == :backward) ? (-1/Δ_1m - ξ_lb*Δ_1m) : 1/(-1+ξ_lb*Δ_1m)/Δ_1m
@@ -86,12 +92,18 @@ function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::BackwardFirs
 end
 
 function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::ForwardFirstDifference)
-    # setup 
+    # setup for operator
+    M = length(x̄) - 2
+    d = diff(x̄)
+    Δ₊⁻¹ = 1 ./ d[2:end] # (1 ./ Δ₊), extracting elements on the interior
+    T = eltype(Δ₊⁻¹)
+
+    # construct the operator
+    L = Tridiagonal(zeros(T, M-1), -Δ₊⁻¹, Δ₊⁻¹[1:M-1]) 
+    
+    # setup for boundary conditions
     ξ_ub = bc[2].ξ
     Δ_Mp = x̄[end] - x̄[end-1]
-
-    # get the corresponding extension operator and extract the interior nodes 
-    L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
 
     # apply boundary conditions
     L[end,end] += (bc[2].direction == :forward) ? (1/Δ_Mp - ξ_ub*Δ_Mp) : 1/(1+ξ_ub*Δ_Mp)/Δ_Mp
@@ -100,17 +112,24 @@ function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::ForwardFirst
 end
 
 function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::CentralSecondDifference)
-    # setup
+    # setup for operators
+    M = length(x̄) - 2
+    d = diff(x̄)
+    Δ₋⁻¹ = 1 ./ d[1:end-1] # 1 ./ Δ₋
+    Δ₊⁻¹ = 1 ./ d[2:end] # 1 ./ Δ₊
+    Δ⁻¹ = 1 ./ (d[1:end-1] + d[2:end]) # 1 ./ (Δ₋ + Δ₊)
+
+    # construct the operator
+    L = 2*Tridiagonal((Δ⁻¹.*Δ₋⁻¹)[2:M], -Δ₋⁻¹ .* Δ₊⁻¹, (Δ⁻¹.*Δ₊⁻¹)[1:M-1])
+
+    # setup for boundary conditions
     ξ_lb = bc[1].ξ
     ξ_ub = bc[2].ξ
     Δ_1p = x̄[3] - x̄[2]
     Δ_1m = x̄[2] - x̄[1]
     Δ_Mp = x̄[end] - x̄[end-1]
     Δ_Mm = x̄[end-1] - x̄[end-2]
-
-    # get the corresponding extension operator and extract the interior nodes 
-    L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
-
+    
     # apply boundary conditions
     Ξ_1p = L[1,1] - 2/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m))
     Ξ_Mm = L[end,end] + 2/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp))
