@@ -13,7 +13,7 @@
 
 # Concretes
     struct Reflecting <: HomogeneousBoundaryCondition end
-    @with_kw struct Mixed{T} <: HomogeneousBoundaryCondition where {T <: DifferenceMethod{1}}
+    @with_kw struct Mixed <: HomogeneousBoundaryCondition 
         ξ::Real = 0.0
-        direction::T = DefaultFirstDifference()
+        direction = :auto # :forward/:backward/:auto
     end
