@@ -1,11 +1,10 @@
 """
-    DifferentialOperator(x̄, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)
+    DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::DifferenceMethod)
 
 Returns a discretized differential operator of `length(x̄)` by `length(x̄)` matrix
-under reflecting boundary conditions from `bc` using finite difference method specified by `method`.
+under mixed boundary conditions from `bc` using finite difference method specified by `method`.
 
 # Examples
-
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
 julia> x̄ = 0:5
 0:5
@@ -30,22 +29,7 @@ julia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), CentralSecondDiff
   1.0  -2.0   1.0    ⋅
    ⋅    1.0  -2.0   1.0
    ⋅     ⋅    1.0  -1.0
-```
-"""
-function DifferentialOperator(x̄, bc::Tuple{Reflecting, Reflecting}, method)
-    # since reflecting boundary conditions are special cases of
-    # mixed boundary conditions with ξ_lb = ξ_ub = 0
-    DifferentialOperator(x̄, (Mixed(ξ = 0), Mixed(ξ = 0)), method)
-end
 
-"""
-    DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)
-
-Returns a discretized differential operator of `length(x̄)` by `length(x̄)` matrix
-under mixed boundary conditions from `bc` using finite difference method specified by `method`.
-
-# Examples
-```jldoctest; setup = :(using SimpleDifferentialOperators)
 julia> x̄ = 0:5
 0:5
 
@@ -71,54 +55,85 @@ julia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), CentralSeco
   ⋅     ⋅    1.0  -2.0
 ```
 """
-function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::BackwardFirstDifference)
-    # setup 
-    ξ_lb = bc[1].ξ
+function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::BackwardFirstDifference)
+    # reflecting bcs are special cases of mixed bcs with ξ = 0
+    if (typeof(bc[1]) <: Reflecting)
+        return DifferentialOperator(x̄, (Mixed(ξ = 0), bc[2]), method)
+    end
+
+    # setup for operator
+    M = length(x̄) - 2
+    d = diff(x̄)
+    Δ₋⁻¹ = 1 ./ d[1:end-1] # (1 ./ Δ₋)
+    T = eltype(Δ₋⁻¹)
+
+    # construct the operator
+    L = Tridiagonal(-Δ₋⁻¹[2:M], Δ₋⁻¹, zeros(T, M-1)) 
+
+    # setup for boundary conditions
     Δ_1m = x̄[2] - x̄[1]
-
-    # get the corresponding extension operator and extract the interior nodes 
-    L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
-
-    # apply boundary conditions
+    ξ_lb = bc[1].ξ
     L[1,1] += (bc[1].direction == :backward) ? (-1/Δ_1m - ξ_lb*Δ_1m) : 1/(-1+ξ_lb*Δ_1m)/Δ_1m
 
     return L
 end
 
-function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::ForwardFirstDifference)
-    # setup 
-    ξ_ub = bc[2].ξ
+function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::ForwardFirstDifference)
+    # reflecting bcs are special cases of mixed bcs with ξ = 0
+    if (typeof(bc[2]) <: Reflecting)
+        return DifferentialOperator(x̄, (Mixed(ξ = 0), bc[1]), method)
+    end
+
+    # setup for operator
+    M = length(x̄) - 2
+    d = diff(x̄)
+    Δ₊⁻¹ = 1 ./ d[2:end] # (1 ./ Δ₊), extracting elements on the interior
+    T = eltype(Δ₊⁻¹)
+
+    # construct the operator
+    L = Tridiagonal(zeros(T, M-1), -Δ₊⁻¹, Δ₊⁻¹[1:M-1]) 
+    
+    # setup for boundary conditions
     Δ_Mp = x̄[end] - x̄[end-1]
+    ξ_ub = bc[2].ξ
 
-    # get the corresponding extension operator and extract the interior nodes 
-    L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
-
-    # apply boundary conditions
     L[end,end] += (bc[2].direction == :forward) ? (1/Δ_Mp - ξ_ub*Δ_Mp) : 1/(1+ξ_ub*Δ_Mp)/Δ_Mp
 
     return L
 end
 
-function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::CentralSecondDifference)
-    # setup
+function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::CentralSecondDifference)
+    # reflecting bcs are special cases of mixed bcs with ξ = 0
+    if (typeof(bc[1]) <: Reflecting || typeof(bc[2]) <: Reflecting)
+        return DifferentialOperator(x̄, (Mixed(ξ = 0), Mixed(ξ = 0)), method)
+    end
+
+    # setup for operators
+    M = length(x̄) - 2
+    d = diff(x̄)
+    Δ₋⁻¹ = 1 ./ d[1:end-1] # 1 ./ Δ₋
+    Δ₊⁻¹ = 1 ./ d[2:end] # 1 ./ Δ₊
+    Δ⁻¹ = 1 ./ (d[1:end-1] + d[2:end]) # 1 ./ (Δ₋ + Δ₊)
+
+    # construct the operator
+    L = 2*Tridiagonal((Δ⁻¹.*Δ₋⁻¹)[2:M], -Δ₋⁻¹ .* Δ₊⁻¹, (Δ⁻¹.*Δ₊⁻¹)[1:M-1])
+
+    # setup for boundary conditions
     ξ_lb = bc[1].ξ
     ξ_ub = bc[2].ξ
     Δ_1p = x̄[3] - x̄[2]
     Δ_1m = x̄[2] - x̄[1]
     Δ_Mp = x̄[end] - x̄[end-1]
     Δ_Mm = x̄[end-1] - x̄[end-2]
-
-    # get the corresponding extension operator and extract the interior nodes 
-    L = ExtensionDifferentialOperator(x̄, method)[:,2:(end-1)]
-
-    # apply boundary conditions
     Ξ_1p = L[1,1] - 2/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m))
     Ξ_Mm = L[end,end] + 2/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp))
     Ξ_1m = 2*(-1/(Δ_1p*Δ_1m) + (1+ξ_lb*Δ_1m)/(Δ_1p+Δ_1m)/Δ_1m)
     Ξ_Mp = 2*(-1/(Δ_Mp*Δ_Mm) - (-1+ξ_ub*Δ_Mp)/(Δ_Mp+Δ_Mm)/Δ_Mp)
 
+    # apply boundary conditions
     L[1,1] = (bc[1].direction == :backward) ? Ξ_1m : Ξ_1p
     L[end,end] = (bc[2].direction == :forward) ? Ξ_Mp : Ξ_Mm
+
     return L
 end
 
