@@ -15,5 +15,5 @@
     struct Reflecting <: HomogeneousBoundaryCondition end
     @with_kw struct Mixed <: HomogeneousBoundaryCondition 
         ξ::Real = 0.0
-        direction = :auto # :forward/:backward/:auto
+        direction = :auto # :forwards/:backwards/:auto
     end
