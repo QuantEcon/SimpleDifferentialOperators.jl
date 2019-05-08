@@ -19,7 +19,7 @@ Detailed derivations and more applications can be found [here](generated/discret
 Consider solving for `v` from the following equation by the Hamilton-Jacobi-Bellman equation (HJBE):
 
 ```math
-\rho v(x) = f(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
+\rho v(x) = \pi(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
 ```
 
 for some constant $\rho, \sigma > 0$ and $\mu \leq 0$. To solve `v` under the reflecting barrier conditions $v'(0) = v'(1) = 0$ on `M`-size discretized grids, one can run the following code:
@@ -27,7 +27,7 @@ for some constant $\rho, \sigma > 0$ and $\mu \leq 0$. To solve `v` under the re
 ```julia
 using LinearAlgebra, SimpleDifferentialOperators
 # setup
-f(x) = x^2
+π(x) = x^2
 μ = -0.1 # constant negative drift
 σ = 0.1
 ρ = 0.05
@@ -43,7 +43,7 @@ Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc)
 L_bc = I * ρ - Lₓ
 
 # solve the value function
-v = L_bc \ f.(x)
+v = L_bc \ π.(x)
 ```
 
 Note that the interior solution `v` does not the values of $v$ at the boundary, i.e., $v(0)$ and $v(1)$. To extend the interior solution to the boundary points, one can call `extrapolatetoboundary` as follows:
@@ -78,7 +78,7 @@ b = [0.0; 0.0]
 L = [spzeros(M) ρ*I spzeros(M)] - Lₓ
 
 # stack the systems of bellman and boundary conditions, and solve
-v̄ = [L; B] \ [f.(x); b]
+v̄ =  [L; B] \ [π.(x); b]
 
 # extract the interior (is identical with `v` above)
 v =  v̄[2:end-1]
@@ -91,7 +91,7 @@ First, consider the case where $S \neq 0$, which gives a nonhomogenous boundary 
 
 ```julia
 # define S
-S = 0.0
+S = 3.0
 
 # boundary conditions (i.e. B v̄ = b)
 B = transpose([[1; 0; zeros(M)] [zeros(M); -1; 1]])
@@ -107,28 +107,28 @@ B[:,2]
 \end{bmatrix}
 =
 \begin{bmatrix}
-f^*
+π^*
 b[:,2]
 \end{bmatrix}
 ```
 where
 
 ```math
-f^* =
+π^* =
 \begin{bmatrix}
-f(x_1) - S(s\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2})
+π(x_1) - S(s\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2})
 \\ 
 \vdots
 \\
-f(x_{M})
+π(x_{M})
 \end{bmatrix}
 ```
 
 Now solve `v`:
 ```julia
 # stack the systems of bellman and boundary conditions, and solve
-v̄ = [L; B] \ [f.(x); b]
-``` 
+v̄ =  [L; B] \ [π.(x); b]
+```
 
 Here is a plot for `v`:
 
@@ -147,7 +147,7 @@ Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc)
 L_bc = I * ρ - Lₓ
 
 # solve the value function
-v = L_bc \ f.(x)
+v = L_bc \ π.(x)
 ```
 
 In fact, on the interior, they return identical solutions:
@@ -160,7 +160,7 @@ B = transpose([[1; 0; zeros(M)] [zeros(M); -1; 1]])
 b = [S; 0.0];
 
 # stack the systems of bellman and boundary conditions, and solve
-v̄ = [L; B] \ [f.(x); b]
+v̄ = [L; B] \ [π.(x); b]
 
 # confirm that v returns the identical solution as the one from the stacked system
 using Test
@@ -172,7 +172,7 @@ using Test
 -------------
 One can also deploy upwind schemes when drift variable is not constant. Consider solving for `v` from the following Bellman equation:
 ```math
-\rho v(x) = f(x) + \mu(x) \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
+\rho v(x) = π(x) + \mu(x) \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
 ```
 
 associated with the diffusion process
@@ -184,7 +184,7 @@ for some constant $\rho, \sigma > 0$ and $\mu(x) = -x$. Note that $\mu(x)$ depen
 
 ```julia
 # setup
-f(x) = x^2
+π(x) = x^2
 μ(x) = -x # drift depends on state
 σ = 1.0
 ρ = 0.05
@@ -203,7 +203,7 @@ Lₓ = L₁ - σ^2 / 2 * L₂bc(x̄, bc)
 L_bc_state_dependent = I * ρ - Lₓ
 
 # solve the value function
-v = L_bc_state_dependent \ f.(x)
+v = L_bc_state_dependent \ π.(x)
 ```
 
 ### Finding stationary distribution from the Kolmogorov forward equation (KFE)
