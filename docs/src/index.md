@@ -87,7 +87,7 @@ v =  v̄[2:end-1]
 ### Solving HJBE with absorbing barrier conditions
 Instead of having the reflecting barrier conditions on both lower bound and upper bound $v'(0) = v'(1) = 0$ as above, one can impose an absorbing barrier condition as well. To solve `v` under the reflecting barrier conditions $v(0) = S$ (absorbing barrier on lower bound) for some S and $v'(1) = 0$ (reflecting barrier on upper bound), one can construct `B` and `b` for the boundary conditions as follows.
 
-First, consider the case where $S = 0$.
+First, consider the case where $S \neq 0$, which gives a nonhomogenous boundary condition:
 
 ```julia
 # define S
@@ -98,7 +98,33 @@ B = transpose([[1; 0; zeros(M)] [zeros(M); -1; 1]])
 b = [S; 0.0];
 ```
 
-and solve `v`:
+We can then apply one Gaussian elimination step to remove a non-zero element of the first column in $L$, which is $\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2}$. This can be done by substracting the first row of the stacked system $[L; B]$ by the first row of the system $B = b$ by $\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2}$. This returns the following identical system:
+
+```math
+\begin{bmatrix}
+L[:,2:M+1] \\
+B[:,2]
+\end{bmatrix}
+=
+\begin{bmatrix}
+f^*
+b[:,2]
+\end{bmatrix}
+```
+where
+
+```math
+f^* =
+\begin{bmatrix}
+f(x_1) - S(s\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2})
+\\ 
+\vdots
+\\
+f(x_{M})
+\end{bmatrix}
+```
+
+Now solve `v`:
 ```julia
 # stack the systems of bellman and boundary conditions, and solve
 v̄ = [L; B] \ [f.(x); b]
@@ -112,7 +138,7 @@ plot(x̄, v̄, lw = 4, label = "v")
 
 ![plot-hjbe-lb-absorbing-ub-reflecting](assets/plot-hjbe-lb-absorbing-ub-reflecting.png)
 
-Note that this can be alternatively done by constructing the corresponding differential operators on the interior with `Absorbing()` boundary condition:
+Note that this can be alternatively done by constructing the corresponding differential operators on the interior with `Absorbing()` boundary condition when $S = 0$:
 ```julia
 # discretize L = ρ - μ D_x - σ^2 / 2 D_xx
 # subject to reflecting barriers at 0 and 1
@@ -126,7 +152,17 @@ v = L_bc \ f.(x)
 
 In fact, on the interior, they return identical solutions:
 ```julia
-# confirm that they return the identical solution as the one from the stacked system
+# define S
+S = 0.0
+
+# boundary conditions (i.e. B v̄ = b)
+B = transpose([[1; 0; zeros(M)] [zeros(M); -1; 1]])
+b = [S; 0.0];
+
+# stack the systems of bellman and boundary conditions, and solve
+v̄ = [L; B] \ [f.(x); b]
+
+# confirm that v returns the identical solution as the one from the stacked system
 using Test
 @test v ≈ v̄[2:end-1]
 ```
