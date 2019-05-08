@@ -1895,22 +1895,22 @@ B_{+1} &\equiv \begin{bmatrix} B_{12} & B_{23} & B_{34} & B_{45} \end{bmatrix}\i
 
 
 \section{Boundary extrapolation under mixed boundary conditions}
-Consider solving $v$ on an irregular extended grid $\overline{x} = \set{x_i}_{i=0}^{M+1}$ with the corresponding interior grid $x = \set{x_i}_{i=1}^M $ such that mixed boundary conditions \eqref{eq:mixed-BC1} and \eqref{eq:mixed-BC2} are applied. As described in Section \ref{subsec:applying-bc}, differential operators with boundary conditions $B$ applied, $L^B$, can be used to solve the system $L^B v = f$ in \eqref{eq:system-on-interior} to find $v$ on the interior grid without stacking up the boundary conditions manually. Note that the resulting interior solution $v$ does not contain the value of $v$ on the boundary, $\overline{v}_0 = v(x_0)$ and $\overline{v}_{M+1} = v(x_{M+1})$. 
+Consider solving $v$ on an irregular extended grid $\overline{x} = \set{x_i}_{i=0}^{M+1}$ with the corresponding interior grid $x = \set{x_i}_{i=1}^M $ such that mixed boundary conditions \eqref{eq:mixed-BC1-irregular-grid} and \eqref{eq:mixed-BC2-irregular-grid} are applied. As described in Section \ref{subsec:applying-bc}, differential operators with boundary conditions $B$ applied, $L^B$, can be used to solve the system $L^B v = f$ in \eqref{eq:system-on-interior} to find $v$ on the interior grid without stacking up the boundary conditions manually. Note that the resulting interior solution $v$ does not contain the value of $v$ on the boundary, $\overline{v}_0 = v(x_0)$ and $\overline{v}_{M+1} = v(x_{M+1})$. 
 
-To retrieve $\overline{v}_0 $ and $\overline{v}_{M+1}$ to construct $\overline{v}$ from $v$, first note that the mixed boundary conditions can be discretized as follows:
+First, we consider the case when the drift is positive on the lower bound and negative on the upper bound. To retrieve $\overline{v}_0 $ and $\overline{v}_{M+1}$ to construct $\overline{v}$ from $v$, first note that the mixed boundary conditions can be discretized as follows:
 \begin{align}
-&\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_0 = 0 \label{eq:mixed-discretized-lb} \\
-&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M+1} = 0 \label{eq:mixed-discretized-ub}
+\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_0 &= 0 \label{eq:mixed-discretized-lb} \\
+\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M+1} &= 0 \label{eq:mixed-discretized-ub}
 \end{align}
 as shown in \ref{subsubsec-irregular-grids-mixed-boundary-conditions}, using forward difference and backward difference scheme for the lower bound and upper bound respecitvely. Rearranging \eqref{eq:mixed-discretized-lb} and \eqref{eq:mixed-discretized-ub} gives
 \begin{align}
-\overline{v}_0 = \frac{1}{1-\underline{\xi} \Delta_{0,+} } \overline{v}_1 \\
-\overline{v}_{M+1} = \frac{1}{1+\overline{\xi} \Delta_{M+1,-} } \overline{v}_M
+\overline{v}_0 &= \frac{1}{1-\underline{\xi} \Delta_{0,+} } \overline{v}_1 \\
+\overline{v}_{M+1} &= \frac{1}{1+\overline{\xi} \Delta_{M+1,-} } \overline{v}_M
 \end{align}
 Note that $\overline{v}_1 = v_1$ and $\overline{v}_M = v_M$ as the resulting solutions on the interior nodes are identical. Also, by the definition, we have $\Delta_{0,+} = x_1 - x_0 = \Delta_{1,-}$ and $\Delta_{M+1,-} = x_{M+1} - x_M = \Delta_{M, +}$, which yields the following boundary extrapolation scheme
 \begin{align}
-\overline{v}_0 = \frac{1}{1-\underline{\xi} \Delta_{1,-} } {v}_1 \\
-\overline{v}_{M+1} = \frac{1}{1+\overline{\xi} \Delta_{M,+} } {v}_M
+\overline{v}_0 &= \frac{1}{1-\underline{\xi} \Delta_{1,-} } {v}_1 \\
+\overline{v}_{M+1} &= \frac{1}{1+\overline{\xi} \Delta_{M,+} } {v}_M
 \end{align}
 to construct
 \begin{align}
@@ -1926,6 +1926,19 @@ v  \\
 \end{bmatrix} 
 \end{align}
 from $v$.
+
+Now suppose that the drift is drift is negative on the lower bound and is positive on the upper bound. Recall from \eqref{eq:mixed-BC1-irregular-grid-negative} and \eqref{eq:mixed-BC2-irregular-grid-positive} that the corresponding discretized boundary conditions are:
+
+\begin{align}
+\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_1 &= 0 \\
+\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M} &= 0 
+\end{align}
+
+Rearrangement with the fact that $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$ gives the following boundary extrapolation scheme:
+\begin{align}
+\overline{v}_0 &= (1+\underline{\xi} \Delta_{1,-} ) {v}_1 \\
+\overline{v}_{M+1} &= (1-\overline{\xi} \Delta_{M,+} ) {v}_M
+\end{align}
 
 \section{Derivation by substitution}
 One can also derive the formula for $L_{1-}^B, L_{1+}^B, L_2^B$ in \eqref{eq:L-1-regular}, \eqref{eq:L-1-plus-regular}, \eqref{eq:L-2-regular} by substitution. For simplicity, here we focus on the case when we have regular grids, i.e., $x_{i+1} - x_i = \Delta$ for some $\Delta > 0$ for all $i = 0, ..., M$.
