@@ -60,6 +60,9 @@ function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryConditio
     if (typeof(bc[1]) <: Reflecting)
         return DifferentialOperator(x̄, (Mixed(ξ = 0), bc[2]), method)
     end
+    if (typeof(bc[2]) <: Reflecting)
+        return DifferentialOperator(x̄, (bc[1], Mixed(ξ = 0)), method)
+    end
 
     # setup for operator
     M = length(x̄) - 2
@@ -85,8 +88,11 @@ end
 
 function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::ForwardFirstDifference)
     # reflecting bcs are special cases of mixed bcs with ξ = 0
+    if (typeof(bc[1]) <: Reflecting)
+        return DifferentialOperator(x̄, (Mixed(ξ = 0), bc[2]), method)
+    end
     if (typeof(bc[2]) <: Reflecting)
-        return DifferentialOperator(x̄, (Mixed(ξ = 0), bc[1]), method)
+        return DifferentialOperator(x̄, (bc[1], Mixed(ξ = 0)), method)
     end
 
     # setup for operator
@@ -113,8 +119,11 @@ end
 
 function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::CentralSecondDifference)
     # reflecting bcs are special cases of mixed bcs with ξ = 0
-    if (typeof(bc[1]) <: Reflecting || typeof(bc[2]) <: Reflecting)
-        return DifferentialOperator(x̄, (Mixed(ξ = 0), Mixed(ξ = 0)), method)
+    if (typeof(bc[1]) <: Reflecting)
+        return DifferentialOperator(x̄, (Mixed(ξ = 0), bc[2]), method)
+    end
+    if (typeof(bc[2]) <: Reflecting)
+        return DifferentialOperator(x̄, (bc[1], Mixed(ξ = 0)), method)
     end
 
     # setup for operators

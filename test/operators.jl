@@ -184,6 +184,26 @@ end
         @test Array(L₂bc) == [-2. 1. 0.; 1. -2. 1.; 0. 1. -2.]
         @test Array(x) == [1; 2; 3]
 
+        # Reflecting on lb, absorbing on ub
+        L₁₋bc, L₁₊bc, L₂bc, x = diffusionoperators(x̄, (Reflecting(), Absorbing()))
+        L₁₋, L₁₊, L₂, x = diffusionoperators_without_bc(x̄)
+
+        # check accuracy as regression tests
+        @test Array(L₁₋bc) == [0. 0. 0.; -1. 1. 0.; 0. -1. 1.]
+        @test Array(L₁₊bc) == [-1. 1. 0.; 0. -1. 1.; 0. 0. -1.]
+        @test Array(L₂bc) == [-1. 1. 0.; 1. -2. 1.; 0. 1. -2.]
+        @test Array(x) == [1; 2; 3]
+        
+        # Absorbing on lb, reflecting on ub
+        L₁₋bc, L₁₊bc, L₂bc, x = diffusionoperators(x̄, (Absorbing(), Reflecting()))
+        L₁₋, L₁₊, L₂, x = diffusionoperators_without_bc(x̄)
+
+        # check accuracy as regression tests
+        @test Array(L₁₋bc) == [1. 0. 0.; -1. 1. 0.; 0. -1. 1.]
+        @test Array(L₁₊bc) == [-1. 1. 0.; 0. -1. 1.; 0. 0. 0.]
+        @test Array(L₂bc) == [-2. 1. 0.; 1. -2. 1.; 0. 1. -1.]
+        @test Array(x) == [1; 2; 3]
+
         # Irregular grid (with Δ_1m = Δ_1p and Δ_Mp = Δ_Mm)
         x̄ = [0.0; 1.0; 2.0; 4.0; 6.0]
         L₁₋bc, L₁₊bc, L₂bc, x = diffusionoperators(x̄, (Absorbing(), Absorbing()))
