@@ -209,14 +209,15 @@ v = L_bc_state_dependent \ π.(x)
 ### Finding stationary distribution from the Kolmogorov forward equation (KFE)
 -------------
 The KFE equation is
-$$
-\partial_t v(x,t) = -\mu \partial_{x} v(x,t) + \frac{\sigma^2}{2} \partial_{xx} v(x,t)
-$$
+```math
+\partial_t f(x,t) = -\mu \partial_{x} f(x,t) + \frac{\sigma^2}{2} \partial_{xx} f(x,t)
+```
+
 for $x \in (x_{\min}, x_{\max})$ with the following corresponding reflecting barrier conditions:
 ```math
 \begin{align}
--\mu v(x_{\min}, t) +\frac{\sigma^2}{2} \partial_{x} v(x_{\min}, t) &= 0 \\
--\mu v(x_{\max}, t) +\frac{\sigma^2}{2} \partial_{x} v(x_{\max}, t) &= 0
+-\mu f(x_{\min}, t) +\frac{\sigma^2}{2} \partial_{x} f(x_{\min}, t) &= 0 \\
+-\mu f(x_{\max}, t) +\frac{\sigma^2}{2} \partial_{x} f(x_{\max}, t) &= 0
 \end{align}
 ```
 
@@ -224,16 +225,16 @@ i.e.,
 
 ```math
 \begin{align}
--\frac{2\mu}{\sigma^2} v(x_{\min}, t) +\partial_{x} v(x_{\min}, t) &= 0 \\
--\frac{2\mu}{\sigma^2} v(x_{\max}, t) +\partial_{x} v(x_{\max}, t) &= 0
+-\frac{2\mu}{\sigma^2} f(x_{\min}, t) +\partial_{x} f(x_{\min}, t) &= 0 \\
+-\frac{2\mu}{\sigma^2} f(x_{\max}, t) +\partial_{x} f(x_{\max}, t) &= 0
 \end{align}
 ```
 
 which gives mixed boundary conditions with $\overline{\xi} = \underline{\xi} = -\frac{2\mu}{\sigma^2}$.
 
-One can compute the stationary distribution of the state `x` above from the corresponding KFE by taking $\partial_{t} g(x,t) = 0$, i.e., solving $g$ from the $L^* g(x) = 0$ where
+One can compute the stationary distribution of the state `x` above from the corresponding KFE by taking $\partial_{t} f(x,t) = 0$, i.e., solving $f$ from the $L^* f(x) = 0$ where
 ```math
-L^* = - \mu(x) \partial_{x} + \frac{\sigma^2}{2} \partial_{xx}
+L^* = - \mu \partial_{x} + \frac{\sigma^2}{2} \partial_{xx}
 ```
 
 The following code constructs $L^*$:
@@ -258,13 +259,13 @@ bc = (Mixed(ξ = ξ_lb, direction = :backward), Mixed(ξ = ξ_ub))
 L_KFE = Array(-μ*L₁₊bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))
 ```
 
-One can find the stationary distribution $g$ by solving the following discretized system of equations:
+One can find the stationary distribution $f$ by solving the following discretized system of equations:
 
 ```math
-L^* g = 0
+L^* f = 0
 ```
 
-such that the sum of $g$ is one. This can be found by finding a non-trivial eigenvector `g_ss` for `L_KFE` associated with the eigenvalue of zero:
+such that the sum of $f$ is one. This can be found by finding a non-trivial eigenvector `f_ss` for `L_KFE` associated with the eigenvalue of zero:
 
 ```julia
 using Arpack # library for extracting eigenvalues and eigenvectors
@@ -272,16 +273,16 @@ using Arpack # library for extracting eigenvalues and eigenvectors
 # extract eigenvalues and eigenvectors, smallest eigenval in magintute first
 λ, ϕ = eigs(L_KFE, which = :SM); 
 # extract the very first eigenvector (associated with the smallest eigenvalue)
-g_ss = real.(ϕ[:,1]);
+f_ss = real.(ϕ[:,1]);
 # normalize it
-g_ss = g_ss / sum(g_ss)
+f_ss = f_ss / sum(f_ss)
 ```
 
 Using `L` from the state-dependent drift example above, this results in the following stationary distribution:
 
 ```julia
-plot(x, g_ss, lw = 4, label = "g_ss")
-```g
+plot(x, f_ss, lw = 4, label = "f_ss")
+```
 
 ![plot-stationary-dist](assets/plot-stationary-dist.png)
 
