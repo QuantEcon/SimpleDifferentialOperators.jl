@@ -62,7 +62,13 @@ function extrapolatetoboundary(v, x̄, bc::Tuple{BoundaryCondition, BoundaryCond
     elseif (typeof(bc[1]) <: Mixed)
         ξ_lb = bc[1].ξ
         Δ_1_minus = x̄[2] - x̄[1]
-        lb_extended = v[1]/(1-ξ_lb*Δ_1_minus)
+
+        # apply extrapolation based on the directions
+        if (bc[1].direction != :backward)
+          lb_extended = v[1]/(1-ξ_lb*Δ_1_minus)
+        else
+          lb_extended = (1+ξ_lb*Δ_1_minus)*v[1]
+        end
     end
 
     # extrapolate on the upper bound
@@ -71,7 +77,13 @@ function extrapolatetoboundary(v, x̄, bc::Tuple{BoundaryCondition, BoundaryCond
     elseif (typeof(bc[2]) <: Mixed)
         ξ_ub = bc[2].ξ
         Δ_M_plus = x̄[end] - x̄[end-1]
-        ub_extended = v[end]/(1+ξ_ub*Δ_M_plus)
+
+        # apply extrapolation based on the directions
+        if (bc[2].direction != :forward)
+          ub_extended = v[end]/(1+ξ_ub*Δ_M_plus)
+        else
+          ub_extended = (1-ξ_ub*Δ_M_plus)*v[end]
+        end
     end
 
     return [lb_extended; v; ub_extended]
