@@ -229,7 +229,7 @@ plot(x, g_ss, lw = 4, label = "g_ss")
 
 ![plot-stationary-dist](assets/plot-stationary-dist.png)
 
-Note that the operator for the KFE in the original equation is the adjoint of the operator for infinitesimal generator used in the HJBE, $L$, and the correct discretization scheme for $L^*$ is, analogously, done by taking the transpose of the discretized operator for HJBE, $L$ (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569) and [Achdou et al., 2017](https://ideas.repec.org/p/nbr/nberwo/23732.html)),which has been constructed as `Lₓ` is the HJBE example above. In fact, the discretized $L^*$ and $L^T$ are identical:
+Note that the operator for the KFE in the original equation is the adjoint of the operator for infinitesimal generator used in the HJBE, $L$, and the correct discretization scheme for $L^*$ is, analogously, done by taking the transpose of the discretized operator for HJBE, $L$ (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569) and [Achdou et al., 2017](https://ideas.repec.org/p/nbr/nberwo/23732.html)), which has been constructed as `Lₓ` is the HJBE example above. In fact, the discretized $L^*$ and $L^T$ are identical:
 
 ```julia
 # discretize L = μ D_x + σ^2 / 2 D_xx
