@@ -345,7 +345,14 @@ B = \begin{bmatrix}
 \end{bmatrix}_{2 \times (M+2)}\label{eq:B-mixed}
 \end{equation}
 
-Depending on the direction of the drift, the locations of $\overline{\xi}$ and $\underline{\xi}$ have to be different:
+Depending on the direction of the drift, the locations of $\overline{\xi}$ and $\underline{\xi}$ have to be different. When the drift is drift is negative on the lower bound and is positive on the upper bound, we have
+
+\begin{align}
+\frac{\overline{v}_1 - \overline{v}_0}{\Delta} + \underline{\xi} \overline{v}_1 &= 0 \label{eq:mixed-BC1-negative}  \\
+\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta} + \overline{\xi} \overline{v}_{M} &= 0 \label{eq:mixed-BC2-positive}
+\end{align}
+
+Hence, letting $\circ_1, \circ_M \in \{-, +\}$ denote the drift directions on the lower and upper boundaries respectively, there are four corresponding boundary condition matrices $B^{\circ_1 \circ_M}$ as follows:
  
 \begin{align}
 B^{--} &\equiv 
@@ -982,11 +989,11 @@ which is identical as the identity operator for regular grids.
 \subsubsection{Mixed boundary conditions}
 Recall mixed boundary conditions from \eqref{eq:mixed-BC1} and \eqref{eq:mixed-BC2}. Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$. Using forward difference and backward difference discretization scheme for the lower bound and upper bound respectively, we have
 \begin{align}
-&\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_0 = 0 \\
-&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M+1} = 0
+&\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_0 = 0 \label{eq:mixed-BC1-irregular-grid}  \\
+&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M+1} = 0 \label{eq:mixed-BC2-irregular-grid}
 \end{align}
 
-Thus, the corresponding boundary condition matrix $B$ is
+when the drift is positive on the lower bound and is negative on the upper bound. Thus, the corresponding boundary condition matrix $B$ is
 
 \begin{equation}\label{eq:mixed-barrier-matrix-original}
 B = \begin{bmatrix}
@@ -1011,8 +1018,14 @@ b = \begin{bmatrix}
 \end{equation}
 since $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$.
 
+Depending on the direction of the drift, the locations of $\overline{\xi}$ and $\underline{\xi}$ have to be different. When the drift is drift is negative on the lower bound and is positive on the upper bound, we have
 
-Depending on the direction of the drift, the locations of $\overline{\xi}$ and $\underline{\xi}$ have to be different:
+\begin{align}
+&\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_1 = 0 \label{eq:mixed-BC1-irregular-grid-negative}  \\
+&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M} = 0 \label{eq:mixed-BC2-irregular-grid-positive}
+\end{align}
+
+Hence, letting $\circ_1, \circ_M \in \{-, +\}$ denote the drift directions on the lower and upper boundaries respectively, there are four corresponding boundary condition matrices $B^{\circ_1 \circ_M}$ as follows:
 
 \begin{align}
 B^{--} &\equiv 
