@@ -12,30 +12,39 @@ julia> x̄ = -2:2
 0:5
 
 julia> x = interiornodes(x̄)
-1
-2
-3
+  1
+  2
+  3
 
 julia> v = (x -> x^2).(x)
 3-element Array{Int64,1}:
- 1
- 0
- 1
+  1
+  0
+  1
 
 julia> extrapolatetoboundary(v, x̄, (Absorbing(), Absorbing()))
 5-element Array{Int64,1}:
- 0
- 1
- 0
- 1
- 0
+  0
+  1
+  0
+  1
+  0
+
 julia> extrapolatetoboundary(v, x̄, (Absorbing(), Reflecting()))
  5-element Array{Int64,1}:
   0
   1
   0
   1
-  0
+  1
+
+julia> extrapolatetoboundary(v, x̄, (Mixed(ξ = 3.0), Reflecting()))
+5-element Array{Float64,1}:
+ -0.5
+  1.0
+  0.0
+  1.0
+  1.0
   
 ```
 """
