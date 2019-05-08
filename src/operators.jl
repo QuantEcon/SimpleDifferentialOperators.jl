@@ -72,8 +72,13 @@ function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryConditio
 
     # setup for boundary conditions
     Δ_1m = x̄[2] - x̄[1]
-    ξ_lb = bc[1].ξ
-    L[1,1] += (bc[1].direction == :backward) ? (-1/Δ_1m - ξ_lb*Δ_1m) : 1/(-1+ξ_lb*Δ_1m)/Δ_1m
+
+    # apply boundary conditions
+    # (under homogeneous absorbing bc on lb, the first column in invariant)
+    if !(typeof(bc[1]) <: Absorbing) 
+        ξ_lb = bc[1].ξ
+        L[1,1] += (bc[1].direction == :backward) ? (-1/Δ_1m - ξ_lb*Δ_1m) : 1/(-1+ξ_lb*Δ_1m)/Δ_1m
+    end
 
     return L
 end
@@ -95,9 +100,13 @@ function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryConditio
     
     # setup for boundary conditions
     Δ_Mp = x̄[end] - x̄[end-1]
-    ξ_ub = bc[2].ξ
 
-    L[end,end] += (bc[2].direction == :forward) ? (1/Δ_Mp - ξ_ub*Δ_Mp) : 1/(1+ξ_ub*Δ_Mp)/Δ_Mp
+    # apply boundary conditions
+    # (under homogeneous absorbing bc on ub, the last column in invariant)
+    if !(typeof(bc[2]) <: Absorbing) 
+        ξ_ub = bc[2].ξ
+        L[end,end] += (bc[2].direction == :forward) ? (1/Δ_Mp - ξ_ub*Δ_Mp) : 1/(1+ξ_ub*Δ_Mp)/Δ_Mp
+    end
 
     return L
 end
@@ -119,21 +128,26 @@ function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryConditio
     L = 2*Tridiagonal((Δ⁻¹.*Δ₋⁻¹)[2:M], -Δ₋⁻¹ .* Δ₊⁻¹, (Δ⁻¹.*Δ₊⁻¹)[1:M-1])
 
     # setup for boundary conditions
-    ξ_lb = bc[1].ξ
-    ξ_ub = bc[2].ξ
     Δ_1p = x̄[3] - x̄[2]
     Δ_1m = x̄[2] - x̄[1]
     Δ_Mp = x̄[end] - x̄[end-1]
     Δ_Mm = x̄[end-1] - x̄[end-2]
-    Ξ_1p = L[1,1] - 2/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m))
-    Ξ_Mm = L[end,end] + 2/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp))
-    Ξ_1m = 2*(-1/(Δ_1p*Δ_1m) + (1+ξ_lb*Δ_1m)/(Δ_1p+Δ_1m)/Δ_1m)
-    Ξ_Mp = 2*(-1/(Δ_Mp*Δ_Mm) - (-1+ξ_ub*Δ_Mp)/(Δ_Mp+Δ_Mm)/Δ_Mp)
 
     # apply boundary conditions
-    L[1,1] = (bc[1].direction == :backward) ? Ξ_1m : Ξ_1p
-    L[end,end] = (bc[2].direction == :forward) ? Ξ_Mp : Ξ_Mm
-
+    # (under homogeneous absorbing bc on lb, the first column in invariant)
+    if !(typeof(bc[1]) <: Absorbing) 
+        ξ_lb = bc[1].ξ
+        Ξ_1p = L[1,1] - 2/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m))
+        Ξ_1m = 2*(-1/(Δ_1p*Δ_1m) + (1+ξ_lb*Δ_1m)/(Δ_1p+Δ_1m)/Δ_1m)
+        L[1,1] = (bc[1].direction == :backward) ? Ξ_1m : Ξ_1p
+    end
+    # (under homogeneous absorbing bc on ub, the last column in invariant)
+    if !(typeof(bc[2]) <: Absorbing) 
+        ξ_ub = bc[2].ξ
+        Ξ_Mm = L[end,end] + 2/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp))
+        Ξ_Mp = 2*(-1/(Δ_Mp*Δ_Mm) - (-1+ξ_ub*Δ_Mp)/(Δ_Mp+Δ_Mm)/Δ_Mp)    
+        L[end,end] = (bc[2].direction == :forward) ? Ξ_Mp : Ξ_Mm
+    end
     return L
 end
 
