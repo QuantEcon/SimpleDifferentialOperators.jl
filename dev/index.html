@@ -32,16 +32,50 @@ b = [0.0; 0.0]
 L = [spzeros(M) ρ*I spzeros(M)] - Lₓ
 
 # stack the systems of bellman and boundary conditions, and solve
-v̄ =  [L; B] \ [f.(x); b]
+v̄ = [L; B] \ [f.(x); b]
 
 # extract the interior (is identical with `v` above)
-v =  v̄[2:end-1]</code></pre><h3><a class="nav-anchor" id="Solving-HJBE-with-absorbing-barrier-conditions-1" href="#Solving-HJBE-with-absorbing-barrier-conditions-1">Solving HJBE with absorbing barrier conditions</a></h3><p>Instead of having the reflecting barrier conditions on both lower bound and upper bound <span>$v&#39;(0) = v&#39;(1) = 0$</span> as above, one can impose an absorbing barrier condition as well. To solve <code>v</code> under the reflecting barrier conditions <span>$v(0) = S$</span> (absorbing barrier on lower bound) for some S and <span>$v&#39;(1) = 0$</span> (reflecting barrier on upper bound), one can construct <code>B</code> and <code>b</code> for the boundary conditions as follows:</p><pre><code class="language-julia"># define S
-S = 3.0
+v =  v̄[2:end-1]</code></pre><h3><a class="nav-anchor" id="Solving-HJBE-with-absorbing-barrier-conditions-1" href="#Solving-HJBE-with-absorbing-barrier-conditions-1">Solving HJBE with absorbing barrier conditions</a></h3><p>Instead of having the reflecting barrier conditions on both lower bound and upper bound <span>$v&#39;(0) = v&#39;(1) = 0$</span> as above, one can impose an absorbing barrier condition as well. To solve <code>v</code> under the reflecting barrier conditions <span>$v(0) = S$</span> (absorbing barrier on lower bound) for some S and <span>$v&#39;(1) = 0$</span> (reflecting barrier on upper bound), one can construct <code>B</code> and <code>b</code> for the boundary conditions as follows.</p><p>First, consider the case where <span>$S \neq 0$</span>, which gives a nonhomogenous boundary condition:</p><pre><code class="language-julia"># define S
+S = 0.0
 
 # boundary conditions (i.e. B v̄ = b)
 B = transpose([[1; 0; zeros(M)] [zeros(M); -1; 1]])
-b = [S; 0.0];</code></pre><p>and solve <code>v</code>:</p><pre><code class="language-julia"># stack the systems of bellman and boundary conditions, and solve
-v̄ =  [L; B] \ [f.(x); b]</code></pre><p>Note that this can be alternatively done by</p><p>Here is a plot for <code>v</code>:</p><pre><code class="language-julia">plot(x̄, v̄, lw = 4, label = &quot;v&quot;)</code></pre><p><img src="assets/plot-hjbe-lb-absorbing-ub-reflecting.png" alt="plot-hjbe-lb-absorbing-ub-reflecting"/></p><h3><a class="nav-anchor" id="Solving-HJBE-with-state-dependent-drifts-1" href="#Solving-HJBE-with-state-dependent-drifts-1">Solving HJBE with state-dependent drifts</a></h3><hr/><p>One can also deploy upwind schemes when drift variable is not constant. Consider solving for <code>v</code> from the following Bellman equation:</p><div>\[\rho v(x) = f(x) + \mu(x) \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)\]</div><p>associated with the diffusion process</p><div>\[dx = \mu(x) dt + \sigma dW\]</div><p>for some constant <span>$\rho, \sigma &gt; 0$</span> and <span>$\mu(x) = -x$</span>. Note that <span>$\mu(x)$</span> depends on states. The following code will solve <code>v</code> using upwind schemes, with the reflecting barrier conditions <span>$v&#39;(0) = v&#39;(1) = 0$</span> applied:</p><pre><code class="language-julia"># setup
+b = [S; 0.0];</code></pre><p>We can then apply one Gaussian elimination step to remove a non-zero element of the first column in <span>$L$</span>, which is <span>$\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2}$</span>. This can be done by substracting the first row of the stacked system <span>$[L; B]$</span> by the first row of the system <span>$B = b$</span> by <span>$\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2}$</span>. This returns the following identical system:</p><div>\[\begin{bmatrix}
+L[:,2:M+1] \\
+B[:,2]
+\end{bmatrix}
+=
+\begin{bmatrix}
+f^*
+b[:,2]
+\end{bmatrix}\]</div><p>where</p><div>\[f^* =
+\begin{bmatrix}
+f(x_1) - S(s\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2})
+\\ 
+\vdots
+\\
+f(x_{M})
+\end{bmatrix}\]</div><p>Now solve <code>v</code>:</p><pre><code class="language-julia"># stack the systems of bellman and boundary conditions, and solve
+v̄ = [L; B] \ [f.(x); b]</code></pre><p>Here is a plot for <code>v</code>:</p><pre><code class="language-julia">plot(x̄, v̄, lw = 4, label = &quot;v&quot;)</code></pre><p><img src="assets/plot-hjbe-lb-absorbing-ub-reflecting.png" alt="plot-hjbe-lb-absorbing-ub-reflecting"/></p><p>Note that this can be alternatively done by constructing the corresponding differential operators on the interior with <code>Absorbing()</code> boundary condition when <span>$S = 0$</span>:</p><pre><code class="language-julia"># discretize L = ρ - μ D_x - σ^2 / 2 D_xx
+# subject to reflecting barriers at 0 and 1
+bc = (Absorbing(), Reflecting())
+Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc)
+L_bc = I * ρ - Lₓ
+
+# solve the value function
+v = L_bc \ f.(x)</code></pre><p>In fact, on the interior, they return identical solutions:</p><pre><code class="language-julia"># define S
+S = 0.0
+
+# boundary conditions (i.e. B v̄ = b)
+B = transpose([[1; 0; zeros(M)] [zeros(M); -1; 1]])
+b = [S; 0.0];
+
+# stack the systems of bellman and boundary conditions, and solve
+v̄ = [L; B] \ [f.(x); b]
+
+# confirm that v returns the identical solution as the one from the stacked system
+using Test
+@test v ≈ v̄[2:end-1]</code></pre><h3><a class="nav-anchor" id="Solving-HJBE-with-state-dependent-drifts-1" href="#Solving-HJBE-with-state-dependent-drifts-1">Solving HJBE with state-dependent drifts</a></h3><hr/><p>One can also deploy upwind schemes when drift variable is not constant. Consider solving for <code>v</code> from the following Bellman equation:</p><div>\[\rho v(x) = f(x) + \mu(x) \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)\]</div><p>associated with the diffusion process</p><div>\[dx = \mu(x) dt + \sigma dW\]</div><p>for some constant <span>$\rho, \sigma &gt; 0$</span> and <span>$\mu(x) = -x$</span>. Note that <span>$\mu(x)$</span> depends on states. The following code will solve <code>v</code> using upwind schemes, with the reflecting barrier conditions <span>$v&#39;(0) = v&#39;(1) = 0$</span> applied:</p><pre><code class="language-julia"># setup
 f(x) = x^2
 μ(x) = -x # drift depends on state
 σ = 1.0
@@ -91,7 +125,7 @@ L_KFE = Array(-μ*L₁₊bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))</code></pre><
 # extract the very first eigenvector (associated with the smallest eigenvalue)
 g_ss = real.(ϕ[:,1]);
 # normalize it
-g_ss = g_ss / sum(g_ss)</code></pre><p>Using <code>L</code> from the state-dependent drift example above, this results in the following stationary distribution:</p><pre><code class="language-julia">plot(x, g_ss, lw = 4, label = &quot;g_ss&quot;)</code></pre><p><img src="assets/plot-stationary-dist.png" alt="plot-stationary-dist"/></p><p>Note that the operator for the KFE in the original equation is the adjoint of the operator for infinitesimal generator used in the HJBE, <span>$L$</span>, and the correct discretization scheme for <span>$L^*$</span> is, analogously, done by taking the transpose of the discretized operator for HJBE, <span>$L$</span> (See <a href="https://doi.org/10.3982/ECTA13569">Gabaix et al., 2016</a> and <a href="https://ideas.repec.org/p/nbr/nberwo/23732.html">Achdou et al., 2017</a>), which has been constructed as <code>Lₓ</code> is the HJBE example above. In fact, the discretized <span>$L^*$</span> and <span>$L^T$</span> are identical:</p><pre><code class="language-julia"># discretize L = μ D_x + σ^2 / 2 D_xx
+g_ss = g_ss / sum(g_ss)</code></pre><p>Using <code>L</code> from the state-dependent drift example above, this results in the following stationary distribution:</p><pre><code class="language-julia">plot(x, g_ss, lw = 4, label = &quot;g_ss&quot;)</code></pre><p>g</p><p><img src="assets/plot-stationary-dist.png" alt="plot-stationary-dist"/></p><p>Note that the operator for the KFE in the original equation is the adjoint of the operator for infinitesimal generator used in the HJBE, <span>$L$</span>, and the correct discretization scheme for <span>$L^*$</span> is, analogously, done by taking the transpose of the discretized operator for HJBE, <span>$L$</span> (See <a href="https://doi.org/10.3982/ECTA13569">Gabaix et al., 2016</a> and <a href="https://ideas.repec.org/p/nbr/nberwo/23732.html">Achdou et al., 2017</a>), which has been constructed as <code>Lₓ</code> is the HJBE example above. In fact, the discretized <span>$L^*$</span> and <span>$L^T$</span> are identical:</p><pre><code class="language-julia"># discretize L = μ D_x + σ^2 / 2 D_xx
 # for infinitesimal generators used in the HJBE
 # subject to reflecting barrier conditions
 bc = (Reflecting(), Reflecting())
