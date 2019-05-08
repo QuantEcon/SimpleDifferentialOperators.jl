@@ -13,8 +13,8 @@ x = interiornodes(x̄) # i.e., x̄[2:end-1]
 # discretize L = ρ - μ D_x - σ^2 / 2 D_xx
 # subject to reflecting barriers at 0 and 1
 bc = (Reflecting(), Reflecting())
-L_generator_bc = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc)
-L_bc = I * ρ - L_generator_bc
+Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc)
+L_bc = I * ρ - Lₓ
 
 # solve the value function
 v = L_bc \ f.(x)</code></pre><p>Note that the interior solution <code>v</code> does not the values of <span>$v$</span> at the boundary, i.e., <span>$v(0)$</span> and <span>$v(1)$</span>. To extend the interior solution to the boundary points, one can call <code>extrapolatetoboundary</code> as follows:</p><pre><code class="language-julia">̄v = extrapolatetoboundary(x̄, v, bc);</code></pre><p>Here is a complete plot for <code>v</code>:</p><pre><code class="language-julia">using Plots
@@ -57,8 +57,8 @@ bc = (Reflecting(), Reflecting())
 L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋bc(x̄, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊bc(x̄, bc)
 
 # Define linear operator using upwind schemes
-L_x = L₁ - σ^2 / 2 * L₂bc(x̄, bc)
-L_bc_state_dependent = I * ρ - L_x
+Lₓ = L₁ - σ^2 / 2 * L₂bc(x̄, bc)
+L_bc_state_dependent = I * ρ - Lₓ
 
 # solve the value function
 v = L_bc_state_dependent \ f.(x)</code></pre><h3><a class="nav-anchor" id="Finding-stationary-distribution-from-the-Kolmogorov-forward-equation-(KFE)-1" href="#Finding-stationary-distribution-from-the-Kolmogorov-forward-equation-(KFE)-1">Finding stationary distribution from the Kolmogorov forward equation (KFE)</a></h3><hr/><p>The KFE equation is $ \partial<em>t v(x,t) = -\mu \partial</em>{x} v(x,t) + \frac{\sigma^2}{2} \partial<em>{xx} v(x,t) $ for x \in (x</em>{\min}, x_{\max})$ with the following corresponding reflecting barrier conditions:</p><div>\[\begin{align}
@@ -91,10 +91,10 @@ L_KFE = Array(-μ*L₁₊bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))</code></pre><
 # extract the very first eigenvector (associated with the smallest eigenvalue)
 g_ss = real.(ϕ[:,1]);
 # normalize it
-g_ss = g_ss / sum(g_ss)</code></pre><p>Using <code>L</code> from the state-dependent drift example above, this results in the following stationary distribution:</p><pre><code class="language-julia">plot(x, g_ss, lw = 4, label = &quot;g_ss&quot;)</code></pre><p><img src="assets/plot-stationary-dist.png" alt="plot-stationary-dist"/></p><p>Note that the operator for the KFE in the original equation is the adjoint of the operator for infinitesimal generator used in the HJBE, <span>$L$</span>, and the correct discretization scheme for <span>$L^*$</span> is, analogously, done by taking the transpose of the discretized operator for HJBE, <span>$L$</span> (See <a href="https://doi.org/10.3982/ECTA13569">Gabaix et al., 2016</a> and <a href="https://ideas.repec.org/p/nbr/nberwo/23732.html">Achdou et al., 2017</a>). In fact, the discretized <span>$L^*$</span> and <span>$L^T$</span> are identical:</p><pre><code class="language-julia"># discretize L = μ D_x + σ^2 / 2 D_xx
+g_ss = g_ss / sum(g_ss)</code></pre><p>Using <code>L</code> from the state-dependent drift example above, this results in the following stationary distribution:</p><pre><code class="language-julia">plot(x, g_ss, lw = 4, label = &quot;g_ss&quot;)</code></pre><p><img src="assets/plot-stationary-dist.png" alt="plot-stationary-dist"/></p><p>Note that the operator for the KFE in the original equation is the adjoint of the operator for infinitesimal generator used in the HJBE, <span>$L$</span>, and the correct discretization scheme for <span>$L^*$</span> is, analogously, done by taking the transpose of the discretized operator for HJBE, <span>$L$</span> (See <a href="https://doi.org/10.3982/ECTA13569">Gabaix et al., 2016</a> and <a href="https://ideas.repec.org/p/nbr/nberwo/23732.html">Achdou et al., 2017</a>),which has been constructed as <code>Lₓ</code> is the HJBE example above. In fact, the discretized <span>$L^*$</span> and <span>$L^T$</span> are identical:</p><pre><code class="language-julia"># discretize L = μ D_x + σ^2 / 2 D_xx
 # for infinitesimal generators used in the HJBE
 # subject to reflecting barrier conditions
 bc = (Reflecting(), Reflecting())
-L_generator_bc = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc)
+Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc)
 
-@test transpose(L_generator_bc) == L_KFE</code></pre><footer><hr/><a class="next" href="notebooks/"><span class="direction">Next</span><span class="title">Notebooks</span></a></footer></article></body></html>
+@test transpose(Lₓ) == L_KFE</code></pre><footer><hr/><a class="next" href="notebooks/"><span class="direction">Next</span><span class="title">Notebooks</span></a></footer></article></body></html>
