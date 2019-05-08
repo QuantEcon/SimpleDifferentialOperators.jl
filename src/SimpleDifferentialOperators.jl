@@ -13,7 +13,6 @@ include("utilities/extrapolatetoboundary.jl")
 # Boundary Conditions
 export BoundaryCondition,
        HomogeneousBoundaryCondition,
-       InhomogeneousBoundaryCondition,
        Reflecting,
        Mixed,
        Absorbing

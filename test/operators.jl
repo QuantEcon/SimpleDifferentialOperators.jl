@@ -160,6 +160,107 @@ end
     end
 end
 
+@testset "Operators under homogenous absorbing boundary conditions" begin
+    # helper function to get differential operators in a more efficient way
+    diffusionoperators(x̄, bc) = (L₁₋bc = L₁₋bc(x̄, bc), L₁₊bc = L₁₊bc(x̄, bc), L₂bc = L₂bc(x̄, bc), x = interiornodes(x̄, bc))
+    diffusionoperators_without_bc(x̄) = (L₁₋ = L₁₋(x̄), L₁₊ = L₁₊(x̄), L₂ = L₂(x̄), x = interiornodes(x̄))
+
+
+    @testset "Accuracy & regression test" begin
+        # Uniform grid
+        x̄ = 0:4
+        L₁₋bc, L₁₊bc, L₂bc, x = diffusionoperators(x̄, (Absorbing(), Absorbing()))
+        L₁₋, L₁₊, L₂, x = diffusionoperators_without_bc(x̄)
+        
+        # under absorbing barrier conditions, the corresponding 
+        # operators on the interiors are identical as interior of extended operators
+        @test L₁₋bc == L₁₋[:,2:end-1]
+        @test L₁₊bc == L₁₊[:,2:end-1]
+        @test L₂bc == L₂[:,2:end-1]
+
+        # check accuracy as regression tests
+        @test Array(L₁₋bc) == [1. 0. 0.; -1. 1. 0.; 0. -1. 1.]
+        @test Array(L₁₊bc) == [-1. 1. 0.; 0. -1. 1.; 0. 0. -1.]
+        @test Array(L₂bc) == [-2. 1. 0.; 1. -2. 1.; 0. 1. -2.]
+        @test Array(x) == [1; 2; 3]
+
+        # Reflecting on lb, absorbing on ub
+        L₁₋bc, L₁₊bc, L₂bc, x = diffusionoperators(x̄, (Reflecting(), Absorbing()))
+        L₁₋, L₁₊, L₂, x = diffusionoperators_without_bc(x̄)
+
+        # check accuracy as regression tests
+        @test Array(L₁₋bc) == [0. 0. 0.; -1. 1. 0.; 0. -1. 1.]
+        @test Array(L₁₊bc) == [-1. 1. 0.; 0. -1. 1.; 0. 0. -1.]
+        @test Array(L₂bc) == [-1. 1. 0.; 1. -2. 1.; 0. 1. -2.]
+        @test Array(x) == [1; 2; 3]
+        
+        # Absorbing on lb, reflecting on ub
+        L₁₋bc, L₁₊bc, L₂bc, x = diffusionoperators(x̄, (Absorbing(), Reflecting()))
+        L₁₋, L₁₊, L₂, x = diffusionoperators_without_bc(x̄)
+
+        # check accuracy as regression tests
+        @test Array(L₁₋bc) == [1. 0. 0.; -1. 1. 0.; 0. -1. 1.]
+        @test Array(L₁₊bc) == [-1. 1. 0.; 0. -1. 1.; 0. 0. 0.]
+        @test Array(L₂bc) == [-2. 1. 0.; 1. -2. 1.; 0. 1. -1.]
+        @test Array(x) == [1; 2; 3]
+
+        # Irregular grid (with Δ_1m = Δ_1p and Δ_Mp = Δ_Mm)
+        x̄ = [0.0; 1.0; 2.0; 4.0; 6.0]
+        L₁₋bc, L₁₊bc, L₂bc, x = diffusionoperators(x̄, (Absorbing(), Absorbing()))
+        L₁₋, L₁₊, L₂, x = diffusionoperators_without_bc(x̄)
+        
+        # under absorbing barrier conditions, the corresponding 
+        # operators on the interiors are identical as interior of extended operators
+        @test L₁₋bc == L₁₋[:,2:end-1]
+        @test L₁₊bc == L₁₊[:,2:end-1]
+        @test L₂bc == L₂[:,2:end-1]
+
+        # check accuracy as regression tests
+        @test Array(L₁₋bc) == [1. 0. 0.; -1. 1. 0.; 0. -1/2 1/2]
+        @test Array(L₁₊bc) == [-1. 1. 0.; 0. -1/2 1/2; 0. 0. -1/2]
+        @test Array(L₂bc) == [-2. 1. 0.; 2/((2.0+1.0)*1.0) -2/(2.0*1.0) 2/((2.0+1.0)*2.0); 0. 1/4 -1/2]
+        @test Array(x) == [1.0; 2.0; 4.0]
+
+        # Irregular grid (with Δ_1m != Δ_1p and Δ_Mp != Δ_Mm)
+        x̄ = [-1.0; 1.0; 2.0; 4.0; 7.0]
+
+        Δ_1m = x̄[2] - x̄[1]
+        Δ_1p = x̄[3] - x̄[2]
+        Δ_Mm = x̄[end-1] - x̄[end-2]
+        Δ_Mp = x̄[end] - x̄[end-1]
+        L₁₋bc, L₁₊bc, L₂bc, x = diffusionoperators(x̄, (Absorbing(), Absorbing()))
+        L₁₋, L₁₊, L₂, x = diffusionoperators_without_bc(x̄)
+        
+        # under absorbing barrier conditions, the corresponding 
+        # operators on the interiors are identical as interior of extended operators
+        @test L₁₋bc == L₁₋[:,2:end-1]
+        @test L₁₊bc == L₁₊[:,2:end-1]
+        @test L₂bc == L₂[:,2:end-1]
+
+        # check accuracy as regression tests
+        @test Array(L₁₋bc) == [1/Δ_1m 0. 0.; -1. 1. 0.; 0. -1/2 1/2]
+        @test Array(L₁₊bc) == [-1. 1. 0.; 0. -1/2 1/2; 0. 0. -1/Δ_Mp]
+        Ξ_1 = -2*(1/(Δ_1m*Δ_1p)-1/((Δ_1p+Δ_1m)*(Δ_1m)))
+        Ξ_M = -2*(1/(Δ_Mm*Δ_Mp)-1/((Δ_Mp+Δ_Mm)*(Δ_Mp)))
+        
+        @test Array(L₂bc) == [-2/(Δ_1p*Δ_1m) 2/(Δ_1p*(Δ_1m+Δ_1p)) 0.; 
+                            2/((2.0+1.0)*1.0) -2/(2.0*1.0) 2/((2.0+1.0)*2.0); 
+                            0. 2/(Δ_Mm*(Δ_Mm+Δ_Mp)) -2/(Δ_Mm*Δ_Mp) ]
+        @test Array(x) == [1.0; 2.0; 4.0]
+    end
+
+    @testset "Consistency" begin
+        # Test for consistency
+        uniformGrid = range(0.0, 1.0, length = 500)
+        irregularGrid = collect(uniformGrid)
+        L₁₋bc, L₁₊bc, L₂bc, x = diffusionoperators(uniformGrid,(Absorbing(), Absorbing()))
+        L₁₋bc_ir, L₁₊_ir, L₂_ir, x_ir = diffusionoperators(irregularGrid, (Absorbing(), Absorbing()))
+        @test L₁₋bc ≈ L₁₋bc_ir
+        @test L₁₊bc ≈ L₁₊_ir
+        @test L₂bc ≈ L₂_ir
+    end
+end
+
 @testset "Operators under upwind schemes" begin
     f(x) = x^2
     μ(x) = -x # drift depends on state

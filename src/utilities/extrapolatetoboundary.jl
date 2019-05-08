@@ -85,3 +85,42 @@ julia> extrapolatetoboundary(v, x̄, (Reflecting(), Reflecting()))
 function extrapolatetoboundary(v, x̄, bc::Tuple{Reflecting, Reflecting})
     return [v[1]; v; v[end]]
 end
+
+"""
+    extrapolatetoboundary(v, x̄, bc::Tuple{Absorbing, Absorbing})
+
+Returns a `length(x̄)`-vector whose `2:(length(x̄)-1)` elements are `v`,
+the first and last element are extrapolated `v` on the boundaries of `x̄` according to
+boundary conditions `bc` given.
+
+The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper.
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x̄ = -2:2
+0:5
+
+julia> x = interiornodes(x̄)
+1
+2
+3
+
+julia> v = (x -> x^2).(x)
+3-element Array{Int64,1}:
+ 1
+ 0
+ 1
+
+julia> extrapolatetoboundary(v, x̄, (Absorbing(), Absorbing()))
+5-element Array{Int64,1}:
+ 0
+ 1
+ 0
+ 1
+ 0
+```
+"""
+function extrapolatetoboundary(v, x̄, bc::Tuple{Absorbing, Absorbing})
+    T = eltype(v)
+    return [zero(T); v; zero(T)]
+end
+
