@@ -153,27 +153,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "api/#SimpleDifferentialOperators.extrapolatetoboundary-Tuple{Any,Any,Tuple{Absorbing,Absorbing}}",
+    "location": "api/#SimpleDifferentialOperators.extrapolatetoboundary-Tuple{Any,Any,Tuple{BoundaryCondition,BoundaryCondition}}",
     "page": "API",
     "title": "SimpleDifferentialOperators.extrapolatetoboundary",
     "category": "method",
-    "text": "extrapolatetoboundary(v, x̄, bc::Tuple{Absorbing, Absorbing})\n\nReturns a length(x̄)-vector whose 2:(length(x̄)-1) elements are v, the first and last element are extrapolated v on the boundaries of x̄ according to boundary conditions bc given.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = -2:2\n-2:2\n\njulia> x = interiornodes(x̄)\n-1:1\n\njulia> v = (x -> x^2).(x)\n3-element Array{Int64,1}:\n 1\n 0\n 1\n\njulia> extrapolatetoboundary(v, x̄, (Absorbing(), Absorbing()))\n5-element Array{Int64,1}:\n 0\n 1\n 0\n 1\n 0\n\n\n\n\n\n"
-},
-
-{
-    "location": "api/#SimpleDifferentialOperators.extrapolatetoboundary-Tuple{Any,Any,Tuple{Mixed,Mixed}}",
-    "page": "API",
-    "title": "SimpleDifferentialOperators.extrapolatetoboundary",
-    "category": "method",
-    "text": "extrapolatetoboundary(v, x̄, bc::Tuple{Mixed, Mixed})\n\nReturns a length(x̄)-vector whose 2:(length(x̄)-1) elements are v, the first and last element are extrapolated v on the boundaries of x̄ according to boundary conditions bc given.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> x = interiornodes(x̄)\n1:4\n\njulia> v = (x -> x^2).(x)\n4-element Array{Int64,1}:\n  1\n  4\n  9\n 16\n\njulia> extrapolatetoboundary(v, x̄, (Mixed(ξ = 1), Mixed(ξ = 1)))\n6-element Array{Float64,1}:\n Inf\n   1.0\n   4.0\n   9.0\n  16.0\n   8.0\n\n\n\n\n\n"
-},
-
-{
-    "location": "api/#SimpleDifferentialOperators.extrapolatetoboundary-Tuple{Any,Any,Tuple{Reflecting,Reflecting}}",
-    "page": "API",
-    "title": "SimpleDifferentialOperators.extrapolatetoboundary",
-    "category": "method",
-    "text": "extrapolatetoboundary(v, x̄, bc::Tuple{Reflecting, Reflecting})\n\nReturns a length(x̄)-vector whose 2:(length(x̄)-1) elements are v, the first and last element are extrapolated v on the boundaries of x̄ according to boundary conditions bc given.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> x = interiornodes(x̄)\n1:4\n\njulia> v = (x -> x^2).(x)\n4-element Array{Int64,1}:\n  1\n  4\n  9\n 16\n\njulia> extrapolatetoboundary(v, x̄, (Reflecting(), Reflecting()))\n6-element Array{Int64,1}:\n  1\n  1\n  4\n  9\n 16\n 16\n\n\n\n\n\n"
+    "text": "extrapolatetoboundary(v, x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})\n\nReturns a length(x̄)-vector whose 2:(length(x̄)-1) elements are v, the first and last element are extrapolated v on the boundaries of x̄ according to boundary conditions bc given.\n\nThe first element of bc is applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = -2:2\n-2:2\n\njulia> x = interiornodes(x̄)\n-1:1\n\njulia> v = (x -> x^2).(x)\n3-element Array{Int64,1}:\n 1\n 0\n 1\n\njulia> extrapolatetoboundary(v, x̄, (Absorbing(), Absorbing()))\n5-element Array{Int64,1}:\n 0\n 1\n 0\n 1\n 0\n\njulia> extrapolatetoboundary(v, x̄, (Absorbing(), Reflecting()))\n5-element Array{Int64,1}:\n 0\n 1\n 0\n 1\n 1\n\njulia> extrapolatetoboundary(v, x̄, (Mixed(ξ = 3.0), Reflecting()))\n5-element Array{Float64,1}:\n -0.5\n  1.0\n  0.0\n  1.0\n  1.0\n  \n\n\n\n\n\n"
 },
 
 {
