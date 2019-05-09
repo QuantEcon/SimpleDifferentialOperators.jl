@@ -39,18 +39,10 @@
             # solution for extended v from L by stacking up boundary condition matrices
             v̄ = [L; B] \ [f.(x); b]
 
-            # FIXIT: broken on irregular grids
-            if (x̄ ∈ regular_grids)
-                # test if interior solutions are identical
-                @test v_bc ≈ v̄[2:end-1]
-                # test if extrapolated solutions are identical
-                @test extrapolatetoboundary(v_bc, x̄, bc) ≈ v̄ 
-            elseif (directions == (:backward, :forward) && (L_bc_generator == L₁₊bc))
-                # test if interior solutions are identical
-                @test_broken v_bc ≈ v̄[2:end-1]
-                # test if extrapolated solutions are identical
-                @test_broken extrapolatetoboundary(v_bc, x̄, bc) ≈ v̄ 
-            end
+            # test if interior solutions are identical
+            @test v_bc ≈ v̄[2:end-1]
+            # test if extrapolated solutions are identical
+            @test extrapolatetoboundary(v_bc, x̄, bc) ≈ v̄ 
         end
 end
 
