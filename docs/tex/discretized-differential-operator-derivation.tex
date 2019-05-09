@@ -614,11 +614,11 @@ L_2^B \equiv  \Delta^{-2}
 \end{align}
 
 \paragraph{Applying drift directions on boundary conditions}
-Adding the first row of $B^{--}$ or $B^{-+}$ multiplied by $\Delta^{-1}$ on the first row of $L_{1-}$ and extracting the interior yields
+Substracting the first row of $B^{--}$ or $B^{-+}$ multiplied by $\Delta^{-1}$ on the first row of $L_{1-}$ and extracting the interior yields
 
 \begin{equation}
 L_{1-}^{B-} \equiv \frac{1}{\Delta}\begin{bmatrix}
--\underline{\xi} \Delta &0&0&\dots&0&0&0\\
+-\underline{\xi} &0&0&\dots&0&0&0\\
 -1&1&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-1&1&0\\
@@ -626,8 +626,7 @@ L_{1-}^{B-} \equiv \frac{1}{\Delta}\begin{bmatrix}
 \end{bmatrix}_{M\times M} \label{eq:L-1-regular-left}
 \end{equation}
 
-Likewise,
-Adding the first row of $B^{-+}$ or $B^{++}$ multiplied by $\Delta^{-1}$ on the first row of $L_{1+}$ and extracting the interior yields
+Likewise, substracting the first row of $B^{-+}$ or $B^{++}$ multiplied by $\Delta^{-1}$ on the first row of $L_{1+}$ and extracting the interior yields
 
 \begin{equation}
 L_{1+}^{B+} \equiv \frac{1}{\Delta}\begin{bmatrix}
@@ -635,7 +634,7 @@ L_{1+}^{B+} \equiv \frac{1}{\Delta}\begin{bmatrix}
 0&-1&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&0&-1&1\\
-0&0&0&\cdots&0&0&-\overline{\xi} \Delta
+0&0&0&\cdots&0&0&-\overline{\xi} 
 \end{bmatrix}_{M\times M} \label{eq:L-1p-regular-right}
 \end{equation}
 
@@ -685,7 +684,7 @@ L_{1-}^{B-} &\equiv \Delta^{-1}
 \left[ 
 \text{tridiag}(-\mathbf{1}_{M-1}, 
 \mathbf{1}_{M}, \mathbf{0}_{M-1} ) + \diag \left( \begin{bmatrix}
-1 - \underline{\xi} \Delta &
+1 - \underline{\xi} &
 \mathbf{0}_{M-1}^T 
 \end{bmatrix}^T
 \right)
@@ -717,7 +716,7 @@ L_{1+}^{B+} &\equiv
 \text{tridiag}(-\mathbf{0}_{M-1}, 
 \mathbf{-1}_{M}, \mathbf{1}_{M-1} ) + \diag \left( \begin{bmatrix}
 \mathbf{0}_{M-1}^T &
-1- \overline{\xi} \Delta
+1- \overline{\xi} 
 \end{bmatrix}^T
 \right)
 \right]
@@ -1270,11 +1269,11 @@ I^B \equiv  \text{diag($\mathbf{1}_M$)}
 
 
 \paragraph{Applying drift directions on boundary conditions}
-Adding the first row of $B^{--}$ or $B^{-+}$ multiplied by $\Delta_{1,-}^{-1}$ on the first row of $L_{1-}$ and extracting the interior yields
+Substracting the first row of $B^{--}$ or $B^{-+}$ multiplied by $\Delta_{1,-}^{-1}$ on the first row of $L_{1-}$ and extracting the interior yields
 
 \begin{equation}
 L_{1-}^{B-} \equiv \begin{bmatrix}
--\underline{\xi} \Delta_{1,-} &0&0&\dots&0&0&0\\
+-\underline{\xi} &0&0&\dots&0&0&0\\
 -\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-\Delta_{M-1,-}^{-1}&\Delta_{M-1,-}^{-1}&0\\
@@ -1282,8 +1281,7 @@ L_{1-}^{B-} \equiv \begin{bmatrix}
 \end{bmatrix}_{M\times M}
 \end{equation}
 
-Likewise,
-Adding the first row of $B^{-+}$ or $B^{++}$ multiplied by $\Delta_{M,+}^{-1}$ on the first row of $L_{1+}$ and extracting the interior yields
+Likewise, substracting the first row of $B^{-+}$ or $B^{++}$ multiplied by $\Delta_{M,+}^{-1}$ on the first row of $L_{1+}$ and extracting the interior yields
 
 \begin{equation}
 L_{1+}^{B+} \equiv \begin{bmatrix}
@@ -1291,7 +1289,7 @@ L_{1+}^{B+} \equiv \begin{bmatrix}
 0&-\Delta_{2,+}^{-1}&\Delta_{2,+}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\cdots&0&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}\\
-0&0&0&\cdots&0&0&-\overline{\xi} \Delta_{M,+}
+0&0&0&\cdots&0&0&-\overline{\xi} 
 \end{bmatrix}_{M\times M} \label{eq:L-1p-irregular-right}
 \end{equation}
 
@@ -1351,7 +1349,7 @@ Using banded matrices, these operators can be definied in the following compact 
 \tridiag \left(-(\Delta_-^\circ)^{-1}[2:M], (\Delta_-^\circ )^{-1}, \mathbf{0}_{M-1}  \right) +
 \diag\left( 
 \begin{bmatrix}
-(-\Delta^{-1}_{1,-} - \underline{\xi} \Delta_{1,-}) &
+(-\Delta^{-1}_{1,-} - \underline{\xi} ) &
 \mathbf{0}_{M-1}^T
 \end{bmatrix}^T
 \right) \\
@@ -1378,7 +1376,7 @@ Using banded matrices, these operators can be definied in the following compact 
 \diag\left( 
 \begin{bmatrix}
 \mathbf{0}_{M-1}^T &
-(\Delta^{-1}_{M,+} - \overline{\xi} \Delta_{M,+})
+(\Delta^{-1}_{M,+} - \overline{\xi})
 \end{bmatrix}^T
 \right) 
 \end{align}
