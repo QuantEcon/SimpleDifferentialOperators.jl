@@ -21,7 +21,8 @@ export BoundaryCondition,
 export DiscretizationMethod,
         ForwardFirstDifference,
         BackwardFirstDifference,
-        CentralSecondDifference
+        CentralSecondDifference,
+        JumpProcess
 
 # Functions
 export DifferentialOperator,
