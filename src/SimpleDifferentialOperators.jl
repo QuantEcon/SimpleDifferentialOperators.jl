@@ -8,6 +8,7 @@ include("types.jl")
 include("operators.jl")
 include("extensionoperators.jl")
 include("utilities/extrapolatetoboundary.jl")
+include("utilities/findnearestindex.jl")
 
 # Exports
 # Boundary Conditions
@@ -34,6 +35,7 @@ export DifferentialOperator,
         L₁₊,
         L₁₋,
         L₂,
-        extrapolatetoboundary
+        extrapolatetoboundary,
+        findnearestindex
 
 end # module
