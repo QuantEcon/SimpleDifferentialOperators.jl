@@ -100,3 +100,17 @@ function ExtensionDifferentialOperator(x̄::AbstractArray, method::CentralSecond
     Δ⁻¹ = 1 ./ (d[1:end-1] + d[2:end]) # 1 ./ (Δ₋ + Δ₊)
     return 2*spdiagm(0 => Δ⁻¹.*Δ₋⁻¹, 1 => -Δ₋⁻¹ .* Δ₊⁻¹, 2 => Δ⁻¹.*Δ₊⁻¹)[1:M,:]
 end
+
+function ExtensionDifferentialOperator(x̄::AbstractArray, method::JumpProcess)
+    T = eltype(x̄)
+    M = length(x̄) - 2
+    jumps = method.jumps
+
+    L̄ = BandedMatrix((0=>zeros(M), 1=>-ones(M)), (M,M+2), 
+                    (max(abs(minimum(jumps))-1, 0), max(abs(maximum(jumps)+1), 1)))
+    for i in 1:length(jumps)
+        L̄[i,(i+1+jumps[i])] += 1
+    end
+
+    return (L̄)
+end

@@ -120,3 +120,96 @@ end
     @test JumpProcess(x̄, jumpf, (:boundary, :interior)).jumps == [-1; 1; 0] 
     @test JumpProcess(x̄, jumpf, (:boundary, :boundary)).jumps == jumps
 end
+
+@testset "Accuracy test for jump diffusion extension operators" begin
+    x̄ = [1; 2.3; 3.4; 4.5; 5.0]
+    jumps = [0; -1; 0]
+    method = JumpProcess(x̄, jumps)
+    L̄ = ExtensionDifferentialOperator(x̄, method) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 1. -1. 0. 0.; 0. 0. 0. 0. 0.]
+
+    jumps = [0; 1; 0]
+    method = JumpProcess(x̄, jumps)
+    L̄ = ExtensionDifferentialOperator(x̄, method) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 0. -1. 1. 0.; 0. 0. 0. 0. 0.]
+
+    jumps = [0; -2; 0]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps)) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 1. -1. 0. 0.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:interior, :boundary))) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 1. -1. 0. 0.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :interior))) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 1. 0. -1. 0. 0.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :boundary))) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 1. 0. -1. 0. 0.; 0. 0. 0. 0. 0.]
+
+    jumps = [0; 2; 0]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps)) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 0. -1. 1. 0.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:interior, :boundary))) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 0. -1. 0. 1.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :interior))) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 0. -1. 1. 0.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :boundary))) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 0. -1. 0. 1.; 0. 0. 0. 0. 0.]
+
+    jumps = [-1; -2; 0]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps)) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 1. -1. 0. 0.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:interior, :boundary))) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 1. -1. 0. 0.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :interior))) 
+    @test Array(L̄) == [1. -1. 0. 0. 0.; 1. 0. -1. 0. 0.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :boundary))) 
+    @test Array(L̄) == [1. -1. 0. 0. 0.; 1. 0. -1. 0. 0.; 0. 0. 0. 0. 0.]
+
+    jumps = [0; 2; 1]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps)) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 0. -1. 1. 0.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:interior, :boundary))) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 0. -1. 0. 1.; 0. 0. 0. -1. 1.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :interior))) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 0. -1. 1. 0.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :boundary))) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 0. -1. 0. 1.; 0. 0. 0. -1. 1.]
+    
+    jumps = [-1; -2; 1]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps)) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 1. -1. 0. 0.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:interior, :boundary))) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 1. -1. 0. 0.; 0. 0. 0. -1. 1.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :interior))) 
+    @test Array(L̄) == [1. -1. 0. 0. 0.; 1. 0. -1. 0. 0.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :boundary))) 
+    @test Array(L̄) == [1. -1. 0. 0. 0.; 1. 0. -1. 0. 0.; 0. 0. 0. -1. 1.]
+
+    jumps = [-1; 2; 1]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps)) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 0. -1. 1. 0.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:interior, :boundary))) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 0. -1. 0. 1.; 0. 0. 0. -1. 1.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :interior))) 
+    @test Array(L̄) == [1. -1. 0. 0. 0.; 0. 0. -1. 1. 0.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :boundary))) 
+    @test Array(L̄) == [1. -1. 0. 0. 0.; 0. 0. -1. 0. 1.; 0. 0. 0. -1. 1.]
+
+    jumps = [-1; -1; -1]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps)) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 1. -1. 0. 0.; 0. 0. 1. -1. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:interior, :boundary))) 
+    @test Array(L̄) == [0. 0. 0. 0. 0.; 0. 1. -1. 0. 0.; 0. 0. 1. -1. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :interior))) 
+    @test Array(L̄) == [1. -1. 0. 0. 0.; 0. 1. -1. 0. 0.; 0. 0. 1. -1. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :boundary))) 
+    @test Array(L̄) == [1. -1. 0. 0. 0.; 0. 1. -1. 0. 0.; 0. 0. 1. -1. 0.]
+
+    jumps = [1; 1; 1]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps)) 
+    @test Array(L̄) == [0. -1. 1. 0. 0.; 0. 0. -1. 1. 0.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:interior, :boundary))) 
+    @test Array(L̄) == [0. -1. 1. 0. 0.; 0. 0. -1. 1. 0.; 0. 0. 0. -1. 1.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :interior))) 
+    @test Array(L̄) == [0. -1. 1. 0. 0.; 0. 0. -1. 1. 0.; 0. 0. 0. 0. 0.]
+    L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :boundary))) 
+    @test Array(L̄) == [0. -1. 1. 0. 0.; 0. 0. -1. 1. 0.; 0. 0. 0. -1. 1.]
+end
