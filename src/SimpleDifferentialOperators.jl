@@ -1,7 +1,7 @@
 module SimpleDifferentialOperators
 
 # Pkg Dependencies
-using LinearAlgebra, SparseArrays, Parameters
+using LinearAlgebra, SparseArrays, Parameters, BandedMatrices
 
 # Includes
 include("types.jl")

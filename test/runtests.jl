@@ -1,5 +1,5 @@
 using SimpleDifferentialOperators
-using Test, LinearAlgebra, PATHSolver, Suppressor, Parameters, Random
+using Test, LinearAlgebra, PATHSolver, Suppressor, Parameters, Random, BandedMatrices
 using DualNumbers
 
 @elapsed begin
