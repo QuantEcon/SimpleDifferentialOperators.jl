@@ -12,8 +12,8 @@
 
 # Concretes
     struct Reflecting <: HomogeneousBoundaryCondition end
-    @with_kw struct Mixed <: HomogeneousBoundaryCondition 
-        ξ::Real = 0.0
+    @with_kw struct Mixed{T} <: HomogeneousBoundaryCondition where T <: Real
+        ξ::T = 0.0
         direction = :auto # :forward/:backward/:auto
     end
     struct Absorbing <: HomogeneousBoundaryCondition end
