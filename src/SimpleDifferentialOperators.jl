@@ -18,7 +18,7 @@ export BoundaryCondition,
        Absorbing
 
 # Differential Types
-export DifferenceMethod,
+export DiscretizationMethod,
         ForwardFirstDifference,
         BackwardFirstDifference,
         CentralSecondDifference

@@ -4,11 +4,14 @@
     abstract type HomogeneousBoundaryCondition <: BoundaryCondition end
 
 # Types for Differences
-    abstract type DifferenceMethod{N} end
-    struct DefaultFirstDifference <: DifferenceMethod{1} end
-    struct ForwardFirstDifference <: DifferenceMethod{1} end
-    struct BackwardFirstDifference <: DifferenceMethod{1} end
-    struct CentralSecondDifference <: DifferenceMethod{2} end
+    abstract type DiscretizationMethod{N} end
+    struct DefaultFirstDifference <: DiscretizationMethod{1} end
+    struct ForwardFirstDifference <: DiscretizationMethod{1} end
+    struct BackwardFirstDifference <: DiscretizationMethod{1} end
+    struct CentralSecondDifference <: DiscretizationMethod{2} end
+    struct JumpProcess{T} where T <: AbstractArray
+        jumps::T
+    end
 
 # Concretes
     struct Reflecting <: HomogeneousBoundaryCondition end
