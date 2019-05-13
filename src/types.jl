@@ -27,10 +27,11 @@ function JumpProcess(x̄::AbstractArray, jumps::AbstractArray,
     # perform truncations
     destinations[destinations .< cutoff_lb] .= cutoff_lb
     destinations[destinations .> cutoff_ub] .= cutoff_ub
-    jumps_after_truncation = destinations - Array(1:M)
+    jumps_after_truncation = Array{Int64}(destinations - Array(1:M))
 
     return JumpProcess(jumps_after_truncation)
 end
+JumpProcess(x̄::AbstractArray, uniform_jump::Int64) = JumpProcess(x̄, uniform_jump*ones(length(x̄) - 2))
 function JumpProcess(x̄::AbstractArray, jumpf::Function, 
     truncate = (:interior, :interior))
     # each ith element of jumps defines the jump direction (negative/positive) and size
@@ -55,6 +56,7 @@ function JumpProcess(x̄::AbstractArray, jumpf::Function,
     
     return JumpProcess(jumps_after_truncation)
 end
+JumpProcess(x̄::AbstractArray, uniform_jump_size::Real) = JumpProcess(x̄, (x -> uniform_jump_size))
 
 # Concretes
 struct Reflecting <: HomogeneousBoundaryCondition end
