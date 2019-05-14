@@ -308,7 +308,7 @@ While boundary conditions can be mixed and matched, for notational simplicity he
 \end{align}
 For some operator $\tilde{B}$ (typically involving evaluation at the boundaries) and $b\in R^2$.  In the case of $b = \textbf{0}_2$, the boundary conditions are called homogenous.
 
-\paragraph{Mixed Boundary Conditions}
+\subsubsection{Mixed boundary conditions}
 Recall mixed boundary conditions from \cref{eq:mixed-BC1,eq:mixed-BC2}. Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$.  In operator form, the boundaries are
 
 \begin{align}
@@ -337,13 +337,72 @@ b &= \begin{bmatrix}
 \end{bmatrix}
 \end{align}
 
-Then, multiplying by $\Delta$, the system has the same $b$ and \cref{eq:mixed-barrier-matrix-original-regular} is equivalent to
+Then, multiplying by $\Delta$, the system has the same $b$ and \cref{eq:mixed-barrier-matrix-original-regular}  equivalent to
 \begin{equation}
 B = \begin{bmatrix}
 -1 +  \underline{\xi} \Delta & 1 & 0 & \dots & 0 & 0 & 0 \\
 0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi} \Delta\\
 \end{bmatrix}_{2 \times (M+2)}\label{eq:B-mixed}
 \end{equation}
+
+Depending on the direction of the drift, the locations of $\overline{\xi}$ and $\underline{\xi}$ have to be different. When the drift is drift is negative on the lower bound and is positive on the upper bound, we have
+
+\begin{align}
+\frac{\overline{v}_1 - \overline{v}_0}{\Delta} + \underline{\xi} \overline{v}_1 &= 0 \label{eq:mixed-BC1-negative}  \\
+\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta} + \overline{\xi} \overline{v}_{M} &= 0 \label{eq:mixed-BC2-positive}
+\end{align}
+
+Hence, letting $\circ_1, \circ_M \in \{-, +\}$ denote the drift directions on the lower and upper boundaries respectively, there are four corresponding boundary condition matrices $B^{\circ_1 \circ_M}$ as follows:
+ 
+\begin{align}
+B^{--} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta} & \dfrac{1}{\Delta}  + \underline{\xi} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta} & \dfrac{1}{\Delta} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{+-} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta} + \underline{\xi} & \dfrac{1}{\Delta} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta} & \dfrac{1}{\Delta} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{-+} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta}  & \dfrac{1}{\Delta} + \underline{\xi} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta}+ \overline{\xi} & \dfrac{1}{\Delta}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{++} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta} + \underline{\xi} & \dfrac{1}{\Delta} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta}+ \overline{\xi} & \dfrac{1}{\Delta} \\
+\end{bmatrix}_{2 \times (M+2)}
+\end{align}
+
+Multiplying all rows by $\Delta$, the resulting system has the same $b$ and the following $B^{--}, B^{+-}, B^{-+}, B^{++}$:
+ 
+\begin{align}
+B^{--} &\equiv 
+\begin{bmatrix}
+-1 & 1  + \underline{\xi}\Delta & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi}\Delta\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{+-} &\equiv 
+\begin{bmatrix}
+-1 + \underline{\xi}\Delta & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi}\Delta\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{-+} &\equiv 
+\begin{bmatrix}
+-1  & 1 + \underline{\xi}\Delta & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1+ \overline{\xi}\Delta & 1\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{++} &\equiv 
+\begin{bmatrix}
+-1 + \underline{\xi}\Delta & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1+ \overline{\xi}\Delta & 1 \\
+\end{bmatrix}_{2 \times (M+2)}
+\end{align}
+
+
 
 \subsubsection{Reflecting Barriers}
 Since a reflecting barrier (i.e. a Neumann boundary condition) is a special case of the mixed boundary condition when  $\underline{\xi} = \bar{\xi} = 0$, the $B$ matrix for a reflecting barrier follows \cref{eq:B-mixed}
@@ -360,6 +419,8 @@ with the same
 		 	0
 		 	\end{bmatrix}
 \end{equation}
+
+Note that this does not depend on the direction of the drift as $B^{--} = B^{+-} = B^{-+} = B^{++}$ when $\overline{\xi} = \underline{\xi} = 0$.
 
 	\subsubsection{Absorbing Barriers}
 
@@ -437,7 +498,7 @@ An alternative approach to solving the systems of $M+2$ equations or DAEs above 
 
 \subsubsection{Mixed Boundary Conditions}
 
-Adding the first row of $L_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta )^{-1}\Delta^{-1}$ gives, with the corresponding row operation matrix $R$,
+Adding the first row of $L_{1-}$ by the first row of $B$ in \eqref{eq:B-mixed} multiplied by $(-1 + \underline{\xi} \Delta )^{-1}\Delta^{-1}$ gives, with the corresponding row operation matrix $R$,
 
 \begin{equation}
 R {L}_{1-} = \dfrac{1}{\Delta} \begin{bmatrix}
@@ -491,7 +552,7 @@ L_{1-}^B \equiv \frac{1}{\Delta}\begin{bmatrix}
 0&0&0&\cdots&0&-1&1
 \end{bmatrix}_{M\times M} \label{eq:L-1-regular}
 \end{equation}
-instead of solving the full system with boundary conditions. Similarly, subtracting the first row of $L_{1+}$ by the second row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(1 + \overline{\xi} \Delta )^{-1} \Delta^{-1}$ gives the following differential operator with the boundary condition $B$ applied:
+instead of solving the full system with boundary conditions. Similarly, subtracting the first row of $L_{1+}$ by the second row of $B$ in \eqref{eq:B-mixed} multiplied by $(1 + \overline{\xi} \Delta )^{-1} \Delta^{-1}$ gives the following differential operator with the boundary condition $B$ applied:
 \begin{align}
 L_{1+}^B &\equiv \frac{1}{\Delta}\begin{bmatrix}
 -1&1&0&\dots&0&0&0\\
@@ -548,6 +609,169 @@ L_2^B \equiv  \Delta^{-2}
 -(-1+\underline{\xi} \Delta)^{-1}&
 \mathbf{0}_{M-2}^T &
 (1+\overline{\xi} \Delta)^{-1}
+\end{bmatrix}^T \right)
+\Big]
+\end{align}
+
+\paragraph{Applying drift directions on boundary conditions}
+Substracting the first row of $B^{--}$ or $B^{-+}$ multiplied by $\Delta^{-1}$ on the first row of $L_{1-}$ and extracting the interior yields
+
+\begin{equation}
+L_{1-}^{B-} \equiv \frac{1}{\Delta}\begin{bmatrix}
+-\underline{\xi} &0&0&\dots&0&0&0\\
+-1&1&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-1&1&0\\
+0&0&0&\cdots&0&-1&1
+\end{bmatrix}_{M\times M} \label{eq:L-1-regular-left}
+\end{equation}
+
+Likewise, substracting the first row of $B^{-+}$ or $B^{++}$ multiplied by $\Delta^{-1}$ on the first row of $L_{1+}$ and extracting the interior yields
+
+\begin{equation}
+L_{1+}^{B+} \equiv \frac{1}{\Delta}\begin{bmatrix}
+-1 &1&0&\dots&0&0&0\\
+0&-1&1&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&0&-1&1\\
+0&0&0&\cdots&0&0&-\overline{\xi} 
+\end{bmatrix}_{M\times M} \label{eq:L-1p-regular-right}
+\end{equation}
+
+For $L_2$, directions on both boundaries affect the interior. Here we study the two upper and lower boundaries separately. For the lower boundary, suppose first that the drift is positive. Substracting the first row of $L_2$ by the first row of $B^{+-}$ or $B^{++}$ multiplied by $(-1 + \underline{\xi} \Delta )^{-1} \Delta^{-2}$ and extracting the interior and first row gives
+\begin{align}
+\frac{1}{\Delta^2}\begin{bmatrix}
+-2 - (-1 + \underline{\xi}\Delta)^{-1} &1&0&\dots&0&0&0
+\end{bmatrix}_{1\times M}
+\end{align}
+
+Suppose that we have a negative drift at the lower boundary. Adding the first row of $L_2$ by the first row of $B^{--}$ or $B^{-+}$ multiplied by $\Delta^{-2}$ and extracting the interior and first row gives
+\begin{align}
+\frac{1}{\Delta^2}\begin{bmatrix}
+-1 + \underline{\xi}\Delta &1&0&\dots&0&0&0
+\end{bmatrix}_{1\times M}
+\end{align}
+
+Now consider the upper boundary. Suppose first that the drift is negative. Substracting the last row of $L_2$ by the second row of $B^{--}$ or $B^{+-}$ multiplied by $(1 + \overline{\xi} \Delta)^{-1} \Delta^{-2}$ and extracting the interior and last row gives 
+\begin{align}
+\frac{1}{\Delta^2}\begin{bmatrix}
+0&0&0&\cdots&0&1&-2 +(1+ \overline{\xi}\Delta)^{-1}
+\end{bmatrix}_{1\times M}
+\end{align}
+
+Suppose that we have a positive drift at the upper boundary. Subtracting the second row of $L_2$ by the first row of $B^{-+}$ or $B^{++}$ multiplied by $\Delta^{-2}$ and extracting the interior and last row gives
+\begin{align}
+\frac{1}{\Delta^2}\begin{bmatrix}
+0&0&0&\cdots&0&1&-1 - \overline{\xi}\Delta
+\end{bmatrix}_{1\times M}
+\end{align}
+
+This provides the complete combination of all possible drift directions on both boundaries for $L_2$. For instance, $L_2^{B-+}$ is defined as
+\begin{align}
+L_2^{B-+} &\equiv \frac{1}{\Delta^2}\begin{bmatrix}
+-1 + \underline{\xi}\Delta &1&0&\dots&0&0&0\\
+1&-2&1&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&1&-2&1\\
+0&0&0&\cdots&0&1&-1 - \overline{\xi}\Delta
+\end{bmatrix}_{M\times M}
+\end{align}
+
+Using banded matrices, these operators can be definied in the following compact forms:
+
+\begin{align}
+L_{1-}^{B-} &\equiv \Delta^{-1}
+\left[ 
+\text{tridiag}(-\mathbf{1}_{M-1}, 
+\mathbf{1}_{M}, \mathbf{0}_{M-1} ) + \diag \left( \begin{bmatrix}
+1 - \underline{\xi} &
+\mathbf{0}_{M-1}^T 
+\end{bmatrix}^T
+\right)
+\right] \\
+L_{1-}^{B+} &\equiv \Delta^{-1}
+\left[ 
+\text{tridiag}(-\mathbf{1}_{M-1}, 
+\mathbf{1}_{M}, \mathbf{0}_{M-1} ) + \diag \left( \begin{bmatrix}
+(-1+\underline{\xi} \Delta)^{-1} &
+\mathbf{0}_{M-1}^T 
+\end{bmatrix}^T
+\right)
+\right] 
+\end{align}
+\begin{align}
+L_{1+}^{B-} &\equiv 
+\Delta^{-1}
+\left[ 
+\text{tridiag}(-\mathbf{0}_{M-1}, 
+\mathbf{-1}_{M}, \mathbf{1}_{M-1} ) + \diag \left( \begin{bmatrix}
+\mathbf{0}_{M-1}^T &
+(1+\overline{\xi} \Delta)^{-1}
+\end{bmatrix}^T
+\right)
+\right] \\
+L_{1+}^{B+} &\equiv 
+\Delta^{-1}
+\left[ 
+\text{tridiag}(-\mathbf{0}_{M-1}, 
+\mathbf{-1}_{M}, \mathbf{1}_{M-1} ) + \diag \left( \begin{bmatrix}
+\mathbf{0}_{M-1}^T &
+1- \overline{\xi} 
+\end{bmatrix}^T
+\right)
+\right]
+\end{align}
+\begin{align}
+L_2^{B--} \equiv  \Delta^{-2} 
+\Big[ 
+&\text{tridiag}(
+\mathbf{1}_{M-1},
+-2 \times \mathbf{1}_M,
+\mathbf{1}_{M-1} )
++ \\
+&\diag \left( \begin{bmatrix}
+-2 + \underline{\xi}\Delta &
+\mathbf{0}_{M-2}^T &
+(1+\overline{\xi} \Delta)^{-1}
+\end{bmatrix}^T \right)
+\Big] \\
+L_2^{B-+} \equiv  \Delta^{-2} 
+\Big[ 
+&\text{tridiag}(
+\mathbf{1}_{M-1},
+-2 \times \mathbf{1}_M,
+\mathbf{1}_{M-1} )
++  \\
+&\diag \left( \begin{bmatrix}
+-2 + \underline{\xi}\Delta &
+\mathbf{0}_{M-2}^T &
+-2 - \overline{\xi}\Delta
+\end{bmatrix}^T \right)
+\Big] \\
+L_2^{B+-} \equiv  \Delta^{-2} 
+\Big[ 
+&\text{tridiag}(
+\mathbf{1}_{M-1},
+-2 \times \mathbf{1}_M,
+\mathbf{1}_{M-1} )
++ \\
+&\diag \left( \begin{bmatrix}
+-(-1+\underline{\xi} \Delta)^{-1}&
+\mathbf{0}_{M-2}^T &
+(1+\overline{\xi} \Delta)^{-1}
+\end{bmatrix}^T \right)
+\Big] \\
+L_2^{B++} \equiv  \Delta^{-2} 
+\Big[ 
+&\text{tridiag}(
+\mathbf{1}_{M-1},
+-2 \times \mathbf{1}_M,
+\mathbf{1}_{M-1} )
++  \\
+&\diag \left( \begin{bmatrix}
+-(-1+\underline{\xi} \Delta)^{-1}&
+\mathbf{0}_{M-2}^T &
+-2 - \overline{\xi}\Delta
 \end{bmatrix}^T \right)
 \Big]
 \end{align}
@@ -761,14 +985,14 @@ which is identical as the identity operator for regular grids.
 
 \subsection{Boundary Conditions}
 
-\paragraph{Mixed boundary conditions}
+\subsubsection{Mixed boundary conditions}
 Recall mixed boundary conditions from \eqref{eq:mixed-BC1} and \eqref{eq:mixed-BC2}. Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$. Using forward difference and backward difference discretization scheme for the lower bound and upper bound respectively, we have
 \begin{align}
-&\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_0 = 0 \\
-&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M+1} = 0
+\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_0 &= 0 \label{eq:mixed-BC1-irregular-grid}  \\
+\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M+1} &= 0 \label{eq:mixed-BC2-irregular-grid}
 \end{align}
 
-Thus, the corresponding boundary condition matrix $B$ is
+when the drift is positive on the lower bound and is negative on the upper bound. Thus, the corresponding boundary condition matrix $B$ is
 
 \begin{equation}\label{eq:mixed-barrier-matrix-original}
 B = \begin{bmatrix}
@@ -793,6 +1017,64 @@ b = \begin{bmatrix}
 \end{equation}
 since $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$.
 
+Depending on the direction of the drift, the locations of $\overline{\xi}$ and $\underline{\xi}$ have to be different. When the drift is drift is negative on the lower bound and is positive on the upper bound, we have
+
+\begin{align}
+&\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_1 = 0 \label{eq:mixed-BC1-irregular-grid-negative}  \\
+&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M} = 0 \label{eq:mixed-BC2-irregular-grid-positive}
+\end{align}
+
+Hence, letting $\circ_1, \circ_M \in \{-, +\}$ denote the drift directions on the lower and upper boundaries respectively, there are four corresponding boundary condition matrices $B^{\circ_1 \circ_M}$ as follows:
+
+\begin{align}
+B^{--} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta_{0,+}} & \dfrac{1}{\Delta_{0,+}}  + \underline{\xi} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta_{M+1,-}} & \dfrac{1}{\Delta_{M+1,-}} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{+-} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta_{0,+}} + \underline{\xi} & \dfrac{1}{\Delta_{0,+}} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta_{M+1,-}} & \dfrac{1}{\Delta_{M+1,-}} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{-+} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta_{0,+}}  & \dfrac{1}{\Delta_{0,+}} + \underline{\xi} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta_{M+1,-}}+ \overline{\xi} & \dfrac{1}{\Delta_{M+1,-}}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{++} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta_{0,+}} + \underline{\xi} & \dfrac{1}{\Delta_{0,+}} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta_{M+1,-}}+ \overline{\xi} & \dfrac{1}{\Delta_{M+1,-}} \\
+\end{bmatrix}_{2 \times (M+2)}
+\end{align}
+
+Multiplying the first rows by $\Delta_{1,-} = \Delta_{0,+}$ and second rows by $\Delta_{M,+} = \Delta_{M+1,-} $, the resulting system has the same $b$ and the following $B^{--}, B^{+-}, B^{-+}, B^{++}$:
+
+\begin{align}
+B^{--} &\equiv 
+\begin{bmatrix}
+-1 & 1  + \underline{\xi}\Delta_{1,-} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi}\Delta_{M,+}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{+-} &\equiv 
+\begin{bmatrix}
+-1 + \underline{\xi}\Delta_{1,-} & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi}\Delta_{M,+}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{-+} &\equiv 
+\begin{bmatrix}
+-1  & 1 + \underline{\xi}\Delta_{1,-} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1+ \overline{\xi}\Delta_{M,+} & 1\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{++} &\equiv 
+\begin{bmatrix}
+-1 + \underline{\xi}\Delta_{1,-} & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1+ \overline{\xi}\Delta_{M,+} & 1 \\
+\end{bmatrix}_{2 \times (M+2)}
+\end{align}
+
+
 \subsubsection{Reflecting Barriers}
 Since a reflecting barrier (i.e. a Neumann boundary condition) is a special case of the mixed when  $\underline{\xi} = \bar{\xi} = 0$, the $B$ matrix for a reflecting barrier follows \cref{eq:B-mixed}
 \begin{equation}
@@ -808,6 +1090,8 @@ with the same
 		 	0
 		 	\end{bmatrix}
 \end{equation}
+
+Note that this does not depend on the direction of the drift as $B^{--} = B^{+-} = B^{-+} = B^{++}$ when $\overline{\xi} = \underline{\xi} = 0$.
 
 \subsubsection{Absorbing Barriers}
 
@@ -982,6 +1266,131 @@ Alternatively, with vectorized differences, we can express the differential oper
 \begin{align}
 I^B \equiv  \text{diag($\mathbf{1}_M$)}
 \end{align}
+
+
+\paragraph{Applying drift directions on boundary conditions}
+Substracting the first row of $B^{--}$ or $B^{-+}$ multiplied by $\Delta_{1,-}^{-1}$ on the first row of $L_{1-}$ and extracting the interior yields
+
+\begin{equation}
+L_{1-}^{B-} \equiv \begin{bmatrix}
+-\underline{\xi} &0&0&\dots&0&0&0\\
+-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-\Delta_{M-1,-}^{-1}&\Delta_{M-1,-}^{-1}&0\\
+0&0&0&\cdots&0&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}
+\end{bmatrix}_{M\times M}
+\end{equation}
+
+Likewise, substracting the first row of $B^{-+}$ or $B^{++}$ multiplied by $\Delta_{M,+}^{-1}$ on the first row of $L_{1+}$ and extracting the interior yields
+
+\begin{equation}
+L_{1+}^{B+} \equiv \begin{bmatrix}
+-\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&0&\dots&0&0&0\\
+0&-\Delta_{2,+}^{-1}&\Delta_{2,+}^{-1}&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\cdots&0&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}\\
+0&0&0&\cdots&0&0&-\overline{\xi} 
+\end{bmatrix}_{M\times M} \label{eq:L-1p-irregular-right}
+\end{equation}
+
+For $L_2$, directions on both boundaries affect the interior. Here we study the two upper and lower boundaries separately. For the lower boundary, suppose first that the drift is positive. Substracting the first row of $L_2$ by the first row of $B^{+-}$ or $B^{++}$ multiplied by $2(-1 + \underline{\xi} \Delta_{1,-} )^{-1} (\Delta_{1,+} + \Delta_{1,-})^{-1}  \Delta_{1,-}^{-1} $  and extracting the interior and first row gives
+\begin{align}
+2\begin{bmatrix}
+\Xi_{1+} &1&0&\dots&0&0&0
+\end{bmatrix}_{1\times M}
+\end{align}
+where $\Xi_{1+} \equiv  - (-1 + \underline{\xi} \Delta_{1,-})^{-1} (\Delta_{1,+} + \Delta_{1,-})^{-1}  \Delta_{1,-}^{-1}$.
+
+Suppose that we have a negative drift at the lower boundary. Adding the first row of $L_2$ by the first row of $B^{--}$ or $B^{-+}$ multiplied by $2(\Delta_{1,+} + \Delta_{1,-} )^{-1} \Delta_{1,-}^{-1}$ and extracting the interior and first row gives
+\begin{align}
+2\begin{bmatrix}
+\Xi_{1-} &1&0&\dots&0&0&0
+\end{bmatrix}_{1\times M}
+\end{align}
+where $\Xi_{1-} \equiv -\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  + (\Delta_{1,+} + \Delta_{1,-} )^{-1} \Delta_{1,-}^{-1} (1 + \underline{\xi}\Delta_{1,-})$.
+Now consider the upper boundary. Suppose first that the drift is negative. Substracting the last row of $L_2$ by the second row of $B^{--}$ or $B^{+-}$ multiplied by $2(1 + \overline{\xi} \Delta_{M,+} )^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1}$ and extracting the interior and last row gives 
+\begin{align}
+2\begin{bmatrix}
+0 &0&0&\dots&0&1&\Xi_{M-}
+\end{bmatrix}_{1\times M}
+\end{align}
+
+where $\Xi_{M-} = (1 + \overline{\xi} \Delta_{M,+})^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1}$. Suppose that we have a positive drift at the upper boundary. Subtracting the second row of $L_2$ by the first row of $B^{-+}$ or $B^{++}$ multiplied by $2(\Delta_{M,+} + \Delta_{M,-})^{-1} \Delta_{M,+}^{-1} $ and extracting the interior and last row gives
+\begin{align}
+2\begin{bmatrix}
+0 &0&0&\dots&0&1&\Xi_{M+}
+\end{bmatrix}_{1\times M}
+\end{align}
+where $\Xi_{M+} = -\Delta_{M,-}^{-1} \Delta_{M,+}^{-1} - ( \Delta_{M,+} + \Delta_{M,-} )^{-1} \Delta_{M,+}^{-1} (-1 + \overline{\xi} \Delta_{M,+})  $.
+
+This provides the complete combination of all possible drift directions on both boundaries for $L_2$. For instance, $L_2^{B-+}$ is defined as
+\begin{align}
+L_2^{B-+} &\equiv  2 \begin{psmallmatrix}
+\Xi_{1-} &
+(\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{1,+}^{-1}
+&0&\cdots&0&0&0 \\
+\vdots&\ddots&\ddots&\ddots&\ddots&\vdots&\vdots\\
+0&\cdots&
+(\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,-}^{-1} &
+-\Delta_{i,-}^{-1} \Delta_{i,+}^{-1}  &
+(\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,+}^{-1}&\cdots&0 \\
+\vdots&\vdots&\vdots&\ddots&\ddots&\ddots&\vdots\\
+0&0&0&\cdots&0&(\Delta_{M,+}+\Delta_{M,-})^{-1} \Delta_{M,-}^{-1}&\Xi_{M+}
+\end{psmallmatrix}_{M\times M}
+\end{align}
+
+
+
+Using banded matrices, these operators can be definied in the following compact forms:
+
+
+\begin{align}
+{L}_{1-}^{B-} &\equiv
+\tridiag \left(-(\Delta_-^\circ)^{-1}[2:M], (\Delta_-^\circ )^{-1}, \mathbf{0}_{M-1}  \right) +
+\diag\left( 
+\begin{bmatrix}
+(-\Delta^{-1}_{1,-} - \underline{\xi} ) &
+\mathbf{0}_{M-1}^T
+\end{bmatrix}^T
+\right) \\
+{L}_{1-}^{B+} &\equiv
+\tridiag \left(-(\Delta_-^\circ)^{-1}[2:M], (\Delta_-^\circ )^{-1}, \mathbf{0}_{M-1}  \right) +
+\diag\left( 
+\begin{bmatrix}
+\Delta^{-1}_{1,-} (-1 + \underline{\xi} \Delta_{1,-})^{-1} &
+\mathbf{0}_{M-1}^T
+\end{bmatrix}^T
+\right)
+\end{align}
+\begin{align}
+{L}_{1+}^{B-} &\equiv
+\tridiag \left(\mathbf{0}_{M-1}, -(\Delta_+^\circ )^{-1}, (\Delta_+^\circ)^{-1}[2:M]  \right) +
+\diag\left( 
+\begin{bmatrix}
+\mathbf{0}_{M-1}^T &
+\Delta^{-1}_{M,+} (1 + \overline{\xi} \Delta_{M,+})^{-1}
+\end{bmatrix}^T
+\right) \\
+{L}_{1+}^{B+} &\equiv
+\tridiag \left(\mathbf{0}_{M-1}, -(\Delta_+^\circ )^{-1}, (\Delta_+^\circ)^{-1}[2:M]  \right) +
+\diag\left( 
+\begin{bmatrix}
+\mathbf{0}_{M-1}^T &
+(\Delta^{-1}_{M,+} - \overline{\xi})
+\end{bmatrix}^T
+\right) 
+\end{align}
+\begin{align}
+{L}_{2}^{B \circ_1 \circ_M } \equiv
+2 \odot \Big[ & \text{tridiag} \Big[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, 
+-(\Delta_-^\circ \odot \Delta_+^\circ)^{-1},
+(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \Big] + \\ & \diag\left(  
+\begin{bmatrix} \
+\Xi_{1 \circ_1} & \mathbf{0}_{M-2} & \Xi_{M \circ_M}
+\end{bmatrix}
+\right) \Big]
+\end{align}
+where $\circ_1, \circ_M \in \{-, +\}$ denote the drift directions on the lower and upper boundaries respectively.
 
 
 \subsubsection{Absorbing barrier conditions}
@@ -1484,22 +1893,22 @@ B_{+1} &\equiv \begin{bmatrix} B_{12} & B_{23} & B_{34} & B_{45} \end{bmatrix}\i
 
 
 \section{Boundary extrapolation under mixed boundary conditions}
-Consider solving $v$ on an irregular extended grid $\overline{x} = \set{x_i}_{i=0}^{M+1}$ with the corresponding interior grid $x = \set{x_i}_{i=1}^M $ such that mixed boundary conditions \eqref{eq:mixed-BC1} and \eqref{eq:mixed-BC2} are applied. As described in Section \ref{subsec:applying-bc}, differential operators with boundary conditions $B$ applied, $L^B$, can be used to solve the system $L^B v = f$ in \eqref{eq:system-on-interior} to find $v$ on the interior grid without stacking up the boundary conditions manually. Note that the resulting interior solution $v$ does not contain the value of $v$ on the boundary, $\overline{v}_0 = v(x_0)$ and $\overline{v}_{M+1} = v(x_{M+1})$. 
+Consider solving $v$ on an irregular extended grid $\overline{x} = \set{x_i}_{i=0}^{M+1}$ with the corresponding interior grid $x = \set{x_i}_{i=1}^M $ such that mixed boundary conditions \eqref{eq:mixed-BC1-irregular-grid} and \eqref{eq:mixed-BC2-irregular-grid} are applied. As described in Section \ref{subsec:applying-bc}, differential operators with boundary conditions $B$ applied, $L^B$, can be used to solve the system $L^B v = f$ in \eqref{eq:system-on-interior} to find $v$ on the interior grid without stacking up the boundary conditions manually. Note that the resulting interior solution $v$ does not contain the value of $v$ on the boundary, $\overline{v}_0 = v(x_0)$ and $\overline{v}_{M+1} = v(x_{M+1})$. 
 
-To retrieve $\overline{v}_0 $ and $\overline{v}_{M+1}$ to construct $\overline{v}$ from $v$, first note that the mixed boundary conditions can be discretized as follows:
+First, we consider the case when the drift is positive on the lower bound and negative on the upper bound. To retrieve $\overline{v}_0 $ and $\overline{v}_{M+1}$ to construct $\overline{v}$ from $v$, first note that the mixed boundary conditions can be discretized as follows:
 \begin{align}
-&\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_0 = 0 \label{eq:mixed-discretized-lb} \\
-&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M+1} = 0 \label{eq:mixed-discretized-ub}
+\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_0 &= 0 \label{eq:mixed-discretized-lb} \\
+\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M+1} &= 0 \label{eq:mixed-discretized-ub}
 \end{align}
 as shown in \ref{subsubsec-irregular-grids-mixed-boundary-conditions}, using forward difference and backward difference scheme for the lower bound and upper bound respecitvely. Rearranging \eqref{eq:mixed-discretized-lb} and \eqref{eq:mixed-discretized-ub} gives
 \begin{align}
-\overline{v}_0 = \frac{1}{1-\underline{\xi} \Delta_{0,+} } \overline{v}_1 \\
-\overline{v}_{M+1} = \frac{1}{1+\overline{\xi} \Delta_{M+1,-} } \overline{v}_M
+\overline{v}_0 &= \frac{1}{1-\underline{\xi} \Delta_{0,+} } \overline{v}_1 \\
+\overline{v}_{M+1} &= \frac{1}{1+\overline{\xi} \Delta_{M+1,-} } \overline{v}_M
 \end{align}
 Note that $\overline{v}_1 = v_1$ and $\overline{v}_M = v_M$ as the resulting solutions on the interior nodes are identical. Also, by the definition, we have $\Delta_{0,+} = x_1 - x_0 = \Delta_{1,-}$ and $\Delta_{M+1,-} = x_{M+1} - x_M = \Delta_{M, +}$, which yields the following boundary extrapolation scheme
 \begin{align}
-\overline{v}_0 = \frac{1}{1-\underline{\xi} \Delta_{1,-} } {v}_1 \\
-\overline{v}_{M+1} = \frac{1}{1+\overline{\xi} \Delta_{M,+} } {v}_M
+\overline{v}_0 &= \frac{1}{1-\underline{\xi} \Delta_{1,-} } {v}_1 \\
+\overline{v}_{M+1} &= \frac{1}{1+\overline{\xi} \Delta_{M,+} } {v}_M
 \end{align}
 to construct
 \begin{align}
@@ -1515,6 +1924,19 @@ v  \\
 \end{bmatrix} 
 \end{align}
 from $v$.
+
+Now suppose that the drift is drift is negative on the lower bound and is positive on the upper bound. Recall from \eqref{eq:mixed-BC1-irregular-grid-negative} and \eqref{eq:mixed-BC2-irregular-grid-positive} that the corresponding discretized boundary conditions are:
+
+\begin{align}
+\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_1 &= 0 \\
+\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M} &= 0 
+\end{align}
+
+Rearrangement with the fact that $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$ gives the following boundary extrapolation scheme:
+\begin{align}
+\overline{v}_0 &= (1+\underline{\xi} \Delta_{1,-} ) {v}_1 \\
+\overline{v}_{M+1} &= (1-\overline{\xi} \Delta_{M,+} ) {v}_M
+\end{align}
 
 \section{Derivation by substitution}
 One can also derive the formula for $L_{1-}^B, L_{1+}^B, L_2^B$ in \eqref{eq:L-1-regular}, \eqref{eq:L-1-plus-regular}, \eqref{eq:L-2-regular} by substitution. For simplicity, here we focus on the case when we have regular grids, i.e., $x_{i+1} - x_i = \Delta$ for some $\Delta > 0$ for all $i = 0, ..., M$.
