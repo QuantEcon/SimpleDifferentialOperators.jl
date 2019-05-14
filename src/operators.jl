@@ -1,8 +1,8 @@
 """
-    DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::DifferenceMethod)
+    DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::DiscretizationMethod)
 
 Returns a discretized differential operator of `length(x̄)` by `length(x̄)` matrix
-under mixed boundary conditions from `bc` using finite difference method specified by `method`.
+under mixed boundary conditions from `bc` using a discretization method specified by `method`.
 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)

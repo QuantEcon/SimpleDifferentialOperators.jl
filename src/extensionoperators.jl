@@ -1,9 +1,9 @@
 """
-    ExtensionDifferentialOperator(x̄, method::DifferenceMethod)
+    ExtensionDifferentialOperator(x̄, method::DiscretizationMethod)
 
 Returns a discretized differential operator of `length(x̄)` by `length(x̄) + 2` matrix
 whose first and last columns are applied to the ghost nodes just before `x̄[1]` and `x̄[end]` respectively
-under no boundary condition using finite difference method specified by `method`.
+under no boundary condition using a discretization method specified by `method`.
 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
@@ -52,6 +52,13 @@ julia> ExtensionDifferentialOperator(x̄, CentralSecondDifference())
   [3, 5]  =  1.0
   [4, 5]  =  -2.0
   [4, 6]  =  1.0
+
+julia> ExtensionDifferentialOperator(x̄, JumpProcess(x̄, -1.0))
+  4×6 BandedMatrix{Float64,Array{Float64,2},Base.OneTo{Int64}}:
+   0.0  0.0    ⋅     ⋅     ⋅    ⋅
+    ⋅   1.0  -1.0    ⋅     ⋅    ⋅
+    ⋅    ⋅    1.0  -1.0    ⋅    ⋅
+    ⋅    ⋅     ⋅    1.0  -1.0   ⋅
 ```
 """
 function ExtensionDifferentialOperator(x̄::AbstractRange, method::BackwardFirstDifference)
@@ -99,4 +106,18 @@ function ExtensionDifferentialOperator(x̄::AbstractArray, method::CentralSecond
     Δ₊⁻¹ = 1 ./ d[2:end] # 1 ./ Δ₊
     Δ⁻¹ = 1 ./ (d[1:end-1] + d[2:end]) # 1 ./ (Δ₋ + Δ₊)
     return 2*spdiagm(0 => Δ⁻¹.*Δ₋⁻¹, 1 => -Δ₋⁻¹ .* Δ₊⁻¹, 2 => Δ⁻¹.*Δ₊⁻¹)[1:M,:]
+end
+
+function ExtensionDifferentialOperator(x̄::AbstractArray, method::JumpProcess)
+    T = eltype(x̄)
+    M = length(x̄) - 2
+    jumps = method.jumps
+
+    L̄ = BandedMatrix((0=>zeros(M), 1=>-ones(M)), (M,M+2), 
+                    (max(abs(minimum(jumps))-1, 0), max(abs(maximum(jumps)+1), 1)))
+    for i in 1:length(jumps)
+        L̄[i,(i+1+jumps[i])] += 1
+    end
+
+    return (L̄)
 end
