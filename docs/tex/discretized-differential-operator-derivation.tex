@@ -284,7 +284,7 @@ In order to calculate the derivatives for all $i = 1, \ldots, M$ (i.e. in the in
 \paragraph{Jump process operator}
 Define the jump process operator as follows:
 \begin{align}
-\tilde{L}_J \tilde{v} (x_i) \equiv  \tilde{v}(x_{J(i)} )
+\tilde{L}_J \tilde{v} (x_i) \equiv  \tilde{v}(x_{J(i)} ) \label{eq:jump-process}
 \end{align}
 for $i= 1,..., M$, where $J$ is a function that takes an index in $i = 1,...,M$ to its corresponding jump destination. Hence, stacking it up for all $i = 1,...,M$, the corresponding discretized operator is
 \begin{align}
@@ -294,7 +294,8 @@ L_J &\equiv \begin{psmallmatrix}
 \vdots & \vdots & \vdots & \ddots & \vdots & \vdots &\vdots \\
 \indicator{J(M-1) = 0} & \indicator{J(2) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M} &\indicator{J(M-1) = M+1} \\
 \indicator{J(M) = 0} & \indicator{J(2) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1&\indicator{J(M) = M+1} 
-\end{psmallmatrix} \\
+\end{psmallmatrix} \label{eq:jump-process-discretized-operator}
+ \\
 &= \{ \indicator{ J(i) = j-1 } \}_{M \times (M+2)} - \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}
 \end{align}
 where $ \{ \indicator{ J(i) = j-1 } \}_{M \times (M+2)} $ is an $M$ by $(M+2)$ matrix whose $(i,j)$th element is $\indicator{ J(i) = j-1 } $.
@@ -794,6 +795,33 @@ L_2^{B++} \equiv  \Delta^{-2}
 \end{bmatrix}^T \right)
 \Big]
 \end{align}
+
+When jumps onto the boundary are not allowed, i.e., the range of $J$ function in \eqref{eq:jump-process} does not include $0$, $M+1$,  jump diffusion process operator $L_J$ can be defined to the interior as well. To see this, note that $\indicator{J(i) = 0} = \indicator{J(i) = M+1} = 0$ holds for all $i = 1,..., M+1$ in this case, so that the discretized operator in \eqref{eq:jump-process-discretized-operator} becomes
+\begin{align}
+L_J &\equiv \begin{psmallmatrix}
+0 & \indicator{J(1) = 1} -1 & \indicator{J(2) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M} & 0 \\
+0 & \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(1) = M-1}  & \indicator{J(1) = M} & 0 \\
+\vdots & \vdots & \vdots & \ddots & \vdots & \vdots &\vdots \\
+0 & \indicator{J(2) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M} &0 \\
+0 & \indicator{J(2) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1&0
+\end{psmallmatrix}
+\\
+&= \{ \indicator{ J(i) = j-1 } \}_{M \times (M+2)} - \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}
+\end{align}
+so that solving $L_J \overline{v} $ is identical with solving $L_J^B v$ where $L_J^B$ is defined as
+
+\begin{align}
+L_J^B &\equiv \begin{psmallmatrix}
+\indicator{J(1) = 1} -1 & \indicator{J(2) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M}  \\
+ \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(1) = M-1}  & \indicator{J(1) = M}  \\
+\vdots & \vdots & \ddots & \vdots & \vdots \\
+\indicator{J(2) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M}  \\
+\indicator{J(2) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1
+\end{psmallmatrix}
+\\
+&= \{ \indicator{ J(i) = j } \}_{M \times M} - \mathbf{I}_M \eqref{eq:jump-process-discretized-operator-interior}
+\end{align}
+where $\{ \indicator{ J(i) = j } \}_{M \times M} $ is an $M$ by $M$ matrix whose $(i,j)$th element is $ \indicator{ J(i) = j } $.
 
 \subsubsection{Absorbing Boundary Conditions}
 To apply an absorbing barrier condition $\tilde{v}(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
@@ -1410,6 +1438,34 @@ Using banded matrices, these operators can be definied in the following compact 
 \right) \Big]
 \end{align}
 where $\circ_1, \circ_M \in \{-, +\}$ denote the drift directions on the lower and upper boundaries respectively.
+
+
+When jumps onto the boundary are not allowed, i.e., the range of $J$ function in \eqref{eq:jump-process} does not include $0$, $M+1$,  jump diffusion process operator $L_J$ can be defined to the interior as well. To see this, note that $\indicator{J(i) = 0} = \indicator{J(i) = M+1} = 0$ holds for all $i = 1,..., M+1$ in this case, so that the discretized operator in \eqref{eq:jump-process-discretized-operator} becomes
+\begin{align}
+L_J &\equiv \begin{psmallmatrix}
+0 & \indicator{J(1) = 1} -1 & \indicator{J(2) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M} & 0 \\
+0 & \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(1) = M-1}  & \indicator{J(1) = M} & 0 \\
+\vdots & \vdots & \vdots & \ddots & \vdots & \vdots &\vdots \\
+0 & \indicator{J(2) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M} &0 \\
+0 & \indicator{J(2) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1&0
+\end{psmallmatrix}
+\\
+&= \{ \indicator{ J(i) = j-1 } \}_{M \times (M+2)} - \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}
+\end{align}
+so that solving $L_J \overline{v} $ is identical with solving $L_J^B v$ where $L_J^B$ is defined as
+
+\begin{align}
+L_J^B &\equiv \begin{psmallmatrix}
+\indicator{J(1) = 1} -1 & \indicator{J(2) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M}  \\
+\indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(1) = M-1}  & \indicator{J(1) = M}  \\
+\vdots & \vdots & \ddots & \vdots & \vdots \\
+\indicator{J(2) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M}  \\
+\indicator{J(2) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1
+\end{psmallmatrix}
+\\
+&= \{ \indicator{ J(i) = j } \}_{M \times M} - \mathbf{I}_M 
+\end{align}
+where $\{ \indicator{ J(i) = j } \}_{M \times M} $ is an $M$ by $M$ matrix whose $(i,j)$th element is $ \indicator{ J(i) = j } $. Note that this is identical with \label{eq:jump-process-discretized-operator-interior} for regular grid cases.
 
 
 \subsubsection{Absorbing barrier conditions}
