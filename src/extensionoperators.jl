@@ -52,6 +52,13 @@ julia> ExtensionDifferentialOperator(x̄, CentralSecondDifference())
   [3, 5]  =  1.0
   [4, 5]  =  -2.0
   [4, 6]  =  1.0
+
+julia> ExtensionDifferentialOperator(x̄, JumpProcess(x̄, -1.0))
+  4×6 BandedMatrix{Float64,Array{Float64,2},Base.OneTo{Int64}}:
+   0.0  0.0    ⋅     ⋅     ⋅    ⋅
+    ⋅   1.0  -1.0    ⋅     ⋅    ⋅
+    ⋅    ⋅    1.0  -1.0    ⋅    ⋅
+    ⋅    ⋅     ⋅    1.0  -1.0   ⋅
 ```
 """
 function ExtensionDifferentialOperator(x̄::AbstractRange, method::BackwardFirstDifference)
