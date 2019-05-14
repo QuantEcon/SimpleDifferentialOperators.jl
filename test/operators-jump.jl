@@ -217,3 +217,47 @@ end
     L̄ = ExtensionDifferentialOperator(x̄, JumpProcess(x̄, jumps, (:boundary, :boundary))) 
     @test Array(L̄) == [0. -1. 1. 0. 0.; 0. 0. -1. 1. 0.; 0. 0. 0. -1. 1.]
 end
+
+
+@testset "Accuracy test for jump diffusion operators on the interior" begin
+    x̄ = [1; 2.3; 3.4; 4.5; 5.0]
+    jumps = [0; -1; 0]
+    bc = (Absorbing(), Absorbing())
+    method = JumpProcess(x̄, jumps)
+    L = Lₙbc(x̄,bc,method) 
+    @test Array(L) == [0. 0. 0.; 1. -1. 0.; 0. 0. 0.]
+
+    jumps = [0; 1; 0]
+    method = JumpProcess(x̄, jumps)
+    L = Lₙbc(x̄,bc,method) 
+    @test Array(L) == [0. 0. 0.; 0. -1. 1.; 0. 0. 0.]
+
+    jumps = [0; -1; 0]
+    L = Lₙbc(x̄,bc,JumpProcess(x̄, jumps))
+    @test Array(L) == [0. 0. 0.; 1. -1. 0.; 0. 0. 0. ]
+    L = Lₙbc(x̄,bc,JumpProcess(x̄, jumps, (:interior, :boundary))) 
+    @test Array(L) == [0. 0. 0.; 1. -1. 0.; 0. 0. 0. ]
+    L = Lₙbc(x̄,bc,JumpProcess(x̄, jumps, (:boundary, :interior))) 
+    @test Array(L) == [0. 0. 0.; 1. -1. 0.; 0. 0. 0. ]
+    L = Lₙbc(x̄,bc,JumpProcess(x̄, jumps, (:boundary, :boundary))) 
+    @test Array(L) == [0. 0. 0.; 1. -1. 0.; 0. 0. 0. ]
+
+    jumps = [0; -2; 0]
+    L = Lₙbc(x̄,bc,JumpProcess(x̄, jumps))
+    @test Array(L) == [0. 0. 0.; 1. -1. 0.; 0. 0. 0. ]
+    L = Lₙbc(x̄,bc,JumpProcess(x̄, jumps, (:interior, :boundary))) 
+    @test Array(L) == [0. 0. 0.; 1. -1. 0.; 0. 0. 0. ]
+    L = Lₙbc(x̄,bc,JumpProcess(x̄, jumps, (:boundary, :interior))) 
+    @test Array(L) == [0. 0. 0.; 0. -1. 0.; 0. 0. 0. ]
+    L = Lₙbc(x̄,bc,JumpProcess(x̄, jumps, (:boundary, :boundary))) 
+    @test Array(L) == [0. 0. 0.; 0. -1. 0.; 0. 0. 0. ]
+
+    bc = (Reflecting(), Reflecting())
+    jumps = [0; -2; 0]
+    L = Lₙbc(x̄,bc,JumpProcess(x̄, jumps))
+    @test Array(L) == [0. 0. 0.; 1. -1. 0.; 0. 0. 0. ]
+    L = Lₙbc(x̄,bc,JumpProcess(x̄, jumps, (:interior, :boundary))) 
+    @test Array(L) == [0. 0. 0.; 1. -1. 0.; 0. 0. 0. ]
+    @test_throws ErrorException Lₙbc(x̄,bc,JumpProcess(x̄, jumps, (:boundary, :interior)))  
+    @test_throws ErrorException Lₙbc(x̄,bc,JumpProcess(x̄, jumps, (:boundary, :boundary))) 
+end

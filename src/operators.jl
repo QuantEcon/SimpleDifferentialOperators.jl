@@ -161,6 +161,37 @@ function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryConditio
     return L
 end
 
+function JumpProcessOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::JumpProcess)
+    T = eltype(x̄)
+    M = length(x̄) - 2
+    jumps = method.jumps
+    destinations = Array(1:M) + jumps
+
+    # under reflecting or mixed boundary conditions, 
+    # we assume that there is no destination on the boundary nodes 
+    if ((typeof(bc[1]) <: Reflecting || typeof(bc[1]) <: Mixed) && any(destinations .<= 0))
+        throw(ErrorException("Under reflecting/mixed boundary conditions on lower boundary, the lower boundary node cannot be destination."))
+    end
+    if ((typeof(bc[2]) <: Reflecting || typeof(bc[2]) <: Mixed) && any(destinations .>= (M+1))) 
+        throw(ErrorException("Under reflecting/mixed boundary conditions on upper boundary, the upper boundary node cannot be destination."))
+    end
+
+    # construct L
+    L = BandedMatrix((0=>-ones(M), 1=>zeros(M-1)), (M,M), 
+                    (max(abs(minimum(jumps)), 0), max(abs(maximum(jumps)), 1)))
+
+    # apply destination for each row
+    for i in 1:length(jumps)
+        # add destination if it is not on/out of the boundary
+        if !(destinations[i] <= 0 || destinations[i] >= M+1)
+            L[i,destinations[i]] += 1
+        end
+    end
+
+    return L
+end
+
+
 # Convenience calls
 """
     L₁₋bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
@@ -233,6 +264,29 @@ julia> L₂bc(x̄, (Reflecting(), Reflecting()))
 """
 L₂bc(x̄, bc) = DifferentialOperator(x̄, bc, CentralSecondDifference())
 
+
+"""
+    Lₙbc(x̄, method, (Absorbing(), Absorbing()))
+
+Returns a discretized jump process operator of
+`length(interiornodes(x̄))` by `length(interiornodes(x̄))` matrix
+specified by `method` under boundary conditions specified by `bc`.
+
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x̄ = 0:5
+0:5 
+
+julia> Lₙbc(x̄, (Absorbing(), Absorbing()), JumpProcess(x̄, -1.0))
+4×4 BandedMatrix{Float64,Array{Float64,2},Base.OneTo{Int64}}:
+ 0.0   0.0    ⋅     ⋅
+ 1.0  -1.0   0.0    ⋅
+  ⋅    1.0  -1.0   0.0
+  ⋅     ⋅    1.0  -1.0
+```
+"""
+Lₙbc(x̄, bc, method)  = JumpProcessOperator(x̄, bc, method)
+
 """
     L₁₋(x̄)
 
@@ -301,6 +355,28 @@ julia> Array(L₂(x̄))
 ```
 """
 L₂(x̄)  = ExtensionDifferentialOperator(x̄, CentralSecondDifference())
+
+"""
+    Lₙ(x̄, method)
+
+Returns a discretized jump process operator of
+`length(interiornodes(x̄))` by `length(x̄)` matrix
+specified by `method`
+
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x̄ = 0:5
+0:5 
+
+julia> Lₙ(x̄, JumpProcess(x̄, -1.0))
+  4×6 BandedMatrix{Float64,Array{Float64,2},Base.OneTo{Int64}}:
+   0.0  0.0    ⋅     ⋅     ⋅    ⋅
+    ⋅   1.0  -1.0    ⋅     ⋅    ⋅
+    ⋅    ⋅    1.0  -1.0    ⋅    ⋅
+    ⋅    ⋅     ⋅    1.0  -1.0   ⋅
+```
+"""
+Lₙ(x̄, method)  = ExtensionDifferentialOperator(x̄, method)
 
 """
     interiornodes(x̄)

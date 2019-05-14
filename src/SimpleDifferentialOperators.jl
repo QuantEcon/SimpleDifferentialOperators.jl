@@ -31,10 +31,12 @@ export DifferentialOperator,
         L₁₋bc,
         L₁₊bc,
         L₂bc,
+        Lₙbc,
         interiornodes,
         L₁₊,
         L₁₋,
         L₂,
+        Lₙ,
         extrapolatetoboundary,
         findnearestindex
 

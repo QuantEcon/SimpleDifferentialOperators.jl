@@ -284,11 +284,11 @@ In order to calculate the derivatives for all $i = 1, \ldots, M$ (i.e. in the in
 \paragraph{Jump process operator}
 Define the jump process operator as follows:
 \begin{align}
-\tilde{L}_J \tilde{v} (x_i) \equiv  \tilde{v}(x_{J(i)} ) \label{eq:jump-process}
+\tilde{L}_n \tilde{v} (x_i) \equiv  \tilde{v}(x_{J(i)}  ) - \tilde{v}(x_i) \label{eq:jump-process}
 \end{align}
 for $i= 1,..., M$, where $J$ is a function that takes an index in $i = 1,...,M$ to its corresponding jump destination. Hence, stacking it up for all $i = 1,...,M$, the corresponding discretized operator is
 \begin{align}
-L_J &\equiv \begin{psmallmatrix}
+L_n &\equiv \begin{psmallmatrix}
 \indicator{J(1) = 0} & \indicator{J(1) = 1} -1 & \indicator{J(2) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M} & \indicator{J(1) = M+1} \\
 \indicator{J(2) = 0} & \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(1) = M-1}  & \indicator{J(1) = M} & \indicator{J(1) = M+1} \\
 \vdots & \vdots & \vdots & \ddots & \vdots & \vdots &\vdots \\
@@ -796,9 +796,9 @@ L_2^{B++} \equiv  \Delta^{-2}
 \Big]
 \end{align}
 
-When jumps onto the boundary are not allowed, i.e., the range of $J$ function in \eqref{eq:jump-process} does not include $0$, $M+1$,  jump diffusion process operator $L_J$ can be defined to the interior as well. To see this, note that $\indicator{J(i) = 0} = \indicator{J(i) = M+1} = 0$ holds for all $i = 1,..., M+1$ in this case, so that the discretized operator in \eqref{eq:jump-process-discretized-operator} becomes
+When jumps onto the boundary are not allowed, i.e., the range of $J$ function in \eqref{eq:jump-process} does not include $0$, $M+1$,  jump diffusion process operator $L_n$ can be defined to the interior as well. To see this, note that $\indicator{J(i) = 0} = \indicator{J(i) = M+1} = 0$ holds for all $i = 1,..., M+1$ in this case, so that the discretized operator in \eqref{eq:jump-process-discretized-operator} becomes
 \begin{align}
-L_J &\equiv \begin{psmallmatrix}
+L_n &\equiv \begin{psmallmatrix}
 0 & \indicator{J(1) = 1} -1 & \indicator{J(2) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M} & 0 \\
 0 & \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(1) = M-1}  & \indicator{J(1) = M} & 0 \\
 \vdots & \vdots & \vdots & \ddots & \vdots & \vdots &\vdots \\
@@ -808,10 +808,10 @@ L_J &\equiv \begin{psmallmatrix}
 \\
 &= \{ \indicator{ J(i) = j-1 } \}_{M \times (M+2)} - \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}
 \end{align}
-so that solving $L_J \overline{v} $ is identical with solving $L_J^B v$ where $L_J^B$ is defined as
+so that solving $L_n \overline{v} $ is identical with solving $L_n^B v$ where $L_n^B$ is defined as
 
 \begin{align}
-L_J^B &\equiv \begin{psmallmatrix}
+L_n^B &\equiv \begin{psmallmatrix}
 \indicator{J(1) = 1} -1 & \indicator{J(2) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M}  \\
  \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(1) = M-1}  & \indicator{J(1) = M}  \\
 \vdots & \vdots & \ddots & \vdots & \vdots \\
@@ -1440,9 +1440,9 @@ Using banded matrices, these operators can be definied in the following compact 
 where $\circ_1, \circ_M \in \{-, +\}$ denote the drift directions on the lower and upper boundaries respectively.
 
 
-When jumps onto the boundary are not allowed, i.e., the range of $J$ function in \eqref{eq:jump-process} does not include $0$, $M+1$,  jump diffusion process operator $L_J$ can be defined to the interior as well. To see this, note that $\indicator{J(i) = 0} = \indicator{J(i) = M+1} = 0$ holds for all $i = 1,..., M+1$ in this case, so that the discretized operator in \eqref{eq:jump-process-discretized-operator} becomes
+When jumps onto the boundary are not allowed, i.e., the range of $J$ function in \eqref{eq:jump-process} does not include $0$, $M+1$,  jump diffusion process operator $L_n$ can be defined to the interior as well. To see this, note that $\indicator{J(i) = 0} = \indicator{J(i) = M+1} = 0$ holds for all $i = 1,..., M+1$ in this case, so that the discretized operator in \eqref{eq:jump-process-discretized-operator} becomes
 \begin{align}
-L_J &\equiv \begin{psmallmatrix}
+L_n &\equiv \begin{psmallmatrix}
 0 & \indicator{J(1) = 1} -1 & \indicator{J(2) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M} & 0 \\
 0 & \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(1) = M-1}  & \indicator{J(1) = M} & 0 \\
 \vdots & \vdots & \vdots & \ddots & \vdots & \vdots &\vdots \\
@@ -1452,10 +1452,10 @@ L_J &\equiv \begin{psmallmatrix}
 \\
 &= \{ \indicator{ J(i) = j-1 } \}_{M \times (M+2)} - \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}
 \end{align}
-so that solving $L_J \overline{v} $ is identical with solving $L_J^B v$ where $L_J^B$ is defined as
+so that solving $L_n \overline{v} $ is identical with solving $L_n^B v$ where $L_n^B$ is defined as
 
 \begin{align}
-L_J^B &\equiv \begin{psmallmatrix}
+L_n^B &\equiv \begin{psmallmatrix}
 \indicator{J(1) = 1} -1 & \indicator{J(2) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M}  \\
 \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(1) = M-1}  & \indicator{J(1) = M}  \\
 \vdots & \vdots & \ddots & \vdots & \vdots \\
