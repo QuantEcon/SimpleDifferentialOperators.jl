@@ -280,6 +280,25 @@ In order to calculate the derivatives for all $i = 1, \ldots, M$ (i.e. in the in
 	&= \frac{1}{\Delta^2}\band_{0,2}^{M,M+2}(\mathbf{1}_M, -2\times\mathbf{1}_M, \mathbf{1}_M)
 \end{align}
 
+
+\paragraph{Jump process operator}
+Define the jump process operator as follows:
+\begin{align}
+\tilde{L}_J \tilde{v} (x_i) \equiv  \tilde{v}(x_{J(i)} )
+\end{align}
+for $i= 1,..., M$, where $J$ is a function that takes an index in $i = 1,...,M$ to its corresponding jump destination. Hence, stacking it up for all $i = 1,...,M$, the corresponding discretized operator is
+\begin{align}
+L_J &\equiv \begin{psmallmatrix}
+\indicator{J(1) = 0} & \indicator{J(1) = 1} -1 & \indicator{J(2) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M} & \indicator{J(1) = M+1} \\
+\indicator{J(2) = 0} & \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(1) = M-1}  & \indicator{J(1) = M} & \indicator{J(1) = M+1} \\
+\vdots & \vdots & \vdots & \ddots & \vdots & \vdots &\vdots \\
+\indicator{J(M-1) = 0} & \indicator{J(2) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M} &\indicator{J(M-1) = M+1} \\
+\indicator{J(M) = 0} & \indicator{J(2) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1&\indicator{J(M) = M+1} 
+\end{psmallmatrix} \\
+&= \{ \indicator{ J(i) = j-1 } \}_{M \times (M+2)} - \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}
+\end{align}
+where $ \{ \indicator{ J(i) = j-1 } \}_{M \times (M+2)} $ is an $M$ by $(M+2)$ matrix whose $(i,j)$th element is $\indicator{ J(i) = j-1 } $.
+
 \paragraph{Identity Operators}
 For simplicity in composition, also consider the discretization of the identity operator (i.e. not applying any derivatives or stencils).  For simplicity, define the identity operator as the $0$-th order operator $\tilde{L}_0 \equiv I$ so that $\tilde{L}_0 \tilde{v}(x) = \tilde{v}(x)$.
 
