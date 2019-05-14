@@ -153,6 +153,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "api/#SimpleDifferentialOperators.Lₙ-Tuple{Any,Any}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.Lₙ",
+    "category": "method",
+    "text": "Lₙ(x̄, method)\n\nReturns a discretized jump process operator of length(interiornodes(x̄)) by length(x̄) matrix specified by method\n\nExamples\n\njulia> x̄ = 0:5\n0:5 \n\njulia> Lₙ(x̄, JumpProcess(x̄, -1.0))\n4×6 BandedMatrices.BandedMatrix{Float64,Array{Float64,2},Base.OneTo{Int64}}:\n 0.0  0.0    ⋅     ⋅     ⋅    ⋅\n  ⋅   1.0  -1.0    ⋅     ⋅    ⋅\n  ⋅    ⋅    1.0  -1.0    ⋅    ⋅\n  ⋅    ⋅     ⋅    1.0  -1.0   ⋅\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#SimpleDifferentialOperators.Lₙbc-Tuple{Any,Any,Any}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.Lₙbc",
+    "category": "method",
+    "text": "Lₙbc(x̄, method, (Absorbing(), Absorbing()))\n\nReturns a discretized jump process operator of length(interiornodes(x̄)) by length(interiornodes(x̄)) matrix specified by method under boundary conditions specified by bc.\n\nExamples\n\njulia> x̄ = 0:5\n0:5 \n\njulia> Lₙbc(x̄, (Absorbing(), Absorbing()), JumpProcess(x̄, -1.0))\n4×4 BandedMatrices.BandedMatrix{Float64,Array{Float64,2},Base.OneTo{Int64}}:\n 0.0   0.0    ⋅     ⋅\n 1.0  -1.0   0.0    ⋅\n  ⋅    1.0  -1.0   0.0\n  ⋅     ⋅    1.0  -1.0\n\n\n\n\n\n"
+},
+
+{
     "location": "api/#SimpleDifferentialOperators.extrapolatetoboundary-Tuple{Any,Any,Tuple{BoundaryCondition,BoundaryCondition}}",
     "page": "API",
     "title": "SimpleDifferentialOperators.extrapolatetoboundary",
