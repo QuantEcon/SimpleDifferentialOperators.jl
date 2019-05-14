@@ -1,7 +1,8 @@
 """
     ExtensionDifferentialOperator(x̄, method::DiscretizationMethod)
 
-Returns a discretized differential operator of `length(x̄)` by `length(x̄) + 2` matrix
+Returns a discretized differential operator of 
+`length(interiornodes(x̄))` by `length(x̄)` matrix
 whose first and last columns are applied to the ghost nodes just before `x̄[1]` and `x̄[end]` respectively
 under no boundary condition using a discretization method specified by `method`.
 

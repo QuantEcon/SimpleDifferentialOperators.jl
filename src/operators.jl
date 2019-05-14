@@ -1,7 +1,8 @@
 """
     DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::DiscretizationMethod)
 
-Returns a discretized differential operator of `length(x̄)` by `length(x̄)` matrix
+Returns a discretized differential operator of 
+`length(interiornodes(x̄))` by `length(interiornodes(x̄))` matrix
 under mixed boundary conditions from `bc` using a discretization method specified by `method`.
 
 # Examples
@@ -164,7 +165,8 @@ end
 """
     L₁₋bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
 
-Returns a discretized first-order differential operator of `length(x̄)` by `length(x̄)` matrix
+Returns a discretized first-order differential operator of 
+`length(interiornodes(x̄))` by `length(interiornodes(x̄))` matrix
 using backward difference under boundary conditions specified by `bc`.
 
 The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper.
@@ -187,7 +189,8 @@ L₁₋bc(x̄, bc) = DifferentialOperator(x̄, bc, BackwardFirstDifference())
 """
     L₁₊bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
 
-Returns a discretized first-order differential operator of `length(x̄)` by `length(x̄)` matrix
+Returns a discretized first-order differential operator of 
+`length(interiornodes(x̄))` by `length(interiornodes(x̄))` matrix
 using forward difference under boundary conditions specified by `bc`.
 
 The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper.
@@ -210,7 +213,8 @@ L₁₊bc(x̄, bc) = DifferentialOperator(x̄, bc, ForwardFirstDifference())
 """
     L₂bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
 
-Returns a discretized second-order differential operator of `length(x̄)` by `length(x̄)` matrix
+Returns a discretized second-order differential operator of 
+`length(interiornodes(x̄))` by `length(interiornodes(x̄))` matrix
 using central difference under boundary conditions specified by `bc`.
 
 The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper.
@@ -232,7 +236,8 @@ L₂bc(x̄, bc) = DifferentialOperator(x̄, bc, CentralSecondDifference())
 """
     L₁₋(x̄)
 
-Returns a discretized first-order differential operator of `length(x̄)` by `length(x̄) + 2` matrix
+Returns a discretized first-order differential operator of 
+`length(interiornodes(x̄))` by `length(x̄)` matrix
 using backward difference under no boundary condition.
 
 The first and last columns are applied to the ghost nodes just before `x̄[1]` and `x̄[end]` respectively.
@@ -252,8 +257,9 @@ L₁₋(x̄) = ExtensionDifferentialOperator(x̄, BackwardFirstDifference())
 """
     L₁₊(x̄)
 
-Returns a discretized first-order differential operator of `length(x̄)` by `length(x̄) + 2` matrix using
-forward difference under no boundary condition.
+Returns a discretized first-order differential operator of
+`length(interiornodes(x̄))` by `length(x̄)` matrix
+using forward difference under no boundary condition.
 
 The first and last columns are applied to the ghost nodes just before `x̄[1]` and `x̄[end]` respectively.
 
@@ -275,7 +281,8 @@ L₁₊(x̄) = ExtensionDifferentialOperator(x̄, ForwardFirstDifference())
 """
     L₂(x̄)
 
-Returns a discretized second-order differential operator of `length(x̄)` by `length(x̄) + 2` matrix
+Returns a discretized second-order differential operator of
+`length(interiornodes(x̄))` by `length(x̄)` matrix
 using central difference under no boundary condition.
 
 The first and last columns are applied to the ghost nodes just before `x̄[1]` and `x̄[end]` respectively.
