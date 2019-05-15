@@ -192,6 +192,21 @@ Alternatively, one can define an identical jump process with ease if the jump si
 jumpprocess = JumpProcess(x̄, -1)
 ```
 
+If a jump process is defined by the jump magnitude defined by $\Delta(x_i)$ rather than indices, i.e., jumps occur from $v(x_i)$ to $v(x_i + \Delta (x_i))$, then one can define the jump process by a function that determines the jump magnitude on $x_i$. As the domain is discretized, the corresponding indices for destinations will be determined by the nearest neighbor.
+
+```julia
+# uniform jump
+jumpf(x_i) = -0.01
+jumpprocess = JumpProcess(x̄, jumpf)
+```
+
+Alternatively, if the jump magnitude is uniform across all cohorts, one can forward the uniform jump maginutde as follows:
+
+```julia
+# use the fact that the jump magnitude is uniform across all nodes
+jumpprocess = JumpProcess(x̄, -0.01)
+```
+
 Then one can define the corresponding operator and solve value functions as follows:
 
 ```julia
