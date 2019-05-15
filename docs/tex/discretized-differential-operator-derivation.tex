@@ -1866,6 +1866,104 @@ f(x_M)
 % \end{equation}
 % where $\dot{g}(t)$ is an $M$-vector whose $i$th element is $\partial_{t} g(x_i, t)$, which can be efficently solved by a number of differential equation solvers available in public, including \cite{rackauckas17}.
 
+\section{Continuous state models with discrete state transition}
+In this section, we study how discretized operators can be constructed when we have both continous and discrete states. In particular, we focus on solving stationary bellman equations with two states as in \cite{achdou17} -- in a later subsection we show how this can be generalized to models that contain more than two discrete states.
+
+\subsection{Bellman equations with two states}
+Consider the following system of Bellman equation with two states $j = 1, 2$:
+\begin{align} 
+	\rho v_{1}(x) &= \pi_1(x)+\mu_1 v'_1 (x) + \dfrac{\sigma^2}{2} v''_1 (x) +q_{1}\left(v_{2}(x)-v_{1}(x) \right) \\ \rho v_{2}(x) &=
+	\pi_2(x)+\mu_2 v'_2 (x) + \dfrac{\sigma^2}{2} v''_2 (x) +q_{2}\left(v_{1}(x)-v_{2}(x)\right)
+\end{align}
+
+Rearranging these two equations gives the following identical system:
+
+\begin{align} 
+\begin{bmatrix}
+\tilde{L}^1 - q_1 & q_2 \\ q_1 & \tilde{L}^2 - q_2
+\end{bmatrix}
+\begin{bmatrix}
+v_1 (x) \\ v_2(x)
+\end{bmatrix}
+ =
+\begin{bmatrix}
+\pi_1 (x) \\
+\pi_2 (x)
+\end{bmatrix}\label{eq:continuous-and-discrete-system}
+\end{align}
+
+where
+
+\begin{align}
+\tilde{L}^1 &= \rho - \mu_1 \partial_{x} - \dfrac{\sigma^2}{2} \partial_{xx} \\
+\tilde{L}^2 &= \rho - \mu_2 \partial_{x} - \dfrac{\sigma^2}{2} \partial_{xx}
+\end{align}
+
+with the corresponding discretized operators
+
+\begin{align}
+{L}^1 &= \rho - \mu_1 L_1 - \dfrac{\sigma^2}{2} L_2 \\
+{L}^2 &= \rho - \mu_2 L_1 - \dfrac{\sigma^2}{2} L_2
+\end{align}
+
+
+Construct the discretized state space by stacking $\overline{v}$ and ${\pi}$ for states $j= 1, 2$:
+
+\begin{align}
+\overline{v} &= \begin{bmatrix}
+\overline{v}_1 \\
+\overline{v}_2
+\end{bmatrix} \\
+\pi &= \begin{bmatrix}
+\pi_1\\
+\pi_2
+\end{bmatrix}
+\end{align}
+
+and recall that $L_0 = \begin{bmatrix} \mathbf{0}_M &  \mathbf{I}_M & \mathbf{0}_M  \end{bmatrix} $; then the corresponding discretized system from \eqref{eq:continuous-and-discrete-system} is
+
+\begin{align}
+\begin{bmatrix}
+{L}^1 - q_1 L_0 & q_2 L_0 \\ 
+q_1 L_0 & {L}^2 - q_2 L_0
+\end{bmatrix}
+\overline{v}
+=
+\pi
+\label{eq:continuous-and-discrete-system-discrete} 
+\end{align}
+
+Suppose further that we also have boundary conditions applied, with the $M$ by $(M+2)$ corresponding boundary condition matrix $B_1$ for boundary conditions on $v_1$ and $B_2$ for $v_2$. Then the solution $\overline{v}$ should satisfy the following system:
+
+\begin{align}
+\begin{bmatrix}
+B_1 & \mathbf{0}_{M \times (M+2)} \\
+\mathbf{0}_{M \times (M+2)} & B_2 
+\end{bmatrix}
+\begin{bmatrix}
+\overline{v}_1 \\
+\overline{v}_2
+\end{bmatrix} &= 
+\begin{bmatrix}
+\pi_1\\
+\pi_2
+\end{bmatrix} 
+\end{align}
+
+Stacking this system with \eqref{eq:continuous-and-discrete-system-discrete} yields the following complete system:
+\begin{align}
+\begin{bmatrix}
+{L}^1 - q_1 L_0 & q_2 L_0 \\ 
+q_1 L_0 & {L}^2 - q_2 L_0 \\
+B_1 & \mathbf{0}_{M \times (M+2)} \\
+\mathbf{0}_{M \times (M+2)} & B_2 
+\end{bmatrix}
+\overline{v}
+=
+\pi
+\end{align}
+
+
 \newpage
 
 \appendix
