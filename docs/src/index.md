@@ -167,6 +167,40 @@ using Test
 @test v ≈ v̄[2:end-1]
 ```
 
+### Solving HJBE with jump diffusion
+Consider the jump process added to the HJBE with some intensity $\lambda \geq 0$: 
+
+```math
+\rho v(x) = \pi(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x) + \lambda L_n v(x)
+```
+
+with the corresponding operator $L_n$ that incurs jumps from $v(x_i)$ to $v(x_{i-1})$ for all $i$ in $2 \leq i \leq M$. In `SimpleDifferentialOperators.jl`, the jump process can be defined as follows:
+
+```julia
+# length of nodes on the interior
+M = length(interiornodes(x̄))
+# vector of jumps; ith element represents the jump from ith node in the interior
+jumps = ones(M)
+# define jump process 
+jumpprocess =  JumpProcess(x̄, jumps)
+```
+
+Alternatively, one can define an identical jump process with ease if the jump size is uniform across all nodes:
+
+```julia
+# use the fact that the jump size is uniform across all nodes
+jumpprocess = JumpProcess(x̄, -1)
+```
+
+Then one can define the corresponding operator and solve value functions as follows:
+
+```julia
+Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc) + λ * Lₙbc(x̄ , bc) 
+L_bc = I * ρ - Lₓ
+
+# solve the value function
+v = L_bc \ π.(x)
+```
 
 ### Solving HJBE with state-dependent drifts
 -------------
