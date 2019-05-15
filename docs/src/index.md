@@ -214,7 +214,7 @@ Then one can define the corresponding operator and solve value functions as foll
 λ = 0.6
 
 # construct discretized operators on interior nodes with the bc
-Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc) + λ * Lₙbc(x̄ , bc) 
+Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc) + λ * Lₙbc(x̄, bc, jumpprocess) 
 L_bc = I * ρ - Lₓ
 
 # solve the value function
