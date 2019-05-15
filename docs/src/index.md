@@ -195,6 +195,10 @@ jumpprocess = JumpProcess(x̄, -1)
 Then one can define the corresponding operator and solve value functions as follows:
 
 ```julia
+# define jump intensity
+λ = 0.6
+
+# construct discretized operators on interior nodes with the bc
 Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc) + λ * Lₙbc(x̄ , bc) 
 L_bc = I * ρ - Lₓ
 
