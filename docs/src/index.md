@@ -167,6 +167,59 @@ using Test
 @test v ≈ v̄[2:end-1]
 ```
 
+### Solving HJBE with jump diffusion
+Consider the jump process added to the HJBE with some intensity $\lambda \geq 0$: 
+
+```math
+\rho v(x) = \pi(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x) + \lambda L_n v(x)
+```
+
+with the corresponding operator $L_n$ that incurs jumps from $v(x_i)$ to $v(x_{i-1})$ for all $i$ in $2 \leq i \leq M$. In `SimpleDifferentialOperators.jl`, the jump process can be defined as follows:
+
+```julia
+# length of nodes on the interior
+M = length(interiornodes(x̄))
+# vector of jumps; ith element represents the jump from ith node in the interior
+jumps = ones(M)
+# define jump process 
+jumpprocess =  JumpProcess(x̄, jumps)
+```
+
+Alternatively, one can define an identical jump process with ease if the jump size is uniform across all nodes:
+
+```julia
+# use the fact that the jump size is uniform across all nodes
+jumpprocess = JumpProcess(x̄, -1)
+```
+
+If a jump process is defined by the jump magnitude defined by $\Delta(x_i)$ rather than indices, i.e., jumps occur from $v(x_i)$ to $v(x_i + \Delta (x_i))$, then one can define the jump process by a function that determines the jump magnitude on $x_i$. As the domain is discretized, the corresponding indices for destinations will be determined by the nearest neighbor.
+
+```julia
+# uniform jump
+jumpf(x_i) = -0.01
+jumpprocess = JumpProcess(x̄, jumpf)
+```
+
+Alternatively, if the jump magnitude is uniform across all cohorts, one can forward the uniform jump maginutde as follows:
+
+```julia
+# use the fact that the jump magnitude is uniform across all nodes
+jumpprocess = JumpProcess(x̄, -0.01)
+```
+
+Then one can define the corresponding operator and solve value functions as follows:
+
+```julia
+# define jump intensity
+λ = 0.6
+
+# construct discretized operators on interior nodes with the bc
+Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc) + λ * Lₙbc(x̄, bc, jumpprocess) 
+L_bc = I * ρ - Lₓ
+
+# solve the value function
+v = L_bc \ π.(x)
+```
 
 ### Solving HJBE with state-dependent drifts
 -------------
