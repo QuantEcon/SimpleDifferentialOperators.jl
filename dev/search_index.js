@@ -101,7 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "SimpleDifferentialOperators.ExtensionDifferentialOperator",
     "category": "method",
-    "text": "ExtensionDifferentialOperator(x̄, method::DiscretizationMethod)\n\nReturns a discretized differential operator of  length(interiornodes(x̄)) by length(x̄) matrix whose first and last columns are applied to the ghost nodes just before x̄[1] and x̄[end] respectively under no boundary condition using a discretization method specified by method.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> ExtensionDifferentialOperator(x̄, BackwardFirstDifference())\n4×6 SparseArrays.SparseMatrixCSC{Float64,Int64} with 8 stored entries:\n  [1, 1]  =  -1.0\n  [1, 2]  =  1.0\n  [2, 2]  =  -1.0\n  [2, 3]  =  1.0\n  [3, 3]  =  -1.0\n  [3, 4]  =  1.0\n  [4, 4]  =  -1.0\n  [4, 5]  =  1.0\n\njulia> ExtensionDifferentialOperator(x̄, ForwardFirstDifference())\n4×6 SparseArrays.SparseMatrixCSC{Float64,Int64} with 8 stored entries:\n  [1, 2]  =  -1.0\n  [1, 3]  =  1.0\n  [2, 3]  =  -1.0\n  [2, 4]  =  1.0\n  [3, 4]  =  -1.0\n  [3, 5]  =  1.0\n  [4, 5]  =  -1.0\n  [4, 6]  =  1.0\n\njulia> ExtensionDifferentialOperator(x̄, CentralSecondDifference())\n4×6 SparseArrays.SparseMatrixCSC{Float64,Int64} with 12 stored entries:\n  [1, 1]  =  1.0\n  [1, 2]  =  -2.0\n  [2, 2]  =  1.0\n  [1, 3]  =  1.0\n  [2, 3]  =  -2.0\n  [3, 3]  =  1.0\n  [2, 4]  =  1.0\n  [3, 4]  =  -2.0\n  [4, 4]  =  1.0\n  [3, 5]  =  1.0\n  [4, 5]  =  -2.0\n  [4, 6]  =  1.0\n\njulia> ExtensionDifferentialOperator(x̄, JumpProcess(x̄, -1.0))\n4×6 BandedMatrices.BandedMatrix{Float64,Array{Float64,2},Base.OneTo{Int64}}:\n 0.0  0.0    ⋅     ⋅     ⋅    ⋅\n  ⋅   1.0  -1.0    ⋅     ⋅    ⋅\n  ⋅    ⋅    1.0  -1.0    ⋅    ⋅\n  ⋅    ⋅     ⋅    1.0  -1.0   ⋅\n\n\n\n\n\n"
+    "text": "ExtensionDifferentialOperator(x̄, method::DiscretizationMethod)\n\nReturns a discretized differential operator of  length(interiornodes(x̄)) by length(x̄) matrix under no boundary condition using a discretization method specified by method.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> ExtensionDifferentialOperator(x̄, BackwardFirstDifference())\n4×6 SparseArrays.SparseMatrixCSC{Float64,Int64} with 8 stored entries:\n  [1, 1]  =  -1.0\n  [1, 2]  =  1.0\n  [2, 2]  =  -1.0\n  [2, 3]  =  1.0\n  [3, 3]  =  -1.0\n  [3, 4]  =  1.0\n  [4, 4]  =  -1.0\n  [4, 5]  =  1.0\n\njulia> ExtensionDifferentialOperator(x̄, ForwardFirstDifference())\n4×6 SparseArrays.SparseMatrixCSC{Float64,Int64} with 8 stored entries:\n  [1, 2]  =  -1.0\n  [1, 3]  =  1.0\n  [2, 3]  =  -1.0\n  [2, 4]  =  1.0\n  [3, 4]  =  -1.0\n  [3, 5]  =  1.0\n  [4, 5]  =  -1.0\n  [4, 6]  =  1.0\n\njulia> ExtensionDifferentialOperator(x̄, CentralSecondDifference())\n4×6 SparseArrays.SparseMatrixCSC{Float64,Int64} with 12 stored entries:\n  [1, 1]  =  1.0\n  [1, 2]  =  -2.0\n  [2, 2]  =  1.0\n  [1, 3]  =  1.0\n  [2, 3]  =  -2.0\n  [3, 3]  =  1.0\n  [2, 4]  =  1.0\n  [3, 4]  =  -2.0\n  [4, 4]  =  1.0\n  [3, 5]  =  1.0\n  [4, 5]  =  -2.0\n  [4, 6]  =  1.0\n\njulia> ExtensionDifferentialOperator(x̄, JumpProcess(x̄, -1.0))\n4×6 BandedMatrices.BandedMatrix{Float64,Array{Float64,2},Base.OneTo{Int64}}:\n 0.0  0.0    ⋅     ⋅     ⋅    ⋅\n  ⋅   1.0  -1.0    ⋅     ⋅    ⋅\n  ⋅    ⋅    1.0  -1.0    ⋅    ⋅\n  ⋅    ⋅     ⋅    1.0  -1.0   ⋅\n\n\n\n\n\n"
 },
 
 {
@@ -109,7 +109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "SimpleDifferentialOperators.L₁₊",
     "category": "method",
-    "text": "L₁₊(x̄)\n\nReturns a discretized first-order differential operator of length(interiornodes(x̄)) by length(x̄) matrix using forward difference under no boundary condition.\n\nThe first and last columns are applied to the ghost nodes just before x̄[1] and x̄[end] respectively.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> Array(L₁₊(x̄))\n4×6 Array{Float64,2}:\n 0.0  -1.0   1.0   0.0   0.0  0.0\n 0.0   0.0  -1.0   1.0   0.0  0.0\n 0.0   0.0   0.0  -1.0   1.0  0.0\n 0.0   0.0   0.0   0.0  -1.0  1.0\n\n\n\n\n\n"
+    "text": "L₁₊(x̄)\n\nReturns a discretized first-order differential operator of length(interiornodes(x̄)) by length(x̄) matrix using forward difference under no boundary condition.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> Array(L₁₊(x̄))\n4×6 Array{Float64,2}:\n 0.0  -1.0   1.0   0.0   0.0  0.0\n 0.0   0.0  -1.0   1.0   0.0  0.0\n 0.0   0.0   0.0  -1.0   1.0  0.0\n 0.0   0.0   0.0   0.0  -1.0  1.0\n\n\n\n\n\n"
 },
 
 {
@@ -125,7 +125,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "SimpleDifferentialOperators.L₁₋",
     "category": "method",
-    "text": "L₁₋(x̄)\n\nReturns a discretized first-order differential operator of  length(interiornodes(x̄)) by length(x̄) matrix using backward difference under no boundary condition.\n\nThe first and last columns are applied to the ghost nodes just before x̄[1] and x̄[end] respectively.\n\nExamples\n\njulia> x̄ = 1:3\n1:3\n\njulia> Array(L₁₋(x̄))\n1×3 Array{Float64,2}:\n -1.0  1.0  0.0\n\n\n\n\n\n"
+    "text": "L₁₋(x̄)\n\nReturns a discretized first-order differential operator of  length(interiornodes(x̄)) by length(x̄) matrix using backward difference under no boundary condition.\n\nExamples\n\njulia> x̄ = 1:3\n1:3\n\njulia> Array(L₁₋(x̄))\n1×3 Array{Float64,2}:\n -1.0  1.0  0.0\n\n\n\n\n\n"
 },
 
 {
@@ -141,7 +141,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API",
     "title": "SimpleDifferentialOperators.L₂",
     "category": "method",
-    "text": "L₂(x̄)\n\nReturns a discretized second-order differential operator of length(interiornodes(x̄)) by length(x̄) matrix using central difference under no boundary condition.\n\nThe first and last columns are applied to the ghost nodes just before x̄[1] and x̄[end] respectively.\n\nExamples\n\njulia> x̄ = 0:5\n0:5 \n\njulia> Array(L₂(x̄))\n4×6 Array{Float64,2}:\n 1.0  -2.0   1.0   0.0   0.0  0.0\n 0.0   1.0  -2.0   1.0   0.0  0.0\n 0.0   0.0   1.0  -2.0   1.0  0.0\n 0.0   0.0   0.0   1.0  -2.0  1.0\n\n\n\n\n\n"
+    "text": "L₂(x̄)\n\nReturns a discretized second-order differential operator of length(interiornodes(x̄)) by length(x̄) matrix using central difference under no boundary condition.\n\nExamples\n\njulia> x̄ = 0:5\n0:5 \n\njulia> Array(L₂(x̄))\n4×6 Array{Float64,2}:\n 1.0  -2.0   1.0   0.0   0.0  0.0\n 0.0   1.0  -2.0   1.0   0.0  0.0\n 0.0   0.0   1.0  -2.0   1.0  0.0\n 0.0   0.0   0.0   1.0  -2.0  1.0\n\n\n\n\n\n"
 },
 
 {
