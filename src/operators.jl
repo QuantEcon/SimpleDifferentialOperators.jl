@@ -294,8 +294,6 @@ Returns a discretized first-order differential operator of
 `length(interiornodes(x̄))` by `length(x̄)` matrix
 using backward difference under no boundary condition.
 
-The first and last columns are applied to the ghost nodes just before `x̄[1]` and `x̄[end]` respectively.
-
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
 julia> x̄ = 1:3
@@ -314,8 +312,6 @@ L₁₋(x̄) = ExtensionDifferentialOperator(x̄, BackwardFirstDifference())
 Returns a discretized first-order differential operator of
 `length(interiornodes(x̄))` by `length(x̄)` matrix
 using forward difference under no boundary condition.
-
-The first and last columns are applied to the ghost nodes just before `x̄[1]` and `x̄[end]` respectively.
 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
@@ -338,8 +334,6 @@ L₁₊(x̄) = ExtensionDifferentialOperator(x̄, ForwardFirstDifference())
 Returns a discretized second-order differential operator of
 `length(interiornodes(x̄))` by `length(x̄)` matrix
 using central difference under no boundary condition.
-
-The first and last columns are applied to the ghost nodes just before `x̄[1]` and `x̄[end]` respectively.
 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
