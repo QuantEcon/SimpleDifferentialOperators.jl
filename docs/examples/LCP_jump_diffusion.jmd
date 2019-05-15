@@ -61,10 +61,6 @@ $$
 \end{equation}
 $$
 
-These conditions are necessary for optimality for any free-boundary problem.  Typically, you would solve $\eqref{eq:bellman}, \eqref{eq:vm},\eqref{eq:sp},$ to find a value function $v(x)$ and a stopping threshold $\hat{x}$.
-
-While this approach can be analytically tractable, it is inconvenient for numerical solutions if: (1) the equations cannot be solved in closed form; (2) there are multiple stopping regions; or (3) the dimension increases, leading to complicated stopping regions separated by non-linear manifolds.
-
 #### HJB Variational Inequality
 
 As discussed in [Ben Moll's notes](http://www.princeton.edu/~moll/HACTproject/option_simple.pdf), the [DVI](https://en.wikipedia.org/wiki/Differential_variational_inequality) form of the above problem is to solve
@@ -74,16 +70,6 @@ $$
   0 = \min\{\mathcal{L} v(x) - u(x), v(x) - S(x)\}\label{eq:DVI}
 \end{equation}
 $$
-
-for $v(x)$.  A few important notes:
-
-* The $\mathcal{L} v(x) - u(x)$ term is just the Bellman equation $\eqref{eq:bellman}$ if it is binding and $=0$.
-* The $v(x) - S(x)$ term is the value matching condition in $\eqref{eq:vm}$ if it is binding and $=0$.
-* You are **not directly solving for the boundaries** of the stopping regions (i.e., there is no $\hat{x}$ in the system.)
-
-Given a solution for $v(x)$, $\eqref{eq:DVI}$ determines which regime a particular $x$ is in.  Those boundaries can be used to determine where an $\hat{x}$ occurs.
-
-Furthermore, you can prove that at any of those points, a solution to $\eqref{eq:DVI}$ implies the smooth-pasting condition $\eqref{eq:sp}$.
 
 ## Numerical Solution
 
