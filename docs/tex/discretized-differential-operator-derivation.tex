@@ -2124,15 +2124,15 @@ B_1 & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \t
 \subsection{Applying homogenous boundary conditions}
 In this subsection, we show how homogenous boundary conditions can be directly applied to operators, i.e., $b$ is zero, via Gaussian eliminations to yield discretized operators on the interior nodes from the complete system \eqref{eq:continuous-and-discrete-system-complete}. We first focus on models with two discrete states -- later we show that models with larger state spaces can be solved using a similar strategy.
 
-Recall the complete system in \eqref{eq:continuous-and-discrete-system-complete}; first, note that the first column has a nonzero element only in the first columns of the blocks $L^1 - q_1 L_0$ and $B_1$, whereas the rows corresponding to the block matrix $B_1$ have non-zero elements only in $B_1$ itself. Hence, applying the corresponding Gaussian elimination to remove the nonzero elements in the first and last column of $L^1$ as in \eqref{subsec:applying-bc-regular} (for regular grids) or \eqref{subsec:applying-bc} (for irregular grids) does not affect block matrices other than $L^1 - q_1 L_0$, and the resulting identical system is
+Recall the complete system in \eqref{eq:continuous-and-discrete-system-complete}; first, note that the first column has a nonzero element only in the first columns of the blocks $L^1 - q_{12} L_0$ and $B_1$, whereas the rows corresponding to the block matrix $B_1$ have non-zero elements only in $B_1$ itself. Hence, applying the corresponding Gaussian elimination to remove the nonzero elements in the first and last column of $L^1$ as in \eqref{subsec:applying-bc-regular} (for regular grids) or \eqref{subsec:applying-bc} (for irregular grids) does not affect block matrices other than $L^1 - q_{12} L_0$, and the resulting identical system is
 
 \begin{align}
 \begin{bmatrix}
 \begin{bmatrix}
 \mathbf{0}_M & {L}^{B_1,1} & \mathbf{0}_M
 \end{bmatrix} 
-- q_1 L_0 & q_2 L_0 \\ 
-q_1 L_0 & {L}^2 - q_2 L_0 \\
+- q_{12} L_0 & q_{12} L_0 \\ 
+ q_{21}  L_0 & {L}^2 - q_{21} L_0 \\
 B_1 & \mathbf{0}_{2 \times (M+2)} \\
 \mathbf{0}_{2 \times (M+2)} & B_2 
 \end{bmatrix}
@@ -2151,12 +2151,12 @@ where $L^{B_1,1}$ is a $M$ by $M$ matrix after Gaussian eliminations that get ri
 \begin{bmatrix}
 \mathbf{0}_M & {L}^{B_1,1} & \mathbf{0}_M
 \end{bmatrix} 
-- q_1 L_0 & q_2 L_0 \\ 
-q_1 L_0 & 
+- q_{12} L_0 & q_{12} L_0 \\ 
+q_{21}  L_0 & 
 \begin{bmatrix}
 \mathbf{0}_M & {L}^{B_2,2} & \mathbf{0}_M
 \end{bmatrix} 
-- q_2 L_0
+- q_{21} L_0
 \\
 B_1 & \mathbf{0}_{2 \times (M+2)} \\
 \mathbf{0}_{2 \times (M+2)} & B_2 
@@ -2172,19 +2172,19 @@ where $L^{B_2,2}$ is a $M$ by $M$ matrix after Gaussian eliminations that get ri
 \begin{align}
 \begin{bmatrix}
 \begin{bmatrix}
-\mathbf{0}_M & ({L}^{B_1,1} - q_1 \mathbf{I}_{M \times M}) & \mathbf{0}_M
+\mathbf{0}_M & ({L}^{B_1,1} - q_{12} \mathbf{I}_{M \times M}) & \mathbf{0}_M
 \end{bmatrix} 
 & 
 \begin{bmatrix}
-\mathbf{0}_M & q_2 \mathbf{I}_{M \times M} & \mathbf{0}_M
+\mathbf{0}_M & q_{12} \mathbf{I}_{M \times M} & \mathbf{0}_M
 \end{bmatrix} 
 \\ 
 \begin{bmatrix}
-\mathbf{0}_M & q_1 \mathbf{I}_{M \times M} & \mathbf{0}_M
+\mathbf{0}_M & q_{21} \mathbf{I}_{M \times M} & \mathbf{0}_M
 \end{bmatrix} 
 & 
 \begin{bmatrix}
-\mathbf{0}_M & ({L}^{B_2,2} - q_2 \mathbf{I}_{M \times M}) & \mathbf{0}_M
+\mathbf{0}_M & ({L}^{B_2,2} - q_{21} \mathbf{I}_{M \times M}) & \mathbf{0}_M
 \end{bmatrix} 
 \\
 B_1 & \mathbf{0}_{2 \times (M+2)} \\
@@ -2198,13 +2198,13 @@ b
 \end{bmatrix}
 \end{align}
 Note that the first and $(M+1)$th columns in the two matrix blocks $\begin{bmatrix}
-\mathbf{0}_M & ({L}^{B_1,1} - q_1 \mathbf{I}_{M \times M}) & \mathbf{0}_M
+\mathbf{0}_M & ({L}^{B_1,1} - q_{12} \mathbf{I}_{M \times M}) & \mathbf{0}_M
 \end{bmatrix} $ and $\begin{bmatrix}
-\mathbf{0}_M & q_1 \mathbf{I}_{M \times M} & \mathbf{0}_M
+\mathbf{0}_M & q_{21} \mathbf{I}_{M \times M} & \mathbf{0}_M
 \end{bmatrix} $ are all zero, and so are they for $\begin{bmatrix}
-\mathbf{0}_M & q_2 \mathbf{I}_{M \times M} & \mathbf{0}_M
+\mathbf{0}_M & q_{12} \mathbf{I}_{M \times M} & \mathbf{0}_M
 \end{bmatrix} $ and $\begin{bmatrix}
-\mathbf{0}_M & ({L}^{B_2,2} - q_2 \mathbf{I}_{M \times M}) & \mathbf{0}_M
+\mathbf{0}_M & ({L}^{B_2,2} - q_{21} \mathbf{I}_{M \times M}) & \mathbf{0}_M
 \end{bmatrix}$. Since $\overline{v}$ can be decomposed into
 \begin{align}
 \overline{v} &= 
@@ -2225,8 +2225,8 @@ where $v_j$ is an $M$-length vector whose $i$th element is $v_j (x_i)$, i.e., th
 
 \begin{align}
 \begin{bmatrix}
-L^{B_1,1} - q_1 \mathbf{I}_{M \times M} & q_2 \mathbf{I}_{M \times M} \\
-q_1 \mathbf{I}_{M \times M} & L^{B_2,2} - q_2 \mathbf{I}_{M \times M}
+L^{B_1,1} - q_{12} \mathbf{I}_{M \times M} & q_{12} \mathbf{I}_{M \times M} \\
+q_{21} \mathbf{I}_{M \times M} & L^{B_2,2} - q_{21} \mathbf{I}_{M \times M}
 \end{bmatrix}
 v
 =
