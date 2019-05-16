@@ -1963,6 +1963,144 @@ B_1 & \mathbf{0}_{2 \times (M+2)} \\
 \pi
 \end{align}
 
+\subsection{Models with more than two discrete states}
+In this subsection, we study how the discretization strategy above can be applied to models with more than two discrete states. Let $N \geq 2$ be an arbitary number of states, with the corresponding Bellman equation
+\begin{align}
+	\rho v_{j}(x) = \pi_j(x)+\mu_j v'_j (x) + \dfrac{\sigma^2}{2} v''_j (x) + 
+	\left( \sum_{j' \neq j} q_{jj'} v_{j'}(x)  - q_{jj} v_j(x) \right) \label{eq:continuous-and-discrete-equation-larger-states}  
+\end{align}
+
+for all $j=1 ,...,N$, where $q_{jj'}$ represents the transition rate from $j$th state to $j'$ state for $j, j' = 1,...,N$. 
+
+Note that for each $j$, \eqref{eq:continuous-and-discrete-equation-larger-states} leads to the following system:
+\begin{align}
+\begin{bmatrix}
+q_{j1} &  \cdots & q_{j,j-1} & \tilde{L}^j - q_{jj} & q_{j,j+1} & \cdots & q_{jN}
+\end{bmatrix}
+\begin{bmatrix}
+v_1 (x) \\
+\vdots \\
+v_N (x)
+\end{bmatrix}
+=
+\pi_1 (x)
+\end{align}
+
+Stcking this for all $j = 1,...,N$, the following system is identical with \eqref{eq:continuous-and-discrete-equation-larger-states}:
+
+\begin{align}
+\begin{bmatrix}
+\tilde{L}^1 -q_{11} & q_{12} & \cdots &  \cdots & \cdots & q_{1,N-1} & q_{1N} \\ 
+q_{21} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+q_{j1} &  \cdots & q_{j,j-1} & \tilde{L}^j - q_{jj} & q_{j,j+1} & \cdots & q_{jN} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & q_{N-1,N} \\
+q_{N1} & q_{N2} & \cdots &  \cdots & \cdots & q_{N,N-1} & \tilde{L}^N - q_{NN} 
+\end{bmatrix}
+\begin{bmatrix}
+v_1 (x) \\
+\vdots \\
+v_N (x)
+\end{bmatrix}
+=
+\begin{bmatrix}
+\pi_1 (x) \\
+\vdots \\
+\pi_N (x)
+\end{bmatrix}
+\end{align}
+
+where
+
+\begin{align}
+\tilde{L}^j &= \rho - \mu_j \partial_{x} - \dfrac{\sigma^2}{2} \partial_{xx} 
+\end{align}
+for all $j = 1,...,N$, with the corresponding discretized operators
+
+\begin{align}
+{L}^j &= \rho - \mu_j L_1 - \dfrac{\sigma^2}{2} L_2 
+\end{align}
+
+Construct the discretized state space by stacking $\overline{v}$ and ${\pi}$ for states $j= 1, ...,N$:
+
+\begin{align}
+\overline{v} &= \begin{bmatrix}
+\overline{v}_1 \\
+\overline{v}_2 \\ 
+\vdots \\
+\overline{v}_N
+\end{bmatrix} \\
+\pi &= \begin{bmatrix}
+\pi_1\\
+\pi_2 \\
+\vdots \\
+\pi_N 
+\end{bmatrix}
+\end{align}
+
+and recall that $L_0 = \begin{bmatrix} \mathbf{0}_M &  \mathbf{I}_M & \mathbf{0}_M  \end{bmatrix} $; then the corresponding discretized system from \eqref{eq:continuous-and-discrete-system} is
+
+\begin{align}
+\begin{bmatrix}
+{L}^1 -L_0 q_{11} & L_0 q_{12} & \cdots &  \cdots & \cdots & L_0 q_{1,N-1} & L_0 q_{1N} \\ 
+L_0 q_{21} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+L_0 q_{j1} &  \cdots & L_0 q_{j,j-1} & {L}^j - L_0 q_{jj} & L_0 q_{j,j+1} & \cdots & L_0 q_{jN} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & L_0 q_{N-1,N} \\
+L_0 q_{N1} & L_0 q_{N2} & \cdots &  \cdots & \cdots & L_0 q_{N,N-1} & {L}^N - L_0 q_{NN} 
+\end{bmatrix}
+\overline{v}
+=
+\pi \label{eq:continuous-and-discrete-system-discrete-larger-states}
+\end{align}
+Suppose further that we also have boundary conditions applied, with the $2$ by $(M+2)$ corresponding boundary condition matrix $B_j$ for boundary conditions on $v_j$ for all $j = 1,..., N$ Then the solution $\overline{v}$ should satisfy the following system:
+
+\begin{align}
+\begin{bmatrix}
+B_1 & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \times (M+2)}  & \mathbf{0}_{2 \times (M+2)} \\ 
+\mathbf{0}_{2 \times (M+2)} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+\mathbf{0}_{2 \times (M+2)} &  \cdots & \mathbf{0}_{2 \times (M+2)} & B_j & \mathbf{0}_{2 \times (M+2)} & \cdots & \mathbf{0}_{2 \times (M+2)} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \times (M+2)} & B_N
+\end{bmatrix}
+\overline{v}
+=
+\pi 
+\end{align}
+
+Stacking this system with \eqref{eq:continuous-and-discrete-system-discrete-larger-states} yields the following complete system:
+
+
+\begin{align}
+\begin{psmallmatrix}
+{L}^1 -L_0 q_{11} & L_0 q_{12} & \cdots &  \cdots & \cdots & L_0 q_{1,N-1} & L_0 q_{1N} \\ 
+L_0 q_{21} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+L_0 q_{j1} &  \cdots & L_0 q_{j,j-1} & {L}^j - L_0 q_{jj} & L_0 q_{j,j+1} & \cdots & L_0 q_{jN} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & L_0 q_{N-1,N} \\
+L_0 q_{N1} & L_0 q_{N2} & \cdots &  \cdots & \cdots & L_0 q_{N,N-1} & {L}^N - L_0 q_{NN} \\
+B_1 & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \times (M+2)}  & \mathbf{0}_{2 \times (M+2)} \\ 
+\mathbf{0}_{2 \times (M+2)} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+\mathbf{0}_{2 \times (M+2)} &  \cdots & \mathbf{0}_{2 \times (M+2)} & B_j & \mathbf{0}_{2 \times (M+2)} & \cdots & \mathbf{0}_{2 \times (M+2)} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \times (M+2)} & B_N
+\end{psmallmatrix}
+\overline{v}
+=
+\pi 
+\end{align}
 
 \newpage
 
