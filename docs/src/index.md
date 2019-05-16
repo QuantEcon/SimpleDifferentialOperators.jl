@@ -107,7 +107,7 @@ B[:,2]
 \end{bmatrix}
 =
 \begin{bmatrix}
-π^*
+π^* \\
 b[:,2]
 \end{bmatrix}
 ```
