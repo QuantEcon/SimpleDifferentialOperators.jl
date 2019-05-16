@@ -2240,6 +2240,34 @@ v_2
 \end{bmatrix}
 \end{align}
 
+\paragraph{Models with more than two discrete states} Applying boundary conditions to models with multiple states is analogous to the 2-state model case above. Stack the interior solutions as follows:
+\begin{align}
+v =
+\begin{bmatrix}
+v_1 \\
+v_2 \\
+\vdots \\
+v_N
+\end{bmatrix}
+\end{align}
+where $v_j$ is an $M$-length vector whose $i$th element is $v_j(x_i)$, i.e., the vector of interior solutions in $j$th state. Performing Gaussian elimination to remove the nonzero elements in the first and last columns of $L^j - L_{0} q_{jj}$ from $B_j$ for each $j$th state in $j = 1,...,N$ in \eqref{eq:continuous-and-discrete-system-complete-larger-states}, we have the following identical system for the interior solutions:
+
+\begin{align}
+\begin{psmallmatrix}
+L^{B_1,1} - q_{11} \mathbf{I}_{M \times M} & q_{12} \mathbf{I}_{M \times M} & \cdots &  \cdots & \cdots & q_{1,N-1} \mathbf{I}_{M \times M} &  q_{1N} \mathbf{I}_{M \times M} \\ 
+ q_{21} \mathbf{I}_{M \times M} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+ q_{j1} \mathbf{I}_{M \times M} &  \cdots &  q_{j,j-1}  \mathbf{I}_{M \times M} & {L}^{B_j,j} - q_{jj} \mathbf{I}_{M \times M} &  q_{j,j+1} \mathbf{I}_{M \times M} & \cdots &  q_{jN} \mathbf{I}_{M \times M} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots &  q_{N-1,N} \mathbf{I}_{M \times M} \\
+ q_{N1} \mathbf{I}_{M \times M} &  q_{N2} \mathbf{I}_{M \times M} & \cdots &  \cdots & \cdots &  q_{N,N-1} \mathbf{I}_{M \times M} & {L}^{B_N,N} -  q_{NN} \mathbf{I}_{M \times M}
+\end{psmallmatrix}
+v
+=
+\pi 
+\end{align}
+where $L^{B_j,j}$ is a $M$ by $M$ matrix after Gaussian eliminations that get rid of non-zero elements of $L^{j}$ in its first and last columns.
 
 \newpage
 
