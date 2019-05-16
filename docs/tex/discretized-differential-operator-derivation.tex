@@ -1933,12 +1933,12 @@ q_1 L_0 & {L}^2 - q_2 L_0
 \label{eq:continuous-and-discrete-system-discrete} 
 \end{align}
 
-Suppose further that we also have boundary conditions applied, with the $M$ by $(M+2)$ corresponding boundary condition matrix $B_1$ for boundary conditions on $v_1$ and $B_2$ for $v_2$. Then the solution $\overline{v}$ should satisfy the following system:
+Suppose further that we also have boundary conditions applied, with the $2$ by $(M+2)$ corresponding boundary condition matrix $B_1$ for boundary conditions on $v_1$ and $B_2$ for $v_2$. Then the solution $\overline{v}$ should satisfy the following system:
 
 \begin{align}
 \begin{bmatrix}
-B_1 & \mathbf{0}_{M \times (M+2)} \\
-\mathbf{0}_{M \times (M+2)} & B_2 
+B_1 & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & B_2 
 \end{bmatrix}
 \begin{bmatrix}
 \overline{v}_1 \\
@@ -1955,8 +1955,8 @@ Stacking this system with \eqref{eq:continuous-and-discrete-system-discrete} yie
 \begin{bmatrix}
 {L}^1 - q_1 L_0 & q_2 L_0 \\ 
 q_1 L_0 & {L}^2 - q_2 L_0 \\
-B_1 & \mathbf{0}_{M \times (M+2)} \\
-\mathbf{0}_{M \times (M+2)} & B_2 
+B_1 & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & B_2 
 \end{bmatrix}
 \overline{v}
 =
