@@ -1933,7 +1933,7 @@ q_1 L_0 & {L}^2 - q_2 L_0
 \label{eq:continuous-and-discrete-system-discrete} 
 \end{align}
 
-Suppose further that we also have boundary conditions applied, with the $2$ by $(M+2)$ corresponding boundary condition matrix $B_1$ for boundary conditions on $v_1$ and $B_2$ for $v_2$. Then the solution $\overline{v}$ should satisfy the following system:
+Suppose further that we also have boundary conditions applied, with the corresponding $2$ by $(M+2)$ boundary condition matrix $B_1$ and $2$-length vector $b_1$ for boundary conditions on $v_1$ and $B_2$ with $b_2$ for $v_2$. Then the solution $\overline{v}$ should satisfy the following system:
 
 \begin{align}
 \begin{bmatrix}
@@ -1945,12 +1945,14 @@ B_1 & \mathbf{0}_{2 \times (M+2)} \\
 \overline{v}_2
 \end{bmatrix} &= 
 \begin{bmatrix}
-\pi_1\\
-\pi_2
+b_1\\
+b_2
 \end{bmatrix} 
 \end{align}
 
-Stacking this system with \eqref{eq:continuous-and-discrete-system-discrete} yields the following complete system:
+Collect $b = \begin{bmatrix}
+b_1^T & b_2^T
+\end{bmatrix}^T$. Stacking this system with \eqref{eq:continuous-and-discrete-system-discrete} yields the following complete system:
 \begin{align}
 \begin{bmatrix}
 {L}^1 - q_1 L_0 & q_2 L_0 \\ 
@@ -1960,7 +1962,10 @@ B_1 & \mathbf{0}_{2 \times (M+2)} \\
 \end{bmatrix}
 \overline{v}
 =
-\pi
+\begin{bmatrix}
+\pi \\
+b
+\end{bmatrix} \label{eq:continuous-and-discrete-system-complete}
 \end{align}
 
 \subsection{Models with more than two discrete states}
@@ -2057,7 +2062,18 @@ L_0 q_{N1} & L_0 q_{N2} & \cdots &  \cdots & \cdots & L_0 q_{N,N-1} & {L}^N - L_
 =
 \pi \label{eq:continuous-and-discrete-system-discrete-larger-states}
 \end{align}
-Suppose further that we also have boundary conditions applied, with the $2$ by $(M+2)$ corresponding boundary condition matrix $B_j$ for boundary conditions on $v_j$ for all $j = 1,..., N$ Then the solution $\overline{v}$ should satisfy the following system:
+Suppose further that we also have boundary conditions applied, with the corresponding $2$ by $(M+2)$ boundary condition matrix $B_j$ and $2$-length vector $b_j$ for boundary conditions on $v_j$ for all $j = 1,..., N$. Collecting $b_j$ for all $j$,
+\begin{align}
+b &=
+\begin{bmatrix}
+b_1 \\
+b_2 \\
+\vdots \\
+b_N
+\end{bmatrix}
+\end{align}
+
+the solution $\overline{v}$ should satisfy the following system:
 
 \begin{align}
 \begin{bmatrix}
@@ -2072,7 +2088,7 @@ B_1 & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \t
 \end{bmatrix}
 \overline{v}
 =
-\pi 
+b 
 \end{align}
 
 Stacking this system with \eqref{eq:continuous-and-discrete-system-discrete-larger-states} yields the following complete system:
@@ -2099,7 +2115,9 @@ B_1 & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \t
 \end{psmallmatrix}
 \overline{v}
 =
-\pi 
+\begin{bmatrix}
+\pi \\ b
+\end{bmatrix} 
 \end{align}
 
 \newpage
