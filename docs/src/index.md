@@ -171,16 +171,31 @@ using Test
 Consider the jump process added to the HJBE with some intensity $\lambda \geq 0$: 
 
 ```math
-\rho v(x) = \pi(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x) + \lambda L_n v(x)
+\rho v(x) = \pi(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x) + \lambda \left[ v(x + \Delta(x) ) - v(x) \right]
 ```
 
-with the corresponding operator $L_n$ that incurs jumps from $v(x_i)$ to $v(x_{i-1})$ for all $i$ in $2 \leq i \leq M$. In `SimpleDifferentialOperators.jl`, the jump process can be defined as follows:
+where the jump process is defined by the jump magnitude defined by $\Delta(x_i)$. In `SimpleDifferentialOperators.jl`, the jump process can be defined as follows:
+
+```julia
+# uniform jump
+jumpf(x_i) = -0.01
+jumpprocess = JumpProcess(x̄, jumpf)
+```
+
+Note that, the corresponding indices for destinations will be determined by the nearest neighbor as the domain has to be discretized accordingly. Alternatively, if the jump magnitude is uniform across all cohorts, one can forward the uniform jump magnitude as follows:
+
+```julia
+# use the fact that the jump magnitude is uniform across all nodes
+jumpprocess = JumpProcess(x̄, -0.01)
+```
+
+One can define a jump process manually by providing jump magnitudes in indices as well. If a jump process is defined by the indices on a discretized domain, which incurs jumps from $v(x_i)$ to $v(x_{i-1})$ for all $i$ in $2 \leq i \leq M$, one can construct a jump process as follows:
 
 ```julia
 # length of nodes on the interior
 M = length(interiornodes(x̄))
 # vector of jumps; ith element represents the jump from ith node in the interior
-jumps = ones(M)
+jumps = -ones(M)
 # define jump process 
 jumpprocess =  JumpProcess(x̄, jumps)
 ```
@@ -192,22 +207,7 @@ Alternatively, one can define an identical jump process with ease if the jump si
 jumpprocess = JumpProcess(x̄, -1)
 ```
 
-If a jump process is defined by the jump magnitude defined by $\Delta(x_i)$ rather than indices, i.e., jumps occur from $v(x_i)$ to $v(x_i + \Delta (x_i))$, then one can define the jump process by a function that determines the jump magnitude on $x_i$. As the domain is discretized, the corresponding indices for destinations will be determined by the nearest neighbor.
-
-```julia
-# uniform jump
-jumpf(x_i) = -0.01
-jumpprocess = JumpProcess(x̄, jumpf)
-```
-
-Alternatively, if the jump magnitude is uniform across all cohorts, one can forward the uniform jump maginutde as follows:
-
-```julia
-# use the fact that the jump magnitude is uniform across all nodes
-jumpprocess = JumpProcess(x̄, -0.01)
-```
-
-Then one can define the corresponding operator and solve value functions as follows:
+Then one can define the corresponding operator $L_n$ and solve value functions as follows:
 
 ```julia
 # define jump intensity
