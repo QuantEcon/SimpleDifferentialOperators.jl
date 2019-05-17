@@ -1977,10 +1977,10 @@ In this subsection, we study how the discretization strategy above can be applie
 
 for all $j=1 ,...,N$, where $q_{jj'}$ represents the transition rate from $j$th state to $j'$ state for $j, j' = 1,...,N$ with $j \neq j'$.
 
-Define $q_{jj}$ as $q_{jj} = \sum_{j' \neq j} q_{jj'}$. Note that for each $j$, \eqref{eq:continuous-and-discrete-equation-larger-states} leads to the following system:
+Define $q_{jj}$ as $q_{jj} = -\sum_{j' \neq j} q_{jj'}$. Note that for each $j$, \eqref{eq:continuous-and-discrete-equation-larger-states} leads to the following system:
 \begin{align}
 \begin{bmatrix}
-q_{j1} &  \cdots & q_{j,j-1} & \tilde{L}^j - q_{jj} & q_{j,j+1} & \cdots & q_{jN}
+q_{j1} &  \cdots & q_{j,j-1} & \tilde{L}^j + q_{jj} & q_{j,j+1} & \cdots & q_{jN}
 \end{bmatrix}
 \begin{bmatrix}
 v_1 (x) \\
@@ -1995,14 +1995,14 @@ Stcking this for all $j = 1,...,N$, the following system is identical with \eqre
 
 \begin{align}
 \begin{bmatrix}
-\tilde{L}^1 -q_{11} & q_{12} & \cdots &  \cdots & \cdots & q_{1,N-1} & q_{1N} \\ 
+\tilde{L}^1 + q_{11} & q_{12} & \cdots &  \cdots & \cdots & q_{1,N-1} & q_{1N} \\ 
 q_{21} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
 \vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
 \\
-q_{j1} &  \cdots & q_{j,j-1} & \tilde{L}^j - q_{jj} & q_{j,j+1} & \cdots & q_{jN} \\
+q_{j1} &  \cdots & q_{j,j-1} & \tilde{L}^j + q_{jj} & q_{j,j+1} & \cdots & q_{jN} \\
 \vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
 \vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & q_{N-1,N} \\
-q_{N1} & q_{N2} & \cdots &  \cdots & \cdots & q_{N,N-1} & \tilde{L}^N - q_{NN} 
+q_{N1} & q_{N2} & \cdots &  \cdots & \cdots & q_{N,N-1} & \tilde{L}^N + q_{NN} 
 \end{bmatrix}
 \begin{bmatrix}
 v_1 (x) \\
@@ -2049,14 +2049,14 @@ and recall that $L_0 = \begin{bmatrix} \mathbf{0}_M &  \mathbf{I}_M & \mathbf{0}
 
 \begin{align}
 \begin{bmatrix}
-{L}^1 -L_0 q_{11} & L_0 q_{12} & \cdots &  \cdots & \cdots & L_0 q_{1,N-1} & L_0 q_{1N} \\ 
+{L}^1 + L_0 q_{11} & L_0 q_{12} & \cdots &  \cdots & \cdots & L_0 q_{1,N-1} & L_0 q_{1N} \\ 
 L_0 q_{21} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
 \vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
 \\
-L_0 q_{j1} &  \cdots & L_0 q_{j,j-1} & {L}^j - L_0 q_{jj} & L_0 q_{j,j+1} & \cdots & L_0 q_{jN} \\
+L_0 q_{j1} &  \cdots & L_0 q_{j,j-1} & {L}^j + L_0 q_{jj} & L_0 q_{j,j+1} & \cdots & L_0 q_{jN} \\
 \vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
 \vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & L_0 q_{N-1,N} \\
-L_0 q_{N1} & L_0 q_{N2} & \cdots &  \cdots & \cdots & L_0 q_{N,N-1} & {L}^N - L_0 q_{NN} 
+L_0 q_{N1} & L_0 q_{N2} & \cdots &  \cdots & \cdots & L_0 q_{N,N-1} & {L}^N + L_0 q_{NN} 
 \end{bmatrix}
 \overline{v}
 =
@@ -2096,14 +2096,14 @@ Stacking this system with \eqref{eq:continuous-and-discrete-system-discrete-larg
 
 \begin{align}
 \begin{psmallmatrix}
-{L}^1 -L_0 q_{11} & L_0 q_{12} & \cdots &  \cdots & \cdots & L_0 q_{1,N-1} & L_0 q_{1N} \\ 
+{L}^1 + L_0 q_{11} & L_0 q_{12} & \cdots &  \cdots & \cdots & L_0 q_{1,N-1} & L_0 q_{1N} \\ 
 L_0 q_{21} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
 \vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
 \\
-L_0 q_{j1} &  \cdots & L_0 q_{j,j-1} & {L}^j - L_0 q_{jj} & L_0 q_{j,j+1} & \cdots & L_0 q_{jN} \\
+L_0 q_{j1} &  \cdots & L_0 q_{j,j-1} & {L}^j + L_0 q_{jj} & L_0 q_{j,j+1} & \cdots & L_0 q_{jN} \\
 \vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
 \vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & L_0 q_{N-1,N} \\
-L_0 q_{N1} & L_0 q_{N2} & \cdots &  \cdots & \cdots & L_0 q_{N,N-1} & {L}^N - L_0 q_{NN} \\
+L_0 q_{N1} & L_0 q_{N2} & \cdots &  \cdots & \cdots & L_0 q_{N,N-1} & {L}^N + L_0 q_{NN} \\
 B_1 & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \times (M+2)}  & \mathbf{0}_{2 \times (M+2)} \\ 
 \mathbf{0}_{2 \times (M+2)} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
 \vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
@@ -2254,14 +2254,14 @@ where $v_j$ is an $M$-length vector whose $i$th element is $v_j(x_i)$, i.e., the
 
 \begin{align}
 \begin{psmallmatrix}
-L^{B_1,1} - q_{11} \mathbf{I}_{M \times M} & q_{12} \mathbf{I}_{M \times M} & \cdots &  \cdots & \cdots & q_{1,N-1} \mathbf{I}_{M \times M} &  q_{1N} \mathbf{I}_{M \times M} \\ 
+L^{B_1,1} + q_{11} \mathbf{I}_{M \times M} & q_{12} \mathbf{I}_{M \times M} & \cdots &  \cdots & \cdots & q_{1,N-1} \mathbf{I}_{M \times M} &  q_{1N} \mathbf{I}_{M \times M} \\ 
  q_{21} \mathbf{I}_{M \times M} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
 \vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
 \\
- q_{j1} \mathbf{I}_{M \times M} &  \cdots &  q_{j,j-1}  \mathbf{I}_{M \times M} & {L}^{B_j,j} - q_{jj} \mathbf{I}_{M \times M} &  q_{j,j+1} \mathbf{I}_{M \times M} & \cdots &  q_{jN} \mathbf{I}_{M \times M} \\
+ q_{j1} \mathbf{I}_{M \times M} &  \cdots &  q_{j,j-1}  \mathbf{I}_{M \times M} & {L}^{B_j,j} + q_{jj} \mathbf{I}_{M \times M} &  q_{j,j+1} \mathbf{I}_{M \times M} & \cdots &  q_{jN} \mathbf{I}_{M \times M} \\
 \vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
 \vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots &  q_{N-1,N} \mathbf{I}_{M \times M} \\
- q_{N1} \mathbf{I}_{M \times M} &  q_{N2} \mathbf{I}_{M \times M} & \cdots &  \cdots & \cdots &  q_{N,N-1} \mathbf{I}_{M \times M} & {L}^{B_N,N} -  q_{NN} \mathbf{I}_{M \times M}
+ q_{N1} \mathbf{I}_{M \times M} &  q_{N2} \mathbf{I}_{M \times M} & \cdots &  \cdots & \cdots &  q_{N,N-1} \mathbf{I}_{M \times M} & {L}^{B_N,N} +  q_{NN} \mathbf{I}_{M \times M}
 \end{psmallmatrix}
 v
 =
