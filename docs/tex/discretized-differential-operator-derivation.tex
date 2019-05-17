@@ -1920,6 +1920,20 @@ Construct the discretized state space by stacking $\overline{v}$ and ${\pi}$ for
 \end{bmatrix}
 \end{align}
 
+where 
+
+\begin{align}
+\pi_1 &= \pi_2 \\
+&=
+\begin{bmatrix}
+\pi (x_1) \\
+\pi (x_2) \\
+\vdots \\
+\pi (x_M)  
+\end{bmatrix}
+\end{align}
+
+
 and recall that $L_0 = \begin{bmatrix} \mathbf{0}_M &  \mathbf{I}_M & \mathbf{0}_M  \end{bmatrix} $; then the corresponding discretized system from \eqref{eq:continuous-and-discrete-system} is
 
 \begin{align}
@@ -1931,6 +1945,14 @@ q_{21} L_0 & {L}^2 - q_{21} L_0
 =
 \pi
 \label{eq:continuous-and-discrete-system-discrete} 
+\end{align}
+
+with
+
+\begin{align}
+\pi = \begin{bmatrix}
+\pi_1 \\ \pi_2
+\end{bmatrix}
 \end{align}
 
 Suppose further that we also have boundary conditions applied, with the corresponding $2$ by $(M+2)$ boundary condition matrix $B_1$ and $2$-length vector $b_1$ for boundary conditions on $v_1$ and $B_2$ with $b_2$ for $v_2$. Then the solution $\overline{v}$ should satisfy the following system:
@@ -1988,8 +2010,19 @@ v_1 (x) \\
 v_N (x)
 \end{bmatrix}
 =
-\pi_1 (x)
+\pi_j (x)
 \end{align}
+
+where 
+
+\begin{align}
+\pi_j (x) = 
+\begin{bmatrix}
+\pi (x_1) \\ \pi (x_2) \\ \vdots \\ \pi (x_M)
+\end{bmatrix}
+\end{align}
+
+so that $\pi_j$ is identical across all $j = 1,...,N$.
 
 Stcking this for all $j = 1,...,N$, the following system is identical with \eqref{eq:continuous-and-discrete-equation-larger-states}:
 
