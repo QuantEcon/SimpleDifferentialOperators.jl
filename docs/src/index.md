@@ -189,7 +189,7 @@ Note that, the corresponding indices for destinations will be determined by the 
 jumpprocess = JumpProcess(x̄, -0.01)
 ```
 
-One can define a jump process manually by providing jump magnitudes in indices as well. If a jump process is defined by the indices on a discretized domain, which incurs jumps from $v(x_i)$ to $v(x_{i-1})$ for all $i$ in $2 \leq i \leq M$, one can construct a jump process as follows:
+One can define a jump process manually by providing jump magnitudes in indices as well. If a jump process is defined by the indices on a discretized domain, incurring jumps from $v(x_i)$ to $v(x_{i-1})$ for all $i$ in $2 \leq i \leq M$, one can construct a jump process as follows:
 
 ```julia
 # length of nodes on the interior
@@ -200,14 +200,14 @@ jumps = -ones(M)
 jumpprocess =  JumpProcess(x̄, jumps)
 ```
 
-Alternatively, one can define an identical jump process with ease if the jump size is uniform across all nodes:
+Alternatively, one can define an identical jump process with ease if the jump maginitude in index is uniform across all nodes:
 
 ```julia
 # use the fact that the jump size is uniform across all nodes
 jumpprocess = JumpProcess(x̄, -1)
 ```
 
-Then one can define the corresponding operator $L_n$ and solve value functions as follows:
+Then one can define the corresponding discretized operator $L_n$ and solve value functions as follows:
 
 ```julia
 # define jump intensity
