@@ -1,12 +1,13 @@
 module SimpleDifferentialOperators
 
 # Pkg Dependencies
-using LinearAlgebra, SparseArrays, Parameters, BandedMatrices
+using LinearAlgebra, SparseArrays, Parameters, BandedMatrices, BlockBandedMatrices, LazyArrays
 
 # Includes
 include("types.jl")
 include("operators.jl")
 include("extensionoperators.jl")
+include("jointoperators.jl")
 include("utilities/extrapolatetoboundary.jl")
 include("utilities/findnearestindex.jl")
 
@@ -37,6 +38,7 @@ export DifferentialOperator,
         L₁₋,
         L₂,
         Lₙ,
+        jointoperator_bc,
         extrapolatetoboundary,
         findnearestindex
 
