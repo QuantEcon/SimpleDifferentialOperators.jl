@@ -68,3 +68,27 @@ end
         @test (diag_L + Q3) == jointoperator_bc((L1_bc, L2_bc, L3_bc), Q3)
     end
 end
+
+@testset "Regression test for asset pricing" begin
+    ρ = 0.05
+    μ1 = 1.0
+    μ2 = 1.0
+    σ = 0.5
+    x̄ = 1:5
+    x = interiornodes(x̄)
+    π(x) = x^2
+
+    bc = (Reflecting(), Reflecting())
+    L1_bc = I * ρ - (μ1 * L₁₋bc(x̄, bc) - σ^2 / 2 * L₂bc(x̄, bc))
+    L2_bc = I * ρ - (μ2 * L₁₋bc(x̄, bc) - σ^2 / 2 * L₂bc(x̄, bc))
+    Q = [-0.05  0.05
+            0.01 -0.01]
+    L = jointoperator_bc( (L1_bc, L2_bc), Q)
+    @test L \ [π.(x); π.(x)] ≈ [93.22751322751147;
+                                87.93650793650619;
+                                77.14285714285545;
+                                93.22751322751348;
+                                87.93650793650818;
+                                77.14285714285738]
+
+end
