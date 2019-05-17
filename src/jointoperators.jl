@@ -15,10 +15,7 @@ function jointoperator_bc(operators, Q)
     @assert size(Q,1) == size(Q,2) == N
 
     # extract operators and append them to form a diagonal block tridiagonal 
-    d = reduce(vcat, [operator[band(0)] for operator in operators])
-    dl = reduce(vcat, [[operator[band(-1)]; 0.] for operator in operators])[1:end-1]
-    du = reduce(vcat, [[operator[band(1)]; 0.] for operator in operators])[1:end-1]
-    Ls = BandedMatrix((-1 => dl, 0 => d, 1 => du), (M*N,M*N))
+    Ls = blockdiag(sparse.(operators)...)
     Ls = BandedBlockBandedMatrix(Ls, (M*ones(Int64, N), M*ones(Int64, N)), (0,0), (1,1))
 
     # construct a kronecker product of Q times I_M
