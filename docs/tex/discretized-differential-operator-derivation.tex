@@ -289,11 +289,11 @@ Define the jump process operator as follows:
 for $i= 1,..., M$, where $J$ is a function that takes an index in $i = 1,...,M$ to its corresponding jump destination. Hence, stacking it up for all $i = 1,...,M$, the corresponding discretized operator is
 \begin{align}
 L_n &\equiv \begin{psmallmatrix}
-\indicator{J(1) = 0} & \indicator{J(1) = 1} -1 & \indicator{J(2) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M} & \indicator{J(1) = M+1} \\
-\indicator{J(2) = 0} & \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(1) = M-1}  & \indicator{J(1) = M} & \indicator{J(1) = M+1} \\
+\indicator{J(1) = 0} & \indicator{J(1) = 1} -1 & \indicator{J(1) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M} & \indicator{J(1) = M+1} \\
+\indicator{J(2) = 0} & \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(2) = M-1}  & \indicator{J(2) = M} & \indicator{J(2) = M+1} \\
 \vdots & \vdots & \vdots & \ddots & \vdots & \vdots &\vdots \\
-\indicator{J(M-1) = 0} & \indicator{J(2) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M} &\indicator{J(M-1) = M+1} \\
-\indicator{J(M) = 0} & \indicator{J(2) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1&\indicator{J(M) = M+1} 
+\indicator{J(M-1) = 0} & \indicator{J(M-1) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M} &\indicator{J(M-1) = M+1} \\
+\indicator{J(M) = 0} & \indicator{J(M) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1&\indicator{J(M) = M+1} 
 \end{psmallmatrix} \label{eq:jump-process-discretized-operator}
  \\
 &= \{ \indicator{ J(i) = j-1 } \}_{M \times (M+2)} - \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}
@@ -365,7 +365,7 @@ B = \begin{bmatrix}
 \end{bmatrix}_{2 \times (M+2)}\label{eq:B-mixed}
 \end{equation}
 
-Depending on the direction of the drift, the locations of $\overline{\xi}$ and $\underline{\xi}$ have to be different. When the drift is drift is negative on the lower bound and is positive on the upper bound, we have
+Depending on the direction of the drift, the locations of $\overline{\xi}$ and $\underline{\xi}$ have to be different. When the drift is negative on the lower bound and is positive on the upper bound, we have
 
 \begin{align}
 \frac{\overline{v}_1 - \overline{v}_0}{\Delta} + \underline{\xi} \overline{v}_1 &= 0 \label{eq:mixed-BC1-negative}  \\
@@ -572,7 +572,7 @@ L_{1-}^B \equiv \frac{1}{\Delta}\begin{bmatrix}
 0&0&0&\cdots&0&-1&1
 \end{bmatrix}_{M\times M} \label{eq:L-1-regular}
 \end{equation}
-instead of solving the full system with boundary conditions. Similarly, subtracting the first row of $L_{1+}$ by the second row of $B$ in \eqref{eq:B-mixed} multiplied by $(1 + \overline{\xi} \Delta )^{-1} \Delta^{-1}$ gives the following differential operator with the boundary condition $B$ applied:
+instead of solving the full system with boundary conditions. Similarly, subtracting the last row of $L_{1+}$ by the second row of $B$ in \eqref{eq:B-mixed} multiplied by $(1 + \overline{\xi} \Delta )^{-1} \Delta^{-1}$ gives the following differential operator with the boundary condition $B$ applied:
 \begin{align}
 L_{1+}^B &\equiv \frac{1}{\Delta}\begin{bmatrix}
 -1&1&0&\dots&0&0&0\\
@@ -646,7 +646,7 @@ L_{1-}^{B-} \equiv \frac{1}{\Delta}\begin{bmatrix}
 \end{bmatrix}_{M\times M} \label{eq:L-1-regular-left}
 \end{equation}
 
-Likewise, substracting the first row of $B^{-+}$ or $B^{++}$ multiplied by $\Delta^{-1}$ on the first row of $L_{1+}$ and extracting the interior yields
+Likewise, subtracting the second row of $B^{-+}$ or $B^{++}$ multiplied by $\Delta^{-1}$ on the last row of $L_{1+}$ and extracting the interior yields
 
 \begin{equation}
 L_{1+}^{B+} \equiv \frac{1}{\Delta}\begin{bmatrix}
@@ -796,14 +796,14 @@ L_2^{B++} \equiv  \Delta^{-2}
 \Big]
 \end{align}
 
-When jumps onto the boundary are not allowed, i.e., the range of $J$ function in \eqref{eq:jump-process} does not include $0$, $M+1$,  jump diffusion process operator $L_n$ can be defined to the interior as well. To see this, note that $\indicator{J(i) = 0} = \indicator{J(i) = M+1} = 0$ holds for all $i = 1,..., M+1$ in this case, so that the discretized operator in \eqref{eq:jump-process-discretized-operator} becomes
+When jumps onto the boundary are not allowed, i.e., the range of $J$ function in \eqref{eq:jump-process} does not include $0$, $M+1$,  jump diffusion process operator $L_n$ can be defined to the interior as well. To see this, note that $\indicator{J(i) = 0} = \indicator{J(i) = M+1} = 0$ holds for all $i = 1,..., M$ in this case, so that the discretized operator in \eqref{eq:jump-process-discretized-operator} becomes
 \begin{align}
 L_n &\equiv \begin{psmallmatrix}
-0 & \indicator{J(1) = 1} -1 & \indicator{J(2) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M} & 0 \\
-0 & \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(1) = M-1}  & \indicator{J(1) = M} & 0 \\
+0 & \indicator{J(1) = 1} -1 & \indicator{J(1) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M} & 0 \\
+0 & \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(2) = M-1}  & \indicator{J(2) = M} & 0 \\
 \vdots & \vdots & \vdots & \ddots & \vdots & \vdots &\vdots \\
-0 & \indicator{J(2) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M} &0 \\
-0 & \indicator{J(2) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1&0
+0 & \indicator{J(M-1) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M} &0 \\
+0 & \indicator{J(M) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1&0
 \end{psmallmatrix}
 \\
 &= \{ \indicator{ J(i) = j-1 } \}_{M \times (M+2)} - \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}
@@ -995,7 +995,7 @@ for second-order derivatives.
 In order to calculate the derivatives for all $i = 1, \ldots, M$ (i.e. in the interior) we can stack these up and apply to the extension $\bar{v}$.
 \begin{align}\label{eq:L-2-extended} \small
 {L}_2 \equiv 2 \begin{psmallmatrix}
-(\Delta_{1,+}+\Delta_{1,-})^{-1}\Delta_{1,-}^{-1} &-\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  & (\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{i,+}^{-1}&\dots&0&0\\
+(\Delta_{1,+}+\Delta_{1,-})^{-1}\Delta_{1,-}^{-1} &-\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  & (\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{1,+}^{-1}&\dots&0&0\\
 0 & \ddots & \ddots &\ddots & 0 & 0\\
 \vdots&\ddots &\ddots & \ddots & \ddots & \vdots\\
 0&0&\cdots&
@@ -1064,7 +1064,7 @@ b = \begin{bmatrix}
 \end{equation}
 since $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$.
 
-Depending on the direction of the drift, the locations of $\overline{\xi}$ and $\underline{\xi}$ have to be different. When the drift is drift is negative on the lower bound and is positive on the upper bound, we have
+Depending on the direction of the drift, the locations of $\overline{\xi}$ and $\underline{\xi}$ have to be different. When the drift is negative on the lower bound and is positive on the upper bound, we have
 
 \begin{align}
 &\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_1 = 0 \label{eq:mixed-BC1-irregular-grid-negative}  \\
@@ -1290,7 +1290,7 @@ Alternatively, with vectorized differences, we can express the differential oper
 
 \begin{align}
 {L}_{1+}^B \equiv
-\tridiag \left(\mathbf{0}_{M-1}, -(\Delta_+^\circ )^{-1}, (\Delta_+^\circ)^{-1}[2:M]  \right) +
+\tridiag \left(\mathbf{0}_{M-1}, -(\Delta_+^\circ )^{-1}, (\Delta_+^\circ)^{-1}[1:M-1]  \right) +
 \diag\left( 
 \begin{bmatrix}
 \mathbf{0}_{M-1}^T &
@@ -1316,7 +1316,7 @@ I^B \equiv  \text{diag($\mathbf{1}_M$)}
 
 
 \paragraph{Applying drift directions on boundary conditions}
-Substracting the first row of $B^{--}$ or $B^{-+}$ multiplied by $\Delta_{1,-}^{-1}$ on the first row of $L_{1-}$ and extracting the interior yields
+Subtracting the first row of $B^{--}$ or $B^{-+}$ multiplied by $\Delta_{1,-}^{-1}$ on the first row of $L_{1-}$ and extracting the interior yields
 
 \begin{equation}
 L_{1-}^{B-} \equiv \begin{bmatrix}
@@ -1328,7 +1328,7 @@ L_{1-}^{B-} \equiv \begin{bmatrix}
 \end{bmatrix}_{M\times M}
 \end{equation}
 
-Likewise, substracting the first row of $B^{-+}$ or $B^{++}$ multiplied by $\Delta_{M,+}^{-1}$ on the first row of $L_{1+}$ and extracting the interior yields
+Likewise, subtracting the second row of $B^{-+}$ or $B^{++}$ multiplied by $\Delta_{M,+}^{-1}$ on the last row of $L_{1+}$ and extracting the interior yields
 
 \begin{equation}
 L_{1+}^{B+} \equiv \begin{bmatrix}
@@ -1346,7 +1346,7 @@ For $L_2$, directions on both boundaries affect the interior. Here we study the 
 \Xi_{1+} &1&0&\dots&0&0&0
 \end{bmatrix}_{1\times M}
 \end{align}
-where $\Xi_{1+} \equiv  - (-1 + \underline{\xi} \Delta_{1,-})^{-1} (\Delta_{1,+} + \Delta_{1,-})^{-1}  \Delta_{1,-}^{-1}$.
+where $\Xi_{1+} \equiv -\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  - (-1 + \underline{\xi} \Delta_{1,-})^{-1} (\Delta_{1,+} + \Delta_{1,-})^{-1}  \Delta_{1,-}^{-1}$.
 
 Suppose that we have a negative drift at the lower boundary. Adding the first row of $L_2$ by the first row of $B^{--}$ or $B^{-+}$ multiplied by $2(\Delta_{1,+} + \Delta_{1,-} )^{-1} \Delta_{1,-}^{-1}$ and extracting the interior and first row gives
 \begin{align}
@@ -1355,14 +1355,14 @@ Suppose that we have a negative drift at the lower boundary. Adding the first ro
 \end{bmatrix}_{1\times M}
 \end{align}
 where $\Xi_{1-} \equiv -\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  + (\Delta_{1,+} + \Delta_{1,-} )^{-1} \Delta_{1,-}^{-1} (1 + \underline{\xi}\Delta_{1,-})$.
-Now consider the upper boundary. Suppose first that the drift is negative. Substracting the last row of $L_2$ by the second row of $B^{--}$ or $B^{+-}$ multiplied by $2(1 + \overline{\xi} \Delta_{M,+} )^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1}$ and extracting the interior and last row gives 
+Now consider the upper boundary. Suppose first that the drift is negative. Subtracting the last row of $L_2$ by the second row of $B^{--}$ or $B^{+-}$ multiplied by $2(1 + \overline{\xi} \Delta_{M,+} )^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1}$ and extracting the interior and last row gives 
 \begin{align}
 2\begin{bmatrix}
 0 &0&0&\dots&0&1&\Xi_{M-}
 \end{bmatrix}_{1\times M}
 \end{align}
 
-where $\Xi_{M-} = (1 + \overline{\xi} \Delta_{M,+})^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1}$. Suppose that we have a positive drift at the upper boundary. Subtracting the second row of $L_2$ by the first row of $B^{-+}$ or $B^{++}$ multiplied by $2(\Delta_{M,+} + \Delta_{M,-})^{-1} \Delta_{M,+}^{-1} $ and extracting the interior and last row gives
+where $\Xi_{M-} = -\Delta_{M,-}^{-1} \Delta_{M,+}^{-1} + (1 + \overline{\xi} \Delta_{M,+})^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1}$. Suppose that we have a positive drift at the upper boundary. Subtracting the last row of $L_2$ by the second row of $B^{-+}$ or $B^{++}$ multiplied by $2(\Delta_{M,+} + \Delta_{M,-})^{-1} \Delta_{M,+}^{-1} $ and extracting the interior and last row gives
 \begin{align}
 2\begin{bmatrix}
 0 &0&0&\dots&0&1&\Xi_{M+}
@@ -1411,7 +1411,7 @@ Using banded matrices, these operators can be definied in the following compact 
 \end{align}
 \begin{align}
 {L}_{1+}^{B-} &\equiv
-\tridiag \left(\mathbf{0}_{M-1}, -(\Delta_+^\circ )^{-1}, (\Delta_+^\circ)^{-1}[2:M]  \right) +
+\tridiag \left(\mathbf{0}_{M-1}, -(\Delta_+^\circ )^{-1}, (\Delta_+^\circ)^{-1}[1:M-1]  \right) +
 \diag\left( 
 \begin{bmatrix}
 \mathbf{0}_{M-1}^T &
@@ -1419,7 +1419,7 @@ Using banded matrices, these operators can be definied in the following compact 
 \end{bmatrix}^T
 \right) \\
 {L}_{1+}^{B+} &\equiv
-\tridiag \left(\mathbf{0}_{M-1}, -(\Delta_+^\circ )^{-1}, (\Delta_+^\circ)^{-1}[2:M]  \right) +
+\tridiag \left(\mathbf{0}_{M-1}, -(\Delta_+^\circ )^{-1}, (\Delta_+^\circ)^{-1}[1:M-1]  \right) +
 \diag\left( 
 \begin{bmatrix}
 \mathbf{0}_{M-1}^T &
@@ -1443,11 +1443,11 @@ where $\circ_1, \circ_M \in \{-, +\}$ denote the drift directions on the lower a
 When jumps onto the boundary are not allowed, i.e., the range of $J$ function in \eqref{eq:jump-process} does not include $0$, $M+1$,  jump diffusion process operator $L_n$ can be defined to the interior as well. To see this, note that $\indicator{J(i) = 0} = \indicator{J(i) = M+1} = 0$ holds for all $i = 1,..., M+1$ in this case, so that the discretized operator in \eqref{eq:jump-process-discretized-operator} becomes
 \begin{align}
 L_n &\equiv \begin{psmallmatrix}
-0 & \indicator{J(1) = 1} -1 & \indicator{J(2) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M} & 0 \\
-0 & \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(1) = M-1}  & \indicator{J(1) = M} & 0 \\
+0 & \indicator{J(1) = 1} -1 & \indicator{J(1) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M} & 0 \\
+0 & \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(2) = M-1}  & \indicator{J(2) = M} & 0 \\
 \vdots & \vdots & \vdots & \ddots & \vdots & \vdots &\vdots \\
-0 & \indicator{J(2) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M} &0 \\
-0 & \indicator{J(2) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1&0
+0 & \indicator{J(M-1) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M} &0 \\
+0 & \indicator{J(M) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1&0
 \end{psmallmatrix}
 \\
 &= \{ \indicator{ J(i) = j-1 } \}_{M \times (M+2)} - \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}
@@ -1456,11 +1456,11 @@ so that solving $L_n \overline{v} $ is identical with solving $L_n^B v$ where $L
 
 \begin{align}
 L_n^B &\equiv \begin{psmallmatrix}
-\indicator{J(1) = 1} -1 & \indicator{J(2) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M}  \\
-\indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(1) = M-1}  & \indicator{J(1) = M}  \\
+\indicator{J(1) = 1} -1 & \indicator{J(1) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M}  \\
+\indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(2) = M-1}  & \indicator{J(2) = M}  \\
 \vdots & \vdots & \ddots & \vdots & \vdots \\
-\indicator{J(2) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M}  \\
-\indicator{J(2) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1
+\indicator{J(M-1) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M}  \\
+\indicator{J(M) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1
 \end{psmallmatrix}
 \\
 &= \{ \indicator{ J(i) = j } \}_{M \times M} - \mathbf{I}_M 
@@ -2157,7 +2157,7 @@ B_1 & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \t
 \subsection{Applying homogenous boundary conditions}
 In this subsection, we show how homogenous boundary conditions can be directly applied to operators, i.e., $b$ is zero, via Gaussian eliminations to yield discretized operators on the interior nodes from the complete system \eqref{eq:continuous-and-discrete-system-complete}. We first focus on models with two discrete states -- later we show that models with larger state spaces can be solved using a similar strategy.
 
-Recall the complete system in \eqref{eq:continuous-and-discrete-system-complete}; first, note that the first column has a nonzero element only in the first columns of the blocks $L^1 - q_{12} L_0$ and $B_1$, whereas the rows corresponding to the block matrix $B_1$ have non-zero elements only in $B_1$ itself. Hence, applying the corresponding Gaussian elimination to remove the nonzero elements in the first and last column of $L^1$ as in \eqref{subsec:applying-bc-regular} (for regular grids) or \eqref{subsec:applying-bc} (for irregular grids) does not affect block matrices other than $L^1 - q_{12} L_0$, and the resulting identical system is
+Recall the complete system in \eqref{eq:continuous-and-discrete-system-complete}; first, note that the first and last columns have a nonzero element only in the first and last rows respectively of the blocks $L^1 - q_{12} L_0$ and $B_1$, whereas the rows corresponding to the block matrix $B_1$ have non-zero elements only in $B_1$ itself. Hence, applying the corresponding Gaussian elimination to remove the nonzero elements in the first and last column of $L^1$ as in \eqref{subsec:applying-bc-regular} (for regular grids) or \eqref{subsec:applying-bc} (for irregular grids) does not affect block matrices other than $L^1 - q_{12} L_0$, and the resulting identical system is
 
 \begin{align}
 \begin{bmatrix}
@@ -2436,7 +2436,7 @@ v  \\
 \end{align}
 from $v$.
 
-Now suppose that the drift is drift is negative on the lower bound and is positive on the upper bound. Recall from \eqref{eq:mixed-BC1-irregular-grid-negative} and \eqref{eq:mixed-BC2-irregular-grid-positive} that the corresponding discretized boundary conditions are:
+Now suppose that the drift is negative on the lower bound and is positive on the upper bound. Recall from \eqref{eq:mixed-BC1-irregular-grid-negative} and \eqref{eq:mixed-BC2-irregular-grid-positive} that the corresponding discretized boundary conditions are:
 
 \begin{align}
 \frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_1 &= 0 \\
