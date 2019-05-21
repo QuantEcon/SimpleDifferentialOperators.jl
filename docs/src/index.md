@@ -171,10 +171,10 @@ using Test
 Consider the jump process added to the HJBE with some intensity $\lambda \geq 0$: 
 
 ```math
-\rho v(x) = \pi(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x) + \lambda \left[ v(x + \Delta(x) ) - v(x) \right]
+\rho v(x) = \pi(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x) + \lambda \left[ v(x + J(x) ) - v(x) \right]
 ```
 
-where the jump process is defined by the jump magnitude defined by $\Delta(x_i)$. In `SimpleDifferentialOperators.jl`, the jump process can be defined as follows:
+where the jump process is defined by the jump magnitude defined by $J(x_i)$. In `SimpleDifferentialOperators.jl`, the jump process can be defined as follows:
 
 ```julia
 # uniform jump
