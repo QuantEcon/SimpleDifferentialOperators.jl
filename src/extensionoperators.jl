@@ -11,29 +11,23 @@ julia> x̄ = 0:5
 0:5
 
 julia> ExtensionDifferentialOperator(x̄, BackwardFirstDifference())
-4×6 SparseArrays.SparseMatrixCSC{Float64,Int64} with 11 stored entries:
+4×6 SparseArrays.SparseMatrixCSC{Float64,Int64} with 8 stored entries:
   [1, 1]  =  -1.0
   [1, 2]  =  1.0
   [2, 2]  =  -1.0
-  [1, 3]  =  0.0
   [2, 3]  =  1.0
   [3, 3]  =  -1.0
-  [2, 4]  =  0.0
   [3, 4]  =  1.0
   [4, 4]  =  -1.0
-  [3, 5]  =  0.0
   [4, 5]  =  1.0
 
 julia> ExtensionDifferentialOperator(x̄, ForwardFirstDifference())
-4×6 SparseArrays.SparseMatrixCSC{Float64,Int64} with 11 stored entries:
+4×6 SparseArrays.SparseMatrixCSC{Float64,Int64} with 8 stored entries:
   [1, 2]  =  -1.0
-  [2, 2]  =  0.0
   [1, 3]  =  1.0
   [2, 3]  =  -1.0
-  [3, 3]  =  0.0
   [2, 4]  =  1.0
   [3, 4]  =  -1.0
-  [4, 4]  =  0.0
   [3, 5]  =  1.0
   [4, 5]  =  -1.0
   [4, 6]  =  1.0
@@ -54,11 +48,11 @@ julia> ExtensionDifferentialOperator(x̄, CentralSecondDifference())
   [4, 6]  =  1.0
 
 julia> ExtensionDifferentialOperator(x̄, JumpProcess(x̄, -1.0))
-  4×6 BandedMatrix{Float64,Array{Float64,2},Base.OneTo{Int64}}:
-   0.0  0.0    ⋅     ⋅     ⋅    ⋅
-    ⋅   1.0  -1.0    ⋅     ⋅    ⋅
-    ⋅    ⋅    1.0  -1.0    ⋅    ⋅
-    ⋅    ⋅     ⋅    1.0  -1.0   ⋅
+4×6 BandedMatrices.BandedMatrix{Float64,Array{Float64,2},Base.OneTo{Int64}}:
+ 0.0  0.0    ⋅     ⋅     ⋅    ⋅
+  ⋅   1.0  -1.0    ⋅     ⋅    ⋅
+  ⋅    ⋅    1.0  -1.0    ⋅    ⋅
+  ⋅    ⋅     ⋅    1.0  -1.0   ⋅
 ```
 """
 function ExtensionDifferentialOperator(x̄::AbstractRange, method::BackwardFirstDifference)
