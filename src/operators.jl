@@ -36,24 +36,24 @@ julia> x̄ = 0:5
 
 julia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), BackwardFirstDifference())
 4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
- -1.0   0.0    ⋅    ⋅
- -1.0   1.0   0.0   ⋅
-   ⋅   -1.0   1.0  0.0
-   ⋅     ⋅   -1.0  1.0
+ Inf     0.0    ⋅    ⋅
+  -1.0   1.0   0.0   ⋅
+    ⋅   -1.0   1.0  0.0
+    ⋅     ⋅   -1.0  1.0
 
 julia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), ForwardFirstDifference())
 4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
  -1.0   1.0    ⋅     ⋅
   0.0  -1.0   1.0    ⋅
    ⋅    0.0  -1.0   1.0
-   ⋅     ⋅    0.0  -1.0
+   ⋅     ⋅    0.0  -0.5
 
 julia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), CentralSecondDifference())
 4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
- 0.0   1.0    ⋅     ⋅
- 1.0  -2.0   1.0    ⋅
-  ⋅    1.0  -2.0   1.0
-  ⋅     ⋅    1.0  -2.0
+ -Inf     1.0    ⋅     ⋅
+    1.0  -2.0   1.0    ⋅
+     ⋅    1.0  -2.0   1.0
+     ⋅     ⋅    1.0  -1.5
 ```
 """
 function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::BackwardFirstDifference)
@@ -278,7 +278,7 @@ julia> x̄ = 0:5
 0:5 
 
 julia> Lₙbc(x̄, (Absorbing(), Absorbing()), JumpProcess(x̄, -1.0))
-4×4 BandedMatrix{Float64,Array{Float64,2},Base.OneTo{Int64}}:
+4×4 BandedMatrices.BandedMatrix{Float64,Array{Float64,2},Base.OneTo{Int64}}:
  0.0   0.0    ⋅     ⋅
  1.0  -1.0   0.0    ⋅
   ⋅    1.0  -1.0   0.0
@@ -363,11 +363,11 @@ julia> x̄ = 0:5
 0:5 
 
 julia> Lₙ(x̄, JumpProcess(x̄, -1.0))
-  4×6 BandedMatrix{Float64,Array{Float64,2},Base.OneTo{Int64}}:
-   0.0  0.0    ⋅     ⋅     ⋅    ⋅
-    ⋅   1.0  -1.0    ⋅     ⋅    ⋅
-    ⋅    ⋅    1.0  -1.0    ⋅    ⋅
-    ⋅    ⋅     ⋅    1.0  -1.0   ⋅
+4×6 BandedMatrices.BandedMatrix{Float64,Array{Float64,2},Base.OneTo{Int64}}:
+ 0.0  0.0    ⋅     ⋅     ⋅    ⋅
+  ⋅   1.0  -1.0    ⋅     ⋅    ⋅
+  ⋅    ⋅    1.0  -1.0    ⋅    ⋅
+  ⋅    ⋅     ⋅    1.0  -1.0   ⋅
 ```
 """
 Lₙ(x̄, method)  = ExtensionDifferentialOperator(x̄, method)

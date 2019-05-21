@@ -3,8 +3,11 @@ using Documenter, SimpleDifferentialOperators
 # Compile the online documentation.
 makedocs(sitename = "SimpleDifferentialOperators.jl",
 	pages = [
-        "index.md",
-        "notebooks.md",
+        "Home" => "index.md", 
+        "Gallery" => [
+            "Examples" => "examples.md",
+            "Notebooks" => "notebooks.md"
+        ],
         "api.md"
     ],
 	doctest = :fix)

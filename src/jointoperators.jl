@@ -33,13 +33,13 @@ julia> jointoperator_bc((L1bc, L2bc), Q)
 2×2-blocked 8×8 BlockBandedMatrices.BandedBlockBandedMatrix{Float64,BlockArrays.PseudoBlockArray{Float64,2,Array{Float64,2},BlockArrays.BlockSizes{2,Tuple{Array{Int64,1},Array{Int64,1}}}}}:
  -0.5   0.0    ⋅    ⋅   │   0.5   0.0    ⋅     ⋅
  -1.0   0.5   0.0   ⋅   │   0.0   0.5   0.0    ⋅
-  ⋅   -1.0   0.5  0.0  │    ⋅    0.0   0.5   0.0
-  ⋅     ⋅   -1.0  0.5  │    ⋅     ⋅    0.0   0.5
-───────────────────────┼────────────────────────
+   ⋅   -1.0   0.5  0.0  │    ⋅    0.0   0.5   0.0
+   ⋅     ⋅   -1.0  0.5  │    ⋅     ⋅    0.0   0.5
+ ───────────────────────┼────────────────────────
   0.3   0.0    ⋅    ⋅   │  -1.3   1.0    ⋅     ⋅
   0.0   0.3   0.0   ⋅   │   1.0  -2.3   1.0    ⋅
-  ⋅    0.0   0.3  0.0  │    ⋅    1.0  -2.3   1.0
-  ⋅     ⋅    0.0  0.3  │    ⋅     ⋅    1.0  -1.3
+   ⋅    0.0   0.3  0.0  │    ⋅    1.0  -2.3   1.0
+   ⋅     ⋅    0.0  0.3  │    ⋅     ⋅    1.0  -1.3
 ```
 """
 function jointoperator_bc(operators, Q::Array)
