@@ -242,7 +242,7 @@ x̄ = range(0.0, 1.0, length = (M+2))
 x = interiornodes(x̄) # i.e., x̄[2:end-1]
 ```
 
-Let the HJBE in the first state have a jump process $J$ associated while the one for the second state does not. Then we have the following system of differential equations:
+Let the HJBE in the first state have a jump process $J$ associated while the one for the second state does not. Then we have the following system of differential equations; note that we have $q_{ii} = -q_{ij}$ for $i \neq j$:
 
 ```math
 \begin{align}
@@ -266,7 +266,7 @@ L_1_bc = I * ρ - L_1ₓ
 L_2_bc = I * ρ - L_2ₓ
 ```
 
-Then construct an intensity matrix $Q$, whose $(i,j)$th element represents $q_{ij}$; note that we have $q_{ii} = -q_{ij}$.
+Then construct an intensity matrix $Q$, whose $(i,j)$th element represents $q_{ij}$:
 
 ```julia
 # define intensity matrix for transition
