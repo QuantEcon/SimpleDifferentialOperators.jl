@@ -3,8 +3,7 @@
 
 Returns a discretized operator that solves systems of differential equations defined by
 `operators` with transitions by `Q` where `operators` is an N-length collection of 
-discretized operators with boundary conditions applied and `Q` is N by N matrix of transition
-probabilities whose (i,j)th element defines the probability of visiting jth state from ith state
+discretized operators with boundary conditions applied and `Q` is N by N intensity matrix.
 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
@@ -25,22 +24,22 @@ julia> L2bc = L₂bc(x̄, (Reflecting(), Reflecting()))
    ⋅    1.0  -2.0   1.0
    ⋅     ⋅    1.0  -1.0
 
-julia> Q = [0.5 0.5; 0.3 0.7]
+julia> Q = [-0.5 0.5; 0.3 -0.3]
 2×2 Array{Float64,2}:
- 0.5  0.5
- 0.3  0.7
+ -0.5   0.5
+  0.3  -0.3
 
 julia> jointoperator_bc((L1bc, L2bc), Q)
 2×2-blocked 8×8 BlockBandedMatrices.BandedBlockBandedMatrix{Float64,BlockArrays.PseudoBlockArray{Float64,2,Array{Float64,2},BlockArrays.BlockSizes{2,Tuple{Array{Int64,1},Array{Int64,1}}}}}:
-  0.5   0.0    ⋅    ⋅   │   0.5   0.0    ⋅     ⋅
- -1.0   1.5   0.0   ⋅   │   0.0   0.5   0.0    ⋅
-   ⋅   -1.0   1.5  0.0  │    ⋅    0.0   0.5   0.0
-   ⋅     ⋅   -1.0  1.5  │    ⋅     ⋅    0.0   0.5
- ───────────────────────┼────────────────────────
-  0.3   0.0    ⋅    ⋅   │  -0.3   1.0    ⋅     ⋅
-  0.0   0.3   0.0   ⋅   │   1.0  -1.3   1.0    ⋅
-   ⋅    0.0   0.3  0.0  │    ⋅    1.0  -1.3   1.0
-   ⋅     ⋅    0.0  0.3  │    ⋅     ⋅    1.0  -0.3
+ -0.5   0.0    ⋅    ⋅   │   0.5   0.0    ⋅     ⋅
+ -1.0   0.5   0.0   ⋅   │   0.0   0.5   0.0    ⋅
+  ⋅   -1.0   0.5  0.0  │    ⋅    0.0   0.5   0.0
+  ⋅     ⋅   -1.0  0.5  │    ⋅     ⋅    0.0   0.5
+───────────────────────┼────────────────────────
+  0.3   0.0    ⋅    ⋅   │  -1.3   1.0    ⋅     ⋅
+  0.0   0.3   0.0   ⋅   │   1.0  -2.3   1.0    ⋅
+  ⋅    0.0   0.3  0.0  │    ⋅    1.0  -2.3   1.0
+  ⋅     ⋅    0.0  0.3  │    ⋅     ⋅    1.0  -1.3
 ```
 """
 function jointoperator_bc(operators, Q::Array)
