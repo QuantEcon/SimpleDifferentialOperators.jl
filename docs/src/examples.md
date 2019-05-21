@@ -101,7 +101,7 @@ where
 ```math
 π^* =
 \begin{bmatrix}
-π(x_1) - S(s\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2})
+π(x_1) - S(\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2})
 \\ 
 \vdots
 \\
