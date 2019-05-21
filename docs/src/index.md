@@ -221,6 +221,71 @@ L_bc = I * ρ - Lₓ
 v = L_bc \ π.(x)
 ```
 
+### Solving HJBE with jump diffusions and Markov chains
+Suppose we are asked to solve HJBE with two states ($N=2$) where for each $i$th state with the corresponding differential operator $L_i$ under different payoff functions $\pi_i$ and drifts $\mu_i$, there is a transition intensity of $q_{ij}$ to have state $j$ assigned.
+
+```julia
+# setup
+# payoff functions
+π_1(x) = x^2
+π_2(x) = (x-0.01)^2
+
+# constant negative drifts
+μ_1 = -0.1
+μ_2 = -0.15
+λ = 0.6
+σ = 0.1
+ρ = 0.05
+M = 100 # size of grid (interior points)
+
+x̄ = range(0.0, 1.0, length = (M+2))
+x = interiornodes(x̄) # i.e., x̄[2:end-1]
+```
+
+Let the HJBE in the first state have a jump process $J$ associated while the one for the second state does not. Then we have the following system of differential equations:
+
+```math
+\begin{align}
+\rho v_1 (x) &= \pi_1(x) + \mu_1 \partial_x v_1(x) + \frac{\sigma^2}{2} \partial_{xx} v_1(x) + \lambda \left[ v_1(x + J(x) ) - v_1(x) \right] + q_{12} [ v_2(x) - v_1(x) ] \\
+\rho v_2 (x) &= \pi_2(x) + \mu_2 \partial_x v_2(x) + \frac{\sigma^2}{2} \partial_{xx} v_2(x) + q_{21} [ v_1(x) - v_2(x) ]
+\end{align}
+```
+
+First, construct $L_1$ and $L_2$ ignoring the Markov chain for transition between the two states; assume that both states have reflecting boundary conditions applied.
+
+```julia
+# construct the jump process for the operator in state 1
+jumpprocess1 = JumpProcess(x̄, -0.01)
+
+# construct the differential operators for both states
+# subject to reflecting barriers at 0 and 1
+bc = (Reflecting(), Reflecting())
+L1ₓ = μ_1*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc) + λ * Lₙbc(x̄, bc, jumpprocess1)
+L2ₓ = μ_2*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc)
+L1_bc = I * ρ - L1ₓ
+L2_bc = I * ρ - L2ₓ
+```
+
+Then construct an intensity matrix $Q$, whose $(i,j)$th element represents $q_{ij}$; note that we have $q_{ii} = -q_{ij}$.
+
+```julia
+# define intensity matrix for transition
+Q = [-0.01 0.01; 0.02 -0.02]
+```
+
+Using the discretized operators `L1_bc` and `L2_bc` on interior nodes `x` with boundary conditions `bc` applied, one can construct the joint operator `L_bc` with the intensity matrix `Q` as follows:
+
+```julia
+# define the corresponding joint operator
+L_bc = jointoperator_bc((L1_bc, L2_bc), Q)
+```
+
+Construct a vector of payoff functions $\pi_1$ and $\pi_2$ stacked together and solve the system using the joint operator constructed above:
+```julia
+# solve the system
+v = L_bc \ [π_1.(x); π_2.(x)]
+```
+
 ### Solving HJBE with state-dependent drifts
 -------------
 One can also deploy upwind schemes when drift variable is not constant. Consider solving for `v` from the following Bellman equation:
