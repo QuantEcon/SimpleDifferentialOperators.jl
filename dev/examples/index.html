@@ -92,7 +92,41 @@ Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc) + λ * Lₙbc(x̄, bc
 L_bc = I * ρ - Lₓ
 
 # solve the value function
-v = L_bc \ π.(x)</code></pre><h2><a class="nav-anchor" id="Solving-HJBE-with-state-dependent-drifts-1" href="#Solving-HJBE-with-state-dependent-drifts-1">Solving HJBE with state-dependent drifts</a></h2><hr/><p>One can also deploy upwind schemes when drift variable is not constant. Consider solving for <code>v</code> from the following Bellman equation:</p><div>\[\rho v(x) = π(x) + \mu(x) \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)\]</div><p>associated with the diffusion process</p><div>\[dx = \mu(x) dt + \sigma dW\]</div><p>for some constant <span>$\rho, \sigma &gt; 0$</span> and <span>$\mu(x) = -x$</span>. Note that <span>$\mu(x)$</span> depends on states. The following code will solve <code>v</code> using upwind schemes, with the reflecting barrier conditions <span>$v&#39;(0) = v&#39;(1) = 0$</span> applied:</p><pre><code class="language-julia"># setup
+v = L_bc \ π.(x)</code></pre><h3><a class="nav-anchor" id="Solving-HJBE-with-jump-diffusions-and-Markov-chains-1" href="#Solving-HJBE-with-jump-diffusions-and-Markov-chains-1">Solving HJBE with jump diffusions and Markov chains</a></h3><p>Suppose we are asked to solve HJBE with two states (<span>$N=2$</span>) where for each <span>$i$</span>th state with the corresponding differential operator <span>$L_i$</span> under different payoff functions <span>$\pi_i$</span> and drifts <span>$\mu_i$</span>, there is a transition intensity of <span>$q_{ij}$</span> to have state <span>$j$</span> assigned.</p><pre><code class="language-julia"># setup
+# payoff functions
+π_1(x) = x^2
+π_2(x) = (x-0.01)^2
+
+# constant negative drifts
+μ_1 = -0.1
+μ_2 = -0.15
+λ = 0.6
+σ = 0.1
+ρ = 0.05
+M = 100 # size of grid (interior points)
+
+x̄ = range(0.0, 1.0, length = (M+2))
+x = interiornodes(x̄) # i.e., x̄[2:end-1]</code></pre><p>Let the HJBE in the first state have a jump process <span>$J$</span> associated while the one for the second state does not. Then we have the following system of differential equations; note that we have <span>$q_{ii} = -q_{ij}$</span> for <span>$i \neq j$</span>:</p><div>\[\begin{align}
+\rho v_1 (x) &amp;= \pi_1(x) + \mu_1 \partial_x v_1(x) + \frac{\sigma^2}{2} \partial_{xx} v_1(x) + \lambda \left[ v_1(x + J(x) ) - v_1(x) \right] + q_{12} [ v_2(x) - v_1(x) ] \\
+\rho v_2 (x) &amp;= \pi_2(x) + \mu_2 \partial_x v_2(x) + \frac{\sigma^2}{2} \partial_{xx} v_2(x) + q_{21} [ v_1(x) - v_2(x) ]
+\end{align}\]</div><p>First, construct <span>$L_1$</span> and <span>$L_2$</span> ignoring the Markov chain for transition between the two states; assume that both states have reflecting boundary conditions applied.</p><pre><code class="language-julia"># construct the jump process for the operator in state 1
+jumpprocess1 = JumpProcess(x̄, -0.01)
+
+# construct the differential operators for both states
+# subject to reflecting barriers at 0 and 1
+bc = (Reflecting(), Reflecting())
+L_1ₓ = μ_1*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc) + λ * Lₙbc(x̄, bc, jumpprocess1)
+L_2ₓ = μ_2*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc)
+L_1_bc = I * ρ - L_1ₓ
+L_2_bc = I * ρ - L_2ₓ</code></pre><p>Then construct an intensity matrix <span>$Q$</span>, whose <span>$(i,j)$</span>th element represents <span>$q_{ij}$</span>:</p><pre><code class="language-julia"># define intensity matrix for transition
+Q = [-0.01 0.01; 0.02 -0.02]</code></pre><p>Using the discretized operators <code>L_1_bc</code> and <code>L_2_bc</code> on interior nodes <code>x</code> with boundary conditions <code>bc</code> applied, one can construct the joint operator <code>L_bc</code> with the intensity matrix <code>Q</code> as follows:</p><pre><code class="language-julia"># define the corresponding joint operator
+L_bc = jointoperator_bc((L_1_bc, L_2_bc), Q)</code></pre><p>Construct a vector of payoff functions <span>$\pi_1$</span> and <span>$\pi_2$</span> stacked together and solve the system using the joint operator constructed above:</p><pre><code class="language-julia"># solve the system
+v = L_bc \ [π_1.(x); π_2.(x)]</code></pre><p>Note that the first <span>$M$</span> elements represent the discretized solution for <span>$v_1$</span> and the last <span>$M$</span> elements represent the one for <span>$v_2$</span>:</p><pre><code class="language-julia"># extract the solution for each state
+v_1 = v[1:M]
+v_2 = v[(M+1):end]
+
+# plot v_1 and v_2
+plot(x, [v_1, v_2], lw = 4, label = [&quot;v_1&quot;, &quot;v_2&quot;])</code></pre><p><img src="../assets/plot-hjbe-two-states.png" alt="plot-hjbe-two-states"/></p><h2><a class="nav-anchor" id="Solving-HJBE-with-state-dependent-drifts-1" href="#Solving-HJBE-with-state-dependent-drifts-1">Solving HJBE with state-dependent drifts</a></h2><hr/><p>One can also deploy upwind schemes when drift variable is not constant. Consider solving for <code>v</code> from the following Bellman equation:</p><div>\[\rho v(x) = π(x) + \mu(x) \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)\]</div><p>associated with the diffusion process</p><div>\[dx = \mu(x) dt + \sigma dW\]</div><p>for some constant <span>$\rho, \sigma &gt; 0$</span> and <span>$\mu(x) = -x$</span>. Note that <span>$\mu(x)$</span> depends on states. The following code will solve <code>v</code> using upwind schemes, with the reflecting barrier conditions <span>$v&#39;(0) = v&#39;(1) = 0$</span> applied:</p><pre><code class="language-julia"># setup
 π(x) = x^2
 μ(x) = -x # drift depends on state
 σ = 1.0

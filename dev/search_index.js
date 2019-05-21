@@ -65,6 +65,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "examples/#Solving-HJBE-with-jump-diffusions-and-Markov-chains-1",
+    "page": "Examples",
+    "title": "Solving HJBE with jump diffusions and Markov chains",
+    "category": "section",
+    "text": "Suppose we are asked to solve HJBE with two states (N=2) where for each ith state with the corresponding differential operator L_i under different payoff functions pi_i and drifts mu_i, there is a transition intensity of q_ij to have state j assigned.# setup\n# payoff functions\nπ_1(x) = x^2\nπ_2(x) = (x-0.01)^2\n\n# constant negative drifts\nμ_1 = -0.1\nμ_2 = -0.15\nλ = 0.6\nσ = 0.1\nρ = 0.05\nM = 100 # size of grid (interior points)\n\nx̄ = range(0.0, 1.0, length = (M+2))\nx = interiornodes(x̄) # i.e., x̄[2:end-1]Let the HJBE in the first state have a jump process J associated while the one for the second state does not. Then we have the following system of differential equations; note that we have q_ii = -q_ij for i neq j:beginalign\nrho v_1 (x) = pi_1(x) + mu_1 partial_x v_1(x) + fracsigma^22 partial_xx v_1(x) + lambda left v_1(x + J(x) ) - v_1(x) right + q_12  v_2(x) - v_1(x)  \nrho v_2 (x) = pi_2(x) + mu_2 partial_x v_2(x) + fracsigma^22 partial_xx v_2(x) + q_21  v_1(x) - v_2(x) \nendalignFirst, construct L_1 and L_2 ignoring the Markov chain for transition between the two states; assume that both states have reflecting boundary conditions applied.# construct the jump process for the operator in state 1\njumpprocess1 = JumpProcess(x̄, -0.01)\n\n# construct the differential operators for both states\n# subject to reflecting barriers at 0 and 1\nbc = (Reflecting(), Reflecting())\nL_1ₓ = μ_1*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc) + λ * Lₙbc(x̄, bc, jumpprocess1)\nL_2ₓ = μ_2*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc)\nL_1_bc = I * ρ - L_1ₓ\nL_2_bc = I * ρ - L_2ₓThen construct an intensity matrix Q, whose (ij)th element represents q_ij:# define intensity matrix for transition\nQ = [-0.01 0.01; 0.02 -0.02]Using the discretized operators L_1_bc and L_2_bc on interior nodes x with boundary conditions bc applied, one can construct the joint operator L_bc with the intensity matrix Q as follows:# define the corresponding joint operator\nL_bc = jointoperator_bc((L_1_bc, L_2_bc), Q)Construct a vector of payoff functions pi_1 and pi_2 stacked together and solve the system using the joint operator constructed above:# solve the system\nv = L_bc \\ [π_1.(x); π_2.(x)]Note that the first M elements represent the discretized solution for v_1 and the last M elements represent the one for v_2:# extract the solution for each state\nv_1 = v[1:M]\nv_2 = v[(M+1):end]\n\n# plot v_1 and v_2\nplot(x, [v_1, v_2], lw = 4, label = [\"v_1\", \"v_2\"])(Image: plot-hjbe-two-states)"
+},
+
+{
     "location": "examples/#Solving-HJBE-with-state-dependent-drifts-1",
     "page": "Examples",
     "title": "Solving HJBE with state-dependent drifts",
