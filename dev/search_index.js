@@ -201,6 +201,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "api/#SimpleDifferentialOperators.jointoperator_bc-Tuple{Any,Array}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.jointoperator_bc",
+    "category": "method",
+    "text": "jointoperator_bc(operators, Q::Array)\n\nReturns a discretized operator that solves systems of differential equations defined by operators with transitions by Q where operators is an N-length collection of  discretized operators with boundary conditions applied and Q is N by N matrix of transition probabilities whose (i,j)th element defines the probability of visiting jth state from ith state\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> L1bc = L₁₋bc(x̄, (Reflecting(), Reflecting()))\n4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n  0.0   0.0    ⋅    ⋅\n -1.0   1.0   0.0   ⋅\n   ⋅   -1.0   1.0  0.0\n   ⋅     ⋅   -1.0  1.0\n\njulia> L2bc = L₂bc(x̄, (Reflecting(), Reflecting()))\n4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:\n -1.0   1.0    ⋅     ⋅\n  1.0  -2.0   1.0    ⋅\n   ⋅    1.0  -2.0   1.0\n   ⋅     ⋅    1.0  -1.0\n\njulia> Q = [0.5 0.5; 0.3 0.7]\n2×2 Array{Float64,2}:\n 0.5  0.5\n 0.3  0.7\n\njulia> jointoperator_bc((L1bc, L2bc), Q)\n2×2-blocked 8×8 BlockBandedMatrices.BandedBlockBandedMatrix{Float64,BlockArrays.PseudoBlockArray{Float64,2,Array{Float64,2},BlockArrays.BlockSizes{2,Tuple{Array{Int64,1},Array{Int64,1}}}}}:\n  0.5   0.0    ⋅    ⋅   │   0.5   0.0    ⋅     ⋅\n -1.0   1.5   0.0   ⋅   │   0.0   0.5   0.0    ⋅\n   ⋅   -1.0   1.5  0.0  │    ⋅    0.0   0.5   0.0\n   ⋅     ⋅   -1.0  1.5  │    ⋅     ⋅    0.0   0.5\n ───────────────────────┼────────────────────────\n  0.3   0.0    ⋅    ⋅   │  -0.3   1.0    ⋅     ⋅\n  0.0   0.3   0.0   ⋅   │   1.0  -1.3   1.0    ⋅\n   ⋅    0.0   0.3  0.0  │    ⋅    1.0  -1.3   1.0\n   ⋅     ⋅    0.0  0.3  │    ⋅     ⋅    1.0  -0.3\n\n\n\n\n\n"
+},
+
+{
     "location": "api/#SimpleDifferentialOperators.JumpProcess",
     "page": "API",
     "title": "SimpleDifferentialOperators.JumpProcess",
