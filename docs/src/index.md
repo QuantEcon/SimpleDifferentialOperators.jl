@@ -286,6 +286,19 @@ Construct a vector of payoff functions $\pi_1$ and $\pi_2$ stacked together and 
 v = L_bc \ [π_1.(x); π_2.(x)]
 ```
 
+Note that the first $M$ elements represent the discretized solution for $v_1$ and the last $M$ elements represent the one for $v_2$:
+
+```julia
+# extract the solution for each state
+v_1 = v[1:M]
+v_2 = v[(M+1):end]
+
+# plot v_1 and v_2
+plot(x, [v_1, v_2], lw = 4, label = ["v_1", "v_2"])
+```
+
+![plot-hjbe-two-states](assets/plot-hjbe-two-states.png)
+
 ### Solving HJBE with state-dependent drifts
 -------------
 One can also deploy upwind schemes when drift variable is not constant. Consider solving for `v` from the following Bellman equation:
