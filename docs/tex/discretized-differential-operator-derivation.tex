@@ -512,7 +512,7 @@ Now, if you were able to discretize this to find a time varying $\bar{v}(t)$, yo
 i.e. a system of $M+2$ differential-algebraic equations given time varying matrices $L(t), B(t)$ and vectors $f(t) \in R^M$ and $b \in \R^2$.
 
 
-\subsection{Applying Boundary Conditions to Operators}
+\subsection{Applying Boundary Conditions to Operators}\label{subsec:applying-bc-regular}
 
 An alternative approach to solving the systems of $M+2$ equations or DAEs above is to apply the boundary conditions directly to the $L$ operators and solve for the $v$ or $v(t)$ directly.  In effect, the methods are identical to applying Gaussian elimination twice to the above systems.
 
@@ -1865,6 +1865,442 @@ f(x_M)
 % \dot{g}(t) = L^T_x g(t)
 % \end{equation}
 % where $\dot{g}(t)$ is an $M$-vector whose $i$th element is $\partial_{t} g(x_i, t)$, which can be efficently solved by a number of differential equation solvers available in public, including \cite{rackauckas17}.
+
+\section{Continuous state models with discrete state transition}
+In this section, we study how discretized operators can be constructed when we have both continous and discrete states. In particular, we focus on solving stationary bellman equations with two states as in \cite{achdou17} -- in a later subsection we show how this can be generalized to models that contain more than two discrete states.
+
+\subsection{Bellman equations with two states}
+Consider the following system of Bellman equation with two states $j = 1, 2$:
+\begin{align} 
+	\rho v_{1}(x) &= \pi_1(x)+\mu_1 v'_1 (x) + \dfrac{\sigma^2}{2} v''_1 (x) +q_{12}\left(v_{2}(x)-v_{1}(x) \right) \\ \rho v_{2}(x) &=
+	\pi_2(x)+\mu_2 v'_2 (x) + \dfrac{\sigma^2}{2} v''_2 (x) +q_{21}\left(v_{1}(x)-v_{2}(x)\right)
+\end{align}
+
+Rearranging these two equations gives the following identical system:
+
+\begin{align} 
+\begin{bmatrix}
+\tilde{L}^1 - q_{12} & q_{12} \\ q_{21} & \tilde{L}^2 - q_{21}
+\end{bmatrix}
+\begin{bmatrix}
+v_1 (x) \\ v_2(x)
+\end{bmatrix}
+ =
+\begin{bmatrix}
+\pi_1 (x) \\
+\pi_2 (x)
+\end{bmatrix}\label{eq:continuous-and-discrete-system}
+\end{align}
+
+where
+
+\begin{align}
+\tilde{L}^1 &= \rho - \mu_1 \partial_{x} - \dfrac{\sigma^2}{2} \partial_{xx} \\
+\tilde{L}^2 &= \rho - \mu_2 \partial_{x} - \dfrac{\sigma^2}{2} \partial_{xx}
+\end{align}
+
+with the corresponding discretized operators
+
+\begin{align}
+{L}^1 &= \rho - \mu_1 L_1 - \dfrac{\sigma^2}{2} L_2 \\
+{L}^2 &= \rho - \mu_2 L_1 - \dfrac{\sigma^2}{2} L_2
+\end{align}
+
+
+Construct the discretized state space by stacking $\overline{v}$ and ${\pi}$ for states $j= 1, 2$:
+
+\begin{align}
+\overline{v} &= \begin{bmatrix}
+\overline{v}_1 \\
+\overline{v}_2
+\end{bmatrix} \\
+\pi &= \begin{bmatrix}
+\pi_1\\
+\pi_2
+\end{bmatrix}
+\end{align}
+
+where 
+
+\begin{align}
+\pi_1 &= \pi_2 \\
+&=
+\begin{bmatrix}
+\pi (x_1) \\
+\pi (x_2) \\
+\vdots \\
+\pi (x_M)  
+\end{bmatrix}
+\end{align}
+
+
+and recall that $L_0 = \begin{bmatrix} \mathbf{0}_M &  \mathbf{I}_M & \mathbf{0}_M  \end{bmatrix} $; then the corresponding discretized system from \eqref{eq:continuous-and-discrete-system} is
+
+\begin{align}
+\begin{bmatrix}
+{L}^1 - q_{12} L_0 & q_{12} L_0 \\ 
+q_{21} L_0 & {L}^2 - q_{21} L_0
+\end{bmatrix}
+\overline{v}
+=
+\pi
+\label{eq:continuous-and-discrete-system-discrete} 
+\end{align}
+
+with
+
+\begin{align}
+\pi = \begin{bmatrix}
+\pi_1 \\ \pi_2
+\end{bmatrix}
+\end{align}
+
+Suppose further that we also have boundary conditions applied, with the corresponding $2$ by $(M+2)$ boundary condition matrix $B_1$ and $2$-length vector $b_1$ for boundary conditions on $v_1$ and $B_2$ with $b_2$ for $v_2$. Then the solution $\overline{v}$ should satisfy the following system:
+
+\begin{align}
+\begin{bmatrix}
+B_1 & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & B_2 
+\end{bmatrix}
+\begin{bmatrix}
+\overline{v}_1 \\
+\overline{v}_2
+\end{bmatrix} &= 
+\begin{bmatrix}
+b_1\\
+b_2
+\end{bmatrix} 
+\end{align}
+
+Collect $b = \begin{bmatrix}
+b_1^T & b_2^T
+\end{bmatrix}^T$. Stacking this system with \eqref{eq:continuous-and-discrete-system-discrete} yields the following complete system:
+\begin{align}
+\begin{bmatrix}
+{L}^1 - q_{12} L_0 & q_{12} L_0 \\ 
+q_{21} L_0 & {L}^2 - q_{21} L_0 \\
+B_1 & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & B_2 
+\end{bmatrix}
+\overline{v}
+=
+\begin{bmatrix}
+\pi \\
+b
+\end{bmatrix} \label{eq:continuous-and-discrete-system-complete}
+\end{align}
+
+\subsection{Models with more than two discrete states}
+In this subsection, we study how the discretization strategy above can be applied to models with more than two discrete states. Let $N \geq 2$ be an arbitary number of states, with the corresponding Bellman equation
+\begin{align}
+	\rho v_{j}(x) = \pi_j(x)+\mu_j v'_j (x) + \dfrac{\sigma^2}{2} v''_j (x) + 
+	\sum_{j' \neq j} q_{jj'}  \left(  v_{j'}(x) - v_j(x) \right) \label{eq:continuous-and-discrete-equation-larger-states}  
+\end{align}
+
+for all $j=1 ,...,N$, where $q_{jj'}$ represents the transition rate from $j$th state to $j'$ state for $j, j' = 1,...,N$ with $j \neq j'$.
+
+Define $q_{jj}$ as $q_{jj} = -\sum_{j' \neq j} q_{jj'}$. Note that for each $j$, \eqref{eq:continuous-and-discrete-equation-larger-states} leads to the following system:
+\begin{align}
+\begin{bmatrix}
+q_{j1} &  \cdots & q_{j,j-1} & \tilde{L}^j + q_{jj} & q_{j,j+1} & \cdots & q_{jN}
+\end{bmatrix}
+\begin{bmatrix}
+v_1 (x) \\
+\vdots \\
+v_N (x)
+\end{bmatrix}
+=
+\pi_j (x)
+\end{align}
+
+where 
+
+\begin{align}
+\pi_j (x) = 
+\begin{bmatrix}
+\pi (x_1) \\ \pi (x_2) \\ \vdots \\ \pi (x_M)
+\end{bmatrix}
+\end{align}
+
+so that $\pi_j$ is identical across all $j = 1,...,N$.
+
+Stcking this for all $j = 1,...,N$, the following system is identical with \eqref{eq:continuous-and-discrete-equation-larger-states}:
+
+\begin{align}
+\begin{bmatrix}
+\tilde{L}^1 + q_{11} & q_{12} & \cdots &  \cdots & \cdots & q_{1,N-1} & q_{1N} \\ 
+q_{21} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+q_{j1} &  \cdots & q_{j,j-1} & \tilde{L}^j + q_{jj} & q_{j,j+1} & \cdots & q_{jN} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & q_{N-1,N} \\
+q_{N1} & q_{N2} & \cdots &  \cdots & \cdots & q_{N,N-1} & \tilde{L}^N + q_{NN} 
+\end{bmatrix}
+\begin{bmatrix}
+v_1 (x) \\
+\vdots \\
+v_N (x)
+\end{bmatrix}
+=
+\begin{bmatrix}
+\pi_1 (x) \\
+\vdots \\
+\pi_N (x)
+\end{bmatrix}
+\end{align}
+
+where
+
+\begin{align}
+\tilde{L}^j &= \rho - \mu_j \partial_{x} - \dfrac{\sigma^2}{2} \partial_{xx} 
+\end{align}
+for all $j = 1,...,N$, with the corresponding discretized operators
+
+\begin{align}
+{L}^j &= \rho - \mu_j L_1 - \dfrac{\sigma^2}{2} L_2 
+\end{align}
+
+Construct the discretized state space by stacking $\overline{v}$ and ${\pi}$ for states $j= 1, ...,N$:
+
+\begin{align}
+\overline{v} &= \begin{bmatrix}
+\overline{v}_1 \\
+\overline{v}_2 \\ 
+\vdots \\
+\overline{v}_N
+\end{bmatrix} \\
+\pi &= \begin{bmatrix}
+\pi_1\\
+\pi_2 \\
+\vdots \\
+\pi_N 
+\end{bmatrix}
+\end{align}
+
+and recall that $L_0 = \begin{bmatrix} \mathbf{0}_M &  \mathbf{I}_M & \mathbf{0}_M  \end{bmatrix} $; then the corresponding discretized system from \eqref{eq:continuous-and-discrete-system} is
+
+\begin{align}
+\begin{bmatrix}
+{L}^1 + L_0 q_{11} & L_0 q_{12} & \cdots &  \cdots & \cdots & L_0 q_{1,N-1} & L_0 q_{1N} \\ 
+L_0 q_{21} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+L_0 q_{j1} &  \cdots & L_0 q_{j,j-1} & {L}^j + L_0 q_{jj} & L_0 q_{j,j+1} & \cdots & L_0 q_{jN} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & L_0 q_{N-1,N} \\
+L_0 q_{N1} & L_0 q_{N2} & \cdots &  \cdots & \cdots & L_0 q_{N,N-1} & {L}^N + L_0 q_{NN} 
+\end{bmatrix}
+\overline{v}
+=
+\pi \label{eq:continuous-and-discrete-system-discrete-larger-states}
+\end{align}
+Suppose further that we also have boundary conditions applied, with the corresponding $2$ by $(M+2)$ boundary condition matrix $B_j$ and $2$-length vector $b_j$ for boundary conditions on $v_j$ for all $j = 1,..., N$. Collecting $b_j$ for all $j$,
+\begin{align}
+b &=
+\begin{bmatrix}
+b_1 \\
+b_2 \\
+\vdots \\
+b_N
+\end{bmatrix}
+\end{align}
+
+the solution $\overline{v}$ should satisfy the following system:
+
+\begin{align}
+\begin{bmatrix}
+B_1 & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \times (M+2)}  & \mathbf{0}_{2 \times (M+2)} \\ 
+\mathbf{0}_{2 \times (M+2)} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+\mathbf{0}_{2 \times (M+2)} &  \cdots & \mathbf{0}_{2 \times (M+2)} & B_j & \mathbf{0}_{2 \times (M+2)} & \cdots & \mathbf{0}_{2 \times (M+2)} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \times (M+2)} & B_N
+\end{bmatrix}
+\overline{v}
+=
+b 
+\end{align}
+
+Stacking this system with \eqref{eq:continuous-and-discrete-system-discrete-larger-states} yields the following complete system:
+
+
+\begin{align}
+\begin{psmallmatrix}
+{L}^1 + L_0 q_{11} & L_0 q_{12} & \cdots &  \cdots & \cdots & L_0 q_{1,N-1} & L_0 q_{1N} \\ 
+L_0 q_{21} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+L_0 q_{j1} &  \cdots & L_0 q_{j,j-1} & {L}^j + L_0 q_{jj} & L_0 q_{j,j+1} & \cdots & L_0 q_{jN} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & L_0 q_{N-1,N} \\
+L_0 q_{N1} & L_0 q_{N2} & \cdots &  \cdots & \cdots & L_0 q_{N,N-1} & {L}^N + L_0 q_{NN} \\
+B_1 & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \times (M+2)}  & \mathbf{0}_{2 \times (M+2)} \\ 
+\mathbf{0}_{2 \times (M+2)} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+\mathbf{0}_{2 \times (M+2)} &  \cdots & \mathbf{0}_{2 \times (M+2)} & B_j & \mathbf{0}_{2 \times (M+2)} & \cdots & \mathbf{0}_{2 \times (M+2)} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \times (M+2)} & B_N
+\end{psmallmatrix}
+\overline{v}
+=
+\begin{bmatrix}
+\pi \\ b
+\end{bmatrix} 
+\label{eq:continuous-and-discrete-system-complete-larger-states}
+\end{align}
+
+\subsection{Applying homogenous boundary conditions}
+In this subsection, we show how homogenous boundary conditions can be directly applied to operators, i.e., $b$ is zero, via Gaussian eliminations to yield discretized operators on the interior nodes from the complete system \eqref{eq:continuous-and-discrete-system-complete}. We first focus on models with two discrete states -- later we show that models with larger state spaces can be solved using a similar strategy.
+
+Recall the complete system in \eqref{eq:continuous-and-discrete-system-complete}; first, note that the first column has a nonzero element only in the first columns of the blocks $L^1 - q_{12} L_0$ and $B_1$, whereas the rows corresponding to the block matrix $B_1$ have non-zero elements only in $B_1$ itself. Hence, applying the corresponding Gaussian elimination to remove the nonzero elements in the first and last column of $L^1$ as in \eqref{subsec:applying-bc-regular} (for regular grids) or \eqref{subsec:applying-bc} (for irregular grids) does not affect block matrices other than $L^1 - q_{12} L_0$, and the resulting identical system is
+
+\begin{align}
+\begin{bmatrix}
+\begin{bmatrix}
+\mathbf{0}_M & {L}^{B_1,1} & \mathbf{0}_M
+\end{bmatrix} 
+- q_{12} L_0 & q_{12} L_0 \\ 
+ q_{21}  L_0 & {L}^2 - q_{21} L_0 \\
+B_1 & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & B_2 
+\end{bmatrix}
+\overline{v}
+=
+\begin{bmatrix}
+\pi \\ 
+b
+\end{bmatrix}
+\end{align}
+
+where $L^{B_1,1}$ is a $M$ by $M$ matrix after Gaussian eliminations that get rid of non-zero elements of $L^{1}$ in its first and last columns. Similarly, applying Gaussian elimination to $L^2$ yields the following system:
+
+\begin{align}
+\begin{bmatrix}
+\begin{bmatrix}
+\mathbf{0}_M & {L}^{B_1,1} & \mathbf{0}_M
+\end{bmatrix} 
+- q_{12} L_0 & q_{12} L_0 \\ 
+q_{21}  L_0 & 
+\begin{bmatrix}
+\mathbf{0}_M & {L}^{B_2,2} & \mathbf{0}_M
+\end{bmatrix} 
+- q_{21} L_0
+\\
+B_1 & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & B_2 
+\end{bmatrix}
+\overline{v}
+=
+\begin{bmatrix}
+\pi \\ 
+b
+\end{bmatrix}
+\end{align}
+where $L^{B_2,2}$ is a $M$ by $M$ matrix after Gaussian eliminations that get rid of non-zero elements of $L^{2}$ in its first and last columns. Since the first and last columns of $L_0$ are all zero, this system is identical with 
+\begin{align}
+\begin{bmatrix}
+\begin{bmatrix}
+\mathbf{0}_M & ({L}^{B_1,1} - q_{12} \mathbf{I}_{M \times M}) & \mathbf{0}_M
+\end{bmatrix} 
+& 
+\begin{bmatrix}
+\mathbf{0}_M & q_{12} \mathbf{I}_{M \times M} & \mathbf{0}_M
+\end{bmatrix} 
+\\ 
+\begin{bmatrix}
+\mathbf{0}_M & q_{21} \mathbf{I}_{M \times M} & \mathbf{0}_M
+\end{bmatrix} 
+& 
+\begin{bmatrix}
+\mathbf{0}_M & ({L}^{B_2,2} - q_{21} \mathbf{I}_{M \times M}) & \mathbf{0}_M
+\end{bmatrix} 
+\\
+B_1 & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & B_2 
+\end{bmatrix}
+\overline{v}
+=
+\begin{bmatrix}
+\pi \\ 
+b
+\end{bmatrix}
+\end{align}
+Note that the first and $(M+1)$th columns in the two matrix blocks $\begin{bmatrix}
+\mathbf{0}_M & ({L}^{B_1,1} - q_{12} \mathbf{I}_{M \times M}) & \mathbf{0}_M
+\end{bmatrix} $ and $\begin{bmatrix}
+\mathbf{0}_M & q_{21} \mathbf{I}_{M \times M} & \mathbf{0}_M
+\end{bmatrix} $ are all zero, and so are they for $\begin{bmatrix}
+\mathbf{0}_M & q_{12} \mathbf{I}_{M \times M} & \mathbf{0}_M
+\end{bmatrix} $ and $\begin{bmatrix}
+\mathbf{0}_M & ({L}^{B_2,2} - q_{21} \mathbf{I}_{M \times M}) & \mathbf{0}_M
+\end{bmatrix}$. Since $\overline{v}$ can be decomposed into
+\begin{align}
+\overline{v} &= 
+\begin{bmatrix}
+\overline{v}_1 \\
+\overline{v}_2
+\end{bmatrix} \\
+&= \begin{bmatrix}
+(\overline{v}_1)_0 \\
+v_1 \\
+(\overline{v}_1)_{M+1} \\
+(\overline{v}_2)_0 \\
+v_2\\
+(\overline{v}_2)_{M+1} \\
+\end{bmatrix}
+\end{align}
+where $v_j$ is an $M$-length vector whose $i$th element is $v_j (x_i)$, i.e., the vector of interior solutions in $j$th state, solving the system \eqref{eq:continuous-and-discrete-system-complete} on the interior is identical with solving the following system:
+
+\begin{align}
+\begin{bmatrix}
+L^{B_1,1} - q_{12} \mathbf{I}_{M \times M} & q_{12} \mathbf{I}_{M \times M} \\
+q_{21} \mathbf{I}_{M \times M} & L^{B_2,2} - q_{21} \mathbf{I}_{M \times M}
+\end{bmatrix}
+v
+=
+\pi 
+\end{align}
+where 
+\begin{align}
+v = \begin{bmatrix}
+v_1 \\
+v_2
+\end{bmatrix}
+\end{align}
+
+\paragraph{Models with more than two discrete states} Applying boundary conditions to models with multiple states is analogous to the 2-state model case above. Stack the interior solutions as follows:
+\begin{align}
+v =
+\begin{bmatrix}
+v_1 \\
+v_2 \\
+\vdots \\
+v_N
+\end{bmatrix}
+\end{align}
+where $v_j$ is an $M$-length vector whose $i$th element is $v_j(x_i)$, i.e., the vector of interior solutions in $j$th state. Performing Gaussian elimination to remove the nonzero elements in the first and last columns of $L^j - L_{0} q_{jj}$ from $B_j$ for each $j$th state in $j = 1,...,N$ in \eqref{eq:continuous-and-discrete-system-complete-larger-states}, we have the following identical system for the interior solutions:
+
+\begin{align}
+\begin{psmallmatrix}
+L^{B_1,1} + q_{11} \mathbf{I}_{M \times M} & q_{12} \mathbf{I}_{M \times M} & \cdots &  \cdots & \cdots & q_{1,N-1} \mathbf{I}_{M \times M} &  q_{1N} \mathbf{I}_{M \times M} \\ 
+ q_{21} \mathbf{I}_{M \times M} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+ q_{j1} \mathbf{I}_{M \times M} &  \cdots &  q_{j,j-1}  \mathbf{I}_{M \times M} & {L}^{B_j,j} + q_{jj} \mathbf{I}_{M \times M} &  q_{j,j+1} \mathbf{I}_{M \times M} & \cdots &  q_{jN} \mathbf{I}_{M \times M} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots &  q_{N-1,N} \mathbf{I}_{M \times M} \\
+ q_{N1} \mathbf{I}_{M \times M} &  q_{N2} \mathbf{I}_{M \times M} & \cdots &  \cdots & \cdots &  q_{N,N-1} \mathbf{I}_{M \times M} & {L}^{B_N,N} +  q_{NN} \mathbf{I}_{M \times M}
+\end{psmallmatrix}
+v
+=
+\pi 
+\end{align}
+where $L^{B_j,j}$ is a $M$ by $M$ matrix after Gaussian eliminations that get rid of non-zero elements of $L^{j}$ in its first and last columns.
 
 \newpage
 
