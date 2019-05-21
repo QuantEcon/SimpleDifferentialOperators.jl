@@ -260,10 +260,10 @@ jumpprocess1 = JumpProcess(x̄, -0.01)
 # construct the differential operators for both states
 # subject to reflecting barriers at 0 and 1
 bc = (Reflecting(), Reflecting())
-L1ₓ = μ_1*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc) + λ * Lₙbc(x̄, bc, jumpprocess1)
-L2ₓ = μ_2*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc)
-L1_bc = I * ρ - L1ₓ
-L2_bc = I * ρ - L2ₓ
+L_1ₓ = μ_1*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc) + λ * Lₙbc(x̄, bc, jumpprocess1)
+L_2ₓ = μ_2*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc)
+L_1_bc = I * ρ - L_1ₓ
+L_2_bc = I * ρ - L_2ₓ
 ```
 
 Then construct an intensity matrix $Q$, whose $(i,j)$th element represents $q_{ij}$; note that we have $q_{ii} = -q_{ij}$.
@@ -273,11 +273,11 @@ Then construct an intensity matrix $Q$, whose $(i,j)$th element represents $q_{i
 Q = [-0.01 0.01; 0.02 -0.02]
 ```
 
-Using the discretized operators `L1_bc` and `L2_bc` on interior nodes `x` with boundary conditions `bc` applied, one can construct the joint operator `L_bc` with the intensity matrix `Q` as follows:
+Using the discretized operators `L_1_bc` and `L_2_bc` on interior nodes `x` with boundary conditions `bc` applied, one can construct the joint operator `L_bc` with the intensity matrix `Q` as follows:
 
 ```julia
 # define the corresponding joint operator
-L_bc = jointoperator_bc((L1_bc, L2_bc), Q)
+L_bc = jointoperator_bc((L_1_bc, L_2_bc), Q)
 ```
 
 Construct a vector of payoff functions $\pi_1$ and $\pi_2$ stacked together and solve the system using the joint operator constructed above:
