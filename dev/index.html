@@ -75,16 +75,16 @@ v̄ = [L; B] \ [π.(x); b]
 
 # confirm that v returns the identical solution as the one from the stacked system
 using Test
-@test v ≈ v̄[2:end-1]</code></pre><h3><a class="nav-anchor" id="Solving-HJBE-with-jump-diffusion-1" href="#Solving-HJBE-with-jump-diffusion-1">Solving HJBE with jump diffusion</a></h3><p>Consider the jump process added to the HJBE with some intensity <span>$\lambda \geq 0$</span>: </p><div>\[\rho v(x) = \pi(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x) + \lambda L_n v(x)\]</div><p>with the corresponding operator <span>$L_n$</span> that incurs jumps from <span>$v(x_i)$</span> to <span>$v(x_{i-1})$</span> for all <span>$i$</span> in <span>$2 \leq i \leq M$</span>. In <code>SimpleDifferentialOperators.jl</code>, the jump process can be defined as follows:</p><pre><code class="language-julia"># length of nodes on the interior
+@test v ≈ v̄[2:end-1]</code></pre><h3><a class="nav-anchor" id="Solving-HJBE-with-jump-diffusion-1" href="#Solving-HJBE-with-jump-diffusion-1">Solving HJBE with jump diffusion</a></h3><p>Consider the jump process added to the HJBE with some intensity <span>$\lambda \geq 0$</span>: </p><div>\[\rho v(x) = \pi(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x) + \lambda \left[ v(x + J(x) ) - v(x) \right]\]</div><p>where the jump process is defined by the jump magnitude defined by <span>$J(x_i)$</span>. In <code>SimpleDifferentialOperators.jl</code>, the jump process can be defined as follows:</p><pre><code class="language-julia"># uniform jump
+jumpf(x_i) = -0.01
+jumpprocess = JumpProcess(x̄, jumpf)</code></pre><p>Note that, the corresponding indices for destinations will be determined by the nearest neighbor as the domain has to be discretized accordingly. Alternatively, if the jump magnitude is uniform across all cohorts, one can forward the uniform jump magnitude as follows:</p><pre><code class="language-julia"># use the fact that the jump magnitude is uniform across all nodes
+jumpprocess = JumpProcess(x̄, -0.01)</code></pre><p>One can define a jump process manually by providing jump magnitudes in indices as well. If a jump process is defined by the indices on a discretized domain, incurring jumps from <span>$v(x_i)$</span> to <span>$v(x_{i-1})$</span> for all <span>$i$</span> in <span>$2 \leq i \leq M$</span>, one can construct a jump process as follows:</p><pre><code class="language-julia"># length of nodes on the interior
 M = length(interiornodes(x̄))
 # vector of jumps; ith element represents the jump from ith node in the interior
-jumps = ones(M)
+jumps = -ones(M)
 # define jump process 
-jumpprocess =  JumpProcess(x̄, jumps)</code></pre><p>Alternatively, one can define an identical jump process with ease if the jump size is uniform across all nodes:</p><pre><code class="language-julia"># use the fact that the jump size is uniform across all nodes
-jumpprocess = JumpProcess(x̄, -1)</code></pre><p>If a jump process is defined by the jump magnitude defined by <span>$\Delta(x_i)$</span> rather than indices, i.e., jumps occur from <span>$v(x_i)$</span> to <span>$v(x_i + \Delta (x_i))$</span>, then one can define the jump process by a function that determines the jump magnitude on <span>$x_i$</span>. As the domain is discretized, the corresponding indices for destinations will be determined by the nearest neighbor.</p><pre><code class="language-julia"># uniform jump
-jumpf(x_i) = -0.01
-jumpprocess = JumpProcess(x̄, jumpf)</code></pre><p>Alternatively, if the jump magnitude is uniform across all cohorts, one can forward the uniform jump maginutde as follows:</p><pre><code class="language-julia"># use the fact that the jump magnitude is uniform across all nodes
-jumpprocess = JumpProcess(x̄, -0.01)</code></pre><p>Then one can define the corresponding operator and solve value functions as follows:</p><pre><code class="language-julia"># define jump intensity
+jumpprocess =  JumpProcess(x̄, jumps)</code></pre><p>Alternatively, one can define an identical jump process with ease if the jump maginitude in index is uniform across all nodes:</p><pre><code class="language-julia"># use the fact that the jump size is uniform across all nodes
+jumpprocess = JumpProcess(x̄, -1)</code></pre><p>Then one can define the corresponding discretized operator <span>$L_n$</span> and solve value functions as follows:</p><pre><code class="language-julia"># define jump intensity
 λ = 0.6
 
 # construct discretized operators on interior nodes with the bc
