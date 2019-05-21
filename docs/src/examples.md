@@ -206,7 +206,7 @@ L_bc = I * ρ - Lₓ
 v = L_bc \ π.(x)
 ```
 
-### Solving HJBE with jump diffusions and Markov chains
+## Solving HJBE with jump diffusions and Markov chains
 Suppose we are asked to solve HJBE with two states ($N=2$) where for each $i$th state with the corresponding differential operator $L_i$ under different payoff functions $\pi_i$ and drifts $\mu_i$, there is a transition intensity of $q_{ij}$ to have state $j$ assigned.
 
 ```julia
