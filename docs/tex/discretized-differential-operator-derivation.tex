@@ -1586,21 +1586,40 @@ f \\
 b
 \end{bmatrix} \\
 &= \begin{bmatrix}
- f(x_1) + \Delta_{1,-}^{-1}S \\
- \vdots \\
- f(x_M) \\
- S \\
- 0
+f(x_1) \\
+f(x_2) \\
+\vdots \\
+f(x_M) \\
+S \\
+0
+\end{bmatrix} +
+\begin{bmatrix}
+\Delta_{1,-}^{-1}S \\
+0  \\
+\vdots \\ 
+0 \\
+0 \\
+0
+\end{bmatrix} \\
+&= \begin{bmatrix}
+f + b^B \\
+b
+\end{bmatrix}
+\end{align}
+where 
+\begin{align}
+b^B = 
+\begin{bmatrix}
+\Delta_{1,-}^{-1}S \\
+0  \\
+\vdots \\ 
+0 \\
 \end{bmatrix}
 \end{align}
 
 Hence, limited to the interior, solving $v$ in the system above is identical as solving the following system with an operator $L^B$ on interior nodes:
 \begin{equation}
-L^Bv=\begin{bmatrix}
-f(x_1) + \Delta_{1,-}^{-1}S\\
-\vdots \\
-f(x_M)
-\end{bmatrix}
+L^Bv= f + b^B
 \end{equation}
 
 
