@@ -1621,6 +1621,36 @@ Hence, limited to the interior, solving $v$ in the system above is identical as 
 \begin{equation}
 L^Bv= f + b^B
 \end{equation}
+where $L^B$ is a matrix $RL_{1-}[:,1:M+1]$
+
+\paragraph{Nonhomogenous absorbing barrier conditions for $L_{1+}$} Likewise, now consider the case of \cref{eq:absorbing-barrier-matrix-ub} with $S\neq 0$ and $L = L_{1+}$. Subtracting the last row of $L_{1+}$ by the second row of $B$ multiplied by $\Delta_{M,+}^{-1}$ gives, with the corresponding row operation matrix $R$, 
+
+\begin{equation}
+R {L}_{1+} = \begin{bmatrix}
+0&-\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&\dots&0&0&0\\
+0&0&-\Delta_{2,+}^{-1}&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}&0\\
+0&0&0&\cdots&0&-\Delta_{M,+}^{-1}&0
+\end{bmatrix}_{M\times (M+2)} 
+\end{equation}
+
+Then, solving $v$ in the system limited to the interior is identical as solving the following system with an operator $L^B$ 
+
+\begin{equation}
+L^Bv= f + b^B
+\end{equation}
+
+where 
+
+\begin{align}
+b^B = \begin{bmatrix}
+0 \\ \vdots \\ 0 \\
+-\Delta_{M,+}^{-1} S
+\end{bmatrix}
+\end{align}
+
+
 
 
 \subsection{Examples}
