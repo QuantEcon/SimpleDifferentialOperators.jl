@@ -48,8 +48,8 @@ function Laffine(L, bc::Tuple{BoundaryCondition, BoundaryCondition})
     b = zeros(M)
     
     # apply affine operator if needed
-    b[1] = (typeof(bc[1]) <: NonhomogeneousAbsorbing) ? -sum(L[:,1])*bc[1] : b[1]
-    b[end] = (typeof(bc[2]) <: NonhomogeneousAbsorbing) ? -sum(L[:,end])*bc[end] : b[end]
+    b[1] = (typeof(bc[1]) <: NonhomogeneousAbsorbing) ? -sum(L[:,1])*bc[1].S : b[1]
+    b[end] = (typeof(bc[2]) <: NonhomogeneousAbsorbing) ? -sum(L[:,end])*bc[2].S : b[end]
 
     return b
 end
