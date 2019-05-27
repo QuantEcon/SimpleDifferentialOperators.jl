@@ -79,7 +79,7 @@ function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryConditio
 
     # apply boundary conditions
     # (under homogeneous absorbing bc on lb, the first column in invariant)
-    if !(typeof(bc[1]) <: Absorbing) 
+    if (typeof(bc[1]) <: Mixed) 
         ξ_lb = bc[1].ξ
         L[1,1] += (bc[1].direction == :backward) ? (-1/Δ_1m - ξ_lb) : 1/(-1+ξ_lb*Δ_1m)/Δ_1m
     end
@@ -110,7 +110,7 @@ function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryConditio
 
     # apply boundary conditions
     # (under homogeneous absorbing bc on ub, the last column in invariant)
-    if !(typeof(bc[2]) <: Absorbing) 
+    if (typeof(bc[2]) <: Mixed) 
         ξ_ub = bc[2].ξ
         L[end,end] += (bc[2].direction == :forward) ? (1/Δ_Mp - ξ_ub) : 1/(1+ξ_ub*Δ_Mp)/Δ_Mp
     end
@@ -145,14 +145,14 @@ function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryConditio
 
     # apply boundary conditions
     # (under homogeneous absorbing bc on lb, the first column in invariant)
-    if !(typeof(bc[1]) <: Absorbing) 
+    if (typeof(bc[1]) <: Mixed) 
         ξ_lb = bc[1].ξ
         Ξ_1p = L[1,1] - 2/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m))
         Ξ_1m = 2*(-1/(Δ_1p*Δ_1m) + (1+ξ_lb*Δ_1m)/(Δ_1p+Δ_1m)/Δ_1m)
         L[1,1] = (bc[1].direction == :backward) ? Ξ_1m : Ξ_1p
     end
     # (under homogeneous absorbing bc on ub, the last column in invariant)
-    if !(typeof(bc[2]) <: Absorbing) 
+    if (typeof(bc[2]) <: Mixed) 
         ξ_ub = bc[2].ξ
         Ξ_Mm = L[end,end] + 2/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp))
         Ξ_Mp = 2*(-1/(Δ_Mp*Δ_Mm) - (-1+ξ_ub*Δ_Mp)/(Δ_Mp+Δ_Mm)/Δ_Mp)    
