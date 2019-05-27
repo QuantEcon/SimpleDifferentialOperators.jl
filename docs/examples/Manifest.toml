@@ -96,10 +96,10 @@ deps = ["Mmap"]
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 
 [[DiffEqDiffTools]]
-deps = ["LinearAlgebra", "Test"]
-git-tree-sha1 = "30f82c63cb9d293513b360572e283c19577fcf82"
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "07991282c76bcd9331f96f786acbeb1775f1f8d5"
 uuid = "01453d9d-ee7c-5054-8395-0335cb756afa"
-version = "0.8.1"
+version = "0.10.0"
 
 [[DiffResults]]
 deps = ["Compat", "StaticArrays"]
@@ -267,10 +267,10 @@ uuid = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
 version = "0.3.2"
 
 [[OSQP]]
-deps = ["BinDeps", "Compat", "Libdl", "MathOptInterface", "MathProgBase", "Random"]
-git-tree-sha1 = "d81ac1bbdc9c1b545d26a09f10346694ce5050a9"
+deps = ["BinaryProvider", "Libdl", "LinearAlgebra", "MathOptInterface", "MathProgBase", "SparseArrays"]
+git-tree-sha1 = "0c0571823def0d18051cdbe4d76767fc285aa9f0"
 uuid = "ab2f91bb-94b4-55e3-9ba0-7f65df51de79"
-version = "0.5.1"
+version = "0.5.2"
 
 [[OrderedCollections]]
 deps = ["Random", "Serialization", "Test"]
