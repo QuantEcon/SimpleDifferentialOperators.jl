@@ -1621,13 +1621,13 @@ S \\
 0
 \end{bmatrix} \\
 &= \begin{bmatrix}
-f + b^B \\
+f + b_{L_{1-}}^B \\
 b
 \end{bmatrix}
 \end{align}
 where 
 \begin{align}
-b^B = 
+b_{L_{1-}}^B = 
 \begin{bmatrix}
 \Delta_{1,-}^{-1}S \\
 0  \\
@@ -1638,7 +1638,7 @@ b^B =
 
 Hence, limited to the interior, solving $v$ in the system above is identical as solving the following system with an operator $L^B$ on interior nodes:
 \begin{equation}
-L^Bv= f + b^B
+L^Bv= f + b_{L_{1-}}^B
 \end{equation}
 where $L^B$ is a matrix $RL_{1-}[:,2:M+1]$
 
@@ -1657,13 +1657,13 @@ R {L}_{1+} = \begin{bmatrix}
 Then, solving $v$ in the system limited to the interior is identical as solving the following system with an operator $L^B$ 
 
 \begin{equation}
-L^Bv= f + b^B
+L^Bv= f + b_{L_{1+}}^B
 \end{equation}
 
 where 
 
 \begin{align}
-b^B = \begin{bmatrix}
+b_{L_{1+}}^B = \begin{bmatrix}
 0 \\ \vdots \\ 0 \\
 -\Delta_{M,+}^{-1} S
 \end{bmatrix}
@@ -1688,19 +1688,40 @@ R {L}_2 \equiv 2 \begin{psmallmatrix}
 Then, solving $v$ in the system limited to the interior is identical as solving the following system with an operator $L^B$ 
 
 \begin{equation}
-L^Bv= f + b^B
+L^Bv= f + b_{L_2}^B
 \end{equation}
 
 where 
 
 \begin{align}
-b^B = \begin{bmatrix}
+b_{L_2}^B = \begin{bmatrix}
 -2(\Delta_{1,+} + \Delta_{1,-})^{-1} \Delta_{1,-} \underline{S} \\ 0 \\ \vdots \\ 0 \\
 -2(\Delta_{M,+} + \Delta_{M,-})^{-1} \Delta_{M,+} \overline{S}
 \end{bmatrix}
 \end{align}
 
 and $L^B$ is a matrix $RL_{2}[:,2:M+1]$
+
+\paragraph{Nonhomogenous absorbing barrier conditions with composite operators} Note that the row operation matrices are linear -- hence, linearity holds for additional $b^B_L$ under common boundary conditions. For instance, consider the composite operator $L = \mu L_{1-} + ({\sigma^2}/{2}) L_2$ with the boundary condition matrix
+
+\begin{equation}
+B = \begin{bmatrix}
+1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 &  0 & 1\\
+\end{bmatrix}_{2 \times (M+2)} \quad
+b = \begin{bmatrix}
+\underline{S} \\
+\overline{S}
+\end{bmatrix}
+\end{equation} 
+
+Performing the row operation for the extended system for each operator yields $\mu R_1  L_{1-} $ and $(\sigma^2/2) R_2 L_2$ whose first and last columns are all zero, and the corresponding $b^B_L$ vectors $\mu b^B_{L_{1-}}$ and $(\sigma^2 / 2) b^B_{L_2}$ . Thus, solving $v$ in the full system limited to the interior is identical as solving the following system with an operator $L^B$
+
+\begin{align}
+L^B v = f + b^B_{L}
+\end{align}
+
+where $b^B_{L} = \mu b^B_{L_{1-}}+ (\sigma^2 / 2) b^B_{L_2}$ and $L^B$ is a matrix $\left( \mu R_1  L_{1-} + (\sigma^2/2) R_2 L_2 \right)[:,2:M+1] $.
 
 
 
