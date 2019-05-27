@@ -36,8 +36,8 @@ function L₂affine(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
     Δ_1m = x̄[2] - x̄[1]
     Δ_Mp = x̄[end] - x̄[end-1]
     Δ_Mm = x̄[end-1] - x̄[end-2]
-    b[1] = (typeof(bc[1]) <: NonhomogeneousAbsorbing) ? -2*bc[1].S*Δ_1m/(Δ_1m+Δ_1p) : b[1]
-    b[end] = (typeof(bc[2]) <: NonhomogeneousAbsorbing) ? -2*bc[2].S*Δ_Mp/(Δ_Mm+Δ_Mp) : b[end]
+    b[1] = (typeof(bc[1]) <: NonhomogeneousAbsorbing) ? -2*bc[1].S/(Δ_1m*(Δ_1m+Δ_1p)) : b[1]
+    b[end] = (typeof(bc[2]) <: NonhomogeneousAbsorbing) ? -2*bc[2].S/(Δ_Mp*(Δ_Mm+Δ_Mp)) : b[end]
 
     return b
 end
