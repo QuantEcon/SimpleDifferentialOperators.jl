@@ -67,6 +67,8 @@ function extrapolatetoboundary(v, x̄, bc::Tuple{BoundaryCondition, BoundaryCond
         else
           lb_extended = (1+ξ_lb*Δ_1_minus)*v[1]
         end
+    elseif (typeof(bc[1]) <: NonhomogeneousAbsorbing)
+      lb_extended = bc[1].S
     end
 
     # extrapolate on the upper bound
@@ -82,6 +84,8 @@ function extrapolatetoboundary(v, x̄, bc::Tuple{BoundaryCondition, BoundaryCond
         else
           ub_extended = (1-ξ_ub*Δ_M_plus)*v[end]
         end
+    elseif (typeof(bc[2]) <: NonhomogeneousAbsorbing)
+      ub_extended = bc[2].S
     end
 
     return [lb_extended; v; ub_extended]
