@@ -957,6 +957,8 @@ Hence, limited to the interior, solving $v$ in the system above is identical as 
 L^Bv= f+ b^B
 \end{equation}
 
+Similar methods can be applied to $L_{1+}$ and $L_2$ as well; see \ref{subsubsec:absorbing-barrier-conditions-irregular} for details with more general cases with irregular grids.
+
 \section{Discretizing Operators with an Irregular Grid}
 \subsection{Discretized Operators}
 
@@ -1487,7 +1489,7 @@ L_n^B &\equiv \begin{psmallmatrix}
 where $\{ \indicator{ J(i) = j } \}_{M \times M} $ is an $M$ by $M$ matrix whose $(i,j)$th element is $ \indicator{ J(i) = j } $. Note that this is identical with \label{eq:jump-process-discretized-operator-interior} for regular grid cases.
 
 
-\subsubsection{Absorbing barrier conditions}
+\subsubsection{Absorbing barrier conditions}\label{subsubsec:absorbing-barrier-conditions-irregular}
 
 To apply an absorbing barrier condition $\tilde{v}(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
 
