@@ -1504,7 +1504,7 @@ S \\
 \end{bmatrix}
 \end{equation}
 
-Similarly, one can apply an absorbing condition on the upper bound  $\tilde{v}(x_{\max}) =S$ for some $S \in \mathbb{R}$ and the
+Similarly, one can apply an absorbing condition on the upper bound  $\tilde{v}(x_{\max}) =S$ for some $S \in \mathbb{R}$ and the lower bound $v'(x_{\min}) = 0$ with the following boundary conditino matrices:
 
 
 \begin{equation}\label{eq:absorbing-barrier-matrix-ub}
@@ -1517,6 +1517,21 @@ b = \begin{bmatrix}
 S
 \end{bmatrix}
 \end{equation}
+
+Or absorbing barrier conditions on both sides with $\tilde{v}( x_{\min} )  = \underline{S}  $ and $\tilde{v}{x_{\max} } = \overline{S}$:
+
+
+\begin{equation}\label{eq:absorbing-barrier-matrix-both}
+B = \begin{bmatrix}
+1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 &  0 & 1\\
+\end{bmatrix}_{2 \times (M+2)} \quad
+b = \begin{bmatrix}
+\underline{S} \\
+\overline{S}
+\end{bmatrix}
+\end{equation}
+
 
 Note that the corresponding $B$ and $b$ are identical with regular grid cases. Furthermore, note that in the case of $b$ being non-zero, solving the system 
 \begin{equation}
@@ -1623,7 +1638,7 @@ Hence, limited to the interior, solving $v$ in the system above is identical as 
 \begin{equation}
 L^Bv= f + b^B
 \end{equation}
-where $L^B$ is a matrix $RL_{1-}[:,1:M+1]$
+where $L^B$ is a matrix $RL_{1-}[:,2:M+1]$
 
 \paragraph{Nonhomogenous absorbing barrier conditions for $L_{1+}$} Likewise, now consider the case of \cref{eq:absorbing-barrier-matrix-ub} with $S\neq 0$ and $L = L_{1+}$. Subtracting the last row of $L_{1+}$ by the second row of $B$ multiplied by $\Delta_{M,+}^{-1}$ gives, with the corresponding row operation matrix $R$, 
 
@@ -1652,6 +1667,38 @@ b^B = \begin{bmatrix}
 \end{bmatrix}
 \end{align}
 
+and $L^B$ is a matrix $RL_{1+}[:,2:M+1]$
+\paragraph{Nonhomogenous absorbing barrier conditions for $L_{2}$} Likewise, now consider the case of \cref{eq:absorbing-barrier-matrix-both} with $\underline{S}, \overline{S} \neq 0$ and $L = L_{2}$. Subtracting the first row of $L_{2}$ by the first row of $B$ multiplied by $2(\Delta_{1,+} + \Delta_{1,-})^{-1} \Delta_{1,-} $ and subtracting the last row of $L_{2}$ by the second row of $B$ multiplied by $ 2 (\Delta_{M,+} + \Delta_{M,-})^{-1} \Delta_{M,+}$ gives, with the corresponding row operation matrix $R$, 
+
+\begin{align}
+ \small
+R {L}_2 \equiv 2 \begin{psmallmatrix}
+0 &
+-\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  & (\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{1,+}^{-1}&0&\dots&0 & 0\\
+0 & (\Delta_{2,+}+\Delta_{2,-})^{-1}\Delta_{2,-}^{-1}  & \ddots &\ddots & \ddots& \vdots & \vdots  \\
+\vdots& 0 & \ddots & \ddots & \ddots & 0  & \vdots  \\
+\vdots& \vdots &\ddots & \ddots & \ddots& (\Delta_{M-1,+}+\Delta_{M-1,-})^{-1}\Delta_{M-1,+}^{-1} & 0\\
+0& 0&\cdots& 0 &
+(\Delta_{M,+}+\Delta_{M,-})^{-1}\Delta_{M,-}^{-1} &-\Delta_{M,-}^{-1} \Delta_{M,+}^{-1} &0   
+\end{psmallmatrix}_{M\times (M+2)} 
+\end{align}
+
+Then, solving $v$ in the system limited to the interior is identical as solving the following system with an operator $L^B$ 
+
+\begin{equation}
+L^Bv= f + b^B
+\end{equation}
+
+where 
+
+\begin{align}
+b^B = \begin{bmatrix}
+-2(\Delta_{1,+} + \Delta_{1,-})^{-1} \Delta_{1,-} \underline{S} \\ 0 \\ \vdots \\ 0 \\
+-2(\Delta_{M,+} + \Delta_{M,-})^{-1} \Delta_{M,+} \overline{S}
+\end{bmatrix}
+\end{align}
+
+and $L^B$ is a matrix $RL_{2}[:,2:M+1]$
 
 
 
