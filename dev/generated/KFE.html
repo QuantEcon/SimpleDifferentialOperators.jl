@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<HTML lang = "en">
+<HEAD>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  
+  
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      TeX: { equationNumbers: { autoNumber: "AMS" } }
+    });
+  </script>
+
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+  
+<style>
+pre.hljl {
+    border: 1px solid #ccc;
+    margin: 5px;
+    padding: 5px;
+    overflow-x: auto;
+    color: rgb(68,68,68); background-color: rgb(251,251,251); }
+pre.hljl > span.hljl-t { }
+pre.hljl > span.hljl-w { }
+pre.hljl > span.hljl-e { }
+pre.hljl > span.hljl-eB { }
+pre.hljl > span.hljl-o { }
+pre.hljl > span.hljl-k { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kc { color: rgb(59,151,46); font-style: italic; }
+pre.hljl > span.hljl-kd { color: rgb(214,102,97); font-style: italic; }
+pre.hljl > span.hljl-kn { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kp { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kr { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kt { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-n { }
+pre.hljl > span.hljl-na { }
+pre.hljl > span.hljl-nb { }
+pre.hljl > span.hljl-nbp { }
+pre.hljl > span.hljl-nc { }
+pre.hljl > span.hljl-ncB { }
+pre.hljl > span.hljl-nd { color: rgb(214,102,97); }
+pre.hljl > span.hljl-ne { }
+pre.hljl > span.hljl-neB { }
+pre.hljl > span.hljl-nf { color: rgb(66,102,213); }
+pre.hljl > span.hljl-nfm { color: rgb(66,102,213); }
+pre.hljl > span.hljl-np { }
+pre.hljl > span.hljl-nl { }
+pre.hljl > span.hljl-nn { }
+pre.hljl > span.hljl-no { }
+pre.hljl > span.hljl-nt { }
+pre.hljl > span.hljl-nv { }
+pre.hljl > span.hljl-nvc { }
+pre.hljl > span.hljl-nvg { }
+pre.hljl > span.hljl-nvi { }
+pre.hljl > span.hljl-nvm { }
+pre.hljl > span.hljl-l { }
+pre.hljl > span.hljl-ld { color: rgb(148,91,176); font-style: italic; }
+pre.hljl > span.hljl-s { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sa { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sb { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sc { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sd { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sdB { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sdC { color: rgb(201,61,57); }
+pre.hljl > span.hljl-se { color: rgb(59,151,46); }
+pre.hljl > span.hljl-sh { color: rgb(201,61,57); }
+pre.hljl > span.hljl-si { }
+pre.hljl > span.hljl-so { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sr { color: rgb(201,61,57); }
+pre.hljl > span.hljl-ss { color: rgb(201,61,57); }
+pre.hljl > span.hljl-ssB { color: rgb(201,61,57); }
+pre.hljl > span.hljl-nB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nbB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nfB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nh { color: rgb(59,151,46); }
+pre.hljl > span.hljl-ni { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nil { color: rgb(59,151,46); }
+pre.hljl > span.hljl-noB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-oB { color: rgb(102,102,102); font-weight: bold; }
+pre.hljl > span.hljl-ow { color: rgb(102,102,102); font-weight: bold; }
+pre.hljl > span.hljl-p { }
+pre.hljl > span.hljl-c { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-ch { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cm { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cp { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cpB { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cs { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-csB { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-g { }
+pre.hljl > span.hljl-gd { }
+pre.hljl > span.hljl-ge { }
+pre.hljl > span.hljl-geB { }
+pre.hljl > span.hljl-gh { }
+pre.hljl > span.hljl-gi { }
+pre.hljl > span.hljl-go { }
+pre.hljl > span.hljl-gp { }
+pre.hljl > span.hljl-gs { }
+pre.hljl > span.hljl-gsB { }
+pre.hljl > span.hljl-gt { }
+</style>
+
+
+
+  <style type="text/css">
+  @font-face {
+  font-style: normal;
+  font-weight: 300;
+}
+@font-face {
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-style: normal;
+  font-weight: 600;
+}
+html {
+  font-family: sans-serif; /* 1 */
+  -ms-text-size-adjust: 100%; /* 2 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+}
+body {
+  margin: 0;
+}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+menu,
+nav,
+section,
+summary {
+  display: block;
+}
+audio,
+canvas,
+progress,
+video {
+  display: inline-block; /* 1 */
+  vertical-align: baseline; /* 2 */
+}
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+[hidden],
+template {
+  display: none;
+}
+a:active,
+a:hover {
+  outline: 0;
+}
+abbr[title] {
+  border-bottom: 1px dotted;
+}
+b,
+strong {
+  font-weight: bold;
+}
+dfn {
+  font-style: italic;
+}
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+mark {
+  background: #ff0;
+  color: #000;
+}
+small {
+  font-size: 80%;
+}
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+sup {
+  top: -0.5em;
+}
+sub {
+  bottom: -0.25em;
+}
+img {
+  border: 0;
+}
+svg:not(:root) {
+  overflow: hidden;
+}
+figure {
+  margin: 1em 40px;
+}
+hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 0;
+}
+pre {
+  overflow: auto;
+}
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+button,
+input,
+optgroup,
+select,
+textarea {
+  color: inherit; /* 1 */
+  font: inherit; /* 2 */
+  margin: 0; /* 3 */
+}
+button {
+  overflow: visible;
+}
+button,
+select {
+  text-transform: none;
+}
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button; /* 2 */
+  cursor: pointer; /* 3 */
+}
+button[disabled],
+html input[disabled] {
+  cursor: default;
+}
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+input {
+  line-height: normal;
+}
+input[type="checkbox"],
+input[type="radio"] {
+  box-sizing: border-box; /* 1 */
+  padding: 0; /* 2 */
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+input[type="search"] {
+  -webkit-appearance: textfield; /* 1 */
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box; /* 2 */
+  box-sizing: content-box;
+}
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+fieldset {
+  border: 1px solid #c0c0c0;
+  margin: 0 2px;
+  padding: 0.35em 0.625em 0.75em;
+}
+legend {
+  border: 0; /* 1 */
+  padding: 0; /* 2 */
+}
+textarea {
+  overflow: auto;
+}
+optgroup {
+  font-weight: bold;
+}
+table {
+  font-family: monospace, monospace;
+  font-size : 0.8em;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+td,
+th {
+  padding: 0;
+}
+thead th {
+    border-bottom: 1px solid black;
+    background-color: white;
+}
+tr:nth-child(odd){
+  background-color: rgb(248,248,248);
+}
+
+
+/*
+* Skeleton V2.0.4
+* Copyright 2014, Dave Gamache
+* www.getskeleton.com
+* Free to use under the MIT license.
+* http://www.opensource.org/licenses/mit-license.php
+* 12/29/2014
+*/
+.container {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box; }
+.column,
+.columns {
+  width: 100%;
+  float: left;
+  box-sizing: border-box; }
+@media (min-width: 400px) {
+  .container {
+    width: 85%;
+    padding: 0; }
+}
+@media (min-width: 550px) {
+  .container {
+    width: 80%; }
+  .column,
+  .columns {
+    margin-left: 4%; }
+  .column:first-child,
+  .columns:first-child {
+    margin-left: 0; }
+
+  .one.column,
+  .one.columns                    { width: 4.66666666667%; }
+  .two.columns                    { width: 13.3333333333%; }
+  .three.columns                  { width: 22%;            }
+  .four.columns                   { width: 30.6666666667%; }
+  .five.columns                   { width: 39.3333333333%; }
+  .six.columns                    { width: 48%;            }
+  .seven.columns                  { width: 56.6666666667%; }
+  .eight.columns                  { width: 65.3333333333%; }
+  .nine.columns                   { width: 74.0%;          }
+  .ten.columns                    { width: 82.6666666667%; }
+  .eleven.columns                 { width: 91.3333333333%; }
+  .twelve.columns                 { width: 100%; margin-left: 0; }
+
+  .one-third.column               { width: 30.6666666667%; }
+  .two-thirds.column              { width: 65.3333333333%; }
+
+  .one-half.column                { width: 48%; }
+
+  /* Offsets */
+  .offset-by-one.column,
+  .offset-by-one.columns          { margin-left: 8.66666666667%; }
+  .offset-by-two.column,
+  .offset-by-two.columns          { margin-left: 17.3333333333%; }
+  .offset-by-three.column,
+  .offset-by-three.columns        { margin-left: 26%;            }
+  .offset-by-four.column,
+  .offset-by-four.columns         { margin-left: 34.6666666667%; }
+  .offset-by-five.column,
+  .offset-by-five.columns         { margin-left: 43.3333333333%; }
+  .offset-by-six.column,
+  .offset-by-six.columns          { margin-left: 52%;            }
+  .offset-by-seven.column,
+  .offset-by-seven.columns        { margin-left: 60.6666666667%; }
+  .offset-by-eight.column,
+  .offset-by-eight.columns        { margin-left: 69.3333333333%; }
+  .offset-by-nine.column,
+  .offset-by-nine.columns         { margin-left: 78.0%;          }
+  .offset-by-ten.column,
+  .offset-by-ten.columns          { margin-left: 86.6666666667%; }
+  .offset-by-eleven.column,
+  .offset-by-eleven.columns       { margin-left: 95.3333333333%; }
+
+  .offset-by-one-third.column,
+  .offset-by-one-third.columns    { margin-left: 34.6666666667%; }
+  .offset-by-two-thirds.column,
+  .offset-by-two-thirds.columns   { margin-left: 69.3333333333%; }
+
+  .offset-by-one-half.column,
+  .offset-by-one-half.columns     { margin-left: 52%; }
+
+}
+html {
+  font-size: 62.5%; }
+body {
+  font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
+  line-height: 1.6;
+  font-weight: 400;
+  font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #222; }
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  font-weight: 300; }
+h1 { font-size: 3.6rem; line-height: 1.2;  letter-spacing: -.1rem;}
+h2 { font-size: 3.4rem; line-height: 1.25; letter-spacing: -.1rem; }
+h3 { font-size: 3.2rem; line-height: 1.3;  letter-spacing: -.1rem; }
+h4 { font-size: 2.8rem; line-height: 1.35; letter-spacing: -.08rem; }
+h5 { font-size: 2.4rem; line-height: 1.5;  letter-spacing: -.05rem; }
+h6 { font-size: 1.5rem; line-height: 1.6;  letter-spacing: 0; }
+
+p {
+  margin-top: 0; }
+a {
+  color: #1EAEDB; }
+a:hover {
+  color: #0FA0CE; }
+.button,
+button,
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  display: inline-block;
+  height: 38px;
+  padding: 0 30px;
+  color: #555;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 38px;
+  letter-spacing: .1rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border-radius: 4px;
+  border: 1px solid #bbb;
+  cursor: pointer;
+  box-sizing: border-box; }
+.button:hover,
+button:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+input[type="button"]:hover,
+.button:focus,
+button:focus,
+input[type="submit"]:focus,
+input[type="reset"]:focus,
+input[type="button"]:focus {
+  color: #333;
+  border-color: #888;
+  outline: 0; }
+.button.button-primary,
+button.button-primary,
+input[type="submit"].button-primary,
+input[type="reset"].button-primary,
+input[type="button"].button-primary {
+  color: #FFF;
+  background-color: #33C3F0;
+  border-color: #33C3F0; }
+.button.button-primary:hover,
+button.button-primary:hover,
+input[type="submit"].button-primary:hover,
+input[type="reset"].button-primary:hover,
+input[type="button"].button-primary:hover,
+.button.button-primary:focus,
+button.button-primary:focus,
+input[type="submit"].button-primary:focus,
+input[type="reset"].button-primary:focus,
+input[type="button"].button-primary:focus {
+  color: #FFF;
+  background-color: #1EAEDB;
+  border-color: #1EAEDB; }
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea,
+select {
+  height: 38px;
+  padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
+  background-color: #fff;
+  border: 1px solid #D1D1D1;
+  border-radius: 4px;
+  box-shadow: none;
+  box-sizing: border-box; }
+/* Removes awkward default styles on some inputs for iOS */
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none; }
+textarea {
+  min-height: 65px;
+  padding-top: 6px;
+  padding-bottom: 6px; }
+input[type="email"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+input[type="text"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  border: 1px solid #33C3F0;
+  outline: 0; }
+label,
+legend {
+  display: block;
+  margin-bottom: .5rem;
+  font-weight: 600; }
+fieldset {
+  padding: 0;
+  border-width: 0; }
+input[type="checkbox"],
+input[type="radio"] {
+  display: inline; }
+label > .label-body {
+  display: inline-block;
+  margin-left: .5rem;
+  font-weight: normal; }
+ul {
+  list-style: circle; }
+ol {
+  list-style: decimal; }
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+  margin: 1.5rem 0 1.5rem 3rem;
+  font-size: 90%; }
+li > p {margin : 0;}
+th,
+td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #E1E1E1; }
+th:first-child,
+td:first-child {
+  padding-left: 0; }
+th:last-child,
+td:last-child {
+  padding-right: 0; }
+button,
+.button {
+  margin-bottom: 1rem; }
+input,
+textarea,
+select,
+fieldset {
+  margin-bottom: 1.5rem; }
+pre,
+blockquote,
+dl,
+figure,
+table,
+p,
+ul,
+ol,
+form {
+  margin-bottom: 1.0rem; }
+.u-full-width {
+  width: 100%;
+  box-sizing: border-box; }
+.u-max-full-width {
+  max-width: 100%;
+  box-sizing: border-box; }
+.u-pull-right {
+  float: right; }
+.u-pull-left {
+  float: left; }
+hr {
+  margin-top: 3rem;
+  margin-bottom: 3.5rem;
+  border-width: 0;
+  border-top: 1px solid #E1E1E1; }
+.container:after,
+.row:after,
+.u-cf {
+  content: "";
+  display: table;
+  clear: both; }
+
+pre {
+  display: block;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.42857143;
+  word-break: break-all;
+  word-wrap: break-word;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+pre.hljl {
+  margin: 0 0 10px;
+  display: block;
+  background: #f5f5f5;
+  border-radius: 4px;
+  padding : 5px;
+}
+
+pre.output {
+  background: #ffffff;
+}
+
+pre.code {
+  background: #ffffff;
+}
+
+pre.julia-error {
+  color : red
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-size: 13px;
+}
+
+
+@media (min-width: 400px) {}
+@media (min-width: 550px) {}
+@media (min-width: 750px) {}
+@media (min-width: 1000px) {}
+@media (min-width: 1200px) {}
+
+h1.title {margin-top : 20px}
+img {max-width : 100%}
+div.title {text-align: center;}
+
+  </style>
+
+
+
+</HEAD>
+  <BODY>
+    <div class ="container">
+      <div class = "row">
+        <div class = "col-md-12 twelve columns">
+
+          <div class="title">
+            
+            
+            
+          </div>
+
+          <h1>Discretizing Kolmogorov Forward Equations</h1>
+<h2>Kolmogorov Forward Equations &#40;KFE&#41;</h2>
+<p>The KFE equation is</p>
+<p class="math">\[
+\partial_t v(x,t) = -\mu \partial_{x} v(x,t) + \frac{\sigma^2}{2} \partial_{xx} v(x,t)
+\]</p>
+<p>for <span class="math">$x \in (x_{\min}, x_{\max})$</span>. The corresponding reflecting barrier conditions are</p>
+<p class="math">\[
+\begin{align}
+-\mu v(x_{\min}, t) +\frac{\sigma^2}{2} \partial_{x} v(x_{\min}, t) &= 0 \\
+-\mu v(x_{\max}, t) +\frac{\sigma^2}{2} \partial_{x} v(x_{\max}, t) &= 0
+\end{align}
+\]</p>
+<p>For notational brevity, we fix <span class="math">$t$</span> and omit <span class="math">$t$</span> on <span class="math">$v$</span> unless it is needed for clarity. Let <span class="math">$\tilde L$</span> be a differential operator such that <span class="math">$\tilde L v(x)$</span> represents <span class="math">$\partial_t v(x,t)$</span>, i.e., \tilde L v &#40;x&#41; &#61; -\mu v&#39;&#40;x&#41; &#43; &#40;\sigma^2/2&#41; v&#39;&#39;&#40;x&#41; &#36;. </p>
+<p>Discretize the domain by <span class="math">$\{x_i \}_{i=0}^{M+1}$</span> with <span class="math">$x_0 = x_{\min}$</span> and <span class="math">$x_{M+1} = x_{\max}$</span> uniformly with the grid size of <span class="math">$\Delta$</span>. Let <span class="math">$v_i$</span> represent <span class="math">$v(x_i)$</span> accordingly for all <span class="math">$i = 0, ..., M+1$</span>.</p>
+
+
+<pre class='hljl'>
+<span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>InstantiateFromURL</span><span class='hljl-t'> 
+</span><span class='hljl-nf'>activate_github_path</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;QuantEcon/SimpleDifferentialOperators.jl&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>path</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;docs/examples&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>activate</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-kc'>true</span><span class='hljl-p'>)</span>
+</pre>
+
+
+<pre class="output">
+Updating registry at &#96;~/.julia/registries/General&#96;
+  Updating git-repo &#96;https://github.com/JuliaRegistries/General.git&#96;
+piling project...
+</pre>
+
+
+
+<pre class='hljl'>
+<span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>SimpleDifferentialOperators</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>Test</span><span class='hljl-t'>
+</span><span class='hljl-n'>μ</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-nfB'>1.0</span><span class='hljl-t'> </span><span class='hljl-cs'># constant negative drift</span><span class='hljl-t'>
+</span><span class='hljl-n'>σ</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>1.</span><span class='hljl-t'>
+</span><span class='hljl-n'>M</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>3</span><span class='hljl-t'> </span><span class='hljl-cs'># size of grid (interior points)</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@assert</span><span class='hljl-t'> </span><span class='hljl-n'>μ</span><span class='hljl-t'> </span><span class='hljl-oB'>&lt;=</span><span class='hljl-t'> </span><span class='hljl-ni'>0</span><span class='hljl-t'> </span><span class='hljl-cs'># make sure we are using negative drifts</span><span class='hljl-t'>
+</span><span class='hljl-n'>x̄</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>range</span><span class='hljl-p'>(</span><span class='hljl-nfB'>0.0</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-nfB'>1.0</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>length</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-n'>M</span><span class='hljl-oB'>+</span><span class='hljl-ni'>2</span><span class='hljl-p'>))</span><span class='hljl-t'>
+</span><span class='hljl-n'>Δ</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>step</span><span class='hljl-p'>(</span><span class='hljl-n'>x̄</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-n'>x</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>interiornodes</span><span class='hljl-p'>(</span><span class='hljl-n'>x̄</span><span class='hljl-p'>);</span><span class='hljl-t'> </span><span class='hljl-cs'># i.e., x̄[2:end-1]</span>
+</pre>
+
+
+
+<p>The corresponding discretized operator <span class="math">$L$</span> can be constructed as follows:</p>
+
+
+<pre class='hljl'>
+<span class='hljl-cs'># construct the discretized operator L</span><span class='hljl-t'>
+</span><span class='hljl-n'>L</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>Array</span><span class='hljl-p'>(</span><span class='hljl-oB'>-</span><span class='hljl-n'>μ</span><span class='hljl-oB'>*</span><span class='hljl-nf'>L₁₊</span><span class='hljl-p'>(</span><span class='hljl-n'>x̄</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-n'>σ</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-t'> </span><span class='hljl-oB'>/</span><span class='hljl-t'> </span><span class='hljl-ni'>2</span><span class='hljl-t'> </span><span class='hljl-oB'>*</span><span class='hljl-t'> </span><span class='hljl-nf'>L₂</span><span class='hljl-p'>(</span><span class='hljl-n'>x̄</span><span class='hljl-p'>))</span>
+</pre>
+
+
+<pre class="output">
+3×5 Array&#123;Float64,2&#125;:
+ 8.0  -20.0   12.0    0.0   0.0
+ 0.0    8.0  -20.0   12.0   0.0
+ 0.0    0.0    8.0  -20.0  12.0
+</pre>
+
+
+<p>Under upwind scheme with the current negative drift term <span class="math">$\mu \leq 0$</span>, the discretized boundary conditions are</p>
+<p class="math">\[
+\begin{align}
+-\mu v_1 +\frac{\sigma^2}{2} \frac{v_1 - v_0}{\Delta} &= 0 \\
+-\mu v_{M+1} +\frac{\sigma^2}{2} \frac{v_{M+1} - v_M}{\Delta} &= 0
+\end{align}
+\]</p>
+<p>Note that <span class="math">$-\mu$</span> appears on the second column, not the first column for the lower bound as the drift is negative. The corresponding boundary condition matrices are</p>
+<p class="math">\[
+B =
+\begin{bmatrix}
+-\frac{\sigma^{2}}{2 \Delta} & {-\mu+\frac{\sigma^{2}}{2 \Delta}} & {0} & {\ldots} & {0} & {0} & {0}\\
+{0} & {0} & {0} & {\ldots} & {0} & {-\frac{\sigma^{2}}{2 \Delta}} & {-\mu+\frac{\sigma^{2}}{2 \Delta}}
+\end{bmatrix}_{2 \times(M+2)}
+\]</p>
+<p>and</p>
+<p class="math">\[
+b = 
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix}
+\]</p>
+
+
+<pre class='hljl'>
+<span class='hljl-cs'># construct boundary condition matrices</span><span class='hljl-t'>
+</span><span class='hljl-n'>B</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>transpose</span><span class='hljl-p'>([[</span><span class='hljl-oB'>-</span><span class='hljl-t'> </span><span class='hljl-n'>σ</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-oB'>/</span><span class='hljl-p'>(</span><span class='hljl-ni'>2</span><span class='hljl-oB'>*</span><span class='hljl-n'>Δ</span><span class='hljl-p'>);</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-n'>μ</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-n'>σ</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-oB'>/</span><span class='hljl-p'>(</span><span class='hljl-ni'>2</span><span class='hljl-oB'>*</span><span class='hljl-n'>Δ</span><span class='hljl-p'>);</span><span class='hljl-t'> </span><span class='hljl-nf'>zeros</span><span class='hljl-p'>(</span><span class='hljl-n'>M</span><span class='hljl-p'>)]</span><span class='hljl-t'> </span><span class='hljl-p'>[</span><span class='hljl-nf'>zeros</span><span class='hljl-p'>(</span><span class='hljl-n'>M</span><span class='hljl-p'>);</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-n'>σ</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-oB'>/</span><span class='hljl-p'>(</span><span class='hljl-ni'>2</span><span class='hljl-oB'>*</span><span class='hljl-n'>Δ</span><span class='hljl-p'>);</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-n'>μ</span><span class='hljl-oB'>+</span><span class='hljl-n'>σ</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-oB'>/</span><span class='hljl-p'>(</span><span class='hljl-ni'>2</span><span class='hljl-oB'>*</span><span class='hljl-n'>Δ</span><span class='hljl-p'>)]])</span><span class='hljl-t'>
+</span><span class='hljl-n'>b</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[</span><span class='hljl-ni'>0</span><span class='hljl-p'>;</span><span class='hljl-t'> </span><span class='hljl-ni'>0</span><span class='hljl-p'>];</span>
+</pre>
+
+
+
+<p>such that the discretized solution <span class="math">$\overline{v}$</span> satisfies the following system:</p>
+<p class="math">\[
+\begin{bmatrix}
+L \\
+B
+\end{bmatrix} 
+\overline{v}
+= 
+\begin{bmatrix}
+v_t \\
+b
+\end{bmatrix} 
+\]</p>
+<p>where <span class="math">$\overline{v}$</span> is an <span class="math">$(M+2)$</span>-vector whose elements are <span class="math">$\{v_i\}_{i=0}^{M+1}$</span> and <span class="math">$v_t$</span> is an <span class="math">$M$</span>-vector whose <span class="math">$i$</span>th element is <span class="math">$\partial_t v(x_i,t)$</span>.</p>
+
+
+<pre class='hljl'>
+<span class='hljl-cs'># display the full system on the left side</span><span class='hljl-t'>
+</span><span class='hljl-p'>[</span><span class='hljl-n'>L</span><span class='hljl-p'>;</span><span class='hljl-t'> </span><span class='hljl-n'>B</span><span class='hljl-p'>]</span>
+</pre>
+
+
+<pre class="output">
+5×5 Array&#123;Float64,2&#125;:
+  8.0  -20.0   12.0    0.0   0.0
+  0.0    8.0  -20.0   12.0   0.0
+  0.0    0.0    8.0  -20.0  12.0
+ -2.0    3.0    0.0    0.0   0.0
+  0.0    0.0    0.0   -2.0   3.0
+</pre>
+
+
+<p>It is also worth mentioning that for <span class="math">$\mu \geq 0$</span>, the discretized boundary conditions are </p>
+<p class="math">\[
+\begin{align}
+-\mu v_0 +\frac{\sigma^2}{2} \frac{v_1 - v_0}{\Delta} &= 0 \\
+-\mu v_{M} +\frac{\sigma^2}{2} \frac{v_{M+1} - v_M}{\Delta} &= 0
+\end{align}
+\]</p>
+<p>and the corresponding boundary condition matrix <span class="math">$B$</span> would have been</p>
+<p class="math">\[
+B =
+\begin{bmatrix}
+-\mu-\frac{\sigma^{2}}{2 \Delta} & {\frac{\sigma^{2}}{2 \Delta}} & {0} & {\ldots} & {0} & {0} & {0}\\
+{0} & {0} & {0} & {\ldots} & {0} & {-\mu-\frac{\sigma^{2}}{2 \Delta}} & {\frac{\sigma^{2}}{2 \Delta}}
+\end{bmatrix}_{2 \times(M+2)}
+\]</p>
+<p>Now perform Gaussian elimination once – substract the first row of <span class="math">$L$</span> by a multiple of the first row of <span class="math">$B$</span> to make the first column of the resulting matrix have zeros only:</p>
+
+
+<pre class='hljl'>
+<span class='hljl-cs'># copy L from the original system</span><span class='hljl-t'>
+</span><span class='hljl-n'>L_KFE</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>copy</span><span class='hljl-p'>(</span><span class='hljl-n'>L</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+</span><span class='hljl-cs'># Gaussian elimination on the first row </span><span class='hljl-t'>
+</span><span class='hljl-n'>L_KFE</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-oB'>:</span><span class='hljl-p'>]</span><span class='hljl-t'> </span><span class='hljl-oB'>-=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-n'>L</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-ni'>1</span><span class='hljl-p'>]</span><span class='hljl-t'> </span><span class='hljl-oB'>/</span><span class='hljl-t'> </span><span class='hljl-n'>B</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-ni'>1</span><span class='hljl-p'>])</span><span class='hljl-oB'>*</span><span class='hljl-n'>B</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-oB'>:</span><span class='hljl-p'>]</span><span class='hljl-t'>
+</span><span class='hljl-p'>[</span><span class='hljl-n'>L_KFE</span><span class='hljl-p'>;</span><span class='hljl-t'> </span><span class='hljl-n'>B</span><span class='hljl-p'>]</span>
+</pre>
+
+
+<pre class="output">
+5×5 Array&#123;Float64,2&#125;:
+  0.0  -8.0   12.0    0.0   0.0
+  0.0   8.0  -20.0   12.0   0.0
+  0.0   0.0    8.0  -20.0  12.0
+ -2.0   3.0    0.0    0.0   0.0
+  0.0   0.0    0.0   -2.0   3.0
+</pre>
+
+
+<p>Likewise, perform another Gaussian elimination by substracting the last row of the resulting <span class="math">$L$</span> by a multiple of the second row of <span class="math">$B$</span> to make the last column of the resulting matrix have zeros only:</p>
+
+
+<pre class='hljl'>
+<span class='hljl-cs'># Gaussian elimination on the last row</span><span class='hljl-t'>
+</span><span class='hljl-n'>L_KFE</span><span class='hljl-p'>[</span><span class='hljl-k'>end</span><span class='hljl-p'>,</span><span class='hljl-oB'>:</span><span class='hljl-p'>]</span><span class='hljl-t'> </span><span class='hljl-oB'>-=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-n'>L</span><span class='hljl-p'>[</span><span class='hljl-k'>end</span><span class='hljl-p'>,</span><span class='hljl-k'>end</span><span class='hljl-p'>]</span><span class='hljl-t'> </span><span class='hljl-oB'>/</span><span class='hljl-t'> </span><span class='hljl-n'>B</span><span class='hljl-p'>[</span><span class='hljl-k'>end</span><span class='hljl-p'>,</span><span class='hljl-k'>end</span><span class='hljl-p'>])</span><span class='hljl-oB'>*</span><span class='hljl-n'>B</span><span class='hljl-p'>[</span><span class='hljl-k'>end</span><span class='hljl-p'>,</span><span class='hljl-oB'>:</span><span class='hljl-p'>]</span><span class='hljl-t'>
+</span><span class='hljl-p'>[</span><span class='hljl-n'>L_KFE</span><span class='hljl-p'>;</span><span class='hljl-t'> </span><span class='hljl-n'>B</span><span class='hljl-p'>]</span>
+</pre>
+
+
+<pre class="output">
+5×5 Array&#123;Float64,2&#125;:
+  0.0  -8.0   12.0    0.0  0.0
+  0.0   8.0  -20.0   12.0  0.0
+  0.0   0.0    8.0  -12.0  0.0
+ -2.0   3.0    0.0    0.0  0.0
+  0.0   0.0    0.0   -2.0  3.0
+</pre>
+
+
+<p>Note that the most left and right columns corresponding to <span class="math">$L$</span> are all zeros. Extracting the interior yields</p>
+
+
+<pre class='hljl'>
+<span class='hljl-cs'># extract the interior, as the first and last columns are all zeros</span><span class='hljl-t'>
+</span><span class='hljl-n'>L_KFE</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>L_KFE</span><span class='hljl-p'>[</span><span class='hljl-oB'>:</span><span class='hljl-p'>,</span><span class='hljl-ni'>2</span><span class='hljl-oB'>:</span><span class='hljl-k'>end</span><span class='hljl-oB'>-</span><span class='hljl-ni'>1</span><span class='hljl-p'>]</span>
+</pre>
+
+
+<pre class="output">
+3×3 Array&#123;Float64,2&#125;:
+ -8.0   12.0    0.0
+  8.0  -20.0   12.0
+  0.0    8.0  -12.0
+</pre>
+
+
+<p>And the corresponding eigenvalues are:</p>
+
+
+<pre class='hljl'>
+<span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>LinearAlgebra</span><span class='hljl-t'>
+</span><span class='hljl-n'>LinearAlgebra</span><span class='hljl-oB'>.</span><span class='hljl-nf'>eigvals</span><span class='hljl-p'>(</span><span class='hljl-n'>L_KFE</span><span class='hljl-p'>)</span>
+</pre>
+
+
+<pre class="output">
+3-element Array&#123;Float64,1&#125;:
+ -29.797958971132715    
+  -5.499073418846478e-16
+ -10.202041028867287
+</pre>
+
+
+<h3>Constructing with operators with <code>SimpleDifferentialOperators.jl</code></h3>
+<p>Or, using <code>SimpleDifferentialOperators.jl</code>, this can be defined using mixed boundary conditions as well; note that multiplying both sides by <span class="math">$2/\sigma^2$</span> on the boundary condition equations above, we have the following equivalent equations:</p>
+<p class="math">\[
+\begin{align}
+-\frac{2\mu}{\sigma^2} v(x_{\min}, t) +\partial_{x} v(x_{\min}, t) &= 0 \\
+-\frac{2\mu}{\sigma^2} v(x_{\max}, t) +\partial_{x} v(x_{\max}, t) &= 0
+\end{align}
+\]</p>
+<p>which gives mixed boundary conditions with <span class="math">$\overline{\xi} = \underline{\xi} = -\frac{2\mu}{\sigma^2}$</span>:</p>
+
+
+<pre class='hljl'>
+<span class='hljl-cs'># ξ values for mixed boundary conditions</span><span class='hljl-t'>
+</span><span class='hljl-n'>ξ_lb</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>ξ_ub</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-ni'>2</span><span class='hljl-n'>μ</span><span class='hljl-oB'>/</span><span class='hljl-n'>σ</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-t'>
+
+</span><span class='hljl-cs'># define the corresponding mixed boundary conditions</span><span class='hljl-t'>
+</span><span class='hljl-cs'># note that the direction on the lower bound is backward (default is forward)</span><span class='hljl-t'>
+</span><span class='hljl-n'>bc</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-nf'>Mixed</span><span class='hljl-p'>(</span><span class='hljl-n'>ξ</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>ξ_lb</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>direction</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-sc'>:backward</span><span class='hljl-p'>),</span><span class='hljl-t'> </span><span class='hljl-nf'>Mixed</span><span class='hljl-p'>(</span><span class='hljl-n'>ξ</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>ξ_ub</span><span class='hljl-p'>))</span><span class='hljl-t'>
+
+</span><span class='hljl-cs'># use SimpleDifferentialOperators.jl to construct the operator on the interior</span><span class='hljl-t'>
+</span><span class='hljl-n'>L_KFE_SDO</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>Array</span><span class='hljl-p'>(</span><span class='hljl-oB'>-</span><span class='hljl-n'>μ</span><span class='hljl-oB'>*</span><span class='hljl-nf'>L₁₊bc</span><span class='hljl-p'>(</span><span class='hljl-n'>x̄</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>bc</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-n'>σ</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-t'> </span><span class='hljl-oB'>/</span><span class='hljl-t'> </span><span class='hljl-ni'>2</span><span class='hljl-t'> </span><span class='hljl-oB'>*</span><span class='hljl-t'> </span><span class='hljl-nf'>L₂bc</span><span class='hljl-p'>(</span><span class='hljl-n'>x̄</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>bc</span><span class='hljl-p'>))</span>
+</pre>
+
+
+<pre class="output">
+3×3 Array&#123;Float64,2&#125;:
+ -8.0   12.0    0.0
+  8.0  -20.0   12.0
+  0.0    8.0  -12.0
+</pre>
+
+
+<p>which returns an identical operator as <code>L_KFE</code> we just have constructed.</p>
+
+
+<pre class='hljl'>
+<span class='hljl-cs'># confirm it returns an identical operator</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@test</span><span class='hljl-t'> </span><span class='hljl-n'>L_KFE</span><span class='hljl-t'> </span><span class='hljl-oB'>≈</span><span class='hljl-t'> </span><span class='hljl-n'>L_KFE_SDO</span>
+</pre>
+
+
+<pre class="output">
+Test Passed
+</pre>
+
+
+<h3>Alternative: ignoring upwind scheme for boundary conditions</h3>
+<p>As mentioned above, <span class="math">$-\mu$</span> appears on the second column, not the first column for the lower bound. Suppose that it were not the case, i.e., <span class="math">$B$</span> is constructed as</p>
+<p class="math">\[
+B =
+\begin{bmatrix}
+-\mu-\frac{\sigma^{2}}{2 \Delta} & {\frac{\sigma^{2}}{2 \Delta}} & {0} & {\ldots} & {0} & {0} & {0}\\
+{0} & {0} & {0} & {\ldots} & {0} & {-\frac{\sigma^{2}}{2 \Delta}} & {-\mu+\frac{\sigma^{2}}{2 \Delta}}
+\end{bmatrix}_{2 \times(M+2)}
+\]</p>
+<p>Then the corresponding discretized operator <code>L_KFE_try</code> is:</p>
+
+
+<pre class='hljl'>
+<span class='hljl-cs'># construct boundary condition matrix</span><span class='hljl-t'>
+</span><span class='hljl-n'>B</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>transpose</span><span class='hljl-p'>([[</span><span class='hljl-oB'>-</span><span class='hljl-n'>μ</span><span class='hljl-oB'>-</span><span class='hljl-t'> </span><span class='hljl-n'>σ</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-oB'>/</span><span class='hljl-p'>(</span><span class='hljl-ni'>2</span><span class='hljl-oB'>*</span><span class='hljl-n'>Δ</span><span class='hljl-p'>);</span><span class='hljl-t'> </span><span class='hljl-n'>σ</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-oB'>/</span><span class='hljl-p'>(</span><span class='hljl-ni'>2</span><span class='hljl-oB'>*</span><span class='hljl-n'>Δ</span><span class='hljl-p'>);</span><span class='hljl-t'> </span><span class='hljl-nf'>zeros</span><span class='hljl-p'>(</span><span class='hljl-n'>M</span><span class='hljl-p'>)]</span><span class='hljl-t'> </span><span class='hljl-p'>[</span><span class='hljl-nf'>zeros</span><span class='hljl-p'>(</span><span class='hljl-n'>M</span><span class='hljl-p'>);</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-n'>σ</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-oB'>/</span><span class='hljl-p'>(</span><span class='hljl-ni'>2</span><span class='hljl-oB'>*</span><span class='hljl-n'>Δ</span><span class='hljl-p'>);</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-n'>μ</span><span class='hljl-oB'>+</span><span class='hljl-n'>σ</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-oB'>/</span><span class='hljl-p'>(</span><span class='hljl-ni'>2</span><span class='hljl-oB'>*</span><span class='hljl-n'>Δ</span><span class='hljl-p'>)]])</span><span class='hljl-t'>
+
+</span><span class='hljl-cs'># copy L from the original system</span><span class='hljl-t'>
+</span><span class='hljl-n'>L_KFE_try</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>copy</span><span class='hljl-p'>(</span><span class='hljl-n'>L</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+</span><span class='hljl-cs'># Gaussian elimination on the first row </span><span class='hljl-t'>
+</span><span class='hljl-n'>L_KFE_try</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-oB'>:</span><span class='hljl-p'>]</span><span class='hljl-t'> </span><span class='hljl-oB'>-=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-n'>L</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-ni'>1</span><span class='hljl-p'>]</span><span class='hljl-t'> </span><span class='hljl-oB'>/</span><span class='hljl-t'> </span><span class='hljl-n'>B</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-ni'>1</span><span class='hljl-p'>])</span><span class='hljl-oB'>*</span><span class='hljl-n'>B</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-oB'>:</span><span class='hljl-p'>]</span><span class='hljl-t'>
+
+</span><span class='hljl-cs'># Gaussian elimination on the last row</span><span class='hljl-t'>
+</span><span class='hljl-n'>L_KFE_try</span><span class='hljl-p'>[</span><span class='hljl-k'>end</span><span class='hljl-p'>,</span><span class='hljl-oB'>:</span><span class='hljl-p'>]</span><span class='hljl-t'> </span><span class='hljl-oB'>-=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-n'>L</span><span class='hljl-p'>[</span><span class='hljl-k'>end</span><span class='hljl-p'>,</span><span class='hljl-k'>end</span><span class='hljl-p'>]</span><span class='hljl-t'> </span><span class='hljl-oB'>/</span><span class='hljl-t'> </span><span class='hljl-n'>B</span><span class='hljl-p'>[</span><span class='hljl-k'>end</span><span class='hljl-p'>,</span><span class='hljl-k'>end</span><span class='hljl-p'>])</span><span class='hljl-oB'>*</span><span class='hljl-n'>B</span><span class='hljl-p'>[</span><span class='hljl-k'>end</span><span class='hljl-p'>,</span><span class='hljl-oB'>:</span><span class='hljl-p'>]</span><span class='hljl-t'>
+
+</span><span class='hljl-cs'># extract the interior, as the first and last columns are all zeros</span><span class='hljl-t'>
+</span><span class='hljl-n'>L_KFE_try</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>L_KFE_try</span><span class='hljl-p'>[</span><span class='hljl-oB'>:</span><span class='hljl-p'>,</span><span class='hljl-ni'>2</span><span class='hljl-oB'>:</span><span class='hljl-k'>end</span><span class='hljl-oB'>-</span><span class='hljl-ni'>1</span><span class='hljl-p'>]</span><span class='hljl-t'>
+
+</span><span class='hljl-n'>L_KFE_try</span>
+</pre>
+
+
+<pre class="output">
+3×3 Array&#123;Float64,2&#125;:
+ -4.0   12.0    0.0
+  8.0  -20.0   12.0
+  0.0    8.0  -12.0
+</pre>
+
+
+<p>The eigenvalues for <code>L_KFE_try</code> are:</p>
+
+
+<pre class='hljl'>
+<span class='hljl-n'>LinearAlgebra</span><span class='hljl-oB'>.</span><span class='hljl-nf'>eigvals</span><span class='hljl-p'>(</span><span class='hljl-n'>L_KFE_try</span><span class='hljl-p'>)</span>
+</pre>
+
+
+<pre class="output">
+3-element Array&#123;Float64,1&#125;:
+ -29.32965915104908  
+   2.2111964297224973
+  -8.881537278673418
+</pre>
+
+
+<h2>Infinitesimal generator for Brownian motions</h2>
+<p>The infinitesimal generator for Brownian motions is defined as <span class="math">$\tilde L$</span> such that</p>
+<p class="math">\[
+\tilde{L}_B v = \mu v'(x) + \frac{\sigma^2}{2} v''(x)
+\]</p>
+<p>for <span class="math">$x \in (x_{\min}, x_{\max})$</span>. Assume that reflecting barrier conditions are applied on both lower bound and upper bound, i.e.,</p>
+<p class="math">\[
+\begin{align}
+v'(x_{\min}) &= 0 \\
+v'(x_{\max}) &= 0 \\
+\end{align}
+\]</p>
+<p>Using <code>SimpleDifferentialOperators.jl</code>, one can construct a discretized operator <span class="math">$L_B$</span> for <span class="math">$\tilde{L}_B$</span> under the reflecting boundary conditions:</p>
+
+
+<pre class='hljl'>
+<span class='hljl-cs'># define boundary conditions</span><span class='hljl-t'>
+</span><span class='hljl-n'>bc</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-nf'>Reflecting</span><span class='hljl-p'>(),</span><span class='hljl-t'> </span><span class='hljl-nf'>Reflecting</span><span class='hljl-p'>())</span><span class='hljl-t'>
+</span><span class='hljl-cs'># define discretized operator</span><span class='hljl-t'>
+</span><span class='hljl-n'>L_B</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>Array</span><span class='hljl-p'>(</span><span class='hljl-n'>μ</span><span class='hljl-oB'>*</span><span class='hljl-nf'>L₁₋bc</span><span class='hljl-p'>(</span><span class='hljl-n'>x̄</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>bc</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-n'>σ</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-t'> </span><span class='hljl-oB'>/</span><span class='hljl-t'> </span><span class='hljl-ni'>2</span><span class='hljl-t'> </span><span class='hljl-oB'>*</span><span class='hljl-t'> </span><span class='hljl-nf'>L₂bc</span><span class='hljl-p'>(</span><span class='hljl-n'>x̄</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>bc</span><span class='hljl-p'>))</span>
+</pre>
+
+
+<pre class="output">
+3×3 Array&#123;Float64,2&#125;:
+ -8.0    8.0    0.0
+ 12.0  -20.0    8.0
+  0.0   12.0  -12.0
+</pre>
+
+
+<h3>Duality of <span class="math">$L$</span></h3>
+<p>Note that the operator for the KFE <span class="math">$\tilde{L}$</span> is the adjoint operator of the infinitesimal generator <span class="math">$\tilde{L}_B$</span>, and the correct discretization scheme for <span class="math">$L$</span> is, analogously, done by taking the transpose of the discretized operator for <span class="math">$L_B$</span> &#40;See <a href="https://doi.org/10.3982/ECTA13569">Gabaix et al., 2016</a> and <a href="https://ideas.repec.org/p/nbr/nberwo/23732.html">Achdou et al., 2017</a>&#41;.  In fact, the transpose of <span class="math">$L_B$</span> is identical with <span class="math">$L$</span>:</p>
+
+
+<pre class='hljl'>
+<span class='hljl-nd'>@test</span><span class='hljl-t'> </span><span class='hljl-n'>L_KFE</span><span class='hljl-t'> </span><span class='hljl-oB'>≈</span><span class='hljl-t'> </span><span class='hljl-nf'>transpose</span><span class='hljl-p'>(</span><span class='hljl-n'>L_B</span><span class='hljl-p'>)</span>
+</pre>
+
+
+<pre class="output">
+Test Passed
+</pre>
+
+
+
+
+          <HR/>
+        
+
+
+        </div>
+      </div>
+    </div>
+  </BODY>
+</HTML>
