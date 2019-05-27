@@ -1670,7 +1670,7 @@ b_{L_{1+}}^B = \begin{bmatrix}
 \end{align}
 
 and $L^B$ is a matrix $RL_{1+}[:,2:M+1]$
-\paragraph{Nonhomogenous absorbing barrier conditions for $L_{2}$} Likewise, now consider the case of \cref{eq:absorbing-barrier-matrix-both} with $\underline{S}, \overline{S} \neq 0$ and $L = L_{2}$. Subtracting the first row of $L_{2}$ by the first row of $B$ multiplied by $2(\Delta_{1,+} + \Delta_{1,-})^{-1} \Delta_{1,-} $ and subtracting the last row of $L_{2}$ by the second row of $B$ multiplied by $ 2 (\Delta_{M,+} + \Delta_{M,-})^{-1} \Delta_{M,+}$ gives, with the corresponding row operation matrix $R$, 
+\paragraph{Nonhomogenous absorbing barrier conditions for $L_{2}$} Likewise, now consider the case of \cref{eq:absorbing-barrier-matrix-both} with $\underline{S}, \overline{S} \neq 0$ and $L = L_{2}$. Subtracting the first row of $L_{2}$ by the first row of $B$ multiplied by $2(\Delta_{1,+} + \Delta_{1,-})^{-1} \Delta_{1,-}^{-1} $ and subtracting the last row of $L_{2}$ by the second row of $B$ multiplied by $ 2 (\Delta_{M,+} + \Delta_{M,-})^{-1} \Delta_{M,+}^{-1}$ gives, with the corresponding row operation matrix $R$, 
 
 \begin{align}
  \small
@@ -1695,8 +1695,8 @@ where
 
 \begin{align}
 b_{L_2}^B = \begin{bmatrix}
--2(\Delta_{1,+} + \Delta_{1,-})^{-1} \Delta_{1,-} \underline{S} \\ 0 \\ \vdots \\ 0 \\
--2(\Delta_{M,+} + \Delta_{M,-})^{-1} \Delta_{M,+} \overline{S}
+-2(\Delta_{1,+} + \Delta_{1,-})^{-1} \Delta_{1,-}^{-1} \underline{S} \\ 0 \\ \vdots \\ 0 \\
+-2(\Delta_{M,+} + \Delta_{M,-})^{-1} \Delta_{M,+}^{-1} \overline{S}
 \end{bmatrix}
 \end{align}
 
