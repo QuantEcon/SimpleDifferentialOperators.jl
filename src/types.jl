@@ -2,6 +2,7 @@
 # Abstracts
 abstract type BoundaryCondition end
 abstract type HomogeneousBoundaryCondition <: BoundaryCondition end
+abstract type NonhomogeneousBoundaryCondition <: BoundaryCondition end
 
 # Types for Differences
 abstract type DiscretizationMethod end
@@ -164,3 +165,6 @@ struct Reflecting <: HomogeneousBoundaryCondition end
     direction = :auto # :forward/:backward/:auto
 end
 struct Absorbing <: HomogeneousBoundaryCondition end
+@with_kw struct NonhomogeneousAbsorbing{T} <: NonhomogeneousBoundaryCondition where T <: Real 
+    S::T  = 0.0
+end
