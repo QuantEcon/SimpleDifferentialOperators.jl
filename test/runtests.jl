@@ -7,6 +7,7 @@ using DualNumbers
     @time @testset "Operators without boundary conditions" begin include("operators-fd-without-bc.jl") end
     @time @testset "Operators without boundary conditions for jump diffusion" begin include("operators-jump.jl") end 
     @time @testset "Joint operators" begin include("jointoperators.jl") end
+    @time @testset "Affine operators" begin include("affine.jl") end
     @time @testset "Linear Complementarity Problems" begin include("lcp.jl") end
     @time @testset "Boundary extrapolation" begin include("utilities/extrapolatetoboundary.jl") end
     @time @testset "Internal helper functions" begin include("utilities/findnearestindex.jl") end
