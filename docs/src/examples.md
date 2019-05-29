@@ -70,11 +70,36 @@ v =  v̄[2:end-1]
 ```
 
 ## Solving HJBE with absorbing barrier conditions
-Instead of having the reflecting barrier conditions on both lower bound and upper bound $v'(0) = v'(1) = 0$ as above, one can impose an absorbing barrier condition as well. To solve `v` under the reflecting barrier conditions $v(0) = S$ (absorbing barrier on lower bound) for some S and $v'(1) = 0$ (reflecting barrier on upper bound), one can construct `B` and `b` for the boundary conditions as follows.
+Instead of having the reflecting barrier conditions on both lower bound and upper bound $v'(0) = v'(1) = 0$ as above, one can impose an absorbing barrier condition as well. Consider solving for `v` from the following equation by the Hamilton-Jacobi-Bellman equation (HJBE):
 
-First, consider the case where $S \neq 0$, which gives a nonhomogenous boundary condition:
+```math
+\rho v(x) = \pi(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
+```
+
+but this time under the boundary conditions $v(0) = S$ (absorbing barrier on lower bound) for some S and $v'(1) = 0$ (reflecting barrier on upper bound). The corresponding boundary condition matrices `B` and `b` can be constructed as follows; first, consider the case where $S \neq 0$, which gives a nonhomogenous boundary condition:
 
 ```julia
+using LinearAlgebra, SimpleDifferentialOperators, SparseArrays
+# setup
+π(x) = x^2
+μ = -0.1 # constant negative drift
+σ = 0.1
+ρ = 0.05
+M = 100 # size of grid (interior points)
+
+x̄ = range(0.0, 1.0, length = (M+2))
+x = interiornodes(x̄) # i.e., x̄[2:end-1]
+
+# differential operators on extended nodes
+Lₓ = μ*L₁₋(x̄) + σ^2 / 2 * L₂(x̄)
+
+# boundary conditions (i.e. B v̄ = b)
+B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]])
+b = [0.0; 0.0]
+
+# form bellman equation on extension
+L = [spzeros(M) ρ*I spzeros(M)] - Lₓ
+
 # define S
 S = 3.0
 
@@ -83,19 +108,33 @@ B = transpose([[1; 0; zeros(M)] [zeros(M); -1; 1]])
 b = [S; 0.0];
 ```
 
-We can then apply one Gaussian elimination step to remove a non-zero element of the first column in $L$, which is $\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2}$. This can be done by substracting the first row of the stacked system $[L; B]$ by the first row of the system $B = b$ by $\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2}$. This returns the following identical system:
+Now solve `v`:
+```julia
+# stack the systems of bellman and boundary conditions, and solve
+v̄ =  [L; B] \ [π.(x); b]
+```
+
+Or we can proceed as follows: we can apply one Gaussian elimination step to remove a non-zero element of the first column in $L$, which is $\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2}$. This can be done by substracting the first row of the stacked system $[L; B]$ by the first row of the system $B = b$ by $\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2}$. This returns the following identical system:
 
 ```math
 \begin{bmatrix}
-L[:,2:M+1] \\
-B[:,2]
+L^* \\
+B 
+\end{bmatrix}
+\begin{bmatrix}
+v(x_0) \\
+v(x_1) \\ 
+\vdots \\
+v(x_{M}) \\
+v(x_{M+1})
 \end{bmatrix}
 =
 \begin{bmatrix}
 π^* \\
-b[:,2]
+b
 \end{bmatrix}
 ```
+
 where
 
 ```math
@@ -109,10 +148,37 @@ where
 \end{bmatrix}
 ```
 
-Now solve `v`:
+and $L^*$ is identical with $L$ except the first column, which is a zero column in $L^*$. Note that the second boundary condition on the upper bound is homogeneous, so as in the HJBE with constant drifts example, we can apply the boundary condition by Gaussian elimination and achieve the following system for the solution on interior nodes:
+
+```math
+\begin{bmatrix}
+L^{B*}
+\end{bmatrix}
+\begin{bmatrix}
+v(x_1)
+\\ 
+\vdots
+\\
+v(x_{M}) 
+\end{bmatrix}
+=
+π^* 
+```
+
+where $L^{B*}$ is the operator on interior nodes with the boundary conditions applied. In the code, one can solve the system as follows:
+
 ```julia
-# stack the systems of bellman and boundary conditions, and solve
-v̄ =  [L; B] \ [π.(x); b]
+# discretize L = ρ - μ D_x - σ^2 / 2 D_xx
+# subject to boundary conditions at 0 and 1
+bc = (NonhomogeneousAbsorbing(S), Reflecting())
+Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc)
+L_bc = I * ρ - Lₓ
+
+# construct the RHS with affine boundary
+π_star = π.(x) + Laffine(L, bc)
+
+# solve the value function
+v = L_bc \ π_star
 ```
 
 Here is a plot for `v`:
@@ -126,7 +192,7 @@ plot(x̄, v̄, lw = 4, label = "v")
 Note that this can be alternatively done by constructing the corresponding differential operators on the interior with `Absorbing()` boundary condition when $S = 0$:
 ```julia
 # discretize L = ρ - μ D_x - σ^2 / 2 D_xx
-# subject to reflecting barriers at 0 and 1
+# subject to boundary conditions at 0 and 1
 bc = (Absorbing(), Reflecting())
 Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc)
 L_bc = I * ρ - Lₓ
