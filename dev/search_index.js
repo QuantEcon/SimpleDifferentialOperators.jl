@@ -129,11 +129,27 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "api/#SimpleDifferentialOperators.L₀affine-Tuple{Any,Tuple{BoundaryCondition,BoundaryCondition}}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.L₀affine",
+    "category": "method",
+    "text": "L₁₋affine(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})\n\nReturns a vector for affine operator given an extended grid `x̄` and boundary conditions `bc`.\n\nReturns a `length(interiornodes(x̄))`-length vector such that solving\n\nL₁₋ * v(x̄) = b on interior nodes x under the boundary condition given by bc is identical with L₁₋bc * v(x) = b + L₁₋affine(x̄, bc) The first element of bc is  applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> L₀affine(x̄, (Reflecting(), Reflecting()))\n4-element Array{Float64,1}:\n 0.0\n 0.0\n 0.0\n 0.0\n\njulia> L₀affine(x̄, (NonhomogeneousAbsorbing(1.0), Reflecting()))\n4-element Array{Float64,1}:\n 0.0\n 0.0\n 0.0\n 0.0\n\njulia> L₀affine(x̄, (NonhomogeneousAbsorbing(1.0), NonhomogeneousAbsorbing(2.0)))\n4-element Array{Float64,1}:\n 0.0\n 0.0\n 0.0\n 0.0\n\n\n\n\n\n"
+},
+
+{
     "location": "api/#SimpleDifferentialOperators.L₁₊-Tuple{Any}",
     "page": "API",
     "title": "SimpleDifferentialOperators.L₁₊",
     "category": "method",
     "text": "L₁₊(x̄)\n\nReturns a discretized first-order differential operator of length(interiornodes(x̄)) by length(x̄) matrix using forward difference under no boundary condition.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> Array(L₁₊(x̄))\n4×6 Array{Float64,2}:\n 0.0  -1.0   1.0   0.0   0.0  0.0\n 0.0   0.0  -1.0   1.0   0.0  0.0\n 0.0   0.0   0.0  -1.0   1.0  0.0\n 0.0   0.0   0.0   0.0  -1.0  1.0\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#SimpleDifferentialOperators.L₁₊affine-Tuple{Any,Tuple{BoundaryCondition,BoundaryCondition}}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.L₁₊affine",
+    "category": "method",
+    "text": "L₁₊affine(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})\n\nReturns a vector for affine operator given an extended grid `x̄` and boundary conditions `bc`.\n\nReturns a `length(interiornodes(x̄))`-length vector such that solving\n\nL₁₋ * v(x̄) = b on interior nodes x under the boundary condition given by bc is identical with L₁₋bc * v(x) = b + L₁₊affine(x̄, bc) The first element of bc is  applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> L₁₊affine(x̄, (Reflecting(), Reflecting()))\n4-element Array{Float64,1}:\n 0.0\n 0.0\n 0.0\n 0.0\n\njulia> L₁₊affine(x̄, (NonhomogeneousAbsorbing(1.0), Reflecting()))\n4-element Array{Float64,1}:\n 0.0\n 0.0\n 0.0\n 0.0\n\njulia> L₁₊affine(x̄, (NonhomogeneousAbsorbing(1.0), NonhomogeneousAbsorbing(2.0)))\n4-element Array{Float64,1}:\n  0.0\n  0.0\n  0.0\n -2.0\n\n\n\n\n\n"
 },
 
 {
@@ -153,6 +169,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "api/#SimpleDifferentialOperators.L₁₋affine-Tuple{Any,Tuple{BoundaryCondition,BoundaryCondition}}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.L₁₋affine",
+    "category": "method",
+    "text": "L₁₋affine(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})\n\nReturns a vector for affine operator given an extended grid `x̄` and boundary conditions `bc`.\n\nReturns a `length(interiornodes(x̄))`-length vector such that solving\n\nL₁₋ * v(x̄) = b on interior nodes x under the boundary condition given by bc is identical with L₁₋bc * v(x) = b + L₁₋affine(x̄, bc). The first element of bc is  applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> L₁₋affine(x̄, (Reflecting(), Reflecting()))\n4-element Array{Float64,1}:\n 0.0\n 0.0\n 0.0\n 0.0\n\njulia> L₁₋affine(x̄, (NonhomogeneousAbsorbing(1.0), Reflecting()))\n4-element Array{Float64,1}:\n 1.0\n 0.0\n 0.0\n 0.0\n\njulia> L₁₋affine(x̄, (NonhomogeneousAbsorbing(1.0), NonhomogeneousAbsorbing(2.0)))\n4-element Array{Float64,1}:\n 1.0\n 0.0\n 0.0\n 0.0\n\n\n\n\n\n"
+},
+
+{
     "location": "api/#SimpleDifferentialOperators.L₁₋bc-Tuple{Any,Any}",
     "page": "API",
     "title": "SimpleDifferentialOperators.L₁₋bc",
@@ -166,6 +190,14 @@ var documenterSearchIndex = {"docs": [
     "title": "SimpleDifferentialOperators.L₂",
     "category": "method",
     "text": "L₂(x̄)\n\nReturns a discretized second-order differential operator of length(interiornodes(x̄)) by length(x̄) matrix using central difference under no boundary condition.\n\nExamples\n\njulia> x̄ = 0:5\n0:5 \n\njulia> Array(L₂(x̄))\n4×6 Array{Float64,2}:\n 1.0  -2.0   1.0   0.0   0.0  0.0\n 0.0   1.0  -2.0   1.0   0.0  0.0\n 0.0   0.0   1.0  -2.0   1.0  0.0\n 0.0   0.0   0.0   1.0  -2.0  1.0\n\n\n\n\n\n"
+},
+
+{
+    "location": "api/#SimpleDifferentialOperators.L₂affine-Tuple{Any,Tuple{BoundaryCondition,BoundaryCondition}}",
+    "page": "API",
+    "title": "SimpleDifferentialOperators.L₂affine",
+    "category": "method",
+    "text": "L₂affine(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})\n\nReturns a vector for affine operator given an extended grid `x̄` and boundary conditions `bc`.\n\nReturns a `length(interiornodes(x̄))`-length vector such that solving\n\nL₂ * v(x̄) = b on interior nodes x under the boundary condition given by bc is identical with L₂bc * v(x) = b + L₂affine(x̄, bc) The first element of bc is  applied to the lower bound, and second element of bc to the upper.\n\nExamples\n\njulia> x̄ = 0:5\n0:5\n\njulia> L₂affine(x̄, (Reflecting(), Reflecting()))\n4-element Array{Float64,1}:\n 0.0\n 0.0\n 0.0\n 0.0\n\njulia> L₂affine(x̄, (NonhomogeneousAbsorbing(1.0), Reflecting()))\n4-element Array{Float64,1}:\n -1.0\n  0.0\n  0.0\n  0.0\n\njulia> L₂affine(x̄, (NonhomogeneousAbsorbing(1.0), NonhomogeneousAbsorbing(2.0)))\n4-element Array{Float64,1}:\n -1.0\n  0.0\n  0.0\n -2.0\n\n\n\n\n\n"
 },
 
 {
