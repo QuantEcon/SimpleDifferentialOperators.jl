@@ -7,8 +7,8 @@ tmp = @__DIR__
 fileset = readdir(tmp * "/src/")
 for file in fileset
     if occursin(".md", file) 
-        txt = read(file, String)
-        open(file, "w") do f
+        txt = read(tmp * "/src/" * file, String)
+        open(tmp * "/src/" * file, "w") do f
            write(f, replace(txt, "TAG_GOES_HERE" => replacement))
         end     
     end
