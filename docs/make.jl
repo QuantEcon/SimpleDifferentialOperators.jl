@@ -7,9 +7,10 @@ else
     replacement = "dev"
 end 
 
-fileset = readdir(@__DIR__)
+tmp = @__DIR__
+fileset = readdir(tmp * "src/")
 for file in fileset
-    if occursin(".jmd", file) 
+    if occursin(".md", file) 
         txt = read(file, String)
         open(file, "w") do f
            write(f, replace(txt, "TAG_GOES_HERE" => replacement))
