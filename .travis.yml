@@ -49,5 +49,5 @@ deploy:
   skip_cleanup: true
   overwrite: true
   on:
-    branch: master
+    all_branches: true
     julia: 1.1
