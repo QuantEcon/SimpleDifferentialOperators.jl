@@ -4,7 +4,7 @@ using Documenter, SimpleDifferentialOperators
 replacement = get(ENV, "TRAVIS_TAG", "dev")
 
 tmp = @__DIR__
-fileset = readdir(tmp * "src/")
+fileset = readdir(tmp * "/src/")
 for file in fileset
     if occursin(".md", file) 
         txt = read(file, String)
