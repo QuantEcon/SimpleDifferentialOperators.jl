@@ -46,6 +46,7 @@ deploy:
   file: 
   - $TRAVIS_BUILD_DIR/docs/tex/*.pdf
   - $TRAVIS_BUILD_DIR/docs/notebooks/*.ipynb
+  - $TRAVIS_BUILD_DIR/docs/notebooks/*.html
   skip_cleanup: true
   overwrite: true
   on:
