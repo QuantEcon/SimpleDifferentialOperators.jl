@@ -50,3 +50,4 @@ deploy:
   overwrite: true
   on:
     branch: master
+    julia: 1.1
