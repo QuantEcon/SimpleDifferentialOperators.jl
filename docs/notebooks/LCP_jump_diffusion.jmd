@@ -137,7 +137,9 @@ The key one is the [`PATHSolver.jl`](https://github.com/chkwon/PATHSolver.jl) pa
 This is a commercial solver due to Dirkse, Ferris, and Munson, who have generously made it [available](http://pages.cs.wisc.edu/~ferris/path.html) for non-commercial academic use.
 
 ```julia
-# if you are running locally for the first time, run ] add InstantiateFromURL
+using Pkg 
+pkg"add InstantiateFromURL"
+
 using InstantiateFromURL 
 activate_github_path("QuantEcon/SimpleDifferentialOperators.jl", path = "docs/examples", activate = true)
 
