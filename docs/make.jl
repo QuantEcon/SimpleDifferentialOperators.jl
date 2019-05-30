@@ -1,11 +1,7 @@
 using Documenter, SimpleDifferentialOperators
 
 # figure out what to paste instead of TAG_GOES_HERE 
-if "TRAVIS_TAG" ∈ keys(ENV)
-    replacement = get(ENV, "TRAVIS_TAG")
-else 
-    replacement = "dev"
-end 
+replacement = get(ENV, "TRAVIS_TAG", "dev")
 
 tmp = @__DIR__
 fileset = readdir(tmp * "src/")
