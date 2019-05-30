@@ -72,7 +72,7 @@ For more usage information, see the docs badge above.
 
 If you want to build the docs locally (say, for contributions), you can just cd to the `docs/` directory and run `julia --project=Project.toml make.jl` (make sure `Documenter.jl` is installed). This will create/populate the `docs/build` directory.
 
-Detailed derivations and more applications can be found [here](https://quantecon.github.io/SimpleDifferentialOperators.jl/stable/generated/discretized-differential-operator-derivation.pdf).
+Detailed derivations and more applications can be found [here](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/releases/download/dev/discretized-differential-operator-derivation.pdf).
 
 ## Troubleshooting
 
