@@ -164,7 +164,9 @@ struct Reflecting <: HomogeneousBoundaryCondition end
     ξ::T = 0.0
     direction = :auto # :forward/:backward/:auto
 end
-struct Absorbing <: HomogeneousBoundaryCondition end
+@with_kw struct Absorbing{T} <: HomogeneousBoundaryCondition where T <: Int64
+    loc::T = 0
+end
 @with_kw struct NonhomogeneousAbsorbing{T} <: NonhomogeneousBoundaryCondition where T <: Real 
     S::T  = 0.0
 end

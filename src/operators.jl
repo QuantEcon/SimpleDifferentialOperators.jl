@@ -83,6 +83,10 @@ function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryConditio
         ξ_lb = bc[1].ξ
         L[1,1] += (bc[1].direction == :backward) ? (-1/Δ_1m - ξ_lb) : 1/(-1+ξ_lb*Δ_1m)/Δ_1m
     end
+    # apply absorbing boundary condition on lb further if it's applied withint boundary
+    if (typeof(bc[1]) <: Absorbing && bc[1].loc > 1)
+        L[:,1:(min(M, bc[1].loc))] .= zero(T)
+    end
 
     return L
 end
@@ -114,6 +118,11 @@ function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryConditio
         ξ_ub = bc[2].ξ
         L[end,end] += (bc[2].direction == :forward) ? (1/Δ_Mp - ξ_ub) : 1/(1+ξ_ub*Δ_Mp)/Δ_Mp
     end
+    
+    # apply absorbing boundary condition on lb further if it's applied withint boundary
+    if (typeof(bc[1]) <: Absorbing && bc[1].loc > 1)
+        L[:,1:(min(M, bc[1].loc))] .= zero(T)
+    end
 
     return L
 end
@@ -133,6 +142,7 @@ function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryConditio
     Δ₋⁻¹ = 1 ./ d[1:end-1] # 1 ./ Δ₋
     Δ₊⁻¹ = 1 ./ d[2:end] # 1 ./ Δ₊
     Δ⁻¹ = 1 ./ (d[1:end-1] + d[2:end]) # 1 ./ (Δ₋ + Δ₊)
+    T = eltype(Δ⁻¹)
 
     # construct the operator
     L = 2*Tridiagonal((Δ⁻¹.*Δ₋⁻¹)[2:M], -Δ₋⁻¹ .* Δ₊⁻¹, (Δ⁻¹.*Δ₊⁻¹)[1:M-1])
@@ -158,6 +168,12 @@ function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryConditio
         Ξ_Mp = 2*(-1/(Δ_Mp*Δ_Mm) - (-1+ξ_ub*Δ_Mp)/(Δ_Mp+Δ_Mm)/Δ_Mp)    
         L[end,end] = (bc[2].direction == :forward) ? Ξ_Mp : Ξ_Mm
     end
+
+    # apply absorbing boundary condition on lb further if it's applied withint boundary
+    if (typeof(bc[1]) <: Absorbing && bc[1].loc > 1)
+        L[:,1:(min(M, bc[1].loc))] .= zero(T)
+    end
+    
     return L
 end
 
