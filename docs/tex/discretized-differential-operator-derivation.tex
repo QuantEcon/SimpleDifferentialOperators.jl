@@ -959,6 +959,43 @@ L^Bv= f+ b^B
 
 Similar methods can be applied to $L_{1+}$ and $L_2$ as well; see \ref{subsubsec:absorbing-barrier-conditions-irregular} for details with more general cases with irregular grids.
 
+
+\subsubsection{Absorbing Boundary Conditions: Absorbing from the Interior}
+Suppose that we have an absorbing condition in a node that is not necessarily $x_{\min}$, i.e., $v(x) = S$ holds for all $x \leq x_{M^*}$ for some $M^* \geq 0$ with a reflecting barrier condition on $x_{\max}$. The corresponding boundary condition matrices $B$ and $b$ are then
+
+\begin{align}
+B &=
+\begin{bmatrix}
+B_{M^*}^0 (S) \\ 
+B_{RB}^{M+1}
+\end{bmatrix}
+\\
+&=
+\begin{bmatrix}
+1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+0 & 1 & 0 & \dots & 0 & 0 & 0 \\
+\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+0 & 0 & 0 & \dots & 0 & -1 & 1\\
+\end{bmatrix}_{((M^* + 1) + 1) \times (M+2)} 
+\end{align}
+where $B_{RB}^{M+1}$ is a $1 \times (M+2)$ boundary condition matrix for reflecting barrier condition on $x_{\max}$, i.e., $B_{RB}^{M+1} = \begin{bmatrix}
+0& 0& 0 &\dots & 0 & -1 & 1
+\end{bmatrix}$ and $B_{M^*}^0 (S)$ is an $M^* \times (M+2)$ boundary condition matrix for absorbing barriers on $x \leq x_{M^*}$, which is a zero matrix whose $(i,i)$th element is $1$ for all $i \leq (M^* + 1)$ and
+\begin{align}
+b &= \begin{bmatrix}
+b_{M^*}^0 (S) \\ 
+b_{RB}^{M+1}
+\end{bmatrix}\\
+&= \begin{bmatrix}
+S \\
+S \\
+\vdots \\
+0
+\end{bmatrix}
+\end{align}
+where $b^0_{M^*} (S)$ is an $(M^* + 1)$-length vector whose every element is $S$ and $b_{RB}^{M+1} = 0$.
+
+
 \section{Discretizing Operators with an Irregular Grid}
 \subsection{Discretized Operators}
 
