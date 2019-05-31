@@ -35,19 +35,48 @@ L = [spzeros(M) ρ*I spzeros(M)] - Lₓ
 v̄ =  [L; B] \ [π.(x); b]
 
 # extract the interior (is identical with `v` above)
-v =  v̄[2:end-1]</code></pre><h2><a class="nav-anchor" id="Solving-HJBE-with-absorbing-barrier-conditions-1" href="#Solving-HJBE-with-absorbing-barrier-conditions-1">Solving HJBE with absorbing barrier conditions</a></h2><p>Instead of having the reflecting barrier conditions on both lower bound and upper bound <span>$v&#39;(0) = v&#39;(1) = 0$</span> as above, one can impose an absorbing barrier condition as well. To solve <code>v</code> under the reflecting barrier conditions <span>$v(0) = S$</span> (absorbing barrier on lower bound) for some S and <span>$v&#39;(1) = 0$</span> (reflecting barrier on upper bound), one can construct <code>B</code> and <code>b</code> for the boundary conditions as follows.</p><p>First, consider the case where <span>$S \neq 0$</span>, which gives a nonhomogenous boundary condition:</p><pre><code class="language-julia"># define S
+v =  v̄[2:end-1]</code></pre><h2><a class="nav-anchor" id="Solving-HJBE-with-absorbing-barrier-conditions-1" href="#Solving-HJBE-with-absorbing-barrier-conditions-1">Solving HJBE with absorbing barrier conditions</a></h2><p>Instead of having the reflecting barrier conditions on both lower bound and upper bound <span>$v&#39;(0) = v&#39;(1) = 0$</span> as above, one can impose an absorbing barrier condition as well. Consider solving for <code>v</code> from the following equation by the Hamilton-Jacobi-Bellman equation (HJBE):</p><div>\[\rho v(x) = \pi(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)\]</div><p>but this time under the boundary conditions <span>$v(0) = S$</span> (absorbing barrier on lower bound) for some S and <span>$v&#39;(1) = 0$</span> (reflecting barrier on upper bound). The corresponding boundary condition matrices <code>B</code> and <code>b</code> can be constructed as follows; first, consider the case where <span>$S \neq 0$</span>, which gives a nonhomogenous boundary condition:</p><pre><code class="language-julia">using LinearAlgebra, SimpleDifferentialOperators, SparseArrays
+# setup
+π(x) = x^2
+μ = -0.1 # constant negative drift
+σ = 0.1
+ρ = 0.05
+M = 100 # size of grid (interior points)
+
+x̄ = range(0.0, 1.0, length = (M+2))
+x = interiornodes(x̄) # i.e., x̄[2:end-1]
+
+# differential operators on extended nodes
+Lₓ = μ*L₁₋(x̄) + σ^2 / 2 * L₂(x̄)
+
+# boundary conditions (i.e. B v̄ = b)
+B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]])
+b = [0.0; 0.0]
+
+# form bellman equation on extension
+L = [spzeros(M) ρ*I spzeros(M)] - Lₓ
+
+# define S
 S = 3.0
 
 # boundary conditions (i.e. B v̄ = b)
 B = transpose([[1; 0; zeros(M)] [zeros(M); -1; 1]])
-b = [S; 0.0];</code></pre><p>We can then apply one Gaussian elimination step to remove a non-zero element of the first column in <span>$L$</span>, which is <span>$\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2}$</span>. This can be done by substracting the first row of the stacked system <span>$[L; B]$</span> by the first row of the system <span>$B = b$</span> by <span>$\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2}$</span>. This returns the following identical system:</p><div>\[\begin{bmatrix}
-L[:,2:M+1] \\
-B[:,2]
+b = [S; 0.0];</code></pre><p>Now solve <code>v</code>:</p><pre><code class="language-julia"># stack the systems of bellman and boundary conditions, and solve
+v̄ =  [L; B] \ [π.(x); b]</code></pre><p>Or we can proceed as follows: we can apply one Gaussian elimination step to remove a non-zero element of the first column in <span>$L$</span>, which is <span>$\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2}$</span>. This can be done by substracting the first row of the stacked system <span>$[L; B]$</span> by the first row of the system <span>$B = b$</span> by <span>$\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2}$</span>. This returns the following identical system:</p><div>\[\begin{bmatrix}
+L^* \\
+B 
+\end{bmatrix}
+\begin{bmatrix}
+v(x_0) \\
+v(x_1) \\ 
+\vdots \\
+v(x_{M}) \\
+v(x_{M+1})
 \end{bmatrix}
 =
 \begin{bmatrix}
 π^* \\
-b[:,2]
+b
 \end{bmatrix}\]</div><p>where</p><div>\[π^* =
 \begin{bmatrix}
 π(x_1) - S(\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2})
@@ -55,9 +84,29 @@ b[:,2]
 \vdots
 \\
 π(x_{M})
-\end{bmatrix}\]</div><p>Now solve <code>v</code>:</p><pre><code class="language-julia"># stack the systems of bellman and boundary conditions, and solve
-v̄ =  [L; B] \ [π.(x); b]</code></pre><p>Here is a plot for <code>v</code>:</p><pre><code class="language-julia">plot(x̄, v̄, lw = 4, label = &quot;v&quot;)</code></pre><p><img src="../assets/plot-hjbe-lb-absorbing-ub-reflecting.png" alt="plot-hjbe-lb-absorbing-ub-reflecting"/></p><p>Note that this can be alternatively done by constructing the corresponding differential operators on the interior with <code>Absorbing()</code> boundary condition when <span>$S = 0$</span>:</p><pre><code class="language-julia"># discretize L = ρ - μ D_x - σ^2 / 2 D_xx
-# subject to reflecting barriers at 0 and 1
+\end{bmatrix}\]</div><p>and <span>$L^*$</span> is identical with <span>$L$</span> except the first column, which is a zero column in <span>$L^*$</span>. Note that the second boundary condition on the upper bound is homogeneous, so as in the HJBE with constant drifts example, we can apply the boundary condition by Gaussian elimination and achieve the following system for the solution on interior nodes:</p><div>\[\begin{bmatrix}
+L^{B*}
+\end{bmatrix}
+\begin{bmatrix}
+v(x_1)
+\\ 
+\vdots
+\\
+v(x_{M}) 
+\end{bmatrix}
+=
+π^* \]</div><p>where <span>$L^{B*}$</span> is the operator on interior nodes with the boundary conditions applied. In the code, one can solve the system as follows:</p><pre><code class="language-julia"># discretize L = ρ - μ D_x - σ^2 / 2 D_xx
+# subject to boundary conditions at 0 and 1
+bc = (NonhomogeneousAbsorbing(S), Reflecting())
+Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc)
+L_bc = I * ρ - Lₓ
+
+# construct the RHS with affine boundary
+π_star = π.(x) + Laffine(L, bc)
+
+# solve the value function
+v = L_bc \ π_star</code></pre><p>Here is a plot for <code>v</code>:</p><pre><code class="language-julia">plot(x̄, v̄, lw = 4, label = &quot;v&quot;)</code></pre><p><img src="../assets/plot-hjbe-lb-absorbing-ub-reflecting.png" alt="plot-hjbe-lb-absorbing-ub-reflecting"/></p><p>Note that this can be alternatively done by constructing the corresponding differential operators on the interior with <code>Absorbing()</code> boundary condition when <span>$S = 0$</span>:</p><pre><code class="language-julia"># discretize L = ρ - μ D_x - σ^2 / 2 D_xx
+# subject to boundary conditions at 0 and 1
 bc = (Absorbing(), Reflecting())
 Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc)
 L_bc = I * ρ - Lₓ
