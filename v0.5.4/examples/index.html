@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Examples · SimpleDifferentialOperators.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>SimpleDifferentialOperators.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../">Home</a></li><li><span class="toctext">Gallery</span><ul><li class="current"><a class="toctext" href>Examples</a><ul class="internal"><li><a class="toctext" href="#Solving-HJBE-with-constant-drifts-1">Solving HJBE with constant drifts</a></li><li><a class="toctext" href="#Solving-HJBE-with-absorbing-barrier-conditions-1">Solving HJBE with absorbing barrier conditions</a></li><li><a class="toctext" href="#Solving-HJBE-with-jump-diffusion-1">Solving HJBE with jump diffusion</a></li><li><a class="toctext" href="#Solving-HJBE-with-jump-diffusions-and-Markov-chains-1">Solving HJBE with jump diffusions and Markov chains</a></li><li><a class="toctext" href="#Solving-HJBE-with-state-dependent-drifts-1">Solving HJBE with state-dependent drifts</a></li><li><a class="toctext" href="#Finding-stationary-distribution-from-the-Kolmogorov-forward-equation-(KFE)-1">Finding stationary distribution from the Kolmogorov forward equation (KFE)</a></li></ul></li><li><a class="toctext" href="../notebooks/">Notebooks</a></li></ul></li><li><a class="toctext" href="../api/">API</a></li></ul></nav><article id="docs"><header><nav><ul><li>Gallery</li><li><a href>Examples</a></li></ul><a class="edit-page" href="https://github.com/QuantEcon/SimpleDifferentialOperators.jl/blob/master/docs/src/examples.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Examples</span><a class="fa fa-bars" href="#"></a></div></header><h2><a class="nav-anchor" id="Solving-HJBE-with-constant-drifts-1" href="#Solving-HJBE-with-constant-drifts-1">Solving HJBE with constant drifts</a></h2><hr/><p>Consider solving for <code>v</code> from the following equation by the Hamilton-Jacobi-Bellman equation (HJBE):</p><div>\[\rho v(x) = \pi(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)\]</div><p>for some constant <span>$\rho, \sigma &gt; 0$</span> and <span>$\mu \leq 0$</span>. To solve <code>v</code> under the reflecting barrier conditions <span>$v&#39;(0) = v&#39;(1) = 0$</span> on <code>M</code>-size discretized grids, one can run the following code:</p><pre><code class="language-julia">using LinearAlgebra, SimpleDifferentialOperators
+# setup
+π(x) = x^2
+μ = -0.1 # constant negative drift
+σ = 0.1
+ρ = 0.05
+M = 100 # size of grid (interior points)
+
+x̄ = range(0.0, 1.0, length = (M+2))
+x = interiornodes(x̄) # i.e., x̄[2:end-1]
+
+# discretize L = ρ - μ D_x - σ^2 / 2 D_xx
+# subject to reflecting barriers at 0 and 1
+bc = (Reflecting(), Reflecting())
+Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc)
+L_bc = I * ρ - Lₓ
+
+# solve the value function
+v = L_bc \ π.(x)</code></pre><p>Note that the interior solution <code>v</code> does not the values of <span>$v$</span> at the boundary, i.e., <span>$v(0)$</span> and <span>$v(1)$</span>. To extend the interior solution to the boundary points, one can call <code>extrapolatetoboundary</code> as follows:</p><pre><code class="language-julia">̄v = extrapolatetoboundary(x̄, v, bc);</code></pre><p>Here is a complete plot for <code>v</code>:</p><pre><code class="language-julia">using Plots
+plot(x̄, v̄, lw = 4, label = &quot;v&quot;)</code></pre><p><img src="../assets/plot-hjbe-both-reflecting.png" alt="plot-hjbe-both-reflecting"/></p><p>Note that the code above uses differential operators on the interior nodes with reflecting boundary conditions applied. One can alternatively use operators on extended nodes (extended operators) and stack them with matrices for boundary conditions to compute <code>v</code>:</p><pre><code class="language-julia"># import SparseArrays package (for identity matrix and spzeros)
+using SparseArrays
+
+# differential operators on extended nodes
+Lₓ = μ*L₁₋(x̄) + σ^2 / 2 * L₂(x̄)
+
+# boundary conditions (i.e. B v̄ = b)
+B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]])
+b = [0.0; 0.0]
+
+# form bellman equation on extension
+L = [spzeros(M) ρ*I spzeros(M)] - Lₓ
+
+# stack the systems of bellman and boundary conditions, and solve
+v̄ =  [L; B] \ [π.(x); b]
+
+# extract the interior (is identical with `v` above)
+v =  v̄[2:end-1]</code></pre><h2><a class="nav-anchor" id="Solving-HJBE-with-absorbing-barrier-conditions-1" href="#Solving-HJBE-with-absorbing-barrier-conditions-1">Solving HJBE with absorbing barrier conditions</a></h2><p>Instead of having the reflecting barrier conditions on both lower bound and upper bound <span>$v&#39;(0) = v&#39;(1) = 0$</span> as above, one can impose an absorbing barrier condition as well. Consider solving for <code>v</code> from the following equation by the Hamilton-Jacobi-Bellman equation (HJBE):</p><div>\[\rho v(x) = \pi(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)\]</div><p>but this time under the boundary conditions <span>$v(0) = S$</span> (absorbing barrier on lower bound) for some S and <span>$v&#39;(1) = 0$</span> (reflecting barrier on upper bound). The corresponding boundary condition matrices <code>B</code> and <code>b</code> can be constructed as follows; first, consider the case where <span>$S \neq 0$</span>, which gives a nonhomogenous boundary condition:</p><pre><code class="language-julia">using LinearAlgebra, SimpleDifferentialOperators, SparseArrays
+# setup
+π(x) = x^2
+μ = -0.1 # constant negative drift
+σ = 0.1
+ρ = 0.05
+M = 100 # size of grid (interior points)
+
+x̄ = range(0.0, 1.0, length = (M+2))
+x = interiornodes(x̄) # i.e., x̄[2:end-1]
+
+# differential operators on extended nodes
+Lₓ = μ*L₁₋(x̄) + σ^2 / 2 * L₂(x̄)
+
+# boundary conditions (i.e. B v̄ = b)
+B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]])
+b = [0.0; 0.0]
+
+# form bellman equation on extension
+L = [spzeros(M) ρ*I spzeros(M)] - Lₓ
+
+# define S
+S = 3.0
+
+# boundary conditions (i.e. B v̄ = b)
+B = transpose([[1; 0; zeros(M)] [zeros(M); -1; 1]])
+b = [S; 0.0];</code></pre><p>Now solve <code>v</code>:</p><pre><code class="language-julia"># stack the systems of bellman and boundary conditions, and solve
+v̄ =  [L; B] \ [π.(x); b]</code></pre><p>Or we can proceed as follows: we can apply one Gaussian elimination step to remove a non-zero element of the first column in <span>$L$</span>, which is <span>$\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2}$</span>. This can be done by substracting the first row of the stacked system <span>$[L; B]$</span> by the first row of the system <span>$B = b$</span> by <span>$\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2}$</span>. This returns the following identical system:</p><div>\[\begin{bmatrix}
+L^* \\
+B 
+\end{bmatrix}
+\begin{bmatrix}
+v(x_0) \\
+v(x_1) \\ 
+\vdots \\
+v(x_{M}) \\
+v(x_{M+1})
+\end{bmatrix}
+=
+\begin{bmatrix}
+π^* \\
+b
+\end{bmatrix}\]</div><p>where</p><div>\[π^* =
+\begin{bmatrix}
+π(x_1) - S(\mu \Delta^{-1} - (\sigma^2/2) \Delta^{-2})
+\\ 
+\vdots
+\\
+π(x_{M})
+\end{bmatrix}\]</div><p>and <span>$L^*$</span> is identical with <span>$L$</span> except the first column, which is a zero column in <span>$L^*$</span>. Note that the second boundary condition on the upper bound is homogeneous, so as in the HJBE with constant drifts example, we can apply the boundary condition by Gaussian elimination and achieve the following system for the solution on interior nodes:</p><div>\[\begin{bmatrix}
+L^{B*}
+\end{bmatrix}
+\begin{bmatrix}
+v(x_1)
+\\ 
+\vdots
+\\
+v(x_{M}) 
+\end{bmatrix}
+=
+π^* \]</div><p>where <span>$L^{B*}$</span> is the operator on interior nodes with the boundary conditions applied. In the code, one can solve the system as follows:</p><pre><code class="language-julia"># discretize L = ρ - μ D_x - σ^2 / 2 D_xx
+# subject to boundary conditions at 0 and 1
+bc = (NonhomogeneousAbsorbing(S), Reflecting())
+Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc)
+L_bc = I * ρ - Lₓ
+
+# construct the RHS with affine boundary
+π_star = π.(x) + Laffine(L, bc)
+
+# solve the value function
+v = L_bc \ π_star</code></pre><p>Here is a plot for <code>v</code>:</p><pre><code class="language-julia">plot(x̄, v̄, lw = 4, label = &quot;v&quot;)</code></pre><p><img src="../assets/plot-hjbe-lb-absorbing-ub-reflecting.png" alt="plot-hjbe-lb-absorbing-ub-reflecting"/></p><p>Note that this can be alternatively done by constructing the corresponding differential operators on the interior with <code>Absorbing()</code> boundary condition when <span>$S = 0$</span>:</p><pre><code class="language-julia"># discretize L = ρ - μ D_x - σ^2 / 2 D_xx
+# subject to boundary conditions at 0 and 1
+bc = (Absorbing(), Reflecting())
+Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc)
+L_bc = I * ρ - Lₓ
+
+# solve the value function
+v = L_bc \ π.(x)</code></pre><p>In fact, on the interior, they return identical solutions:</p><pre><code class="language-julia"># define S
+S = 0.0
+
+# boundary conditions (i.e. B v̄ = b)
+B = transpose([[1; 0; zeros(M)] [zeros(M); -1; 1]])
+b = [S; 0.0];
+
+# stack the systems of bellman and boundary conditions, and solve
+v̄ = [L; B] \ [π.(x); b]
+
+# confirm that v returns the identical solution as the one from the stacked system
+using Test
+@test v ≈ v̄[2:end-1]</code></pre><h2><a class="nav-anchor" id="Solving-HJBE-with-jump-diffusion-1" href="#Solving-HJBE-with-jump-diffusion-1">Solving HJBE with jump diffusion</a></h2><p>Consider the jump process added to the HJBE with some intensity <span>$\lambda \geq 0$</span>: </p><div>\[\rho v(x) = \pi(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x) + \lambda \left[ v(x + J(x) ) - v(x) \right]\]</div><p>where the jump process is defined by the jump magnitude defined by <span>$J(x_i)$</span>. In <code>SimpleDifferentialOperators.jl</code>, the jump process can be defined as follows:</p><pre><code class="language-julia"># uniform jump
+jumpf(x_i) = -0.01
+jumpprocess = JumpProcess(x̄, jumpf)</code></pre><p>Note that, the corresponding indices for destinations will be determined by the nearest neighbor as the domain has to be discretized accordingly. Alternatively, if the jump magnitude is uniform across all cohorts, one can forward the uniform jump magnitude as follows:</p><pre><code class="language-julia"># use the fact that the jump magnitude is uniform across all nodes
+jumpprocess = JumpProcess(x̄, -0.01)</code></pre><p>One can define a jump process manually by providing jump magnitudes in indices as well. If a jump process is defined by the indices on a discretized domain, incurring jumps from <span>$v(x_i)$</span> to <span>$v(x_{i-1})$</span> for all <span>$i$</span> in <span>$2 \leq i \leq M$</span>, one can construct a jump process as follows:</p><pre><code class="language-julia"># length of nodes on the interior
+M = length(interiornodes(x̄))
+# vector of jumps; ith element represents the jump from ith node in the interior
+jumps = -ones(M)
+# define jump process 
+jumpprocess =  JumpProcess(x̄, jumps)</code></pre><p>Alternatively, one can define an identical jump process with ease if the jump maginitude in index is uniform across all nodes:</p><pre><code class="language-julia"># use the fact that the jump size is uniform across all nodes
+jumpprocess = JumpProcess(x̄, -1)</code></pre><p>Then one can define the corresponding discretized operator <span>$L_n$</span> and solve value functions as follows:</p><pre><code class="language-julia"># define jump intensity
+λ = 0.6
+
+# construct discretized operators on interior nodes with the bc
+Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc) + λ * Lₙbc(x̄, bc, jumpprocess) 
+L_bc = I * ρ - Lₓ
+
+# solve the value function
+v = L_bc \ π.(x)</code></pre><h2><a class="nav-anchor" id="Solving-HJBE-with-jump-diffusions-and-Markov-chains-1" href="#Solving-HJBE-with-jump-diffusions-and-Markov-chains-1">Solving HJBE with jump diffusions and Markov chains</a></h2><p>Suppose we are asked to solve HJBE with two states (<span>$N=2$</span>) where for each <span>$i$</span>th state with the corresponding differential operator <span>$L_i$</span> under different payoff functions <span>$\pi_i$</span> and drifts <span>$\mu_i$</span>, there is a transition intensity of <span>$q_{ij}$</span> to have state <span>$j$</span> assigned.</p><pre><code class="language-julia"># setup
+# payoff functions
+π_1(x) = x^2
+π_2(x) = (x-0.01)^2
+
+# constant negative drifts
+μ_1 = -0.1
+μ_2 = -0.15
+λ = 0.6
+σ = 0.1
+ρ = 0.05
+M = 100 # size of grid (interior points)
+
+x̄ = range(0.0, 1.0, length = (M+2))
+x = interiornodes(x̄) # i.e., x̄[2:end-1]</code></pre><p>Let the HJBE in the first state have a jump process <span>$J$</span> associated while the one for the second state does not. Then we have the following system of differential equations; note that we have <span>$q_{ii} = -q_{ij}$</span> for <span>$i \neq j$</span>:</p><div>\[\begin{align}
+\rho v_1 (x) &amp;= \pi_1(x) + \mu_1 \partial_x v_1(x) + \frac{\sigma^2}{2} \partial_{xx} v_1(x) + \lambda \left[ v_1(x + J(x) ) - v_1(x) \right] + q_{12} [ v_2(x) - v_1(x) ] \\
+\rho v_2 (x) &amp;= \pi_2(x) + \mu_2 \partial_x v_2(x) + \frac{\sigma^2}{2} \partial_{xx} v_2(x) + q_{21} [ v_1(x) - v_2(x) ]
+\end{align}\]</div><p>First, construct <span>$L_1$</span> and <span>$L_2$</span> ignoring the Markov chain for transition between the two states; assume that both states have reflecting boundary conditions applied.</p><pre><code class="language-julia"># construct the jump process for the operator in state 1
+jumpprocess1 = JumpProcess(x̄, -0.01)
+
+# construct the differential operators for both states
+# subject to reflecting barriers at 0 and 1
+bc = (Reflecting(), Reflecting())
+L_1ₓ = μ_1*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc) + λ * Lₙbc(x̄, bc, jumpprocess1)
+L_2ₓ = μ_2*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc)
+L_1_bc = I * ρ - L_1ₓ
+L_2_bc = I * ρ - L_2ₓ</code></pre><p>Then construct an intensity matrix <span>$Q$</span>, whose <span>$(i,j)$</span>th element represents <span>$q_{ij}$</span>:</p><pre><code class="language-julia"># define intensity matrix for transition
+Q = [-0.01 0.01; 0.02 -0.02]</code></pre><p>Using the discretized operators <code>L_1_bc</code> and <code>L_2_bc</code> on interior nodes <code>x</code> with boundary conditions <code>bc</code> applied, one can construct the joint operator <code>L_bc</code> with the intensity matrix <code>Q</code> as follows:</p><pre><code class="language-julia"># define the corresponding joint operator
+L_bc = jointoperator_bc((L_1_bc, L_2_bc), Q)</code></pre><p>Construct a vector of payoff functions <span>$\pi_1$</span> and <span>$\pi_2$</span> stacked together and solve the system using the joint operator constructed above:</p><pre><code class="language-julia"># solve the system
+v = L_bc \ [π_1.(x); π_2.(x)]</code></pre><p>Note that the first <span>$M$</span> elements represent the discretized solution for <span>$v_1$</span> and the last <span>$M$</span> elements represent the one for <span>$v_2$</span>:</p><pre><code class="language-julia"># extract the solution for each state
+v_1 = v[1:M]
+v_2 = v[(M+1):end]
+
+# plot v_1 and v_2
+plot(x, [v_1, v_2], lw = 4, label = [&quot;v_1&quot;, &quot;v_2&quot;])</code></pre><p><img src="../assets/plot-hjbe-two-states.png" alt="plot-hjbe-two-states"/></p><h2><a class="nav-anchor" id="Solving-HJBE-with-state-dependent-drifts-1" href="#Solving-HJBE-with-state-dependent-drifts-1">Solving HJBE with state-dependent drifts</a></h2><hr/><p>One can also deploy upwind schemes when drift variable is not constant. Consider solving for <code>v</code> from the following Bellman equation:</p><div>\[\rho v(x) = π(x) + \mu(x) \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)\]</div><p>associated with the diffusion process</p><div>\[dx = \mu(x) dt + \sigma dW\]</div><p>for some constant <span>$\rho, \sigma &gt; 0$</span> and <span>$\mu(x) = -x$</span>. Note that <span>$\mu(x)$</span> depends on states. The following code will solve <code>v</code> using upwind schemes, with the reflecting barrier conditions <span>$v&#39;(0) = v&#39;(1) = 0$</span> applied:</p><pre><code class="language-julia"># setup
+π(x) = x^2
+μ(x) = -x # drift depends on state
+σ = 1.0
+ρ = 0.05
+M = 100 # size of grid
+
+x̄ = range(-1., 1., length = M + 2)
+x = interiornodes(x̄) # i.e., x̄[2:end-1]
+
+bc = (Reflecting(), Reflecting())
+
+# Define first order differential operator using upwind scheme
+L₁ = Diagonal(min.(μ.(x), 0.0)) * L₁₋bc(x̄, bc) + Diagonal(max.(μ.(x), 0.0)) * L₁₊bc(x̄, bc)
+
+# Define linear operator using upwind schemes
+Lₓ = L₁ - σ^2 / 2 * L₂bc(x̄, bc)
+L_bc_state_dependent = I * ρ - Lₓ
+
+# solve the value function
+v = L_bc_state_dependent \ π.(x)</code></pre><h2><a class="nav-anchor" id="Finding-stationary-distribution-from-the-Kolmogorov-forward-equation-(KFE)-1" href="#Finding-stationary-distribution-from-the-Kolmogorov-forward-equation-(KFE)-1">Finding stationary distribution from the Kolmogorov forward equation (KFE)</a></h2><hr/><p>The KFE equation is</p><div>\[\partial_t f(x,t) = -\mu \partial_{x} f(x,t) + \frac{\sigma^2}{2} \partial_{xx} f(x,t)\]</div><p>for <span>$x \in (x_{\min}, x_{\max})$</span> with the following corresponding reflecting barrier conditions:</p><div>\[\begin{align}
+-\mu f(x_{\min}, t) +\frac{\sigma^2}{2} \partial_{x} f(x_{\min}, t) &amp;= 0 \\
+-\mu f(x_{\max}, t) +\frac{\sigma^2}{2} \partial_{x} f(x_{\max}, t) &amp;= 0
+\end{align}\]</div><p>i.e.,</p><div>\[\begin{align}
+-\frac{2\mu}{\sigma^2} f(x_{\min}, t) +\partial_{x} f(x_{\min}, t) &amp;= 0 \\
+-\frac{2\mu}{\sigma^2} f(x_{\max}, t) +\partial_{x} f(x_{\max}, t) &amp;= 0
+\end{align}\]</div><p>which gives mixed boundary conditions with <span>$\overline{\xi} = \underline{\xi} = -\frac{2\mu}{\sigma^2}$</span>.</p><p>One can compute the stationary distribution of the state <code>x</code> above from the corresponding KFE by taking <span>$\partial_{t} f(x,t) = 0$</span>, i.e., solving <span>$f$</span> from the <span>$L^* f(x) = 0$</span> where</p><div>\[L^* = - \mu \partial_{x} + \frac{\sigma^2}{2} \partial_{xx}\]</div><p>The following code constructs <span>$L^*$</span>:</p><pre><code class="language-julia"># parameter setup
+μ = -0.1 # constant negative drift
+σ = 0.1
+M = 100 # size of grid (interior points)
+x_min = 0.0
+x_max = 1.0
+x̄ = range(x_min, x_max, length = (M+2))
+
+# ξ values for mixed boundary conditions
+ξ_lb = ξ_ub = -2μ/σ^2
+
+# define the corresponding mixed boundary conditions
+# note that the direction on the lower bound is backward (default is forward)
+# as the drift μ is negative.
+bc = (Mixed(ξ = ξ_lb, direction = :backward), Mixed(ξ = ξ_ub))
+
+# use SimpleDifferentialOperators.jl to construct the operator on the interior
+L_KFE = Array(-μ*L₁₊bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))</code></pre><p>One can find the stationary distribution <span>$f$</span> by solving the following discretized system of equations:</p><div>\[L^* f = 0\]</div><p>such that the sum of <span>$f$</span> is one. This can be found by finding a non-trivial eigenvector <code>f_ss</code> for <code>L_KFE</code> associated with the eigenvalue of zero:</p><pre><code class="language-julia">using Arpack # library for extracting eigenvalues and eigenvectors
+
+# extract eigenvalues and eigenvectors, smallest eigenval in magintute first
+λ, ϕ = eigs(L_KFE, which = :SM); 
+# extract the very first eigenvector (associated with the smallest eigenvalue)
+f_ss = real.(ϕ[:,1]);
+# normalize it
+f_ss = f_ss / sum(f_ss)</code></pre><p>Using <code>L</code> from the state-dependent drift example above, this results in the following stationary distribution:</p><pre><code class="language-julia">plot(x, f_ss, lw = 4, label = &quot;f_ss&quot;)</code></pre><p><img src="../assets/plot-stationary-dist.png" alt="plot-stationary-dist"/></p><p>Note that the operator for the KFE in the original equation is the adjoint of the operator for infinitesimal generator used in the HJBE, <span>$L$</span>, and the correct discretization scheme for <span>$L^*$</span> is, analogously, done by taking the transpose of the discretized operator for HJBE, <span>$L$</span> (See <a href="https://doi.org/10.3982/ECTA13569">Gabaix et al., 2016</a> and <a href="https://ideas.repec.org/p/nbr/nberwo/23732.html">Achdou et al., 2017</a>), which has been constructed as <code>Lₓ</code> is the HJBE example above. In fact, the discretized <span>$L^*$</span> and <span>$L^T$</span> are identical:</p><pre><code class="language-julia"># discretize L = μ D_x + σ^2 / 2 D_xx
+# for infinitesimal generators used in the HJBE
+# subject to reflecting barrier conditions
+bc = (Reflecting(), Reflecting())
+Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc)
+
+@test transpose(Lₓ) == L_KFE</code></pre><footer><hr/><a class="previous" href="../"><span class="direction">Previous</span><span class="title">Home</span></a><a class="next" href="../notebooks/"><span class="direction">Next</span><span class="title">Notebooks</span></a></footer></article></body></html>
