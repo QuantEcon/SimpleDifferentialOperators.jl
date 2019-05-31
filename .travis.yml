@@ -24,11 +24,12 @@ jobs:
       julia: 1.1
       os: linux
       script:
+        - export DOCS_TAG=${TRAVIS_TAG:-dev}
         - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
         - julia --project=docs/ docs/make.jl
       after_success: skip
 
-# Deployment stuff 
+# Deployment stuff
 before_deploy:
 - export TRAVIS_TAG=${TRAVIS_TAG:-dev}
 - git tag $TRAVIS_TAG --force
@@ -42,8 +43,8 @@ before_deploy:
 deploy:
   provider: releases
   api_key: $GIT_KEY
-  file_glob: true 
-  file: 
+  file_glob: true
+  file:
   - $TRAVIS_BUILD_DIR/docs/tex/*.pdf
   - $TRAVIS_BUILD_DIR/docs/notebooks/*.ipynb
   - $TRAVIS_BUILD_DIR/docs/notebooks/*.html
