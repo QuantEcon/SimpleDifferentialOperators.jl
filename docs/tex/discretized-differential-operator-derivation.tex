@@ -996,6 +996,44 @@ L^Bv= f+ b^B
 Similar methods can be applied to $L_{1+}$ and $L_2$ as well; see \ref{subsubsec:absorbing-barrier-conditions-irregular} for details with more general cases with irregular grids.
 
 
+\paragraph{Absorbing Barriers: from Nodes That Are Different from the Boundary} Suppose that we have $v(x) = 0$ absorbing barrier conditions applied for all $x \leq x_{M^*}$ for some $M^* \geq 0$. Then, the corresponding matrix boundary condition matrices $B$ and $b$ are
+
+\begin{align}
+B 
+=
+\begin{bmatrix}
+1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+0 & 1 & 0 & \dots & 0 & 0 & 0 \\
+\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+0 & 0 & 0 & \dots & 0 & -1 & 1\\
+\end{bmatrix}_{((M^* + 1) + 1) \times (M+2)} 
+\end{align}
+and
+\begin{align}
+b = \begin{bmatrix}
+0 \\
+0 \\
+\vdots \\
+0
+\end{bmatrix}_{((M^*+1) + 1) \times 1}
+\end{align}
+which implies that the first $(M^* +1)$ members of $\overline{v}$ must be zero elements. Hence, solving the full system 
+\begin{align}
+\begin{bmatrix}
+L \\
+B
+\end{bmatrix} \overline{v} = 
+\begin{bmatrix}
+\pi \\
+b
+\end{bmatrix}
+\end{align}
+with some extension operator $L$ is identical with solving 
+\begin{align}
+L^{B} v = f 
+\end{align}
+for the interior solution $v$ where $L^{B}$ is a differential operator with reflecting boundary condition applied for the upper bound such that the first $M^*$ columns are all zero columns.
+
 
 
 \section{Discretizing Operators with an Irregular Grid}
@@ -1797,7 +1835,43 @@ L^B v = f + b^B_{L}
 
 where $b^B_{L} = \mu b^B_{L_{1-}}+ (\sigma^2 / 2) b^B_{L_2}$ and $L^B$ is a matrix $\left( \mu R_1  L_{1-} + (\sigma^2/2) R_2 L_2 \right)[:,2:M+1] $.
 
+\paragraph{Absorbing Barriers: from Nodes That Are Different from the Boundary} Suppose that we have $v(x) = 0$ absorbing barrier conditions applied for all $x \leq x_{M^*}$ for some $M^* \geq 0$. Then, the corresponding matrix boundary condition matrices $B$ and $b$ are
 
+\begin{align}
+B 
+=
+\begin{bmatrix}
+1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+0 & 1 & 0 & \dots & 0 & 0 & 0 \\
+\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+0 & 0 & 0 & \dots & 0 & -1 & 1\\
+\end{bmatrix}_{((M^* + 1) + 1) \times (M+2)} 
+\end{align}
+and
+\begin{align}
+b = \begin{bmatrix}
+0 \\
+0 \\
+\vdots \\
+0
+\end{bmatrix}_{((M^*+1) + 1) \times 1}
+\end{align}
+which implies that the first $(M^* +1)$ members of $\overline{v}$ must be zero elements. Hence, solving the full system 
+\begin{align}
+\begin{bmatrix}
+L \\
+B
+\end{bmatrix} \overline{v} = 
+\begin{bmatrix}
+\pi \\
+b
+\end{bmatrix}
+\end{align}
+with some extension operator $L$ is identical with solving 
+\begin{align}
+L^{B} v = f 
+\end{align}
+for the interior solution $v$ where $L^{B}$ is a differential operator with reflecting boundary condition applied for the upper bound such that the first $M^*$ columns are all zero columns.
 
 \subsection{Examples}
 
