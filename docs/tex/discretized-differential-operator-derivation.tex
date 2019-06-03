@@ -1030,10 +1030,20 @@ b
 \end{align}
 with some extension operator $L$ is identical with solving 
 \begin{align}
-L^{B} v = f 
+L^{B} v = f + f^B
 \end{align}
-for the interior solution $v$ where $L^{B}$ is a differential operator with reflecting boundary condition applied for the upper bound such that the first $M^*$ columns are all zero columns.
-
+for the interior solution $v$ where $L^{B}$ is a differential operator with reflecting boundary condition applied for the upper bound such that the first $M^*$ columns are all zero columns except $(m,m)$th element whose value is one for all $1\leq n \leq M^*$ with $f^B$ defined as
+\begin{align}
+f^B = \begin{bmatrix}
+-f_1 \\
+\vdots \\
+-f_{M^*}\\ 
+0 \\
+\vdots \\
+0
+\end{bmatrix}
+\end{align}
+i.e. a column vector whose $m$th element is $1$ for all $1 \leq m \leq M^*$ and is zero for all $ M^* < m \leq  M$.
 
 
 \section{Discretizing Operators with an Irregular Grid}
@@ -1869,10 +1879,20 @@ b
 \end{align}
 with some extension operator $L$ is identical with solving 
 \begin{align}
-L^{B} v = f 
+L^{B} v = f + f^B
 \end{align}
-for the interior solution $v$ where $L^{B}$ is a differential operator with reflecting boundary condition applied for the upper bound such that the first $M^*$ columns are all zero columns.
-
+for the interior solution $v$ where $L^{B}$ is a differential operator with reflecting boundary condition applied for the upper bound such that the first $M^*$ columns are all zero columns except $(m,m)$th element whose value is one for all $1\leq n \leq M^*$ with $f^B$ defined as
+\begin{align}
+f^B = \begin{bmatrix}
+-f_1 \\
+\vdots \\
+-f_{M^*}\\ 
+0 \\
+\vdots \\
+0
+\end{bmatrix}
+\end{align}
+i.e. a column vector whose $m$th element is $1$ for all $1 \leq m \leq M^*$ and is zero for all $ M^* < m \leq  M$.
 \subsection{Examples}
 
 \begin{example}\label{ex:gaussian-elimination-reflecting-barrier}
