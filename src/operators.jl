@@ -86,6 +86,7 @@ function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryConditio
     # apply absorbing boundary condition on lb further if it's applied withint boundary
     if (typeof(bc[1]) <: Absorbing && bc[1].loc > 1)
         L[:,1:(min(M, bc[1].loc))] .= zero(T)
+        L[diagind(L)[1:(min(M, bc[1].loc))]] .= 1.0
     end
 
     return L
@@ -122,6 +123,7 @@ function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryConditio
     # apply absorbing boundary condition on lb further if it's applied withint boundary
     if (typeof(bc[1]) <: Absorbing && bc[1].loc > 1)
         L[:,1:(min(M, bc[1].loc))] .= zero(T)
+        L[diagind(L)[1:(min(M, bc[1].loc))]] .= 1.0
     end
 
     return L
@@ -172,6 +174,7 @@ function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryConditio
     # apply absorbing boundary condition on lb further if it's applied withint boundary
     if (typeof(bc[1]) <: Absorbing && bc[1].loc > 1)
         L[:,1:(min(M, bc[1].loc))] .= zero(T)
+        L[diagind(L)[1:(min(M, bc[1].loc))]] .= 1.0
     end
     
     return L

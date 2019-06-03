@@ -47,10 +47,12 @@
 end
 
 @testset "Accuracy test for absorbing boundary conditions" begin
-    regular_grids = [0:4, -1:6]
+    using LinearAlgebra
+    regular_grids = [1:20, -5:-1]
     irregular_grids = [[-1.0; 0.0; 2.0; 5.0; 9.0], [0.2; 0.3; 0.5; 0.9; 1.6; 2.5]]
     for x̄ in [regular_grids; irregular_grids], 
-        (L_bc_generator, L_generator) in [(L₁₋bc, L₁₋), (L₁₊bc, L₁₊), (L₂bc, L₂)]
+        (L_bc_generator, L_generator) in [(L₁₋bc, L₁₋), (L₁₊bc, L₁₊), (L₂bc, L₂)],
+        loc in 0:0
         # Setup
         # RHS function
         f(x) = x^2
@@ -63,11 +65,14 @@ end
         Δ_Mp = x̄[end] - x̄[end-1]
 
         # boundary condition
-        bc = (Absorbing(), Absorbing())
+        bc = (Absorbing(loc), Absorbing())
 
         # corresponding boundary condition matrix
-        B = transpose([[1; zeros(M+1)] [zeros(M+1); 1]])
-        b = [0; 0]
+        B_absorbing_lb = [I zeros(loc+1, M+2-(loc+1))]
+        B_absorbing_ub = transpose([zeros(M+1); 1])
+        # B_absorbing_ub = transpose([zeros(M); -1; 1])
+        B = [B_absorbing_lb; B_absorbing_ub]
+        b = [zeros(loc+1); 0]
 
         # operator on the interior, with bc applied 
         L_bc = L_bc_generator(x̄, bc)
