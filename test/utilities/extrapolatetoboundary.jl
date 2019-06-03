@@ -115,7 +115,7 @@ end
         L = L_generator(x̄)
 
         # solution for interior v from L_bc
-        v_bc = L_bc \ (f.(x) + L_affine_generator(x̄, bc))
+        v_bc = L_bc \ (f.(x) + L_affine_generator(x̄, f.(x), bc))
         # solution for extended v from L by stacking up boundary condition matrices
         v̄ = [L; B] \ [f.(x); b]
 
