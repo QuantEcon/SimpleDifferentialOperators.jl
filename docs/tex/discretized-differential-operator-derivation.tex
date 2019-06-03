@@ -993,46 +993,36 @@ Hence, limited to the interior, solving $v$ in the system above is identical as 
 L^Bv= f+ b^B
 \end{equation}
 
-Similar methods can be applied to $L_{1+}$ and $L_2$ as well; see \ref{subsubsec:absorbing-barrier-conditions-irregular} for details with more general cases with irregular grids.
+Similar methods can applied to $L_{1+}$ and $L_2$ as well; see \ref{subsubsec:absorbing-barrier-conditions-irregular} for details with more general cases with irregular grids.
 
 
-\paragraph{Absorbing Barriers: from Nodes That Are Different from the Boundary} Suppose that we have $v(x) = 0$ absorbing barrier conditions applied for all $x \leq x_{M^*}$ for some $M^* \geq 0$. Then, the corresponding matrix boundary condition matrices $B$ and $b$ are
+\paragraph{Absorbing Barriers: from Nodes That Are Different from the Boundary} Let $L^B$ be a differential operator on the interior nodes with some boundary conditions applied. Suppose we have extra absorbing barrier conditions $v(x) = 0$  for all $x \leq x_{M^*}$ for some $M^* \geq 0$ on the system. 
 
+Then, the first $M^*$ columns of a new discretized operator $L^{BM^*}$ and first $M^*$ elements of a new right handside $f^B$ have to be transformed so that the resulting system implies
 \begin{align}
-B 
-=
-\begin{bmatrix}
-1 & 0 & 0 & \dots & 0 & 0 & 0 \\
-0 & 1 & 0 & \dots & 0 & 0 & 0 \\
-\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
-0 & 0 & 0 & \dots & 0 & -1 & 1\\
-\end{bmatrix}_{((M^* + 1) + 1) \times (M+2)} 
+L v(x_i) = 
+\begin{cases}
+0 & \text{if $i \leq M^*$} \\
+f(x_i) & \text{if $M^* < i \leq M$}
+\end{cases}
 \end{align}
-and
+so that the new discretized operator  $L^{BM^*}$ with absorbing barrier conditions applied on interior nodes must satisfy
 \begin{align}
-b = \begin{bmatrix}
-0 \\
+L^{BM^*} v = \begin{bmatrix}
 0 \\
 \vdots \\
-0
-\end{bmatrix}_{((M^*+1) + 1) \times 1}
-\end{align}
-which implies that the first $(M^* +1)$ members of $\overline{v}$ must be zero elements. Hence, solving the full system 
-\begin{align}
-\begin{bmatrix}
-L \\
-B
-\end{bmatrix} \overline{v} = 
-\begin{bmatrix}
-\pi \\
-b
+0 \\
+f_{M^* + 1} \\
+f_{M^* + 2} \\
+\vdots \\
+f_{M}
 \end{bmatrix}
 \end{align}
-with some extension operator $L$ is identical with solving 
+where $L^{BM^*}$ is identical with $L^{B}$, except the first $M^*$ columns: the first $M^*$ columns of $L^{BM^*}$ are all zero columns except $(m,m)$th element whose value is one for all $1 \leq m \leq M^*$. This gives an identical system as 
 \begin{align}
-L^{B} v = f + f^B
+L^{BM^*} v = f + f^B
 \end{align}
-for the interior solution $v$ where $L^{B}$ is a differential operator with reflecting boundary condition applied for the upper bound such that the first $M^*$ columns are all zero columns except $(m,m)$th element whose value is one for all $1\leq n \leq M^*$ with $f^B$ defined as
+for the interior solution $v$ where $f^B$ defined as
 \begin{align}
 f^B = \begin{bmatrix}
 -f_1 \\
@@ -1043,7 +1033,8 @@ f^B = \begin{bmatrix}
 0
 \end{bmatrix}
 \end{align}
-i.e. a column vector whose $m$th element is $1$ for all $1 \leq m \leq M^*$ and is zero for all $ M^* < m \leq  M$.
+i.e. a column vector whose $m$th element is $-f(x_{m})$ for all $1 \leq m \leq M^*$ and is zero for all $ M^* < m \leq  M$.
+
 
 
 \section{Discretizing Operators with an Irregular Grid}
@@ -1845,43 +1836,33 @@ L^B v = f + b^B_{L}
 
 where $b^B_{L} = \mu b^B_{L_{1-}}+ (\sigma^2 / 2) b^B_{L_2}$ and $L^B$ is a matrix $\left( \mu R_1  L_{1-} + (\sigma^2/2) R_2 L_2 \right)[:,2:M+1] $.
 
-\paragraph{Absorbing Barriers: from Nodes That Are Different from the Boundary} Suppose that we have $v(x) = 0$ absorbing barrier conditions applied for all $x \leq x_{M^*}$ for some $M^* \geq 0$. Then, the corresponding matrix boundary condition matrices $B$ and $b$ are
+\paragraph{Absorbing Barriers: from Nodes That Are Different from the Boundary} Let $L^B$ be a differential operator on the interior nodes with some boundary conditions applied. Suppose we have extra absorbing barrier conditions $v(x) = 0$  for all $x \leq x_{M^*}$ for some $M^* \geq 0$ on the system. 
 
+Then, the first $M^*$ columns of a new discretized operator $L^{BM^*}$ and first $M^*$ elements of a new right handside $f^B$ have to be transformed so that the resulting system implies
 \begin{align}
-B 
-=
-\begin{bmatrix}
-1 & 0 & 0 & \dots & 0 & 0 & 0 \\
-0 & 1 & 0 & \dots & 0 & 0 & 0 \\
-\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
-0 & 0 & 0 & \dots & 0 & -1 & 1\\
-\end{bmatrix}_{((M^* + 1) + 1) \times (M+2)} 
+L v(x_i) = 
+\begin{cases}
+0 & \text{if $i \leq M^*$} \\
+f(x_i) & \text{if $M^* < i \leq M$}
+\end{cases}
 \end{align}
-and
+so that the new discretized operator  $L^{BM^*}$ with absorbing barrier conditions applied on interior nodes must satisfy
 \begin{align}
-b = \begin{bmatrix}
-0 \\
+L^{BM^*} v = \begin{bmatrix}
 0 \\
 \vdots \\
-0
-\end{bmatrix}_{((M^*+1) + 1) \times 1}
-\end{align}
-which implies that the first $(M^* +1)$ members of $\overline{v}$ must be zero elements. Hence, solving the full system 
-\begin{align}
-\begin{bmatrix}
-L \\
-B
-\end{bmatrix} \overline{v} = 
-\begin{bmatrix}
-\pi \\
-b
+0 \\
+f_{M^* + 1} \\
+f_{M^* + 2} \\
+\vdots \\
+f_{M}
 \end{bmatrix}
 \end{align}
-with some extension operator $L$ is identical with solving 
+where $L^{BM^*}$ is identical with $L^{B}$, except the first $M^*$ columns: the first $M^*$ columns of $L^{BM^*}$ are all zero columns except $(m,m)$th element whose value is one for all $1 \leq m \leq M^*$. This gives an identical system as 
 \begin{align}
-L^{B} v = f + f^B
+L^{BM^*} v = f + f^B
 \end{align}
-for the interior solution $v$ where $L^{B}$ is a differential operator with reflecting boundary condition applied for the upper bound such that the first $M^*$ columns are all zero columns except $(m,m)$th element whose value is one for all $1\leq n \leq M^*$ with $f^B$ defined as
+for the interior solution $v$ where $f^B$ defined as
 \begin{align}
 f^B = \begin{bmatrix}
 -f_1 \\
@@ -1892,7 +1873,7 @@ f^B = \begin{bmatrix}
 0
 \end{bmatrix}
 \end{align}
-i.e. a column vector whose $m$th element is $1$ for all $1 \leq m \leq M^*$ and is zero for all $ M^* < m \leq  M$.
+i.e. a column vector whose $m$th element is $-f(x_{m})$ for all $1 \leq m \leq M^*$ and is zero for all $ M^* < m \leq  M$.
 \subsection{Examples}
 
 \begin{example}\label{ex:gaussian-elimination-reflecting-barrier}
