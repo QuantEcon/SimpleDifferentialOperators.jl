@@ -95,7 +95,7 @@ function L₁₋affine(x̄, b, bc::Tuple{BoundaryCondition, BoundaryCondition})
     Δ_1m = x̄[2] - x̄[1]
     b_affine[1] = (typeof(bc[1]) <: NonhomogeneousAbsorbing) ? bc[1].S / Δ_1m : b_affine[1]
 
-    if (typeof(bc[1]) <: Absorbing && bc[1].loc > 1)
+    if (typeof(bc[1]) <: Absorbing && bc[1].loc > 0)
         b_affine[1:min(M, bc[1].loc)] = -b[1:min(M, bc[1].loc)]
     end
     
@@ -151,7 +151,7 @@ function L₁₊affine(x̄, b, bc::Tuple{BoundaryCondition, BoundaryCondition})
     Δ_Mp = x̄[end] - x̄[end-1]
     b_affine[end] = (typeof(bc[2]) <: NonhomogeneousAbsorbing) ? -bc[2].S / Δ_Mp : b_affine[end]
 
-    if (typeof(bc[1]) <: Absorbing && bc[1].loc > 1)
+    if (typeof(bc[1]) <: Absorbing && bc[1].loc > 0)
         b_affine[1:min(M, bc[1].loc)] = -b[1:min(M, bc[1].loc)]
     end
     
@@ -212,7 +212,7 @@ function L₂affine(x̄, b, bc::Tuple{BoundaryCondition, BoundaryCondition})
     b_affine[1] = (typeof(bc[1]) <: NonhomogeneousAbsorbing) ? -2*bc[1].S/(Δ_1m*(Δ_1m+Δ_1p)) : b_affine[1]
     b_affine[end] = (typeof(bc[2]) <: NonhomogeneousAbsorbing) ? -2*bc[2].S/(Δ_Mp*(Δ_Mm+Δ_Mp)) : b_affine[end]
 
-    if (typeof(bc[1]) <: Absorbing && bc[1].loc > 1)
+    if (typeof(bc[1]) <: Absorbing && bc[1].loc > 0)
         b_affine[1:min(M, bc[1].loc)] = -b[1:min(M, bc[1].loc)]
     end
 
@@ -284,7 +284,7 @@ function Laffine(L, b, bc::Tuple{BoundaryCondition, BoundaryCondition})
     b_affine[1] = (typeof(bc[1]) <: NonhomogeneousAbsorbing) ? -sum(L[:,1])*bc[1].S : b_affine[1]
     b_affine[end] = (typeof(bc[2]) <: NonhomogeneousAbsorbing) ? -sum(L[:,end])*bc[2].S : b_affine[end]
     
-    if (typeof(bc[1]) <: Absorbing && bc[1].loc > 1)
+    if (typeof(bc[1]) <: Absorbing && bc[1].loc > 0)
         b_affine[1:min(M, bc[1].loc)] = -b[1:min(M, bc[1].loc)]
     end
     
