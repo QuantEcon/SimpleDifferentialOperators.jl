@@ -73,10 +73,8 @@ end
         # apply interior boundary conditions (if needed)
         RHS = f.(x)
         if (bc[1].loc > 0)
-            L[1:(min(M, bc[1].loc)),:] .= zero(eltype(L))
-            for i in 1:min(M, bc[1].loc)
-                L[i,i+1] = 1.0
-            end
+            L[1:bc[1].loc,:] = zeros(bc[1].loc,M+2)
+            L[1:bc[1].loc,2:(1+bc[1].loc)] = Diagonal(ones(bc[1].loc))
             RHS[1:bc[1].loc] .= zero(eltype(L))
         end
 
