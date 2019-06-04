@@ -171,19 +171,20 @@ where $L^{B*}$ is the operator on interior nodes with the boundary conditions ap
 # discretize L = ρ - μ D_x - σ^2 / 2 D_xx
 # subject to boundary conditions at 0 and 1
 bc = (NonhomogeneousAbsorbing(S), Reflecting())
-Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc)
-L_bc = I * ρ - Lₓ
+Lₓbc = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc)
+Lbc = I * ρ - Lₓbc
 
 # construct the RHS with affine boundary
-π_star = π.(x) + Laffine(L, bc)
+π_star = π.(x) + Laffine(Lbc, π.(x), bc)
 
 # solve the value function
-v = L_bc \ π_star
+v = Lbc \ π_star
 ```
 
 Here is a plot for `v`:
 
 ```julia
+using Plots
 plot(x̄, v̄, lw = 4, label = "v")
 ```
 
