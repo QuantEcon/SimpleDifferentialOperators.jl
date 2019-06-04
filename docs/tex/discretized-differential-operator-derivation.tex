@@ -957,7 +957,49 @@ Hence, limited to the interior, solving $v$ in the system above is identical as 
 L^Bv= f+ b^B
 \end{equation}
 
-Similar methods can be applied to $L_{1+}$ and $L_2$ as well; see \ref{subsubsec:absorbing-barrier-conditions-irregular} for details with more general cases with irregular grids.
+Similar methods can applied to $L_{1+}$ and $L_2$ as well; see \ref{subsubsec:absorbing-barrier-conditions-irregular} for details with more general cases with irregular grids.
+
+
+\paragraph{Absorbing Barriers: from Nodes That Are Different from the Boundary} Let $L^B$ be a differential operator on the interior nodes with some boundary conditions applied. Suppose we have extra absorbing barrier conditions $v(x) = 0$  for all $x \leq x_{M^*}$ for some $M^* \geq 0$ on the system. 
+
+Then, the first $M^*$ columns of a new discretized operator $L^{BM^*}$ and first $M^*$ elements of a new right handside $f^B$ have to be transformed so that the resulting system implies
+\begin{align}
+L v(x_i) = 
+\begin{cases}
+0 & \text{if $i \leq M^*$} \\
+f(x_i) & \text{if $M^* < i \leq M$}
+\end{cases}
+\end{align}
+so that the new discretized operator  $L^{BM^*}$ with absorbing barrier conditions applied on interior nodes must satisfy
+\begin{align}
+L^{BM^*} v = \begin{bmatrix}
+0 \\
+\vdots \\
+0 \\
+f_{M^* + 1} \\
+f_{M^* + 2} \\
+\vdots \\
+f_{M}
+\end{bmatrix}
+\end{align}
+where $L^{BM^*}$ is identical with $L^{B}$, except the first $M^*$ columns: the first $M^*$ columns of $L^{BM^*}$ are all zero columns except $(m,m)$th element whose value is one for all $1 \leq m \leq M^*$. This gives an identical system as 
+\begin{align}
+L^{BM^*} v = f + f^B
+\end{align}
+for the interior solution $v$ where $f^B$ defined as
+\begin{align}
+f^B = \begin{bmatrix}
+-f_1 \\
+\vdots \\
+-f_{M^*}\\ 
+0 \\
+\vdots \\
+0
+\end{bmatrix}
+\end{align}
+i.e. a column vector whose $m$th element is $-f(x_{m})$ for all $1 \leq m \leq M^*$ and is zero for all $ M^* < m \leq  M$.
+
+
 
 \section{Discretizing Operators with an Irregular Grid}
 \subsection{Discretized Operators}
@@ -1723,8 +1765,44 @@ L^B v = f + b^B_{L}
 
 where $b^B_{L} = \mu b^B_{L_{1-}}+ (\sigma^2 / 2) b^B_{L_2}$ and $L^B$ is a matrix $\left( \mu R_1  L_{1-} + (\sigma^2/2) R_2 L_2 \right)[:,2:M+1] $.
 
+\paragraph{Absorbing Barriers: from Nodes That Are Different from the Boundary} Let $L^B$ be a differential operator on the interior nodes with some boundary conditions applied. Suppose we have extra absorbing barrier conditions $v(x) = 0$  for all $x \leq x_{M^*}$ for some $M^* \geq 0$ on the system. 
 
-
+Then, the first $M^*$ columns of a new discretized operator $L^{BM^*}$ and first $M^*$ elements of a new right handside $f^B$ have to be transformed so that the resulting system implies
+\begin{align}
+L v(x_i) = 
+\begin{cases}
+0 & \text{if $i \leq M^*$} \\
+f(x_i) & \text{if $M^* < i \leq M$}
+\end{cases}
+\end{align}
+so that the new discretized operator  $L^{BM^*}$ with absorbing barrier conditions applied on interior nodes must satisfy
+\begin{align}
+L^{BM^*} v = \begin{bmatrix}
+0 \\
+\vdots \\
+0 \\
+f_{M^* + 1} \\
+f_{M^* + 2} \\
+\vdots \\
+f_{M}
+\end{bmatrix}
+\end{align}
+where $L^{BM^*}$ is identical with $L^{B}$, except the first $M^*$ columns: the first $M^*$ columns of $L^{BM^*}$ are all zero columns except $(m,m)$th element whose value is one for all $1 \leq m \leq M^*$. This gives an identical system as 
+\begin{align}
+L^{BM^*} v = f + f^B
+\end{align}
+for the interior solution $v$ where $f^B$ defined as
+\begin{align}
+f^B = \begin{bmatrix}
+-f_1 \\
+\vdots \\
+-f_{M^*}\\ 
+0 \\
+\vdots \\
+0
+\end{bmatrix}
+\end{align}
+i.e. a column vector whose $m$th element is $-f(x_{m})$ for all $1 \leq m \leq M^*$ and is zero for all $ M^* < m \leq  M$.
 \subsection{Examples}
 
 \begin{example}\label{ex:gaussian-elimination-reflecting-barrier}
