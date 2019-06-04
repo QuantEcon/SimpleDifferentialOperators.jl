@@ -171,19 +171,20 @@ where $L^{B*}$ is the operator on interior nodes with the boundary conditions ap
 # discretize L = ρ - μ D_x - σ^2 / 2 D_xx
 # subject to boundary conditions at 0 and 1
 bc = (NonhomogeneousAbsorbing(S), Reflecting())
-Lₓ = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc)
-L_bc = I * ρ - Lₓ
+Lₓbc = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄ , bc)
+Lbc = I * ρ - Lₓbc
 
 # construct the RHS with affine boundary
-π_star = π.(x) + Laffine(L, bc)
+π_star = π.(x) + Laffine(Lbc, π.(x), bc)
 
 # solve the value function
-v = L_bc \ π_star
+v = Lbc \ π_star
 ```
 
 Here is a plot for `v`:
 
 ```julia
+using Plots
 plot(x̄, v̄, lw = 4, label = "v")
 ```
 
@@ -212,6 +213,122 @@ b = [S; 0.0];
 
 # stack the systems of bellman and boundary conditions, and solve
 v̄ = [L; B] \ [π.(x); b]
+
+# confirm that v returns the identical solution as the one from the stacked system
+using Test
+@test v ≈ v̄[2:end-1]
+```
+
+## Solving HJBE with absorbing barrier conditions on interior nodes
+Like the example above, consider the following HJBE with boundary conditions $v(0) = 0$ (absorbing barrier on lower bound) for some S and $v'(1) = 0$ (reflecting barrier on upper bound):
+
+```math
+\rho v(x) = \pi(x) + \mu \partial_x v(x) + \frac{\sigma^2}{2} \partial_{xx} v(x)
+```
+
+but this time under the boundary conditions $v(x) = 0$ for all $x \leq x_{M^*}$ for some $0 < M^* < M$ so that absorbing barrier conditions are applied on interior nodes as well. First, one can construct the extension operator `L` with boundary condition matrices `B` and `b` with the boundary conditions $v(0) = 0$ and $v'(1) = 0$ as follows:
+
+```julia
+using LinearAlgebra, SimpleDifferentialOperators, SparseArrays
+# setup
+π(x) = x^2
+μ = -0.1 # constant negative drift
+σ = 0.1
+ρ = 0.05
+M = 100 # size of grid (interior points)
+
+x̄ = range(0.0, 1.0, length = (M+2))
+x = interiornodes(x̄) # i.e., x̄[2:end-1]
+
+# differential operators on extended nodes
+Lₓ = μ*L₁₋(x̄) + σ^2 / 2 * L₂(x̄)
+
+# boundary conditions (i.e. B v̄ = b)
+B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]])
+b = [0.0; 0.0]
+
+# form bellman equation on extension
+L = [spzeros(M) ρ*I spzeros(M)] - Lₓ
+
+# define S
+S = 0.0
+
+# boundary conditions (i.e. B v̄ = b)
+B = transpose([[1; 0; zeros(M)] [zeros(M); -1; 1]])
+b = [S; 0.0];
+```
+
+Note that under $v(x) = 0$ for all $x \leq x_{M^*}$, the following equation must be satisfied for all $0 \geq m \leq M^*$:
+
+```math
+v(x_m) = 0 & \forall 0 \geq m \leq M^*
+```
+
+In the matrix form with discretized extended solution $\overline{x}$, this is equivalent to
+
+```math
+\begin{bmatrix}
+0 & 1 & 0 & \dots & 0 & 0
+0 & 0 & 1 & \ddots & 0 & 0
+0 & 0 & 0 & \ddots & 0 & 0
+0 & 0 & 0 & \ddots & 1 & 0
+0 & 0 & 0 & \dots & 0 & 1
+\end{bmatrix}
+\begin{bmatrix}
+\overline{x}_0 \\
+\overline{x}_1 \\
+\overline{x}_2 \\
+\vdots \\
+\overline{x}_{M^*-1}
+\overline{x}_{M^*}
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 \\ 0 \\ \vdots \\ 0 \\ 0
+\end{bmatrix}
+```
+so that `L` should be modified such that its first $m$th rows are all zero rows except $(m,m+1)$th element, which has a value of one for all $1 \leq m \leq M^*$. Likewise, the expression on the right hand side, `π.(x)` has to be modified so that its first $M^*$ elements are all zero.
+
+```julia
+M_loc = 40 # cutoff for absorbing barrier conditions on interior nodes
+L_modified = copy(L)
+RHS = copy(π.(x))
+
+# modify L and RHS
+L_modified[:,1:(1+M_loc)] = zeros(M,1+M_loc)
+L_modified[1:M_loc,2:(1+M_loc)] = Diagonal(ones(M_loc))
+RHS[1:M_loc] = zeros(M_loc)
+
+# stack the systems of bellman and boundary conditions, and solve
+v̄ =  [L_modified; B] \ [RHS; b]
+```
+
+And here's a plot:
+
+```julia
+using Plots
+plot(x̄, v̄, lw = 4, label = "v")
+```
+
+![plot-hjbe-absorbing-interior](assets/plot-hjbe-absorbing-interior.png)
+
+Alternatively, one can use `Lbc` with `Laffine` family as follows:
+
+```julia
+# define boundary conditions
+bc = (Absorbing(M_loc), Reflecting())
+
+# differential operators on interior nodes, boundary conditions applied
+Lₓbc = μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc)
+
+# form bellman equation on extension
+Lbc = ρ*I - Lₓbc
+
+# construct the RHS with affine boundary
+π_star = π.(x) + Laffine(Lbc, π.(x), bc)
+
+# solve the value function
+v = Lbc \ π_star
 
 # confirm that v returns the identical solution as the one from the stacked system
 using Test
