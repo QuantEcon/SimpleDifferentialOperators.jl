@@ -1,6 +1,6 @@
 name = "SimpleDifferentialOperators"
 uuid = "7ccca996-40d6-5c2f-be7f-4eb2934af9c4"
-version = "0.5.0"
+version = "0.6.1"
 
 [deps]
 BandedMatrices = "aae01518-5342-5314-be14-df237901396f"
