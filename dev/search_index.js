@@ -109,7 +109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Notebooks",
     "title": "Notebooks",
     "category": "section",
-    "text": "We prepared a gallery of notebooks to showcase the applicability of the package to different economic problems.Kolmogorov Forward Equations: HTML and Jupyter notebook\nOptimal Stopping Problems: HTML and Jupyter notebookOptimal Stopping Problems with Jump Diffusion: HTML and Jupyter notebook\nComputational Appendix for Optimal Stopping Problems: HTML and Jupyter notebook"
+    "text": "We prepared a gallery of notebooks to showcase the applicability of the package to different economic problems.Kolmogorov Forward Equations: View and download\nOptimal Stopping Problems: View and downloadOptimal Stopping Problems with Jump Diffusion: View and download\nComputational Appendix for Optimal Stopping Problems: View and download"
 },
 
 {
