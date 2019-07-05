@@ -1,0 +1,448 @@
+```julia
+using SimpleDifferentialOperators, Plots, LinearAlgebra
+```
+
+# Gentle Introduction to Upwind Finite Differences
+
+This notebook is a gentle introduction to upwind finite difference methods along with demonstrating the application of the SimpleDifferntialOperators.jl package.
+This notebook follows the notation of the SimpleDifferntialOperators.jl package and serves as a motivating example for the package.
+
+# Motivating Example
+
+As a simple example, let
+
+* $x\in [0.2, 0.4]$ be a state variable on a domain following the stochastic differential equation
+
+$$
+\begin{equation}
+  dx_t = \mu dx_t + \sigma W_t
+\end{equation}
+$$
+
+where the variable $x_t$ is reflected at $x_{\text{min}} = 0.2$ and $x_{\text{max}}=0.4$. Let $\mu = -0.1$ and $\sigma = 0.01$.
+
+* The payoffs for state $x$ are a function $\widetilde{f}(x)$ defined on the domain $[0.2, 0.4]$. For this particular example, let $\widetilde{f}(x) = log(x)$
+
+* $\widetilde{v}(x)$ is the value of the stream of payoffs discounted at rate $r=0.05$
+
+```julia
+
+µ = -0.1
+σ = 0.01
+r = 0.05
+
+function f(x)
+    return log(x)
+end
+
+```
+
+Then, through standard arguments, the stationary Bellman equation along with boundary conditions is
+
+$$
+\begin{align}
+  r\widetilde{v}(x) &= \widetilde{f}(x) + \mu\partial_x\widetilde{v}(x) + \frac{\sigma^2}{2}\partial_{xx}\widetilde{v}(x) \\
+  \partial_x\widetilde{v}(0.2) &= 0 \\
+  \partial_x\widetilde{v}(0.4) &= 0
+\end{align}
+$$
+
+Our goal is to solve for $\widetilde{v}(x)$ on the domain $[0.2,0.4]$. Then, mapping to the PDE notation in the Derivation and Applications for SimpleDifferentialOperators.jl document.
+
+$$
+\begin{align}
+\widetilde{L} &\equiv r - \mu\partial_x - \frac{\sigma^2}{2}\partial_{xx} \\
+\widetilde{B} & \equiv \begin{bmatrix}
+  \partial_x\lvert_{x=0.2} \\
+  \partial_x\lvert_{x=0.4} \\
+  \end{bmatrix} \\
+b &\equiv \begin{bmatrix}
+0 \\
+0 \\
+\end{bmatrix}
+\end{align}
+$$
+
+We will solve for $\widetilde{v}(x)$ on the domain $[0.2, 0.4]$ by discretizing this domain (and in turn the solution $\widetilde{v}(x)$) and then utilizing an upwind finite difference method.
+We will discretize the domain $[0.2, 0.4]$ using a constant grid size of $\Delta = 0.1$, and hence defining $x = [0.2, 0.3, 0.4]^T$ the discretized grid, and defining $\bar{x} = [0.1, 0.2, 0.3, 0.4, 0.5]^T$, the extended discretized grid.
+Likewise, we will solve for $v \equiv \{\widetilde{v}(x_i)\}_{i=1}^3$ by directly solving the extended-grid solution $\bar{v} \equiv \{\widetilde{v}(x_i)\}_{i=0}^4$. Note, we label the grid points as $x_0 = 0.1, x_1 = 0.2, \ldots, x_4 = 0.5$.
+
+```julia
+
+x̄ = range(0.1, 0.5, length = (5)) # extended grid
+x = interiornodes(x̄) # interior grid
+
+```
+
+Next, we will derive the stencils for the discretized $3\times 5$ operators: $L_{1-}$, $L_{1+}$, $I$, and $L_2$.
+
+# First Derivative Operators
+
+To discretize the $\widetilde{L}_1$ operators we can use a backward difference approximation
+
+$$
+\begin{equation}
+\widetilde{L}_1\widetilde{v}(x_i) = \partial_x\widetilde{v}(x_i)\approx \frac{\bar{v}_i-\bar{v}_{i-1}}{\Delta}, \text{ for } i=1,\ldots, 3
+\end{equation}
+$$
+
+And with forward differences
+
+$$
+\begin{equation}
+\widetilde{L}_1\widetilde{v}(x_i) = \partial_x\widetilde{v}(x_i)\approx \frac{\bar{v}_{i+1}-\bar{v}_{i}}{\Delta}, \text{ for } i=1,\ldots, 3
+\end{equation}
+$$
+
+In order to calculate the derivatives for all $i=1,\ldots, 3$ (i.e. in the interior) we can stack these up and apply to the extension $\bar{v}$
+
+$$
+\begin{equation}
+\{\partial_x\widetilde{v}(x_i)\}_{i=1}^3 \approx L_{1-}\cdot \bar{v}
+\end{equation}
+$$
+
+or,
+
+$$
+\begin{equation}
+\{\partial_x\widetilde{v}(x_i)\}_{i=1}^3 \approx L_{1+}\cdot \bar{v}
+\end{equation}
+$$
+
+Where we define $L_{1-}$ from applying the backward difference approximation to the $\bar{v}$ vectors for all $i=1,\ldots, 3$
+
+$$
+\begin{equation}
+L_{1-} = \frac{1}{\Delta}\begin{bmatrix}
+  -1 & 1 & 0 & 0 & 0 \\
+  0 & -1 & 1 & 0 & 0 \\
+  0 & 0 & -1 & 1 & 0
+\end{bmatrix}
+\end{equation}
+$$
+
+And similarly define $L_{1+}$ from applying the forward difference approximation to the $\bar{v}$ vector for all $i=1,\ldots, 3$
+
+$$
+\begin{equation}
+L_{1+} = \frac{1}{\Delta}\begin{bmatrix}
+  0 & -1 & 1 & 0 & 0 \\
+  0 & 0 & -1 & 1 & 0 \\
+  0 & 0 & 0 & -1 & 1
+\end{bmatrix}
+\end{equation}
+$$
+
+  Since $\mu < 0$ throughout the domain, by the upwind scheme, we will utilize $L_{1-}$
+
+```julia
+
+L_1m = 1/0.1*[-1 1 0 0 0; 0 -1 1 0 0; 0 0 -1 1 0]
+
+```
+
+# Second Derivative Operators
+
+To discretize the $\widetilde{L}_2$ second order operator, we can use central differences
+
+$$
+\begin{equation}
+\widetilde{L}_2\widetilde{v}(x_i) \equiv \partial_{xx}\widetilde{v}(x_i)\approx \frac{\bar{v}_{i+1}-2\bar{v}_i\bar{v}_{i-1}}{\Delta^2} \text{ for } i=1,\ldots, 3
+\end{equation}
+$$
+
+In order to calculate the derivatives for all $i=1, \ldots, 3$ (i.e the interior) we can stack these up and apply to the extension $\bar{v}$
+
+$$
+\begin{equation}
+\{\partial_{xx}\widetilde{v}(x_i)\}_{i=1}^3 \approx L_{2}\cdot \bar{v}
+\end{equation}
+$$
+
+Where we define $L_2$ from applying the central difference approximation to the $\bar{v}$ vector for all $i=1,\ldots, 3$,
+
+$$
+\begin{equation}
+L_{2} = \frac{1}{\Delta^2}\begin{bmatrix}
+  1 & -2 & 1 & 0 & 0 \\
+  0 & 1 & -2 & 1 & 0 \\
+  0 & 0 & 1 & -2 & 1
+  \end{bmatrix}
+\end{equation}
+$$
+
+```julia
+
+L_2 = 1/0.1^2*[1 -2 1 0 0 ; 0 1 -2 1 0; 0 0 1 -2 1]
+
+```
+# Identity Operator
+
+  Additionally, we will require the identity operator for compositions. For simplicity, define the identity operator as the 0-th
+  order operator $\widetilde{L}_0\equiv I$ so that $\widetilde{L}_0\widetilde{v}(x) = \widetilde{v}(x)$.
+
+  With this, the operator applied to the $\bar{v}$ vector is trivial
+
+  $$
+  \begin{equation}
+  \widetilde{L}_0\widetilde{v}(x_i) \equiv \widetilde{v}(x_i) = \bar{v}_i, \text{ for } i = 1,\ldots, 3
+  \end{equation}
+  $$
+
+  And stacking these up for all $i=1,\ldots, 3$
+
+  $$
+  \begin{equation}
+    \{\widetilde{v}(x_i)\}_{i=1}^3 \approx L_0\cdot \bar{v}
+  \end{equation}
+  $$
+
+  Where
+
+  $$
+  \begin{equation}
+  L_{0} = \begin{bmatrix}
+    0 & 1 & 0 & 0 & 0 \\
+    0 & 0 & 1 & 0 & 0 \\
+    0 & 0 & 0 & 1 & 0
+\end{bmatrix}
+\end{equation}
+$$
+
+```julia
+
+L_0 = [0 1 0 0 0; 0 0 1 0 0; 0 0 0 1 0]
+
+```
+
+  Now that we have the $L_{1-}$, $L_2$, and $L_0$ operators, we can compose them together to construct the discretized differential operator $L$ for the diffusion process
+
+$$
+\begin{equation}
+  L = rL_0 - \mu L_{1-} - \frac{σ^2}{2}L_2
+\end{equation}
+$$
+
+```julia
+
+L = r*L_0 - µ*L_1m - σ^2/2*L_2
+
+```
+
+# Boundary Conditions
+
+Next, we will derive the stencil for the boundary operator $B$
+
+Given the reflecting boundary conditions, using forward difference and backward differences
+
+$$
+\begin{equation}
+0 = \partial_xv(x_4) \approx \frac{v(x_4)-v(x_3)}{\Delta}
+\end{equation}
+$$
+
+and
+
+$$
+\begin{equation}
+0 = \partial_xv(x_1) \approx \frac{v(0.1)-v(0.0)}{\Delta}
+\end{equation}
+$$
+
+which imply that $v(x_1) = v(x_0)$ and that $v(x_4) = v(x_3)$
+
+Stacking the two conditions above, it follows that
+
+$$
+\begin{equation}
+B = \begin{bmatrix}
+  -1 & 1 & 0 & 0 & 0 \\
+  0 & 0 & 0 & -1 & 1
+\end{bmatrix}
+\end{equation}
+$$
+
+```julia
+
+B = [-1 1 0 0 0; 0 0 0 -1 1]
+
+```
+
+# Solving the System
+
+Now we can stack the operators and the affine terms and obtain the following $5\times 5$ system
+
+$$
+\begin{equation}
+\begin{bmatrix}
+L \\
+B
+\end{bmatrix}\bar{v} =
+\begin{bmatrix}
+f \\
+b
+\end{bmatrix}
+\end{equation}
+$$
+
+Solving the above system as an inverse problem for $\bar{v}$, we can then extract the interior nodes of $\bar{v}$ in order to obtain $v=\{\widetilde{v}(x_i)\}_{i=1}^3$, the
+discretization of $\widetilde{v}$ on $[0.2,0.4]$.
+
+```julia
+
+v̄ = [L; B] \ [f.(x); 0 ; 0]
+
+v = interiornodes(v̄)
+
+```
+
+# Applying Boundary Conditions to Operators, the SimpleDifferentialOperators.jl Implementation
+
+Additionally, we can apply the boundary conditions directly to the operators that compose $L$ and solve for the $v$ vector directly as opposed to solving for $\bar{v}$ directly with the stacked $5\times 5$ system.
+In fact, this is the implementation of the SimpleDifferentialOperators.jl package and we will thus utilize the SimpleDifferentialOperators.jl package throughout this derivation.
+
+We note that subtracting the first row of $L_{1-}$ by the first of $B$ multiplied by $\Delta^{-1}$ gives, with the corresponding row operation matrix R,
+
+$$
+\begin{equation}
+RL_{1-} = \frac{1}{\Delta}
+\begin{bmatrix}
+0 & 0 & 0 & 0 & 0 \\
+0 & -1 & 1 & 0  & 0 \\
+0 & 0 & -1 & 1 & 0
+\end{bmatrix}
+\end{equation}
+$$
+
+Note that there is no non-zero element in the first and last column for nodes on the boundaries. Hence, solving the corresponding extended system,
+
+$$
+\begin{equation}
+\begin{bmatrix}
+L_{1-} \\
+B
+\end{bmatrix}
+\bar{v} =
+\begin{bmatrix}
+f \\
+b
+\end{bmatrix}
+\end{equation}
+$$
+
+is identical as solving the following system
+
+$$
+\begin{align}
+R\begin{bmatrix}
+L_{1-} \\
+B
+\end{bmatrix}
+\bar{v} &=
+R\begin{bmatrix}
+f \\
+b
+\end{bmatrix} \\
+&= \begin{bmatrix}
+f \\
+b
+\end{bmatrix}
+\end{align}
+$$
+
+as $b$ is a zero vector and hence the row operations $R$ do not change anything on the right hand side. Furthermore,
+ limited to the interior, solving $v$ in the system above is identical to solving the following system with an operator $L^B_{1-}$ on interior nodes:
+
+$$
+\begin{equation}
+L^{B}_{1-}v=f
+\end{equation}
+$$
+
+ where we have
+
+$$
+\begin{equation}
+L^B_{1-} = \frac{1}{\Delta}\begin{bmatrix}
+0 & 0 & 0 \\
+-1 & 1 & 0 \\
+0 & -1 & 1
+\end{bmatrix}
+\end{equation}
+$$
+
+instead of solving the full system with boundary conditions.
+
+```julia
+
+bc = (Reflecting(), Reflecting())
+L₁₋(x̄, bc)
+
+```
+
+Likewise, for the $L_2$ operator, we can obtain the differential operator $L_2^B$ on the interior nodes with the boundary condition $B$ applied to $L_2^B$ by the following procedure.
+Add the first row $L_2$ by the first row $B$ multiplied by $\Delta^{-2}$ and subtract the
+last row $L_2$ by the second row of $B$ multiplied by $\Delta^{-2}$, and restricting to the interior columns we obtain
+
+$$
+\begin{equation}
+L^B_2 = \frac{1}{\Delta^2}
+\begin{bmatrix}
+-1 & 1 & 0 \\
+1 & -2 & 1 \\
+0 & -1 & 1
+\end{bmatrix}
+\end{equation}
+$$
+
+```julia
+
+L₂(x̄, bc)
+
+```
+
+Note that for $L_0$ there is no non-zero element in the first and last column for nodes on the boundaries and hence restricting $L_0$ to the interior
+columns we obtain the identity matrix $I$.
+
+Thus, setting
+
+$$
+\begin{equation}
+L^B = rI - \mu L^B_{1-} - \frac{\sigma^2}{2}L^B_2
+\end{equation}
+$$
+
+we note that solving
+
+$$
+\begin{equation}
+\begin{bmatrix}
+L \\
+B
+\end{bmatrix}\bar{v} =
+\begin{bmatrix}
+f \\
+b
+\end{bmatrix}
+\end{equation}
+$$
+
+is identical to solving
+
+$$
+\begin{equation}
+L^Bv = f
+\end{equation}
+$$
+
+
+```julia
+
+L = r*I - μ*L₁₋(x̄, bc) - σ^2 / 2 * L₂(x̄, bc)
+
+v_SDO = L \ f.(x)
+
+```
+
+We observe that this result is identical to the result obtained from solving the stacked system above.
