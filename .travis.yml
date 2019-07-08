@@ -1,7 +1,7 @@
-# Documentation: http://docs.travis-ci.com/user/languages/julia/
+# Julia and Documenter stuff
+sudo: required
 language: julia
-os:
-  - linux
+services: docker
 julia:
   - 1.1
   - nightly
@@ -24,6 +24,32 @@ jobs:
       julia: 1.1
       os: linux
       script:
+        - export DOCS_TAG=${TRAVIS_TAG:-dev}
         - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
         - julia --project=docs/ docs/make.jl
       after_success: skip
+
+# Deployment stuff
+before_deploy:
+- export TRAVIS_TAG=${TRAVIS_TAG:-dev}
+- git tag $TRAVIS_TAG --force
+# tex stuff
+- docker pull dxjoke/tectonic-docker
+- docker run --mount src=$TRAVIS_BUILD_DIR/docs/tex,target=/usr/src/tex,type=bind dxjoke/tectonic-docker
+  /bin/sh -c "./generate_tex.sh"
+# weave stuff (don't know why the docker login is required; ppl have filed git issues about this)
+- docker pull quantecon/julia-weave
+- docker run -it --rm -v "$TRAVIS_BUILD_DIR/docs/notebooks":/usr/myapp -w /usr/myapp quantecon/julia-weave julia generate_notebooks.jl
+deploy:
+  provider: releases
+  api_key: $GIT_KEY
+  file_glob: true
+  file:
+  - $TRAVIS_BUILD_DIR/docs/tex/*.pdf
+  - $TRAVIS_BUILD_DIR/docs/notebooks/*.ipynb
+  - $TRAVIS_BUILD_DIR/docs/notebooks/*.html
+  skip_cleanup: true
+  overwrite: true
+  on:
+    all_branches: true
+    julia: 1.1

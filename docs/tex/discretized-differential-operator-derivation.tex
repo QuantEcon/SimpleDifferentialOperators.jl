@@ -15,6 +15,7 @@
 \newcommand{\band}{\ensuremath{\mathrm{band}}}
 \newcommand{\toep}{\ensuremath{\mathrm{toep}}}
 \newcommand{\tridiag}{\ensuremath{\mathrm{tridiag}}}
+\newcommand{\diag}{\ensuremath{\mathrm{diag}}}
 \newcommand{\D}[1][]{\ensuremath{\partial_{#1}}}
 \newcommand{\indicator}[1]{\ensuremath{\mathds{1}\left\{{#1}\right\}}}
 \newcommand{\condexpec}[3][]{\ensuremath{\mathbb{E}_{#1}\left[{#2} \; \middle| \; {#3} \right]}}
@@ -38,9 +39,9 @@ This package is intended to be a stop-gap while more complete and higher-perform
 
 The focus is on discretizing linear (and, with some careful checks, affine) operators.  In the case of models where the process is non-linear, it is most appropriate for algorithms that iteratively solve linear ODEs/PDEs.  Some notation used throughout the document
 \begin{itemize}
-	\item Let $x \in R$ is the general ``spatial'' state  variable
+	\item Let $x \in R$ be the general ``spatial'' state  variable
 
-	\item Derivatives are denoted by the operator $\D[x]$ and univariate derivatives such as $\D[x]\tilde{v}(x) \equiv \tilde{v}'(x)$.
+	\item Derivatives are denoted by the operator $\D[x]$ and univariate derivatives such as $\D[x]\tilde{v}(x) \equiv \tilde{v}'(x)$
 	\item Use the vertical bar to denote operator evaluation at a particular point.  That is if $\tilde{B} \equiv \partial_x\vert_{x = x_0}$ then $\tilde{B} \tilde{v}(x) = \partial_x \tilde{v}(x_0)$, and if $\tilde{B} \equiv 1 \vert_{x = x_0}$ then $\tilde{B} \tilde{v}(x) = \tilde{v}(x_0)$.  For the notation, the $1$ is simply the identity operator on the function instead of applying a derivative (i.e. $\tilde{B} \equiv 1 \vert_{x = x_0}$ then $\tilde{B} \tilde{v}(\cdot) = 1 \times \tilde{v}(x_0) $)
 	\item Let $W_t$ be the Wiener process with the integral defined by the Ito interpretation
 
@@ -51,7 +52,7 @@ The focus is on discretizing linear (and, with some careful checks, affine) oper
 
 
 \paragraph{ODEs (e.g. Steady State)}
-To understand the class of models that this can support, first look at the sort of ODE that comes out of solving a stationary model.  The general pattern is a linear differential operator $\tilde{L}$, a boundary condition operator $\tilde{B}$, the function of interest $\tilde{v}(x)$, and the affine terms $\tilde{f}(\cdot)$ and $b$. The general problem to solve is to find the $\tilde{v}(x)$ such that.
+To understand the class of models that this can support, first look at the sort of ODE that comes out of solving a stationary model.  The general pattern is a linear differential operator $\tilde{L}$, a boundary condition operator $\tilde{B}$, the function of interest $\tilde{v}(x)$, and the affine terms $\tilde{f}(\cdot)$ and $b$. The general problem to solve is to find the $\tilde{v}(x)$ such that
 \begin{align}
 	0 &= \tilde{L} \tilde{v}(x) - \tilde{f}(x)\label{eq:A-u-DE}\\
 	0 &= \tilde{B} \tilde{v}(x) - b\label{eq:B-u-DE}
@@ -61,9 +62,11 @@ To understand the class of models that this can support, first look at the sort 
 As a simple example, let
 \begin{itemize}
 	\item $x \in [x_{\min},x_{\max}]$ be a state variable on a domain following the SDE
-	$$d x_t = \mu d t + \sigma d W_t$$
+	\begin{equation} 
+		d x_t = \mu d t + \sigma d W_t
+	\end{equation}
 	where the variable $x_t$ is reflected at $x_{\min}$ and $x_{\max}$
-	\item The payoffs for state $x$ are a function $\tilde{f}(x)$ defines on the domain
+	\item The payoffs for state $x$ are a function $\tilde{f}(x)$ defined on the domain 
 	\item $\tilde{v}(x)$ as the value of the the stream of payoffs discounted at rate $r > 0$
 \end{itemize}
 Then, through standard arguments, the stationary Bellman equation along with boundary conditions is
@@ -91,7 +94,7 @@ The motivating example above has no time-variation in any of the parameters, pay
 	\D[t] \tilde{v}(t,x) &= \tilde{L}(t) \tilde{v}(t, x) - \tilde{f}(t, x)\label{eq:A-u-DE-t}\\
 	0 &= \tilde{B}(t) \tilde{v}(t, x) - b(t)\label{eq:B-u-DE-t}
 \end{align}
-Subsect to an initial condition, $\tilde{v}(0,x)$ given or potentially a boundary value, $\tilde{v}(T,x)$ for some $T$.
+Subject to an initial condition, $\tilde{v}(0,x)$ given or potentially a boundary value, $\tilde{v}(T,x)$ for some $T$.
 
 This is a linear PDE where the operators, boundary conditions, and payoffs all may change over time.
 
@@ -105,7 +108,7 @@ Going back to the motivating example, consider an extension where   We will make
 
 \noindent Through standard arguments, the Bellman equation is
 \begin{align}
-	r \tilde{v}(t, x) &= \tilde{f}(t, x) + \mu(t) \D[x] \tilde{v}(x) + \frac{\sigma^2}{2} \D[xx]\tilde{v}(x) + \D[t] \tilde{v}(t, x)\\
+	r \tilde{v}(t, x) &= \tilde{f}(t, x) + \mu(t) \D[x] \tilde{v}(t,x) + \frac{\sigma^2}{2} \D[xx]\tilde{v}(t,x) + \D[t] \tilde{v}(t, x)\\
 	\D[x]\tilde{v}(t, x_{\min}) &= 0\\
 	\D[x] \tilde{v}(t, x_{\max}) &= 0
 \end{align}
@@ -126,10 +129,10 @@ In order to find the steady state, we can solve the stationary equation with $\D
 \paragraph{Boundary Conditions}
 The package supports some key boundary conditions used for stochastic processes and ODE/PDEs.
 
-As will become clear in the discretization, whether the boundary condition is homogenous or not (i.e. $b>0$ or $b = 0$) is important for the numerical methods.  If the boundary conditions are inhomogeneous, then the setup is affine.  To detail a few of the one-dimensional versions of the supported boundary conditions
+As will become clear in the discretization, whether the boundary condition is homogenous or not (i.e. $b = 0$ or $b>0$) is important for the numerical methods.  If the boundary conditions are inhomogeneous, then the setup is affine.  To detail a few of the one-dimensional versions of the supported boundary conditions
 
 \begin{itemize}
-	\item Reflecting Barriers (i.e. a homogeneous Neumann Boundary Conditions)
+	\item Reflecting Barriers (i.e. homogeneous Neumann Boundary Conditions)
 	\begin{align}
 		\D[x]\tilde{v}({x_{\min}} ) &= 0\label{eq:reflecting-BC1}\\
 		\D[x]\tilde{v}({x_{\max}}) &= 0\label{eq:reflecting-BC2}
@@ -142,7 +145,7 @@ As will become clear in the discretization, whether the boundary condition is ho
 		\end{bmatrix}\\
 		b &\equiv \begin{bmatrix} 0\\ 0 \end{bmatrix}
 	\end{align}
-	\item Mixed boundary conditions (i.e a homogeneous Robin Boundary Conditions):
+	\item Mixed boundary conditions (i.e homogeneous Robin Boundary Conditions):
 	\begin{align}
 	\underline{\xi} \tilde{v}({x_{\min}}) + \D[x]\tilde{v}({x_{\min}} ) &= 0\label{eq:mixed-BC1}\\
 	\overline{\xi} \tilde{v}({x_{\max}}) + \D[x]\tilde{v}({x_{\max}}) &= 0\label{eq:mixed-BC2}
@@ -155,7 +158,7 @@ As will become clear in the discretization, whether the boundary condition is ho
 		\end{bmatrix}\\
 		b &\equiv \begin{bmatrix} 0\\ 0 \end{bmatrix}
 	\end{align}
-	\item Absorbing Barriers (i.e. a homogenous or inhomogeneous Dirichlet Boundary Conditions)
+	\item Absorbing Barriers (i.e. homogenous or inhomogeneous Dirichlet Boundary Conditions)
 	\begin{align}
 		\tilde{v}({x_{\min}} ) &= b_1\label{eq:absorbing-BC1}\\
 		\tilde{v}({x_{\max}}) &= b_2\label{eq:absorbing-BC2}
@@ -166,7 +169,7 @@ As will become clear in the discretization, whether the boundary condition is ho
 		1 \vert_{x = x_{\min}}\\
 		1 \vert_{x = x_{\max}}
 		\end{bmatrix}\\
-		b &\equiv \begin{bmatrix} b_0\\ b_2 \end{bmatrix}
+		b &\equiv \begin{bmatrix} b_1\\ b_2 \end{bmatrix}
 	\end{align}
 \end{itemize}
 Of course, many models would have different boundary conditions on different sides of the domain, which entails mixing and matching rows in the $B$ and $b$ matrices.
@@ -199,6 +202,7 @@ This section defines the grids and other notation for the discretization.
 		\item $\mathbf{I}_N$ is the $N\times N$ identity matrix.  Always drop the subscript when the dimensions are unambiguous, as it would be the same in the code
 		\item $\mathbf{0}_N$ is the column vector of $N$ $0$s, and $\mathbf{0}_N^{\top}$ a row vector
 		\item $\mathbf{0}_{N\times M}$ is the $N\times M$ matrix of $0$s
+		\item See \cref{sec:special-matrices} for the definitions of $\toep(\cdot), \band^{n,m}_{l,u}(\cdot)$ and $\tridiag(\cdot)$ matrices
 	\end{itemize}
 \end{itemize}
 
@@ -223,17 +227,17 @@ In this section we derive the stencils for operators of various orders.
 \paragraph{First Derivative Operators}
 To discretize the $\tilde{L}_1$ operator, we can use a backward difference approximation
  \begin{align}
-\tilde{L}_1 \tilde{v}(x_i) &\equiv \D[x] \tilde{v}(x_i) \approx \frac{\bar{v}_i - \bar{v}_{i-1}}{\Delta},\, \text{ for } i = 1,\ldots M\label{eq:first-order-bd}\\
+\tilde{L}_1 \tilde{v}(x_i) &\equiv \D[x] \tilde{v}(x_i) \approx \frac{\bar{v}_i - \bar{v}_{i-1}}{\Delta},\, \text{ for } i = 1,\ldots, M\label{eq:first-order-bd}\\
 \intertext{And with forward differences}
-\tilde{L}_1 \tilde{v}(x_i) &\equiv \D[x] \tilde{v}(x_i) \approx \frac{\bar{v}_{i+1} - \bar{v}_i}{\Delta},\, \text{ for } i = 1,\ldots M\label{eq:first-order-fd}
+\tilde{L}_1 \tilde{v}(x_i) &\equiv \D[x] \tilde{v}(x_i) \approx \frac{\bar{v}_{i+1} - \bar{v}_i}{\Delta},\, \text{ for } i = 1,\ldots, M\label{eq:first-order-fd}
 \end{align}
 
-In order to calculate the derivatives for all $i = 1, \ldots M$ (i.e. in the interior) we can stack these up and apply to the extension $\bar{v}$.
+In order to calculate the derivatives for all $i = 1, \ldots, M$ (i.e. in the interior) we can stack these up and apply to the extension $\bar{v}$.
 \begin{align}
 \set{\D[x]\tilde{v}(x_i)}_{i=1}^M &\approx L_{1-} \cdot \bar{v}
 \intertext{or,}
 \set{\D[x]\tilde{v}(x_i)}_{i=1}^M &\approx L_{1+} \cdot \bar{v}
-\intertext{Where we define $L_{1-}$ from applying \cref{eq:first-order-bd} to the $\bar{v}$ vector for all $i = 1,\ldots M$ }
+\intertext{Where we define $L_{1-}$ from applying \cref{eq:first-order-bd} to the $\bar{v}$ vector for all $i = 1,\ldots, M$ }
 L_{1-} &\equiv \frac{1}{\Delta}\begin{bmatrix}
 -1 &1 &0&\dots&0&0&0&0\\
 0&-1&1&\ddots&0&0&0&0\\
@@ -241,7 +245,8 @@ L_{1-} &\equiv \frac{1}{\Delta}\begin{bmatrix}
 0&0&0&\dots&-1&1&0&0\\
 0&0&0&\cdots&0&-1&1&0
 \end{bmatrix}_{M\times (M+2)}\label{eq:L-1-m-extended-regular} \\
-\intertext{And similarly define $L_{1+}$ from applying \cref{eq:first-order-fd} to the $\bar{v}$ vector for all $i = 1,\ldots M$ }
+&= \frac{1}{\Delta}\band^{M,M+2}_{0,1}(-\mathbf{1}_M, \mathbf{1}_M)
+\intertext{And similarly define $L_{1+}$ from applying \cref{eq:first-order-fd} to the $\bar{v}$ vector for all $i = 1,\ldots, M$ }
 L_{1+} &\equiv \frac{1}{\Delta}\begin{bmatrix}
 0&-1&1&0&\dots&0&0&0\\
 0&0&-1&1&\dots&0&0&0\\
@@ -249,37 +254,59 @@ L_{1+} &\equiv \frac{1}{\Delta}\begin{bmatrix}
 0&0&0&0&\dots&-1&1&0\\
 0&0&0&0&\cdots&0&-1&1
 \end{bmatrix}_{M\times( M+2)}\label{eq:L-1-plus-extended-regular} \\
+&= \frac{1}{\Delta}\band^{M,M+2}_{0,2}(\mathbf{0}_M, -\mathbf{1}_M, \mathbf{1}_M)
 \end{align}
-It is important to note that while these operators map the $\bar{v}$ (i.e. including the boundary points), the operator only maps to points on the interior i.e. $i = 1, \ldots M$.
+It is important to note that while these operators map the $\bar{v}$ (i.e. including the boundary points), the operator only maps to points on the interior i.e. $i = 1, \ldots, M$.
 
 
 
 \paragraph{Second Derivative Operators}
 To discretize the $\tilde{L}_2$ second order operator, we can use central differences
 \begin{equation}
-\tilde{L}_2 \tilde{v}(x_i) \equiv \D[x x ] \tilde{v}(x_i) \approx \dfrac{\bar{v}_{i+1} - 2 \bar{v}_{i} + \bar{v}_{i-1} }{\Delta^2},\, \text{ for } i = 1,\ldots M\label{eq:second-order}
+\tilde{L}_2 \tilde{v}(x_i) \equiv \D[x x ] \tilde{v}(x_i) \approx \dfrac{\bar{v}_{i+1} - 2 \bar{v}_{i} + \bar{v}_{i-1} }{\Delta^2},\, \text{ for } i = 1,\ldots, M\label{eq:second-order}
  \end{equation}
 
-In order to calculate the derivatives for all $i = 1, \ldots M$ (i.e. in the interior) we can stack these up and apply to the extension $\bar{v}$.
+In order to calculate the derivatives for all $i = 1, \ldots, M$ (i.e. in the interior) we can stack these up and apply to the extension $\bar{v}$
 \begin{align}
 	\set{\D[x x ]\tilde{v}(x_i)}_{i=1}^M &\approx L_{2} \cdot \bar{v}
-	\intertext{Where we define $L_2$ from applying \cref{eq:second-order} to the $\bar{v}$ vector for all $i = 1,\ldots M$ }
+	\intertext{Where we define $L_2$ from applying \cref{eq:second-order} to the $\bar{v}$ vector for all $i = 1,\ldots, M$ }
 	L_2 &\equiv \frac{1}{\Delta^2}\begin{bmatrix}
 	1&-2  &1&0&\dots&0&0&0&0\\
 	0&1&-2&1&\dots&0&0&0&0\\
 	\vdots&\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots&\vdots\\
 	0&0&0&0&\dots&1&-2&1&0\\
 	0&0&0&0&\cdots&0&1&-2 &1
-	\end{bmatrix}_{M\times (M+2)}\label{eq:L-2-extended-regular}
+	\end{bmatrix}_{M\times (M+2)}\label{eq:L-2-extended-regular}\\
+	&= \frac{1}{\Delta^2}\band_{0,2}^{M,M+2}(\mathbf{1}_M, -2\times\mathbf{1}_M, \mathbf{1}_M)
 \end{align}
+
+
+\paragraph{Jump process operator}
+Define the jump process operator as follows:
+\begin{align}
+\tilde{L}_n \tilde{v} (x_i) \equiv  \tilde{v}(x_{J(i)}  ) - \tilde{v}(x_i) \label{eq:jump-process}
+\end{align}
+for $i= 1,..., M$, where $J$ is a function that takes an index in $i = 1,...,M$ to its corresponding jump destination. Hence, stacking it up for all $i = 1,...,M$, the corresponding discretized operator is
+\begin{align}
+L_n &\equiv \begin{psmallmatrix}
+\indicator{J(1) = 0} & \indicator{J(1) = 1} -1 & \indicator{J(1) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M} & \indicator{J(1) = M+1} \\
+\indicator{J(2) = 0} & \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(2) = M-1}  & \indicator{J(2) = M} & \indicator{J(2) = M+1} \\
+\vdots & \vdots & \vdots & \ddots & \vdots & \vdots &\vdots \\
+\indicator{J(M-1) = 0} & \indicator{J(M-1) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M} &\indicator{J(M-1) = M+1} \\
+\indicator{J(M) = 0} & \indicator{J(M) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1&\indicator{J(M) = M+1} 
+\end{psmallmatrix} \label{eq:jump-process-discretized-operator}
+ \\
+&= \{ \indicator{ J(i) = j-1 } \}_{M \times (M+2)} - \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}
+\end{align}
+where $ \{ \indicator{ J(i) = j-1 } \}_{M \times (M+2)} $ is an $M$ by $(M+2)$ matrix whose $(i,j)$th element is $\indicator{ J(i) = j-1 } $.
 
 \paragraph{Identity Operators}
 For simplicity in composition, also consider the discretization of the identity operator (i.e. not applying any derivatives or stencils).  For simplicity, define the identity operator as the $0$-th order operator $\tilde{L}_0 \equiv I$ so that $\tilde{L}_0 \tilde{v}(x) = \tilde{v}(x)$.
 
 With this, the operator applied to the $\bar{v}$ vector is trivial
 \begin{align}
-\tilde{L}_0 \tilde{v}(x_i) &\equiv \tilde{v}(x_i) = \bar{v}_i,\, \text{ for } i = 1,\ldots M\label{eq:zero-order}
-\intertext{And stacking it up for all $i = 1, \ldots M$,}
+\tilde{L}_0 \tilde{v}(x_i) &\equiv \tilde{v}(x_i) = \bar{v}_i,\, \text{ for } i = 1,\ldots, M\label{eq:zero-order}
+\intertext{And stacking it up for all $i = 1, \ldots, M$,}
 \set{\tilde{v}(x_i)}_{i=1}^M &\approx L_0 \cdot \bar{v}
 \intertext{Where}
 L_0 &\equiv \begin{bmatrix}
@@ -288,32 +315,166 @@ L_0 &\equiv \begin{bmatrix}
 \vdots&\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots&\vdots\\
 0 & 0 & 0 & 0 &\dots & 0 & 1 & 0 &0\\
 0 & 0 & 0 & 0 &\dots & 0 & 0 & 1 &0
-\end{bmatrix}_{M\times (M+2)}
+\end{bmatrix}_{M\times (M+2)}\\
+&= \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}\\
+&= \band_{0,1}^{M,M+2}(\mathbf{0}_M, \mathbf{1}_M)
 \end{align}
-This operator trivially maps from the $\bar{v}$ to extract the interior $v$ and ignoring the boundaries $\bar{v}_0$ and $\bar{v}_{P+1}$.  Its primary role will be when composing operators rather than being used directly.
+This operator trivially maps from the $\bar{v}$ to extract the interior $v$ and ignoring the boundaries $\bar{v}_0$ and $\bar{v}_{M+1}$.  Its primary role will be when composing operators rather than being used directly.
 
-\subsection{Representation with Special Matrices}
-See \cref{sec:specialmatrices} for more details on the notation of special matrices (e.g. Toeplitz, Tridiagonal, and Banded)
-
-These can be defined in more compact forms as banded matrices
+\subsection{Boundary Conditions}
+While boundary conditions can be mixed and matched, for notational simplicity here, we will apply the same boundaries at each corner.  In general, boundaries are of the form
 \begin{align}
-L_{1-} &\equiv  \frac{1}{\Delta}\begin{bmatrix}
-\text{tridiag}(\mathbf{0}_{M-1}, -\mathbf{1}_M, \mathbf{1}_{M} ) & \mathbf{0}_M
-\end{bmatrix} \\
-L_{1+} &\equiv \frac{1}{\Delta}\begin{bmatrix}
-\mathbf{0}_M & \text{tridiag}(\mathbf{0}_{M-1}, -\mathbf{1}_M, \mathbf{1}_{M} )
-\end{bmatrix} \\
-L_2 &\equiv \frac{1}{\Delta^2} \text{tridiag}^+(\mathbf{1}_{M}, -2\mathbf{1}_M, \mathbf{1}_{M} )\\
-L_0 &\equiv \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}
+\tilde{B} \tilde{v}(x) &= b\label{eq:BC-system}
+\end{align}
+For some operator $\tilde{B}$ (typically involving evaluation at the boundaries) and $b\in R^2$.  In the case of $b = \textbf{0}_2$, the boundary conditions are called homogenous.
+
+\subsubsection{Mixed boundary conditions}
+Recall mixed boundary conditions from \cref{eq:mixed-BC1,eq:mixed-BC2}. Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$.  In operator form, the boundaries are
+
+\begin{align}
+\tilde{B} &\equiv \begin{bmatrix}
+\partial_x\vert_{x = x_{\min}} + \underline{\xi}\,1 \vert_{x = x_{\min}}\\
+\partial_x\vert_{x = x_{\max}} + \bar{\xi}\,1 \vert_{x = x_{\max}}
+\end{bmatrix}\label{eq:mixed}\\
+b &\equiv \begin{bmatrix} 0\\ 0 \end{bmatrix}\in \R^2
 \end{align}
 
-where $\text{tridiag}(x,y,z)$ is a matrix whose lower, main, upper diagonal vectors are $x$, $y$, and $z$, respectively, and $\text{tridiag}^+(x,y,z)$ is a matrix whose main, upper, and second upper diagonal vectors $x$, $y$, and $z$, respectively.
+Using forward difference and backward differences respectively to discretize the first derivatives at the lower and upper bound of \cref{eq:mixed} gives the system \cref{eq:BC-system} as
+\begin{align}
+\frac{\overline{v}_1 - \overline{v}_0}{\Delta} + \underline{\xi} \overline{v}_0 &= 0\label{eq:regular-mixed-1} \\
+\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta} + \overline{\xi} \overline{v}_{M+1} &= 0\label{eq:regular-mixed-2}
+\end{align}
 
-\subsection{Applying Boundary Conditions}
-Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids.
-Suppose that we want to solve a system $\tilde{L} \tilde{v}({x}) = \tilde{f}(x) $ for $\tilde{v}(x)$ where $L$ is a linear combination of discretized differential operators for some $f$ that represents the values of a function $\tilde{f}(\cdot)$ on discretized interior $x$. To solve the system under boundary conditions on $v$, one can construct and solve the following extended system:
+Define
+\begin{align}
+B &\equiv \begin{bmatrix}
+-\dfrac{1}{\Delta} + \underline{\xi} & \dfrac{1}{\Delta} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta} & \dfrac{1}{\Delta} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)}\label{eq:mixed-barrier-matrix-original-regular}\\
+b &= \begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\end{align}
 
-\begin{equation}\label{eq:reflecting-barrier-extended-system}
+Then, multiplying by $\Delta$, the system has the same $b$ and \cref{eq:mixed-barrier-matrix-original-regular}  equivalent to
+\begin{equation}
+B = \begin{bmatrix}
+-1 +  \underline{\xi} \Delta & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi} \Delta\\
+\end{bmatrix}_{2 \times (M+2)}\label{eq:B-mixed}
+\end{equation}
+
+Depending on the direction of the drift, the locations of $\overline{\xi}$ and $\underline{\xi}$ have to be different. When the drift is negative on the lower bound and is positive on the upper bound, we have
+
+\begin{align}
+\frac{\overline{v}_1 - \overline{v}_0}{\Delta} + \underline{\xi} \overline{v}_1 &= 0 \label{eq:mixed-BC1-negative}  \\
+\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta} + \overline{\xi} \overline{v}_{M} &= 0 \label{eq:mixed-BC2-positive}
+\end{align}
+
+Hence, letting $\circ_1, \circ_M \in \{-, +\}$ denote the drift directions on the lower and upper boundaries respectively, there are four corresponding boundary condition matrices $B^{\circ_1 \circ_M}$ as follows:
+ 
+\begin{align}
+B^{--} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta} & \dfrac{1}{\Delta}  + \underline{\xi} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta} & \dfrac{1}{\Delta} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{+-} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta} + \underline{\xi} & \dfrac{1}{\Delta} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta} & \dfrac{1}{\Delta} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{-+} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta}  & \dfrac{1}{\Delta} + \underline{\xi} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta}+ \overline{\xi} & \dfrac{1}{\Delta}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{++} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta} + \underline{\xi} & \dfrac{1}{\Delta} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta}+ \overline{\xi} & \dfrac{1}{\Delta} \\
+\end{bmatrix}_{2 \times (M+2)}
+\end{align}
+
+Multiplying all rows by $\Delta$, the resulting system has the same $b$ and the following $B^{--}, B^{+-}, B^{-+}, B^{++}$:
+ 
+\begin{align}
+B^{--} &\equiv 
+\begin{bmatrix}
+-1 & 1  + \underline{\xi}\Delta & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi}\Delta\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{+-} &\equiv 
+\begin{bmatrix}
+-1 + \underline{\xi}\Delta & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi}\Delta\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{-+} &\equiv 
+\begin{bmatrix}
+-1  & 1 + \underline{\xi}\Delta & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1+ \overline{\xi}\Delta & 1\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{++} &\equiv 
+\begin{bmatrix}
+-1 + \underline{\xi}\Delta & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1+ \overline{\xi}\Delta & 1 \\
+\end{bmatrix}_{2 \times (M+2)}
+\end{align}
+
+
+
+\subsubsection{Reflecting Barriers}
+Since a reflecting barrier (i.e. a Neumann boundary condition) is a special case of the mixed boundary condition when  $\underline{\xi} = \bar{\xi} = 0$, the $B$ matrix for a reflecting barrier follows \cref{eq:B-mixed}
+\begin{equation}
+	B = \begin{bmatrix}
+	-1& 1 & 0 & \dots & 0 & 0 & 0 \\
+	0 & 0 & 0 & \dots & 0 & -1 & 1\\
+	\end{bmatrix}_{2 \times (M+2)}
+	\end{equation}
+with the same 
+\begin{equation}
+	b = \begin{bmatrix}	
+			0 \\
+		 	0
+		 	\end{bmatrix}
+\end{equation}
+
+Note that this does not depend on the direction of the drift as $B^{--} = B^{+-} = B^{-+} = B^{++}$ when $\overline{\xi} = \underline{\xi} = 0$.
+
+	\subsubsection{Absorbing Barriers}
+
+With the homogenous or inhomogeneous Dirichlet Boundary Conditions in \cref{eq:absorbing-BC1,eq:absorbing-BC2}, in operator form,
+\begin{align}
+	\tilde{B} &\equiv \begin{bmatrix}
+	1 \vert_{x = x_{\min}}\\
+	1 \vert_{x = x_{\max}}
+	\end{bmatrix}
+\end{align}
+
+Implementing this for the system in \cref{eq:BC-system} gives,
+
+\begin{align}
+B &= \begin{bmatrix}
+1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & 0 & 1\\
+\end{bmatrix}_{2 \times (M+2)}\label{eq:absorbing-barrier-matrix-regular}\\
+b &= \begin{bmatrix}
+b_1 \\
+b_2
+\end{bmatrix}
+\end{align}
+
+\subsection{Solving ODEs and PDEs}
+Going back to the motivation, a typical scenario might be to solve the stationary problem \cref{eq:A-u-DE,eq:B-u-DE}
+\begin{align}
+	\tilde{L} \tilde{v}(x) &= \tilde{f}(x)\\
+	\tilde{B} \tilde{v}(x) &= b
+\end{align}
+
+Boundary conditions can be applied manually by using operators on extended grids, $\overline{x}$, to find solutions on extended grids.  First, apply $\tilde{f}(x)$ to the interior, $x$ to get  $f$ then solve the system of $M+2$ equations
+
+\begin{align}
 \begin{bmatrix}
 L \\
 B
@@ -322,51 +483,42 @@ B
 \begin{bmatrix}
 f \\
 b
-\end{bmatrix}
-\end{equation}
+\end{bmatrix}\label{eq:reflecting-barrier-extended-system}
+\end{align}
 
-with $M_E$ by $(M+2)$ matrix $B$ and $M_E$-length vector $b$ that represent the current boundary conditions, where $M_E$ is the number of boundary conditions to be applied. The solution of \eqref{eq:reflecting-barrier-extended-system}, $\tilde{v}(\overline{x})$ can be decomposed into
+To get the $v\in \R^M$ in the interior, we can just take the interior of the resulting $\bar{v}$
 \begin{align}
-\overline{v} = \begin{bmatrix}
-\tilde{v}(x_0) \\
-v \\
-\tilde{v}(x_{M+1})
-\end{bmatrix}
+	\overline{v} = \begin{bmatrix}
+	\tilde{v}(x_0) \\
+	v \\
+	\tilde{v}(x_{M+1})
+	\end{bmatrix}
 \end{align}
 which also gives the solution for $v$.
 
-\subsubsection{Mixed Boundary Conditions}
-Recall mixed boundary conditions from \eqref{eq:mixed-BC1} and \eqref{eq:mixed-BC2}. Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$. Using forward difference and backward difference discretization scheme for the lower bound and upper bound respectively, we have
+\paragraph{Discretizing PDEs to DAEs}
+The PDEs that come out of these operators are more of an issue.  A common setup becomes (with $\tilde{L}(t)$ and $\tilde{B}(t)$ time varying operators)
+
 \begin{align}
-&\frac{\overline{v}_1 - \overline{v}_0}{\Delta} - \underline{\xi} \overline{v}_0 = 0 \\
-&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta} - \overline{\xi} \overline{v}_{M+1} = 0
+	\D[t] \tilde{v}(t,x) &= \tilde{L}(t) \tilde{v}(t,x) - \tilde{f}(t,x)  \\
+	0 &= \tilde{B}(t) \tilde{v}(t,x) - b(t)
 \end{align}
 
-Thus, the corresponding boundary condition matrix $B$ is
+Now, if you were able to discretize this to find a time varying $\bar{v}(t)$, you could potentially discretize the setup as
+\begin{align}
+	\D[t] \bar{v}(t) &= L(t) \bar{v}(t) - f(t)\\
+	0 &= B(t) \bar{v}(t) - b(t)
+\end{align}
+i.e. a system of $M+2$ differential-algebraic equations given time varying matrices $L(t), B(t)$ and vectors $f(t) \in R^M$ and $b \in \R^2$.
 
-\begin{equation}\label{eq:mixed-barrier-matrix-original-regular}
-B = \begin{bmatrix}
--\dfrac{1}{\Delta} + \underline{\xi} & \dfrac{1}{\Delta} & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta} & \dfrac{1}{\Delta} + \overline{\xi}\\
-\end{bmatrix}_{2 \times (M+2)} \quad
-b = \begin{bmatrix}
-0 \\
-0
-\end{bmatrix}
-\end{equation}
-which provides the identical system as
-\begin{equation}\label{eq:mixed-barrier-matrix-regular}
-B = \begin{bmatrix}
--1 +  \underline{\xi} \Delta & 1 & 0 & \dots & 0 & 0 & 0 \\
-0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi} \Delta\\
-\end{bmatrix}_{2 \times (M+2)} \quad
-b = \begin{bmatrix}
-0 \\
-0
-\end{bmatrix}
-\end{equation}
 
-Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta )^{-1}\Delta^{-1}$ gives, with the corresponding row operation matrix $R$,
+\subsection{Applying Boundary Conditions to Operators}\label{subsec:applying-bc-regular}
+
+An alternative approach to solving the systems of $M+2$ equations or DAEs above is to apply the boundary conditions directly to the $L$ operators and solve for the $v$ or $v(t)$ directly.  In effect, the methods are identical to applying Gaussian elimination twice to the above systems.
+
+\subsubsection{Mixed Boundary Conditions}
+
+Adding the first row of $L_{1-}$ by the first row of $B$ in \eqref{eq:B-mixed} multiplied by $(-1 + \underline{\xi} \Delta )^{-1}\Delta^{-1}$ gives, with the corresponding row operation matrix $R$,
 
 \begin{equation}
 R {L}_{1-} = \dfrac{1}{\Delta} \begin{bmatrix}
@@ -382,7 +534,9 @@ note that there is no zero element in the first and last column for nodes on bou
 \begin{bmatrix}
 {L}\\
 B
-\end{bmatrix} =
+\end{bmatrix} 
+\overline{v} 
+=
 \begin{bmatrix}
 f \\ b
 \end{bmatrix}
@@ -393,7 +547,9 @@ R
 \begin{bmatrix}
 {L}\\
 B
-\end{bmatrix} &=
+\end{bmatrix} 
+\overline{v} 
+&=
 R
 \begin{bmatrix}
 f \\ b
@@ -403,7 +559,7 @@ f \\ b
 \end{bmatrix}
 \end{align}
 as $b$ is a zero vector so that the row operations $R$ do not change anything on the RHS. Furthermore, limited to the interior, solving $v$ in the system above is identical as solving the following system with an operator $L^B$ on interior nodes:
-\begin{equation}
+\begin{equation}\label{eq:system-on-interior}
 L^B v = f
 \end{equation}
 where we have ${L} = {L}_{1-}$ and $L^B = L_{1-}^B$ with
@@ -414,57 +570,263 @@ L_{1-}^B \equiv \frac{1}{\Delta}\begin{bmatrix}
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-1&1&0\\
 0&0&0&\cdots&0&-1&1
-\end{bmatrix}_{M\times M}
+\end{bmatrix}_{M\times M} \label{eq:L-1-regular}
 \end{equation}
-instead of solving the full system with boundary conditions. Similarly, one can define differential operators on the interior as follows:
-
+instead of solving the full system with boundary conditions. Similarly, subtracting the last row of $L_{1+}$ by the second row of $B$ in \eqref{eq:B-mixed} multiplied by $(1 + \overline{\xi} \Delta )^{-1} \Delta^{-1}$ gives the following differential operator with the boundary condition $B$ applied:
 \begin{align}
-L_{1-}^B &\equiv \frac{1}{\Delta}\begin{bmatrix}
-1 + (-1 + \underline{\xi} \Delta)^{-1} &0&0&\dots&0&0&0\\
--1&1&0&\dots&0&0&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
-0&0&0&\dots&-1&1&0\\
-0&0&0&\cdots&0&-1&1
-\end{bmatrix}_{M\times M}\label{eq:L-1-regular} \\
 L_{1+}^B &\equiv \frac{1}{\Delta}\begin{bmatrix}
 -1&1&0&\dots&0&0&0\\
 0&-1&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&0&-1&1\\
 0&0&0&\cdots&0&0&-1+(1+\overline{\xi} \Delta)^{-1}
-\end{bmatrix}_{M\times M}\label{eq:L-1-plus-regular} \\
+\end{bmatrix}_{M\times M}\label{eq:L-1-plus-regular}
+\end{align}
+And by substracting the first row of $L_2$ by the first row of $B$ multiplied by $(-1 + \underline{\xi} \Delta )^{-1} \Delta^{-2}$ and the last row of $L_2$ by the second row of $B$ multiplied by $(1 + \overline{\xi} \Delta)^{-1} \Delta^{-2}$, we have the following differential operator with the boundary condition $B$ applied for $L_2$:
+\begin{align}
 L_2^B &\equiv \frac{1}{\Delta^2}\begin{bmatrix}
 -2 - (-1 + \underline{\xi}\Delta)^{-1} &1&0&\dots&0&0&0\\
 1&-2&1&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&1&-2&1\\
-0&0&0&\cdots&0&1&-2 + (1+ \overline{\xi}\Delta)^{-1}
+0&0&0&\cdots&0&1&-2 +(1+ \overline{\xi}\Delta)^{-1}
 \end{bmatrix}_{M\times M}\label{eq:L-2-regular}
 \end{align}
 
 which can be defined in more compact forms:
 \begin{align}
-L_{1-}^B &\equiv
-\text{tridiag}(-\mathbf{1}_{M-1}, \begin{bmatrix}
-1+(-1+\underline{\xi} \Delta)^{-1} & \mathbf{1}_{M-1}^T
-\end{bmatrix}^T, \mathbf{0}_{M-1} )  \\
-L_{1+}^B &\equiv \text{tridiag}(\mathbf{0}_{M-1}, \begin{bmatrix}
- -\mathbf{1}_{M-1}^T & -1+(1+\overline{\xi} \Delta)^{-1}
-\end{bmatrix}^T, \mathbf{1}_{M-1} ) \\
-L_2^B &\equiv \text{tridiag}(
-\mathbf{1}_{M-1},
-\begin{bmatrix}
--2-(-1+\underline{\xi} \Delta)^{-1}&
--2\mathbf{1}_{M-2}^T &
--2+(1+\overline{\xi} \Delta)^{-1}
-\end{bmatrix}^T,
-\mathbf{1}_{M-1} )
+L_{1-}^B &\equiv \Delta^{-1}
+\left[ 
+\text{tridiag}(-\mathbf{1}_{M-1}, 
+\mathbf{1}_{M}, \mathbf{0}_{M-1} ) + \diag \left( \begin{bmatrix}
+(-1+\underline{\xi} \Delta)^{-1} &
+\mathbf{0}_{M-1}^T 
+\end{bmatrix}^T
+\right)
+\right]
 \end{align}
+\begin{align}
+L_{1+}^B &\equiv 
+\Delta^{-1}
+\left[ 
+\text{tridiag}(-\mathbf{0}_{M-1}, 
+\mathbf{-1}_{M}, \mathbf{1}_{M-1} ) + \diag \left( \begin{bmatrix}
+\mathbf{0}_{M-1}^T &
+(1+\overline{\xi} \Delta)^{-1}
+\end{bmatrix}^T
+\right)
+\right]
+\end{align}
+\begin{align}
+L_2^B \equiv  \Delta^{-2} 
+\Big[ 
+&\text{tridiag}(
+\mathbf{1}_{M-1},
+-2 \times \mathbf{1}_M,
+\mathbf{1}_{M-1} )
++ \\
+&\diag \left( \begin{bmatrix}
+-(-1+\underline{\xi} \Delta)^{-1}&
+\mathbf{0}_{M-2}^T &
+(1+\overline{\xi} \Delta)^{-1}
+\end{bmatrix}^T \right)
+\Big]
+\end{align}
+
+\paragraph{Applying drift directions on boundary conditions}
+Substracting the first row of $B^{--}$ or $B^{-+}$ multiplied by $\Delta^{-1}$ on the first row of $L_{1-}$ and extracting the interior yields
+
+\begin{equation}
+L_{1-}^{B-} \equiv \frac{1}{\Delta}\begin{bmatrix}
+-\underline{\xi} &0&0&\dots&0&0&0\\
+-1&1&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-1&1&0\\
+0&0&0&\cdots&0&-1&1
+\end{bmatrix}_{M\times M} \label{eq:L-1-regular-left}
+\end{equation}
+
+Likewise, subtracting the second row of $B^{-+}$ or $B^{++}$ multiplied by $\Delta^{-1}$ on the last row of $L_{1+}$ and extracting the interior yields
+
+\begin{equation}
+L_{1+}^{B+} \equiv \frac{1}{\Delta}\begin{bmatrix}
+-1 &1&0&\dots&0&0&0\\
+0&-1&1&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&0&-1&1\\
+0&0&0&\cdots&0&0&-\overline{\xi} 
+\end{bmatrix}_{M\times M} \label{eq:L-1p-regular-right}
+\end{equation}
+
+For $L_2$, directions on both boundaries affect the interior. Here we study the two upper and lower boundaries separately. For the lower boundary, suppose first that the drift is positive. Substracting the first row of $L_2$ by the first row of $B^{+-}$ or $B^{++}$ multiplied by $(-1 + \underline{\xi} \Delta )^{-1} \Delta^{-2}$ and extracting the interior and first row gives
+\begin{align}
+\frac{1}{\Delta^2}\begin{bmatrix}
+-2 - (-1 + \underline{\xi}\Delta)^{-1} &1&0&\dots&0&0&0
+\end{bmatrix}_{1\times M}
+\end{align}
+
+Suppose that we have a negative drift at the lower boundary. Adding the first row of $L_2$ by the first row of $B^{--}$ or $B^{-+}$ multiplied by $\Delta^{-2}$ and extracting the interior and first row gives
+\begin{align}
+\frac{1}{\Delta^2}\begin{bmatrix}
+-1 + \underline{\xi}\Delta &1&0&\dots&0&0&0
+\end{bmatrix}_{1\times M}
+\end{align}
+
+Now consider the upper boundary. Suppose first that the drift is negative. Substracting the last row of $L_2$ by the second row of $B^{--}$ or $B^{+-}$ multiplied by $(1 + \overline{\xi} \Delta)^{-1} \Delta^{-2}$ and extracting the interior and last row gives 
+\begin{align}
+\frac{1}{\Delta^2}\begin{bmatrix}
+0&0&0&\cdots&0&1&-2 +(1+ \overline{\xi}\Delta)^{-1}
+\end{bmatrix}_{1\times M}
+\end{align}
+
+Suppose that we have a positive drift at the upper boundary. Subtracting the second row of $L_2$ by the first row of $B^{-+}$ or $B^{++}$ multiplied by $\Delta^{-2}$ and extracting the interior and last row gives
+\begin{align}
+\frac{1}{\Delta^2}\begin{bmatrix}
+0&0&0&\cdots&0&1&-1 - \overline{\xi}\Delta
+\end{bmatrix}_{1\times M}
+\end{align}
+
+This provides the complete combination of all possible drift directions on both boundaries for $L_2$. For instance, $L_2^{B-+}$ is defined as
+\begin{align}
+L_2^{B-+} &\equiv \frac{1}{\Delta^2}\begin{bmatrix}
+-1 + \underline{\xi}\Delta &1&0&\dots&0&0&0\\
+1&-2&1&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&1&-2&1\\
+0&0&0&\cdots&0&1&-1 - \overline{\xi}\Delta
+\end{bmatrix}_{M\times M}
+\end{align}
+
+Using banded matrices, these operators can be definied in the following compact forms:
+
+\begin{align}
+L_{1-}^{B-} &\equiv \Delta^{-1}
+\left[ 
+\text{tridiag}(-\mathbf{1}_{M-1}, 
+\mathbf{1}_{M}, \mathbf{0}_{M-1} ) + \diag \left( \begin{bmatrix}
+1 - \underline{\xi} &
+\mathbf{0}_{M-1}^T 
+\end{bmatrix}^T
+\right)
+\right] \\
+L_{1-}^{B+} &\equiv \Delta^{-1}
+\left[ 
+\text{tridiag}(-\mathbf{1}_{M-1}, 
+\mathbf{1}_{M}, \mathbf{0}_{M-1} ) + \diag \left( \begin{bmatrix}
+(-1+\underline{\xi} \Delta)^{-1} &
+\mathbf{0}_{M-1}^T 
+\end{bmatrix}^T
+\right)
+\right] 
+\end{align}
+\begin{align}
+L_{1+}^{B-} &\equiv 
+\Delta^{-1}
+\left[ 
+\text{tridiag}(-\mathbf{0}_{M-1}, 
+\mathbf{-1}_{M}, \mathbf{1}_{M-1} ) + \diag \left( \begin{bmatrix}
+\mathbf{0}_{M-1}^T &
+(1+\overline{\xi} \Delta)^{-1}
+\end{bmatrix}^T
+\right)
+\right] \\
+L_{1+}^{B+} &\equiv 
+\Delta^{-1}
+\left[ 
+\text{tridiag}(-\mathbf{0}_{M-1}, 
+\mathbf{-1}_{M}, \mathbf{1}_{M-1} ) + \diag \left( \begin{bmatrix}
+\mathbf{0}_{M-1}^T &
+1- \overline{\xi} 
+\end{bmatrix}^T
+\right)
+\right]
+\end{align}
+\begin{align}
+L_2^{B--} \equiv  \Delta^{-2} 
+\Big[ 
+&\text{tridiag}(
+\mathbf{1}_{M-1},
+-2 \times \mathbf{1}_M,
+\mathbf{1}_{M-1} )
++ \\
+&\diag \left( \begin{bmatrix}
+-2 + \underline{\xi}\Delta &
+\mathbf{0}_{M-2}^T &
+(1+\overline{\xi} \Delta)^{-1}
+\end{bmatrix}^T \right)
+\Big] \\
+L_2^{B-+} \equiv  \Delta^{-2} 
+\Big[ 
+&\text{tridiag}(
+\mathbf{1}_{M-1},
+-2 \times \mathbf{1}_M,
+\mathbf{1}_{M-1} )
++  \\
+&\diag \left( \begin{bmatrix}
+-2 + \underline{\xi}\Delta &
+\mathbf{0}_{M-2}^T &
+-2 - \overline{\xi}\Delta
+\end{bmatrix}^T \right)
+\Big] \\
+L_2^{B+-} \equiv  \Delta^{-2} 
+\Big[ 
+&\text{tridiag}(
+\mathbf{1}_{M-1},
+-2 \times \mathbf{1}_M,
+\mathbf{1}_{M-1} )
++ \\
+&\diag \left( \begin{bmatrix}
+-(-1+\underline{\xi} \Delta)^{-1}&
+\mathbf{0}_{M-2}^T &
+(1+\overline{\xi} \Delta)^{-1}
+\end{bmatrix}^T \right)
+\Big] \\
+L_2^{B++} \equiv  \Delta^{-2} 
+\Big[ 
+&\text{tridiag}(
+\mathbf{1}_{M-1},
+-2 \times \mathbf{1}_M,
+\mathbf{1}_{M-1} )
++  \\
+&\diag \left( \begin{bmatrix}
+-(-1+\underline{\xi} \Delta)^{-1}&
+\mathbf{0}_{M-2}^T &
+-2 - \overline{\xi}\Delta
+\end{bmatrix}^T \right)
+\Big]
+\end{align}
+
+When jumps onto the boundary are not allowed, i.e., the range of $J$ function in \eqref{eq:jump-process} does not include $0$, $M+1$,  jump diffusion process operator $L_n$ can be defined to the interior as well. To see this, note that $\indicator{J(i) = 0} = \indicator{J(i) = M+1} = 0$ holds for all $i = 1,..., M$ in this case, so that the discretized operator in \eqref{eq:jump-process-discretized-operator} becomes
+\begin{align}
+L_n &\equiv \begin{psmallmatrix}
+0 & \indicator{J(1) = 1} -1 & \indicator{J(1) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M} & 0 \\
+0 & \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(2) = M-1}  & \indicator{J(2) = M} & 0 \\
+\vdots & \vdots & \vdots & \ddots & \vdots & \vdots &\vdots \\
+0 & \indicator{J(M-1) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M} &0 \\
+0 & \indicator{J(M) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1&0
+\end{psmallmatrix}
+\\
+&= \{ \indicator{ J(i) = j-1 } \}_{M \times (M+2)} - \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}
+\end{align}
+so that solving $L_n \overline{v} $ is identical with solving $L_n^B v$ where $L_n^B$ is defined as
+
+\begin{align}
+L_n^B &\equiv \begin{psmallmatrix}
+\indicator{J(1) = 1} -1 & \indicator{J(2) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M}  \\
+ \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(1) = M-1}  & \indicator{J(1) = M}  \\
+\vdots & \vdots & \ddots & \vdots & \vdots \\
+\indicator{J(2) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M}  \\
+\indicator{J(2) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1
+\end{psmallmatrix}
+\\
+&= \{ \indicator{ J(i) = j } \}_{M \times M} - \mathbf{I}_M \eqref{eq:jump-process-discretized-operator-interior}
+\end{align}
+where $\{ \indicator{ J(i) = j } \}_{M \times M} $ is an $M$ by $M$ matrix whose $(i,j)$th element is $ \indicator{ J(i) = j } $.
 
 \subsubsection{Absorbing Boundary Conditions}
 To apply an absorbing barrier condition $\tilde{v}(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
 
-\begin{equation}\label{eq:absorbing-barrier-matrix-regular}
+\begin{equation}\label{eq:absorbing-barrier-matrix-lb-regular}
 B = \begin{bmatrix}
 1 & 0 & 0 & \dots & 0 & 0 & 0 \\
 0 & 0 & 0 & \dots & 0 & -1 & 1\\
@@ -489,14 +851,158 @@ S
 \end{bmatrix}
 \end{equation}
 
+Note that in the case of $b$ being non-zero, solving the system 
+\begin{equation}
+\begin{bmatrix}
+ L \\
+ B
+\end{bmatrix} 
+\overline{v} 
+=
+\begin{bmatrix}
+f \\
+b
+\end{bmatrix}
+\end{equation}
 
-\section{Discretizing Operators with a Irregular Grid}
+is not necessarily identical to solving the system
+\begin{equation}
+R \begin{bmatrix}
+ L \\
+ B
+\end{bmatrix} 
+\overline{v}
+=
+\begin{bmatrix}
+f \\
+b
+\end{bmatrix}
+\end{equation}
 
-\subsection{Applying Boundary Conditions}
-Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value function $\tilde{v}(\overline{x})$ on the extended grid, one can perform Gaussian elimination to reduce the system and solve $\tilde{v}(x)$, which gives the identical solution as the interior of $\tilde{v}(\overline{x})$.
+Consider the case of \cref{eq:absorbing-barrier-matrix-lb-regular} with $S\neq 0$ and $L = L_{1-}$. Adding the first row of $L_{1-}$ by the first row of $B$ multiplied by $\Delta^{-1}$ gives, with the corresponding row operation matrix $R$, 
+
+\begin{equation}
+RL_{1-} = \frac{1}{\Delta}\begin{bmatrix}
+0&1&0&0&\dots&0&0&0&0\\
+0&-1&1&0&\ddots&0&0&0&0\\
+\vdots&\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots&\vdots\\
+0&0&0&0&\dots&-1&1&0&0\\
+0&0&0&0&\cdots&0&-1&1&0
+\end{bmatrix}_{M\times (M+2)}
+\end{equation}
 
 
-\subsection{Irregular grids}
+Then, solving the system 
+
+\begin{equation}
+\begin{bmatrix}
+ L \\
+ B
+\end{bmatrix} 
+\overline{v}
+=
+\begin{bmatrix}
+f \\
+b
+\end{bmatrix}
+\end{equation}
+
+is identical to solving the system
+
+\begin{align}
+R\begin{bmatrix}
+ L \\
+ B
+\end{bmatrix} 
+\overline{v}
+&= 
+R\begin{bmatrix}
+f \\
+b
+\end{bmatrix} \\
+ &= \begin{bmatrix}
+ f(x_1) \\
+ f(x_2) \\
+ \vdots \\
+ f(x_M) \\
+ S \\
+ 0
+\end{bmatrix} +
+\begin{bmatrix}
+\Delta^{-1}S \\
+0  \\
+\vdots \\ 
+0 \\
+0 \\
+0
+\end{bmatrix} \\
+&= \begin{bmatrix}
+f + b^B \\
+b
+\end{bmatrix}
+\end{align}
+where 
+\begin{align}
+b^B = 
+\begin{bmatrix}
+\Delta^{-1}S \\
+0  \\
+\vdots \\ 
+0 \\
+\end{bmatrix}
+\end{align}
+
+Hence, limited to the interior, solving $v$ in the system above is identical as solving the following system with an operator $L^B$ on interior nodes:
+\begin{equation}
+L^Bv= f+ b^B
+\end{equation}
+
+Similar methods can applied to $L_{1+}$ and $L_2$ as well; see \ref{subsubsec:absorbing-barrier-conditions-irregular} for details with more general cases with irregular grids.
+
+
+\paragraph{Absorbing Barriers: from Nodes That Are Different from the Boundary} Let $L^B$ be a differential operator on the interior nodes with some boundary conditions applied. Suppose we have extra absorbing barrier conditions $v(x) = 0$  for all $x \leq x_{M^*}$ for some $M^* \geq 0$ on the system. 
+
+Then, the first $M^*$ columns of a new discretized operator $L^{BM^*}$ and first $M^*$ elements of a new right handside $f^B$ have to be transformed so that the resulting system implies
+\begin{align}
+L v(x_i) = 
+\begin{cases}
+0 & \text{if $i \leq M^*$} \\
+f(x_i) & \text{if $M^* < i \leq M$}
+\end{cases}
+\end{align}
+so that the new discretized operator  $L^{BM^*}$ with absorbing barrier conditions applied on interior nodes must satisfy
+\begin{align}
+L^{BM^*} v = \begin{bmatrix}
+0 \\
+\vdots \\
+0 \\
+f_{M^* + 1} \\
+f_{M^* + 2} \\
+\vdots \\
+f_{M}
+\end{bmatrix}
+\end{align}
+where $L^{BM^*}$ is identical with $L^{B}$, except the first $M^*$ rows: the first $M^*$ rows of $L^{BM^*}$ are all zero rows except $(m,m)$th element whose value is one for all $1 \leq m \leq M^*$. This gives an identical system as 
+\begin{align}
+L^{BM^*} v = f + f^B
+\end{align}
+for the interior solution $v$ where $f^B$ defined as
+\begin{align}
+f^B = \begin{bmatrix}
+-f_1 \\
+\vdots \\
+-f_{M^*}\\ 
+0 \\
+\vdots \\
+0
+\end{bmatrix}
+\end{align}
+i.e. a column vector whose $m$th element is $-f(x_{m})$ for all $1 \leq m \leq M^*$ and is zero for all $ M^* < m \leq  M$.
+
+
+
+\section{Discretizing Operators with an Irregular Grid}
+\subsection{Discretized Operators}
 
 Define the vectors of backward and forward distance for interior nodes as follows:
 \begin{align}
@@ -504,92 +1010,99 @@ Define the vectors of backward and forward distance for interior nodes as follow
 \Delta_{+}^\circ &= \set{\Delta_{i,+}}_{i=1}^M
 \end{align}
 
+\paragraph{First Derivative Operators}
+To discretize the $\tilde{L}_1$ operator, we can use a backward difference approximation
+\begin{align}
+\tilde{L}_1 \tilde{v}(x_i) &\equiv \D[x] \tilde{v}(x_i) \approx \frac{\bar{v}_i - \bar{v}_{i-1}}{\Delta_{i,-}},\, \text{ for } i = 1,\ldots, M\label{eq:first-order-bd-irregular}\\
+\intertext{And with forward differences}
+\tilde{L}_1 \tilde{v}(x_i) &\equiv \D[x] \tilde{v}(x_i) \approx \frac{\bar{v}_{i+1} - \bar{v}_i}{\Delta_{i,+}},\, \text{ for } i = 1,\ldots, M\label{eq:first-order-fd-irregular}
+\end{align}
 
-We can then define the following operators on $\overline{x}$:
-
-
-\begin{equation}\label{eq:L-1-minus-extended}
-{L}_{1-} \equiv\begin{bmatrix}
+In order to calculate the derivatives for all $i = 1, \ldots, M$ (i.e. in the interior) we can stack these up and apply to the extension $\bar{v}$.
+\begin{align}\label{eq:L-1-minus-extended}
+{L}_{1-} &\equiv\begin{bmatrix}
 -\Delta_{1,-}^{-1}&\Delta_{1,-}^{-1}&0&\dots&0&0&0\\
 0&-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&\Delta_{M-1,-}^{-1}&0&0\\
 0&0&0&\cdots&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}&0
-\end{bmatrix}_{M\times (M+2)}
-\end{equation}
+\end{bmatrix}_{M\times (M+2)} \\
+&= 
+\band^{M,M+2}_{0,1}(-(\Delta_-^\circ)^{-1}, (\Delta_-^\circ)^{-1})
+\end{align}
 
-\begin{equation}\label{eq:L-1-plus-extended}
-{L}_{1+} \equiv \begin{bmatrix}
+\begin{align}\label{eq:L-1-plus-extended}
+{L}_{1+} &\equiv \begin{bmatrix}
 0&-\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&\dots&0&0&0\\
 0&0&-\Delta_{2,+}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}&0\\
 0&0&0&\cdots&0&-\Delta_{M,+}^{-1}&\Delta_{M,+}^{-1}&
-\end{bmatrix}_{M\times (M+2)}
-\end{equation}
+\end{bmatrix}_{M\times (M+2)} \\
+&= 
+\band^{M,M+2}_{0,2}(\mathbf{0}_M, -(\Delta_+^\circ)^{-1}, (\Delta_+^\circ)^{-1})
+\end{align}
+
+It is important to note that while these operators map the $\bar{v}$ (i.e. including the boundary points), the operator only maps to points on the interior i.e. $i = 1, \ldots, M$.
 
 
-\begin{equation}\label{eq:L-2-extended} \small
-{L}_2 \equiv 2 \begin{psmallmatrix}
-(\Delta_{1,+}+\Delta_{1,-})^{-1}\Delta_{1,-}^{-1} &-\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  & (\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{i,+}^{-1}&\dots&0&0\\
-0 & \ddots & \ddots &\ddots & 0 & 0\\
-\vdots&\ddots &\ddots & \ddots & \ddots & \vdots\\
-0&0&\cdots&
-(\Delta_{M,+}+\Delta_{M,-})^{-1}\Delta_{M,-}^{-1} &-\Delta_{M,-}^{-1} \Delta_{M,+}^{-1}  &
-(\Delta_{M,+}+\Delta_{M,-})^{-1}\Delta_{M,+}^{-1}
-\end{psmallmatrix}_{M\times (M+2)}
-\end{equation}
 
-Note that we use the following discretization scheme scheme from \cite{achdou17}:
+\paragraph{Second Derivative Operators}
+To discretize the $\tilde{L}_2$ second order operator, we can use the following discretization scheme scheme from \cite{achdou17}:
 \begin{equation}
 v''(x_i) \approx \dfrac{ \Delta_{i,-} \tilde{v}( x_i + \Delta_{i,+}) - (\Delta_{i,+} + \Delta_{i,-}) \tilde{v}( x_i ) + \Delta_{i,+} \tilde{v}( x_i - \Delta_{i,-})}{\frac{1}{2}(\Delta_{i,+} + \Delta_{i,-}) \Delta_{i,+} \Delta_{i,-} }, \text{for } i = 1, \ldots, M
 \end{equation}
 for second-order derivatives.
 
-And one for identity matrix:
-\begin{equation}\label{eq:I-extended}
-{I} \equiv \begin{bmatrix}
-0 & 1 & 0 & \cdots & 0 & 0 & 0\\
-0 & 0 & 1 & \cdots & 0 & 0 & 0\\
-\vdots & \vdots  & \ddots & \ddots &  \vdots  & \vdots  & \vdots  \\
-0 & 0 & 0 & \cdots & 1 & 0 & 0 \\
-0 & 0 & 0 & \cdots & 0 & 1 & 0
-\end{bmatrix}_{M\times (M+2)}
-\end{equation}
 
-Alternatively, in a more compact form, using vectors distances for interior nodes:
-\begin{align}
-{L}_{1-} \equiv
-\begin{bmatrix}
-\text{tridiag($\mathbf{0}_{M-1}$, $-(\Delta_-^\circ)^{-1}$, $(\Delta_-^\circ)^{-1}$) } &  \mathbf{0}_M
-\end{bmatrix}
+In order to calculate the derivatives for all $i = 1, \ldots, M$ (i.e. in the interior) we can stack these up and apply to the extension $\bar{v}$.
+\begin{align}\label{eq:L-2-extended} \small
+{L}_2 \equiv 2 \begin{psmallmatrix}
+(\Delta_{1,+}+\Delta_{1,-})^{-1}\Delta_{1,-}^{-1} &-\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  & (\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{1,+}^{-1}&\dots&0&0\\
+0 & \ddots & \ddots &\ddots & 0 & 0\\
+\vdots&\ddots &\ddots & \ddots & \ddots & \vdots\\
+0&0&\cdots&
+(\Delta_{M,+}+\Delta_{M,-})^{-1}\Delta_{M,-}^{-1} &-\Delta_{M,-}^{-1} \Delta_{M,+}^{-1}  &
+(\Delta_{M,+}+\Delta_{M,-})^{-1}\Delta_{M,+}^{-1}
+\end{psmallmatrix}_{M\times (M+2)} 
 \end{align}
+which is identical as
 \begin{align}
-{L}_{1+} \equiv
-\begin{bmatrix}
-\mathbf{0}_M &
-\text{tridiag($\mathbf{0}_{M-1}$, $-(\Delta_-^\circ)^{-1}$, $(\Delta_-^\circ)^{-1}$) }
-\end{bmatrix}
+L_2 &= 2 \odot \band_{0,2}^{M,M+2} \left[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, -(\Delta_-^\circ \odot \Delta_+^\circ)^{-1} , (\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \right]
 \end{align}
+
+
+\paragraph{Identity Operators}
+Define the identity operator as the $0$-th order operator $\tilde{L}_0 \equiv I$ so that $\tilde{L}_0 \tilde{v}(x) = \tilde{v}(x)$.
+
+With this, the operator applied to the $\bar{v}$ vector is trivial
 \begin{align}
-{L}_{2} \equiv
-2 \odot \text{tridiag}^+ \left[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, -(\Delta_-^\circ \odot \Delta_+^\circ)^{-1} , (\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \right]
+\tilde{L}_0 \tilde{v}(x_i) &\equiv \tilde{v}(x_i) = \bar{v}_i,\, \text{ for } i = 1,\ldots, M\
+\intertext{And stacking it up for all $i = 1, \ldots, M$,}
+\set{\tilde{v}(x_i)}_{i=1}^M &\approx L_0 \cdot \bar{v}
+\intertext{Where}
+L_0 &\equiv \begin{bmatrix}
+0 & 1 & 0 & 0 &\dots & 0 & 0 & 0 &0\\
+0 & 0 & 1 & 0 &\dots & 0 & 0 & 0 &0\\
+\vdots&\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots&\vdots\\
+0 & 0 & 0 & 0 &\dots & 0 & 1 & 0 &0\\
+0 & 0 & 0 & 0 &\dots & 0 & 0 & 1 &0
+\end{bmatrix}_{M\times (M+2)}\\
+&= \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}\\
+&= \band_{0,1}^{M,M+2}(\mathbf{0}_M, \mathbf{1}_M)
 \end{align}
-\begin{align}
-{I} \equiv
-\begin{bmatrix}
-\mathbf{0}_M &  \text{diag($\mathbf{1}_M$)} &  \mathbf{0}_M
-\end{bmatrix}
-\end{align}
+which is identical as the identity operator for regular grids.
+
+\subsection{Boundary Conditions}
 
 \subsubsection{Mixed boundary conditions}
 Recall mixed boundary conditions from \eqref{eq:mixed-BC1} and \eqref{eq:mixed-BC2}. Note that reflecting barrier conditions are special cases with $\overline{\xi} = \underline{\xi} = 0$. Using forward difference and backward difference discretization scheme for the lower bound and upper bound respectively, we have
 \begin{align}
-&\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} - \underline{\xi} \overline{v}_0 = 0 \\
-&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} - \overline{\xi} \overline{v}_{M+1} = 0
+\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_0 &= 0 \label{eq:mixed-BC1-irregular-grid}  \\
+\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M+1} &= 0 \label{eq:mixed-BC2-irregular-grid}
 \end{align}
 
-Thus, the corresponding boundary condition matrix $B$ is
+when the drift is positive on the lower bound and is negative on the upper bound. Thus, the corresponding boundary condition matrix $B$ is
 
 \begin{equation}\label{eq:mixed-barrier-matrix-original}
 B = \begin{bmatrix}
@@ -612,13 +1125,119 @@ b = \begin{bmatrix}
 0
 \end{bmatrix}
 \end{equation}
-since $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$
+since $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$.
+
+Depending on the direction of the drift, the locations of $\overline{\xi}$ and $\underline{\xi}$ have to be different. When the drift is negative on the lower bound and is positive on the upper bound, we have
+
+\begin{align}
+&\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_1 = 0 \label{eq:mixed-BC1-irregular-grid-negative}  \\
+&\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M} = 0 \label{eq:mixed-BC2-irregular-grid-positive}
+\end{align}
+
+Hence, letting $\circ_1, \circ_M \in \{-, +\}$ denote the drift directions on the lower and upper boundaries respectively, there are four corresponding boundary condition matrices $B^{\circ_1 \circ_M}$ as follows:
+
+\begin{align}
+B^{--} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta_{0,+}} & \dfrac{1}{\Delta_{0,+}}  + \underline{\xi} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta_{M+1,-}} & \dfrac{1}{\Delta_{M+1,-}} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{+-} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta_{0,+}} + \underline{\xi} & \dfrac{1}{\Delta_{0,+}} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta_{M+1,-}} & \dfrac{1}{\Delta_{M+1,-}} + \overline{\xi}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{-+} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta_{0,+}}  & \dfrac{1}{\Delta_{0,+}} + \underline{\xi} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta_{M+1,-}}+ \overline{\xi} & \dfrac{1}{\Delta_{M+1,-}}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{++} &\equiv 
+\begin{bmatrix}
+-\dfrac{1}{\Delta_{0,+}} + \underline{\xi} & \dfrac{1}{\Delta_{0,+}} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -\dfrac{1}{\Delta_{M+1,-}}+ \overline{\xi} & \dfrac{1}{\Delta_{M+1,-}} \\
+\end{bmatrix}_{2 \times (M+2)}
+\end{align}
+
+Multiplying the first rows by $\Delta_{1,-} = \Delta_{0,+}$ and second rows by $\Delta_{M,+} = \Delta_{M+1,-} $, the resulting system has the same $b$ and the following $B^{--}, B^{+-}, B^{-+}, B^{++}$:
+
+\begin{align}
+B^{--} &\equiv 
+\begin{bmatrix}
+-1 & 1  + \underline{\xi}\Delta_{1,-} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi}\Delta_{M,+}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{+-} &\equiv 
+\begin{bmatrix}
+-1 + \underline{\xi}\Delta_{1,-} & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1 + \overline{\xi}\Delta_{M,+}\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{-+} &\equiv 
+\begin{bmatrix}
+-1  & 1 + \underline{\xi}\Delta_{1,-} & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1+ \overline{\xi}\Delta_{M,+} & 1\\
+\end{bmatrix}_{2 \times (M+2)} \\
+B^{++} &\equiv 
+\begin{bmatrix}
+-1 + \underline{\xi}\Delta_{1,-} & 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1+ \overline{\xi}\Delta_{M,+} & 1 \\
+\end{bmatrix}_{2 \times (M+2)}
+\end{align}
 
 
-The first columns of all the extension operators above, $\overline{L}_{1-}, \overline{L}_{1+}, \overline{L}_{2}, \overline{I}$, have non-zero element only in the first rows. Thus, a single Gaussian elimination for the first extension grid will suffice to remove the extended. Likewise, in the last columns of all the extension operators have non-zero element only in the last row.
+\subsubsection{Reflecting Barriers}
+Since a reflecting barrier (i.e. a Neumann boundary condition) is a special case of the mixed when  $\underline{\xi} = \bar{\xi} = 0$, the $B$ matrix for a reflecting barrier follows \cref{eq:B-mixed}
+\begin{equation}
+B = \begin{bmatrix}
+-1& 1 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & -1 & 1\\
+\end{bmatrix}_{2 \times (M+2)}
+\end{equation}
+with the same 
+\begin{equation}
+	b = \begin{bmatrix}	
+			0 \\
+		 	0
+		 	\end{bmatrix}
+\end{equation}
+
+Note that this does not depend on the direction of the drift as $B^{--} = B^{+-} = B^{-+} = B^{++}$ when $\overline{\xi} = \underline{\xi} = 0$.
+
+\subsubsection{Absorbing Barriers}
+
+With the homogenous or inhomogeneous Dirichlet Boundary Conditions in \cref{eq:absorbing-BC1,eq:absorbing-BC2}, in operator form,
+\begin{align}
+\tilde{B} &\equiv \begin{bmatrix}
+1 \vert_{x = x_{\min}}\\
+1 \vert_{x = x_{\max}}
+\end{bmatrix}
+\end{align}
+
+Implementing this for the system in \cref{eq:BC-system} gives,
+
+\begin{align}
+B &= \begin{bmatrix}
+1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 & 0 & 1\\
+\end{bmatrix}_{2 \times (M+2)}\\
+b &= \begin{bmatrix}
+b_1 \\
+b_2
+\end{bmatrix}
+\end{align}
+which is identical as \eqref{eq:absorbing-barrier-matrix-regular} for regular grids.
+
+\subsection{Applying Boundary Conditions to Operators}\label{subsec:applying-bc}
+Instead of solving \eqref{eq:reflecting-barrier-extended-system} for a value function $\tilde{v}(\overline{x})$ on the extended grid, one can perform Gaussian elimination to reduce the system and solve $\tilde{v}(x)$, which gives the identical solution as the interior of $\tilde{v}(\overline{x})$.
 
 
-Subtracting the first row of $\overline{L}_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta_{1,-} )^{-1}\Delta_{1,-}^{-1}$ gives, with the corresponding row operation matrix $R$ for Gaussian elimination,
+
+\subsubsection{Mixed boundary conditions}\label{subsubsec-irregular-grids-mixed-boundary-conditions}
+
+The first columns of all the extension operators above, ${L}_{1-}, {L}_{1+}, {L}_{2}, {I}$, have non-zero element only in the first rows. Thus, a single Gaussian elimination for the first extension grid will suffice to remove the extended grid point. Likewise, in the last columns of all the extension operators have non-zero element only in the last row.
+
+
+Adding the first row of $L_{1-}$ by the first row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(-1 + \underline{\xi} \Delta_{1,-} )^{-1}\Delta_{1,-}^{-1}$ gives, with the corresponding row operation matrix $R$ for Gaussian elimination,
 
 \begin{equation}
 R {L}_{1-} = \begin{bmatrix}
@@ -634,7 +1253,9 @@ note that there is no zero element in the first and last column for nodes on bou
 \begin{bmatrix}
 {L}\\
 B
-\end{bmatrix} =
+\end{bmatrix} 
+\overline{v}
+=
 \begin{bmatrix}
 f \\ b
 \end{bmatrix}
@@ -645,7 +1266,9 @@ R
 \begin{bmatrix}
 {L}\\
 B
-\end{bmatrix} &=
+\end{bmatrix} 
+\overline{v}
+&=
 R
 \begin{bmatrix}
 f \\ b
@@ -661,31 +1284,25 @@ L^B v = f
 where we have ${L} = {L}_{1-}$ and $L^B = L_{1-}^B$ with
 \begin{equation}
 L_{1-}^B \equiv \begin{bmatrix}
-\Delta_{1,-}^{-1} [1 + (-1 + \underline{\xi} \Delta_{1,-})]^{-1} &0&0&\dots&0&0&0\\
+\Delta_{1,-}^{-1} [1 + (-1 + \underline{\xi} \Delta_{1,-})^{-1}] &0&0&\dots&0&0&0\\
 -\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\dots&-\Delta_{M-1,-}^{-1}&\Delta_{M-1,-}^{-1}&0\\
 0&0&0&\cdots&0&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}
 \end{bmatrix}_{M\times M}
 \end{equation}
-instead of solving the full system with boundary conditions. Similarly, one can define differential operators on the interior as follows:
-
-
+instead of solving the full system with boundary conditions. Similarly, subtracting the last row of $L_{1+}$ by the second row of $B$ in \eqref{eq:mixed-barrier-matrix} multiplied by $(1 + \overline{\xi} \Delta_{M,+})^{-1} \Delta_{M,+}^{-1}$ gives the following differential operator with the boundary condition $B$ applied:
 \begin{align}
-L_{1-}^B &\equiv \begin{bmatrix}
-\Delta^{-1}_{1,-} [1 + (-1 + \underline{\xi} \Delta_{1,-})^{-1}] &0&0&\dots&0&0&0\\
--\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
-0&0&0&\dots&-\Delta_{M-1,-}^{-1}&\Delta_{M-1,-}^{-1}&0\\
-0&0&0&\cdots&0&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}
-\end{bmatrix}_{M\times M}\label{eq:L-1} \\
 L_{1+}^B &\equiv \begin{bmatrix}
 -\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&0&\dots&0&0&0\\
 0&-\Delta_{2,+}^{-1}&\Delta_{2,+}^{-1}&\dots&0&0&0\\
 \vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
 0&0&0&\cdots&0&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}\\
 0&0&0&\dots&0&0&\Delta_{M,+}^{-1}  [-1 + (1 + \overline{\xi} \Delta_{M,+})^{-1}]  \\
-\end{bmatrix}_{M\times M}\label{eq:L-1-plus} \\
+\end{bmatrix}_{M\times M}\label{eq:L-1-plus}
+\end{align}
+And by substracting the first row of $L_2$ by the first row of $B$ multiplied by $2(-1 + \underline{\xi} \Delta_{1,-} )^{-1} (\Delta_{1,+} + \Delta_{1,-})^{-1}  \Delta_{1,-}^{-1} $ and the last row of $L_2$ by the second row of $B$ multiplied by $2(1 + \overline{\xi} \Delta_{M,+} )^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1}$, we have the following differential operator with the boundary condition $B$ applied for $L_2$:
+\begin{align}
 L_2^B &\equiv 2 \begin{psmallmatrix}
 \Xi_1 &
 (\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{1,+}^{-1}
@@ -697,7 +1314,18 @@ L_2^B &\equiv 2 \begin{psmallmatrix}
  (\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,+}^{-1}&\cdots&0 \\
 \vdots&\vdots&\vdots&\ddots&\ddots&\ddots&\vdots\\
 0&0&0&\cdots&0&(\Delta_{M,+}+\Delta_{M,-})^{-1} \Delta_{M,-}^{-1}&\Xi_M
-\end{psmallmatrix}_{M\times M}\label{eq:L-2} \\
+\end{psmallmatrix}_{M\times M}\label{eq:L-2} 
+\end{align}
+where
+
+\begin{align}
+\Xi_{1} &= - (-1 + \underline{\xi} \Delta_{1,-})^{-1} (\Delta_{1,+} + \Delta_{1,-})^{-1}  \Delta_{1,-}^{-1} \\
+\Xi_{M} &=  (1 + \overline{\xi} \Delta_{M,+})^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1} 
+\end{align}
+
+Note that the interior of the identity operator is invariant even after applying the mixed boundary conditions, as the columns for the boundary (the first and last column) are all empty. Hence, we have:
+
+\begin{align}
 I^B &\equiv \begin{bmatrix}
 1 & 0 & \cdots & 0 & 0 \\
 0 & 1 & \cdots & 0 & 0 \\
@@ -706,38 +1334,43 @@ I^B &\equiv \begin{bmatrix}
 0 & 0 & \cdots & 0 & 1
 \end{bmatrix}_{M\times M}
 \end{align}
-where
-
-\begin{align}
-\Xi_{1} &= -2\left[  \Delta_{1,-}^{-1} \Delta_{1,+}^{-1} + (-1 + \underline{\xi} \Delta_{1,-})^{-1} (\Delta_{1,+} + \Delta_{1,-})^{-1}  \Delta_{1,-}^{-1} \right] \\
-\Xi_{M} &= -2\left[  \Delta_{M,-}^{-1} \Delta_{M,+}^{-1} - (1 + \overline{\xi} \Delta_{M,+})^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1} \right]
-\end{align}
 
 
-Or, alternatively, with vectorized differences:
+
+Alternatively, with vectorized differences, we can express the differential operators with boundary conditions applied on the interior nodes as follows. Let $\Delta_-^\circ, \Delta_+^\circ$ as the vectors of differences on the interior nodes, i.e., $\Delta_{-}^\circ = \set{\Delta_{i,-}}_{i=1}^M$, $\Delta_{+}^\circ = \set{\Delta_{i,+}}_{i=1}^M$ and let $x^{-1}$ be defined as the elementwise inverse of a vector $x$ that contains no zero element. Then, the operators can be defined in the following matrix forms:
 
 
 \begin{align}
 {L}_{1-}^B \equiv
-\text{tridiag} \left[-(\Delta_-^\circ)^{-1}[2:M], \begin{bmatrix}\Delta^{-1}_{1,-} [1 + (-1 + \underline{\xi} \Delta_{1,-})^{-1}]; (\Delta_-^\circ )^{-1}[2:M] \end{bmatrix}, \mathbf{0}_{M-1}  \right]
+\tridiag \left(-(\Delta_-^\circ)^{-1}[2:M], (\Delta_-^\circ )^{-1}, \mathbf{0}_{M-1}  \right) +
+\diag\left( 
+\begin{bmatrix}
+\Delta^{-1}_{1,-} (-1 + \underline{\xi} \Delta_{1,-})^{-1} &
+\mathbf{0}_{M-1}^T
+\end{bmatrix}^T
+ \right)
 \end{align}
 
 \begin{align}
 {L}_{1+}^B \equiv
-\text{tridiag} \left[  \mathbf{0}_{M-1},
-\begin{bmatrix}-(\Delta_-^\circ )^{-1}[1:M-1]; \Delta^{-1}_{M,+} [-1 + (1 + \overline{\xi} \Delta_{M,+})^{-1}] \end{bmatrix},
-(\Delta_-^\circ)^{-1}[2:M]
- \right]
+\tridiag \left(\mathbf{0}_{M-1}, -(\Delta_+^\circ )^{-1}, (\Delta_+^\circ)^{-1}[1:M-1]  \right) +
+\diag\left( 
+\begin{bmatrix}
+\mathbf{0}_{M-1}^T &
+\Delta^{-1}_{M,+} (1 + \overline{\xi} \Delta_{M,+})^{-1}
+\end{bmatrix}^T
+\right)
 \end{align}
+
 \begin{align}
 {L}_{2}^B \equiv
-2 \odot \text{tridiag}& \Big[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, \\&
-	\begin{bmatrix}
-	\Xi_1 ;
-	-(\Delta_-^\circ \odot \Delta_+^\circ)^{-1}[2:M-1];
-	\Xi_M
-	\end{bmatrix} , \\&
-	(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \Big]
+2 \odot \Big[ & \text{tridiag} \Big[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, 
+-(\Delta_-^\circ \odot \Delta_+^\circ)^{-1},
+(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \Big] + \\ & \diag\left(  
+\begin{bmatrix} \
+\Xi_1 & \mathbf{0}_{M-2} & \Xi_M
+\end{bmatrix}
+  \right) \Big]
 \end{align}
 
 \begin{align}
@@ -745,7 +1378,160 @@ I^B \equiv  \text{diag($\mathbf{1}_M$)}
 \end{align}
 
 
-\subsubsection{Absorbing barrier conditions}
+\paragraph{Applying drift directions on boundary conditions}
+Subtracting the first row of $B^{--}$ or $B^{-+}$ multiplied by $\Delta_{1,-}^{-1}$ on the first row of $L_{1-}$ and extracting the interior yields
+
+\begin{equation}
+L_{1-}^{B-} \equiv \begin{bmatrix}
+-\underline{\xi} &0&0&\dots&0&0&0\\
+-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&0&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-\Delta_{M-1,-}^{-1}&\Delta_{M-1,-}^{-1}&0\\
+0&0&0&\cdots&0&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}
+\end{bmatrix}_{M\times M}
+\end{equation}
+
+Likewise, subtracting the second row of $B^{-+}$ or $B^{++}$ multiplied by $\Delta_{M,+}^{-1}$ on the last row of $L_{1+}$ and extracting the interior yields
+
+\begin{equation}
+L_{1+}^{B+} \equiv \begin{bmatrix}
+-\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&0&\dots&0&0&0\\
+0&-\Delta_{2,+}^{-1}&\Delta_{2,+}^{-1}&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\cdots&0&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}\\
+0&0&0&\cdots&0&0&-\overline{\xi} 
+\end{bmatrix}_{M\times M} \label{eq:L-1p-irregular-right}
+\end{equation}
+
+For $L_2$, directions on both boundaries affect the interior. Here we study the two upper and lower boundaries separately. For the lower boundary, suppose first that the drift is positive. Substracting the first row of $L_2$ by the first row of $B^{+-}$ or $B^{++}$ multiplied by $2(-1 + \underline{\xi} \Delta_{1,-} )^{-1} (\Delta_{1,+} + \Delta_{1,-})^{-1}  \Delta_{1,-}^{-1} $  and extracting the interior and first row gives
+\begin{align}
+2\begin{bmatrix}
+\Xi_{1+} &1&0&\dots&0&0&0
+\end{bmatrix}_{1\times M}
+\end{align}
+where $\Xi_{1+} \equiv -\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  - (-1 + \underline{\xi} \Delta_{1,-})^{-1} (\Delta_{1,+} + \Delta_{1,-})^{-1}  \Delta_{1,-}^{-1}$.
+
+Suppose that we have a negative drift at the lower boundary. Adding the first row of $L_2$ by the first row of $B^{--}$ or $B^{-+}$ multiplied by $2(\Delta_{1,+} + \Delta_{1,-} )^{-1} \Delta_{1,-}^{-1}$ and extracting the interior and first row gives
+\begin{align}
+2\begin{bmatrix}
+\Xi_{1-} &1&0&\dots&0&0&0
+\end{bmatrix}_{1\times M}
+\end{align}
+where $\Xi_{1-} \equiv -\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  + (\Delta_{1,+} + \Delta_{1,-} )^{-1} \Delta_{1,-}^{-1} (1 + \underline{\xi}\Delta_{1,-})$.
+Now consider the upper boundary. Suppose first that the drift is negative. Subtracting the last row of $L_2$ by the second row of $B^{--}$ or $B^{+-}$ multiplied by $2(1 + \overline{\xi} \Delta_{M,+} )^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1}$ and extracting the interior and last row gives 
+\begin{align}
+2\begin{bmatrix}
+0 &0&0&\dots&0&1&\Xi_{M-}
+\end{bmatrix}_{1\times M}
+\end{align}
+
+where $\Xi_{M-} = -\Delta_{M,-}^{-1} \Delta_{M,+}^{-1} + (1 + \overline{\xi} \Delta_{M,+})^{-1} (\Delta_{M,+} + \Delta_{M,-})^{-1}  \Delta_{M,+}^{-1}$. Suppose that we have a positive drift at the upper boundary. Subtracting the last row of $L_2$ by the second row of $B^{-+}$ or $B^{++}$ multiplied by $2(\Delta_{M,+} + \Delta_{M,-})^{-1} \Delta_{M,+}^{-1} $ and extracting the interior and last row gives
+\begin{align}
+2\begin{bmatrix}
+0 &0&0&\dots&0&1&\Xi_{M+}
+\end{bmatrix}_{1\times M}
+\end{align}
+where $\Xi_{M+} = -\Delta_{M,-}^{-1} \Delta_{M,+}^{-1} - ( \Delta_{M,+} + \Delta_{M,-} )^{-1} \Delta_{M,+}^{-1} (-1 + \overline{\xi} \Delta_{M,+})  $.
+
+This provides the complete combination of all possible drift directions on both boundaries for $L_2$. For instance, $L_2^{B-+}$ is defined as
+\begin{align}
+L_2^{B-+} &\equiv  2 \begin{psmallmatrix}
+\Xi_{1-} &
+(\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{1,+}^{-1}
+&0&\cdots&0&0&0 \\
+\vdots&\ddots&\ddots&\ddots&\ddots&\vdots&\vdots\\
+0&\cdots&
+(\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,-}^{-1} &
+-\Delta_{i,-}^{-1} \Delta_{i,+}^{-1}  &
+(\Delta_{i,+}+\Delta_{i,-})^{-1} \Delta_{i,+}^{-1}&\cdots&0 \\
+\vdots&\vdots&\vdots&\ddots&\ddots&\ddots&\vdots\\
+0&0&0&\cdots&0&(\Delta_{M,+}+\Delta_{M,-})^{-1} \Delta_{M,-}^{-1}&\Xi_{M+}
+\end{psmallmatrix}_{M\times M}
+\end{align}
+
+
+
+Using banded matrices, these operators can be definied in the following compact forms:
+
+
+\begin{align}
+{L}_{1-}^{B-} &\equiv
+\tridiag \left(-(\Delta_-^\circ)^{-1}[2:M], (\Delta_-^\circ )^{-1}, \mathbf{0}_{M-1}  \right) +
+\diag\left( 
+\begin{bmatrix}
+(-\Delta^{-1}_{1,-} - \underline{\xi} ) &
+\mathbf{0}_{M-1}^T
+\end{bmatrix}^T
+\right) \\
+{L}_{1-}^{B+} &\equiv
+\tridiag \left(-(\Delta_-^\circ)^{-1}[2:M], (\Delta_-^\circ )^{-1}, \mathbf{0}_{M-1}  \right) +
+\diag\left( 
+\begin{bmatrix}
+\Delta^{-1}_{1,-} (-1 + \underline{\xi} \Delta_{1,-})^{-1} &
+\mathbf{0}_{M-1}^T
+\end{bmatrix}^T
+\right)
+\end{align}
+\begin{align}
+{L}_{1+}^{B-} &\equiv
+\tridiag \left(\mathbf{0}_{M-1}, -(\Delta_+^\circ )^{-1}, (\Delta_+^\circ)^{-1}[1:M-1]  \right) +
+\diag\left( 
+\begin{bmatrix}
+\mathbf{0}_{M-1}^T &
+\Delta^{-1}_{M,+} (1 + \overline{\xi} \Delta_{M,+})^{-1}
+\end{bmatrix}^T
+\right) \\
+{L}_{1+}^{B+} &\equiv
+\tridiag \left(\mathbf{0}_{M-1}, -(\Delta_+^\circ )^{-1}, (\Delta_+^\circ)^{-1}[1:M-1]  \right) +
+\diag\left( 
+\begin{bmatrix}
+\mathbf{0}_{M-1}^T &
+(\Delta^{-1}_{M,+} - \overline{\xi})
+\end{bmatrix}^T
+\right) 
+\end{align}
+\begin{align}
+{L}_{2}^{B \circ_1 \circ_M } \equiv
+2 \odot \Big[ & \text{tridiag} \Big[(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{-}^\circ)^{-1}, 
+-(\Delta_-^\circ \odot \Delta_+^\circ)^{-1},
+(\Delta_-^\circ + \Delta_+^\circ)^{-1} \odot (\Delta_{+}^\circ)^{-1} \Big] + \\ & \diag\left(  
+\begin{bmatrix} \
+\Xi_{1 \circ_1} & \mathbf{0}_{M-2} & \Xi_{M \circ_M}
+\end{bmatrix}
+\right) \Big]
+\end{align}
+where $\circ_1, \circ_M \in \{-, +\}$ denote the drift directions on the lower and upper boundaries respectively.
+
+
+When jumps onto the boundary are not allowed, i.e., the range of $J$ function in \eqref{eq:jump-process} does not include $0$, $M+1$,  jump diffusion process operator $L_n$ can be defined to the interior as well. To see this, note that $\indicator{J(i) = 0} = \indicator{J(i) = M+1} = 0$ holds for all $i = 1,..., M+1$ in this case, so that the discretized operator in \eqref{eq:jump-process-discretized-operator} becomes
+\begin{align}
+L_n &\equiv \begin{psmallmatrix}
+0 & \indicator{J(1) = 1} -1 & \indicator{J(1) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M} & 0 \\
+0 & \indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(2) = M-1}  & \indicator{J(2) = M} & 0 \\
+\vdots & \vdots & \vdots & \ddots & \vdots & \vdots &\vdots \\
+0 & \indicator{J(M-1) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M} &0 \\
+0 & \indicator{J(M) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1&0
+\end{psmallmatrix}
+\\
+&= \{ \indicator{ J(i) = j-1 } \}_{M \times (M+2)} - \begin{bmatrix} \mathbf{0}_M &\mathbf{I}_M & \mathbf{0}_M  \end{bmatrix}
+\end{align}
+so that solving $L_n \overline{v} $ is identical with solving $L_n^B v$ where $L_n^B$ is defined as
+
+\begin{align}
+L_n^B &\equiv \begin{psmallmatrix}
+\indicator{J(1) = 1} -1 & \indicator{J(1) = 2} & \cdots & \indicator{J(1) = M-1} & \indicator{J(1) = M}  \\
+\indicator{J(2) = 1}  & \indicator{J(2) = 2} - 1 & \cdots & \indicator{J(2) = M-1}  & \indicator{J(2) = M}  \\
+\vdots & \vdots & \ddots & \vdots & \vdots \\
+\indicator{J(M-1) = 1}  & \indicator{J(M-1) = 2} & \cdots & \indicator{J(M-1) = M-1} - 1 & \indicator{J(M-1) = M}  \\
+\indicator{J(M) = 1}  & \indicator{J(M) = 2} & \cdots & \indicator{J(M) = M-1}  & \indicator{J(M) = M} - 1
+\end{psmallmatrix}
+\\
+&= \{ \indicator{ J(i) = j } \}_{M \times M} - \mathbf{I}_M 
+\end{align}
+where $\{ \indicator{ J(i) = j } \}_{M \times M} $ is an $M$ by $M$ matrix whose $(i,j)$th element is $ \indicator{ J(i) = j } $. Note that this is identical with \label{eq:jump-process-discretized-operator-interior} for regular grid cases.
+
+
+\subsubsection{Absorbing barrier conditions}\label{subsubsec:absorbing-barrier-conditions-irregular}
 
 To apply an absorbing barrier condition $\tilde{v}(x_{\min}) =S$ for some $S \in \mathbb{R}$, with one reflecting barrier condition on the upper bound $v'(x_{\max}) = 0$, one can use
 
@@ -760,7 +1546,7 @@ S \\
 \end{bmatrix}
 \end{equation}
 
-Similarly, one can apply an absorbing condition on the upper bound  $\tilde{v}(x_{\max}) =S$ for some $S \in \mathbb{R}$ and the
+Similarly, one can apply an absorbing condition on the upper bound  $\tilde{v}(x_{\max}) =S$ for some $S \in \mathbb{R}$ and the lower bound $v'(x_{\min}) = 0$ with the following boundary conditino matrices:
 
 
 \begin{equation}\label{eq:absorbing-barrier-matrix-ub}
@@ -774,17 +1560,258 @@ S
 \end{bmatrix}
 \end{equation}
 
-Note that the corresponding $B$ and $b$ are identical with regular grid cases.
+Or absorbing barrier conditions on both sides with $\tilde{v}( x_{\min} )  = \underline{S}  $ and $\tilde{v}{x_{\max} } = \overline{S}$:
 
+
+\begin{equation}\label{eq:absorbing-barrier-matrix-both}
+B = \begin{bmatrix}
+1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 &  0 & 1\\
+\end{bmatrix}_{2 \times (M+2)} \quad
+b = \begin{bmatrix}
+\underline{S} \\
+\overline{S}
+\end{bmatrix}
+\end{equation}
+
+
+Note that the corresponding $B$ and $b$ are identical with regular grid cases. Furthermore, note that in the case of $b$ being non-zero, solving the system 
+\begin{equation}
+\begin{bmatrix}
+ L \\
+ B
+\end{bmatrix} 
+\overline{v}
+=
+\begin{bmatrix}
+f \\
+b
+\end{bmatrix}
+\end{equation}
+
+is not necessarily identical to solving the system
+\begin{equation}
+R \begin{bmatrix}
+ L \\
+ B
+\end{bmatrix} 
+\overline{v}
+=
+\begin{bmatrix}
+f \\
+b
+\end{bmatrix}
+\end{equation}
+
+
+\paragraph{Nonhomogenous absorbing barrier conditions for $L_{1-}$}
+
+Consider the case of \cref{eq:absorbing-barrier-matrix} with $S\neq 0$ and $L = L_{1-}$. Adding the first row of $L_{1-}$ by the first row of $B$ multiplied by $\Delta_{1,-}^{-1}$ gives, with the corresponding row operation matrix $R$, 
+
+\begin{equation}
+R {L}_{1-} = \begin{bmatrix}
+0&\Delta_{1,-}^{-1} &0&\dots&0&0&0\\
+0&-\Delta_{2,-}^{-1}&\Delta_{2,-}^{-1}&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&\Delta_{M-1,-}^{-1}&0&0\\
+0&0&0&\cdots&-\Delta_{M,-}^{-1}&\Delta_{M,-}^{-1}&0
+\end{bmatrix}_{M\times (M+2)}
+\end{equation}
+
+Then, solving the system 
+
+\begin{equation}
+\begin{bmatrix}
+ L \\
+ B
+\end{bmatrix} 
+\overline{v} 
+=
+\begin{bmatrix}
+f \\
+b
+\end{bmatrix}
+\end{equation}
+
+is identical to solving the system
+
+\begin{align}
+R\begin{bmatrix}
+ L \\
+ B
+\end{bmatrix} 
+\overline{v}
+&= 
+R\begin{bmatrix}
+f \\
+b
+\end{bmatrix} \\
+&= \begin{bmatrix}
+f(x_1) \\
+f(x_2) \\
+\vdots \\
+f(x_M) \\
+S \\
+0
+\end{bmatrix} +
+\begin{bmatrix}
+\Delta_{1,-}^{-1}S \\
+0  \\
+\vdots \\ 
+0 \\
+0 \\
+0
+\end{bmatrix} \\
+&= \begin{bmatrix}
+f + b_{L_{1-}}^B \\
+b
+\end{bmatrix}
+\end{align}
+where 
+\begin{align}
+b_{L_{1-}}^B = 
+\begin{bmatrix}
+\Delta_{1,-}^{-1}S \\
+0  \\
+\vdots \\ 
+0 \\
+\end{bmatrix}
+\end{align}
+
+Hence, limited to the interior, solving $v$ in the system above is identical as solving the following system with an operator $L^B$ on interior nodes:
+\begin{equation}
+L^Bv= f + b_{L_{1-}}^B
+\end{equation}
+where $L^B$ is a matrix $RL_{1-}[:,2:M+1]$
+
+\paragraph{Nonhomogenous absorbing barrier conditions for $L_{1+}$} Likewise, now consider the case of \cref{eq:absorbing-barrier-matrix-ub} with $S\neq 0$ and $L = L_{1+}$. Subtracting the last row of $L_{1+}$ by the second row of $B$ multiplied by $\Delta_{M,+}^{-1}$ gives, with the corresponding row operation matrix $R$, 
+
+\begin{equation}
+R {L}_{1+} = \begin{bmatrix}
+0&-\Delta_{1,+}^{-1}&\Delta_{1,+}^{-1}&\dots&0&0&0\\
+0&0&-\Delta_{2,+}^{-1}&\dots&0&0&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots&\vdots&\vdots\\
+0&0&0&\dots&-\Delta_{M-1,+}^{-1}&\Delta_{M-1,+}^{-1}&0\\
+0&0&0&\cdots&0&-\Delta_{M,+}^{-1}&0
+\end{bmatrix}_{M\times (M+2)} 
+\end{equation}
+
+Then, solving $v$ in the system limited to the interior is identical as solving the following system with an operator $L^B$ 
+
+\begin{equation}
+L^Bv= f + b_{L_{1+}}^B
+\end{equation}
+
+where 
+
+\begin{align}
+b_{L_{1+}}^B = \begin{bmatrix}
+0 \\ \vdots \\ 0 \\
+-\Delta_{M,+}^{-1} S
+\end{bmatrix}
+\end{align}
+
+and $L^B$ is a matrix $RL_{1+}[:,2:M+1]$
+\paragraph{Nonhomogenous absorbing barrier conditions for $L_{2}$} Likewise, now consider the case of \cref{eq:absorbing-barrier-matrix-both} with $\underline{S}, \overline{S} \neq 0$ and $L = L_{2}$. Subtracting the first row of $L_{2}$ by the first row of $B$ multiplied by $2(\Delta_{1,+} + \Delta_{1,-})^{-1} \Delta_{1,-}^{-1} $ and subtracting the last row of $L_{2}$ by the second row of $B$ multiplied by $ 2 (\Delta_{M,+} + \Delta_{M,-})^{-1} \Delta_{M,+}^{-1}$ gives, with the corresponding row operation matrix $R$, 
+
+\begin{align}
+ \small
+R {L}_2 \equiv 2 \begin{psmallmatrix}
+0 &
+-\Delta_{1,-}^{-1} \Delta_{1,+}^{-1}  & (\Delta_{1,+}+\Delta_{1,-})^{-1} \Delta_{1,+}^{-1}&0&\dots&0 & 0\\
+0 & (\Delta_{2,+}+\Delta_{2,-})^{-1}\Delta_{2,-}^{-1}  & \ddots &\ddots & \ddots& \vdots & \vdots  \\
+\vdots& 0 & \ddots & \ddots & \ddots & 0  & \vdots  \\
+\vdots& \vdots &\ddots & \ddots & \ddots& (\Delta_{M-1,+}+\Delta_{M-1,-})^{-1}\Delta_{M-1,+}^{-1} & 0\\
+0& 0&\cdots& 0 &
+(\Delta_{M,+}+\Delta_{M,-})^{-1}\Delta_{M,-}^{-1} &-\Delta_{M,-}^{-1} \Delta_{M,+}^{-1} &0   
+\end{psmallmatrix}_{M\times (M+2)} 
+\end{align}
+
+Then, solving $v$ in the system limited to the interior is identical as solving the following system with an operator $L^B$ 
+
+\begin{equation}
+L^Bv= f + b_{L_2}^B
+\end{equation}
+
+where 
+
+\begin{align}
+b_{L_2}^B = \begin{bmatrix}
+-2(\Delta_{1,+} + \Delta_{1,-})^{-1} \Delta_{1,-}^{-1} \underline{S} \\ 0 \\ \vdots \\ 0 \\
+-2(\Delta_{M,+} + \Delta_{M,-})^{-1} \Delta_{M,+}^{-1} \overline{S}
+\end{bmatrix}
+\end{align}
+
+and $L^B$ is a matrix $RL_{2}[:,2:M+1]$
+
+\paragraph{Nonhomogenous absorbing barrier conditions with composite operators} Note that the row operation matrices are linear -- hence, linearity holds for additional $b^B_L$ under common boundary conditions. For instance, consider the composite operator $L = \mu L_{1-} + ({\sigma^2}/{2}) L_2$ with the boundary condition matrix
+
+\begin{equation}
+B = \begin{bmatrix}
+1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+0 & 0 & 0 & \dots & 0 &  0 & 1\\
+\end{bmatrix}_{2 \times (M+2)} \quad
+b = \begin{bmatrix}
+\underline{S} \\
+\overline{S}
+\end{bmatrix}
+\end{equation} 
+
+Performing the row operation for the extended system for each operator yields $\mu R_1  L_{1-} $ and $(\sigma^2/2) R_2 L_2$ whose first and last columns are all zero, and the corresponding $b^B_L$ vectors $\mu b^B_{L_{1-}}$ and $(\sigma^2 / 2) b^B_{L_2}$ . Thus, solving $v$ in the full system limited to the interior is identical as solving the following system with an operator $L^B$
+
+\begin{align}
+L^B v = f + b^B_{L}
+\end{align}
+
+where $b^B_{L} = \mu b^B_{L_{1-}}+ (\sigma^2 / 2) b^B_{L_2}$ and $L^B$ is a matrix $\left( \mu R_1  L_{1-} + (\sigma^2/2) R_2 L_2 \right)[:,2:M+1] $.
+
+\paragraph{Absorbing Barriers: from Nodes That Are Different from the Boundary} Let $L^B$ be a differential operator on the interior nodes with some boundary conditions applied. Suppose we have extra absorbing barrier conditions $v(x) = 0$  for all $x \leq x_{M^*}$ for some $M^* \geq 0$ on the system. 
+
+Then, the first $M^*$ columns of a new discretized operator $L^{BM^*}$ and first $M^*$ elements of a new right handside $f^B$ have to be transformed so that the resulting system implies
+\begin{align}
+L v(x_i) = 
+\begin{cases}
+0 & \text{if $i \leq M^*$} \\
+f(x_i) & \text{if $M^* < i \leq M$}
+\end{cases}
+\end{align}
+so that the new discretized operator  $L^{BM^*}$ with absorbing barrier conditions applied on interior nodes must satisfy
+\begin{align}
+L^{BM^*} v = \begin{bmatrix}
+0 \\
+\vdots \\
+0 \\
+f_{M^* + 1} \\
+f_{M^* + 2} \\
+\vdots \\
+f_{M}
+\end{bmatrix}
+\end{align}
+where $L^{BM^*}$ is identical with $L^{B}$, except the first $M^*$ rows: the first $M^*$ rows of $L^{BM^*}$ are all zero rows except $(m,m)$th element whose value is one for all $1 \leq m \leq M^*$. This gives an identical system as 
+\begin{align}
+L^{BM^*} v = f + f^B
+\end{align}
+for the interior solution $v$ where $f^B$ defined as
+\begin{align}
+f^B = \begin{bmatrix}
+-f_1 \\
+\vdots \\
+-f_{M^*}\\ 
+0 \\
+\vdots \\
+0
+\end{bmatrix}
+\end{align}
+i.e. a column vector whose $m$th element is $-f(x_{m})$ for all $1 \leq m \leq M^*$ and is zero for all $ M^* < m \leq  M$.
 \subsection{Examples}
 
 \begin{example}\label{ex:gaussian-elimination-reflecting-barrier}
 	Consider $L = L_{2}$ to solve $L v = f$ with $M = 3$ under uniform grids $\overline{x} = \{x_0, x_1, x_2, x_3, x_4\}$ and $\Delta = 1$, whose corresponding interior grid is $x = \{x_1, x_2, x_3\}$. This gives
 	\begin{align}
 	L^B = 	 \begin{bmatrix}
-	-2 & 1 & 0 \\
+	-1 & 1 & 0 \\
 	1 & -2 & 1 \\
-	0 & 1 & -2 \\
+	0 & 1 & -1 \\
 	\end{bmatrix}
 	\end{align}
 	so $L^B v= f$ on the grid $x$ results in the following system
@@ -1057,11 +2084,447 @@ Note that the corresponding $B$ and $b$ are identical with regular grid cases.
 % \end{equation}
 % where $\dot{g}(t)$ is an $M$-vector whose $i$th element is $\partial_{t} g(x_i, t)$, which can be efficently solved by a number of differential equation solvers available in public, including \cite{rackauckas17}.
 
+\section{Continuous state models with discrete state transition}
+In this section, we study how discretized operators can be constructed when we have both continous and discrete states. In particular, we focus on solving stationary bellman equations with two states as in \cite{achdou17} -- in a later subsection we show how this can be generalized to models that contain more than two discrete states.
+
+\subsection{Bellman equations with two states}
+Consider the following system of Bellman equation with two states $j = 1, 2$:
+\begin{align} 
+	\rho v_{1}(x) &= \pi_1(x)+\mu_1 v'_1 (x) + \dfrac{\sigma^2}{2} v''_1 (x) +q_{12}\left(v_{2}(x)-v_{1}(x) \right) \\ \rho v_{2}(x) &=
+	\pi_2(x)+\mu_2 v'_2 (x) + \dfrac{\sigma^2}{2} v''_2 (x) +q_{21}\left(v_{1}(x)-v_{2}(x)\right)
+\end{align}
+
+Rearranging these two equations gives the following identical system:
+
+\begin{align} 
+\begin{bmatrix}
+\tilde{L}^1 - q_{12} & q_{12} \\ q_{21} & \tilde{L}^2 - q_{21}
+\end{bmatrix}
+\begin{bmatrix}
+v_1 (x) \\ v_2(x)
+\end{bmatrix}
+ =
+\begin{bmatrix}
+\pi_1 (x) \\
+\pi_2 (x)
+\end{bmatrix}\label{eq:continuous-and-discrete-system}
+\end{align}
+
+where
+
+\begin{align}
+\tilde{L}^1 &= \rho - \mu_1 \partial_{x} - \dfrac{\sigma^2}{2} \partial_{xx} \\
+\tilde{L}^2 &= \rho - \mu_2 \partial_{x} - \dfrac{\sigma^2}{2} \partial_{xx}
+\end{align}
+
+with the corresponding discretized operators
+
+\begin{align}
+{L}^1 &= \rho - \mu_1 L_1 - \dfrac{\sigma^2}{2} L_2 \\
+{L}^2 &= \rho - \mu_2 L_1 - \dfrac{\sigma^2}{2} L_2
+\end{align}
+
+
+Construct the discretized state space by stacking $\overline{v}$ and ${\pi}$ for states $j= 1, 2$:
+
+\begin{align}
+\overline{v} &= \begin{bmatrix}
+\overline{v}_1 \\
+\overline{v}_2
+\end{bmatrix} \\
+\pi &= \begin{bmatrix}
+\pi_1\\
+\pi_2
+\end{bmatrix}
+\end{align}
+
+where 
+
+\begin{align}
+\pi_1 &= \pi_2 \\
+&=
+\begin{bmatrix}
+\pi (x_1) \\
+\pi (x_2) \\
+\vdots \\
+\pi (x_M)  
+\end{bmatrix}
+\end{align}
+
+
+and recall that $L_0 = \begin{bmatrix} \mathbf{0}_M &  \mathbf{I}_M & \mathbf{0}_M  \end{bmatrix} $; then the corresponding discretized system from \eqref{eq:continuous-and-discrete-system} is
+
+\begin{align}
+\begin{bmatrix}
+{L}^1 - q_{12} L_0 & q_{12} L_0 \\ 
+q_{21} L_0 & {L}^2 - q_{21} L_0
+\end{bmatrix}
+\overline{v}
+=
+\pi
+\label{eq:continuous-and-discrete-system-discrete} 
+\end{align}
+
+with
+
+\begin{align}
+\pi = \begin{bmatrix}
+\pi_1 \\ \pi_2
+\end{bmatrix}
+\end{align}
+
+Suppose further that we also have boundary conditions applied, with the corresponding $2$ by $(M+2)$ boundary condition matrix $B_1$ and $2$-length vector $b_1$ for boundary conditions on $v_1$ and $B_2$ with $b_2$ for $v_2$. Then the solution $\overline{v}$ should satisfy the following system:
+
+\begin{align}
+\begin{bmatrix}
+B_1 & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & B_2 
+\end{bmatrix}
+\begin{bmatrix}
+\overline{v}_1 \\
+\overline{v}_2
+\end{bmatrix} &= 
+\begin{bmatrix}
+b_1\\
+b_2
+\end{bmatrix} 
+\end{align}
+
+Collect $b = \begin{bmatrix}
+b_1^T & b_2^T
+\end{bmatrix}^T$. Stacking this system with \eqref{eq:continuous-and-discrete-system-discrete} yields the following complete system:
+\begin{align}
+\begin{bmatrix}
+{L}^1 - q_{12} L_0 & q_{12} L_0 \\ 
+q_{21} L_0 & {L}^2 - q_{21} L_0 \\
+B_1 & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & B_2 
+\end{bmatrix}
+\overline{v}
+=
+\begin{bmatrix}
+\pi \\
+b
+\end{bmatrix} \label{eq:continuous-and-discrete-system-complete}
+\end{align}
+
+\subsection{Models with more than two discrete states}
+In this subsection, we study how the discretization strategy above can be applied to models with more than two discrete states. Let $N \geq 2$ be an arbitary number of states, with the corresponding Bellman equation
+\begin{align}
+	\rho v_{j}(x) = \pi_j(x)+\mu_j v'_j (x) + \dfrac{\sigma^2}{2} v''_j (x) + 
+	\sum_{j' \neq j} q_{jj'}  \left(  v_{j'}(x) - v_j(x) \right) \label{eq:continuous-and-discrete-equation-larger-states}  
+\end{align}
+
+for all $j=1 ,...,N$, where $q_{jj'}$ represents the transition rate from $j$th state to $j'$ state for $j, j' = 1,...,N$ with $j \neq j'$.
+
+Define $q_{jj}$ as $q_{jj} = -\sum_{j' \neq j} q_{jj'}$. Note that for each $j$, \eqref{eq:continuous-and-discrete-equation-larger-states} leads to the following system:
+\begin{align}
+\begin{bmatrix}
+q_{j1} &  \cdots & q_{j,j-1} & \tilde{L}^j + q_{jj} & q_{j,j+1} & \cdots & q_{jN}
+\end{bmatrix}
+\begin{bmatrix}
+v_1 (x) \\
+\vdots \\
+v_N (x)
+\end{bmatrix}
+=
+\pi_j (x)
+\end{align}
+
+where 
+
+\begin{align}
+\pi_j (x) = 
+\begin{bmatrix}
+\pi (x_1) \\ \pi (x_2) \\ \vdots \\ \pi (x_M)
+\end{bmatrix}
+\end{align}
+
+so that $\pi_j$ is identical across all $j = 1,...,N$.
+
+Stcking this for all $j = 1,...,N$, the following system is identical with \eqref{eq:continuous-and-discrete-equation-larger-states}:
+
+\begin{align}
+\begin{bmatrix}
+\tilde{L}^1 + q_{11} & q_{12} & \cdots &  \cdots & \cdots & q_{1,N-1} & q_{1N} \\ 
+q_{21} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+q_{j1} &  \cdots & q_{j,j-1} & \tilde{L}^j + q_{jj} & q_{j,j+1} & \cdots & q_{jN} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & q_{N-1,N} \\
+q_{N1} & q_{N2} & \cdots &  \cdots & \cdots & q_{N,N-1} & \tilde{L}^N + q_{NN} 
+\end{bmatrix}
+\begin{bmatrix}
+v_1 (x) \\
+\vdots \\
+v_N (x)
+\end{bmatrix}
+=
+\begin{bmatrix}
+\pi_1 (x) \\
+\vdots \\
+\pi_N (x)
+\end{bmatrix}
+\end{align}
+
+where
+
+\begin{align}
+\tilde{L}^j &= \rho - \mu_j \partial_{x} - \dfrac{\sigma^2}{2} \partial_{xx} 
+\end{align}
+for all $j = 1,...,N$, with the corresponding discretized operators
+
+\begin{align}
+{L}^j &= \rho - \mu_j L_1 - \dfrac{\sigma^2}{2} L_2 
+\end{align}
+
+Construct the discretized state space by stacking $\overline{v}$ and ${\pi}$ for states $j= 1, ...,N$:
+
+\begin{align}
+\overline{v} &= \begin{bmatrix}
+\overline{v}_1 \\
+\overline{v}_2 \\ 
+\vdots \\
+\overline{v}_N
+\end{bmatrix} \\
+\pi &= \begin{bmatrix}
+\pi_1\\
+\pi_2 \\
+\vdots \\
+\pi_N 
+\end{bmatrix}
+\end{align}
+
+and recall that $L_0 = \begin{bmatrix} \mathbf{0}_M &  \mathbf{I}_M & \mathbf{0}_M  \end{bmatrix} $; then the corresponding discretized system from \eqref{eq:continuous-and-discrete-system} is
+
+\begin{align}
+\begin{bmatrix}
+{L}^1 + L_0 q_{11} & L_0 q_{12} & \cdots &  \cdots & \cdots & L_0 q_{1,N-1} & L_0 q_{1N} \\ 
+L_0 q_{21} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+L_0 q_{j1} &  \cdots & L_0 q_{j,j-1} & {L}^j + L_0 q_{jj} & L_0 q_{j,j+1} & \cdots & L_0 q_{jN} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & L_0 q_{N-1,N} \\
+L_0 q_{N1} & L_0 q_{N2} & \cdots &  \cdots & \cdots & L_0 q_{N,N-1} & {L}^N + L_0 q_{NN} 
+\end{bmatrix}
+\overline{v}
+=
+\pi \label{eq:continuous-and-discrete-system-discrete-larger-states}
+\end{align}
+Suppose further that we also have boundary conditions applied, with the corresponding $2$ by $(M+2)$ boundary condition matrix $B_j$ and $2$-length vector $b_j$ for boundary conditions on $v_j$ for all $j = 1,..., N$. Collecting $b_j$ for all $j$,
+\begin{align}
+b &=
+\begin{bmatrix}
+b_1 \\
+b_2 \\
+\vdots \\
+b_N
+\end{bmatrix}
+\end{align}
+
+the solution $\overline{v}$ should satisfy the following system:
+
+\begin{align}
+\begin{bmatrix}
+B_1 & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \times (M+2)}  & \mathbf{0}_{2 \times (M+2)} \\ 
+\mathbf{0}_{2 \times (M+2)} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+\mathbf{0}_{2 \times (M+2)} &  \cdots & \mathbf{0}_{2 \times (M+2)} & B_j & \mathbf{0}_{2 \times (M+2)} & \cdots & \mathbf{0}_{2 \times (M+2)} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \times (M+2)} & B_N
+\end{bmatrix}
+\overline{v}
+=
+b 
+\end{align}
+
+Stacking this system with \eqref{eq:continuous-and-discrete-system-discrete-larger-states} yields the following complete system:
+
+
+\begin{align}
+\begin{psmallmatrix}
+{L}^1 + L_0 q_{11} & L_0 q_{12} & \cdots &  \cdots & \cdots & L_0 q_{1,N-1} & L_0 q_{1N} \\ 
+L_0 q_{21} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+L_0 q_{j1} &  \cdots & L_0 q_{j,j-1} & {L}^j + L_0 q_{jj} & L_0 q_{j,j+1} & \cdots & L_0 q_{jN} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & L_0 q_{N-1,N} \\
+L_0 q_{N1} & L_0 q_{N2} & \cdots &  \cdots & \cdots & L_0 q_{N,N-1} & {L}^N + L_0 q_{NN} \\
+B_1 & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \times (M+2)}  & \mathbf{0}_{2 \times (M+2)} \\ 
+\mathbf{0}_{2 \times (M+2)} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+\mathbf{0}_{2 \times (M+2)} &  \cdots & \mathbf{0}_{2 \times (M+2)} & B_j & \mathbf{0}_{2 \times (M+2)} & \cdots & \mathbf{0}_{2 \times (M+2)} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & \mathbf{0}_{2 \times (M+2)} & \cdots &  \cdots & \cdots & \mathbf{0}_{2 \times (M+2)} & B_N
+\end{psmallmatrix}
+\overline{v}
+=
+\begin{bmatrix}
+\pi \\ b
+\end{bmatrix} 
+\label{eq:continuous-and-discrete-system-complete-larger-states}
+\end{align}
+
+\subsection{Applying homogenous boundary conditions}
+In this subsection, we show how homogenous boundary conditions can be directly applied to operators, i.e., $b$ is zero, via Gaussian eliminations to yield discretized operators on the interior nodes from the complete system \eqref{eq:continuous-and-discrete-system-complete}. We first focus on models with two discrete states -- later we show that models with larger state spaces can be solved using a similar strategy.
+
+Recall the complete system in \eqref{eq:continuous-and-discrete-system-complete}; first, note that the first and last columns have a nonzero element only in the first and last rows respectively of the blocks $L^1 - q_{12} L_0$ and $B_1$, whereas the rows corresponding to the block matrix $B_1$ have non-zero elements only in $B_1$ itself. Hence, applying the corresponding Gaussian elimination to remove the nonzero elements in the first and last column of $L^1$ as in \eqref{subsec:applying-bc-regular} (for regular grids) or \eqref{subsec:applying-bc} (for irregular grids) does not affect block matrices other than $L^1 - q_{12} L_0$, and the resulting identical system is
+
+\begin{align}
+\begin{bmatrix}
+\begin{bmatrix}
+\mathbf{0}_M & {L}^{B_1,1} & \mathbf{0}_M
+\end{bmatrix} 
+- q_{12} L_0 & q_{12} L_0 \\ 
+ q_{21}  L_0 & {L}^2 - q_{21} L_0 \\
+B_1 & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & B_2 
+\end{bmatrix}
+\overline{v}
+=
+\begin{bmatrix}
+\pi \\ 
+b
+\end{bmatrix}
+\end{align}
+
+where $L^{B_1,1}$ is a $M$ by $M$ matrix after Gaussian eliminations that get rid of non-zero elements of $L^{1}$ in its first and last columns. Similarly, applying Gaussian elimination to $L^2$ yields the following system:
+
+\begin{align}
+\begin{bmatrix}
+\begin{bmatrix}
+\mathbf{0}_M & {L}^{B_1,1} & \mathbf{0}_M
+\end{bmatrix} 
+- q_{12} L_0 & q_{12} L_0 \\ 
+q_{21}  L_0 & 
+\begin{bmatrix}
+\mathbf{0}_M & {L}^{B_2,2} & \mathbf{0}_M
+\end{bmatrix} 
+- q_{21} L_0
+\\
+B_1 & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & B_2 
+\end{bmatrix}
+\overline{v}
+=
+\begin{bmatrix}
+\pi \\ 
+b
+\end{bmatrix}
+\end{align}
+where $L^{B_2,2}$ is a $M$ by $M$ matrix after Gaussian eliminations that get rid of non-zero elements of $L^{2}$ in its first and last columns. Since the first and last columns of $L_0$ are all zero, this system is identical with 
+\begin{align}
+\begin{bmatrix}
+\begin{bmatrix}
+\mathbf{0}_M & ({L}^{B_1,1} - q_{12} \mathbf{I}_{M \times M}) & \mathbf{0}_M
+\end{bmatrix} 
+& 
+\begin{bmatrix}
+\mathbf{0}_M & q_{12} \mathbf{I}_{M \times M} & \mathbf{0}_M
+\end{bmatrix} 
+\\ 
+\begin{bmatrix}
+\mathbf{0}_M & q_{21} \mathbf{I}_{M \times M} & \mathbf{0}_M
+\end{bmatrix} 
+& 
+\begin{bmatrix}
+\mathbf{0}_M & ({L}^{B_2,2} - q_{21} \mathbf{I}_{M \times M}) & \mathbf{0}_M
+\end{bmatrix} 
+\\
+B_1 & \mathbf{0}_{2 \times (M+2)} \\
+\mathbf{0}_{2 \times (M+2)} & B_2 
+\end{bmatrix}
+\overline{v}
+=
+\begin{bmatrix}
+\pi \\ 
+b
+\end{bmatrix}
+\end{align}
+Note that the first and $(M+1)$th columns in the two matrix blocks $\begin{bmatrix}
+\mathbf{0}_M & ({L}^{B_1,1} - q_{12} \mathbf{I}_{M \times M}) & \mathbf{0}_M
+\end{bmatrix} $ and $\begin{bmatrix}
+\mathbf{0}_M & q_{21} \mathbf{I}_{M \times M} & \mathbf{0}_M
+\end{bmatrix} $ are all zero, and so are they for $\begin{bmatrix}
+\mathbf{0}_M & q_{12} \mathbf{I}_{M \times M} & \mathbf{0}_M
+\end{bmatrix} $ and $\begin{bmatrix}
+\mathbf{0}_M & ({L}^{B_2,2} - q_{21} \mathbf{I}_{M \times M}) & \mathbf{0}_M
+\end{bmatrix}$. Since $\overline{v}$ can be decomposed into
+\begin{align}
+\overline{v} &= 
+\begin{bmatrix}
+\overline{v}_1 \\
+\overline{v}_2
+\end{bmatrix} \\
+&= \begin{bmatrix}
+(\overline{v}_1)_0 \\
+v_1 \\
+(\overline{v}_1)_{M+1} \\
+(\overline{v}_2)_0 \\
+v_2\\
+(\overline{v}_2)_{M+1} \\
+\end{bmatrix}
+\end{align}
+where $v_j$ is an $M$-length vector whose $i$th element is $v_j (x_i)$, i.e., the vector of interior solutions in $j$th state, solving the system \eqref{eq:continuous-and-discrete-system-complete} on the interior is identical with solving the following system:
+
+\begin{align}
+\begin{bmatrix}
+L^{B_1,1} - q_{12} \mathbf{I}_{M \times M} & q_{12} \mathbf{I}_{M \times M} \\
+q_{21} \mathbf{I}_{M \times M} & L^{B_2,2} - q_{21} \mathbf{I}_{M \times M}
+\end{bmatrix}
+v
+=
+\pi 
+\end{align}
+where 
+\begin{align}
+v = \begin{bmatrix}
+v_1 \\
+v_2
+\end{bmatrix}
+\end{align}
+
+\paragraph{Models with more than two discrete states} Applying boundary conditions to models with multiple states is analogous to the 2-state model case above. Stack the interior solutions as follows:
+\begin{align}
+v =
+\begin{bmatrix}
+v_1 \\
+v_2 \\
+\vdots \\
+v_N
+\end{bmatrix}
+\end{align}
+where $v_j$ is an $M$-length vector whose $i$th element is $v_j(x_i)$, i.e., the vector of interior solutions in $j$th state. Performing Gaussian elimination to remove the nonzero elements in the first and last columns of $L^j - L_{0} q_{jj}$ from $B_j$ for each $j$th state in $j = 1,...,N$ in \eqref{eq:continuous-and-discrete-system-complete-larger-states}, we have the following identical system for the interior solutions:
+
+\begin{align}
+\begin{psmallmatrix}
+L^{B_1,1} + q_{11} \mathbf{I}_{M \times M} & q_{12} \mathbf{I}_{M \times M} & \cdots &  \cdots & \cdots & q_{1,N-1} \mathbf{I}_{M \times M} &  q_{1N} \mathbf{I}_{M \times M} \\ 
+ q_{21} \mathbf{I}_{M \times M} & \ddots & \ddots & \vdots & \vdots & \vdots & \vdots  \\
+\vdots & \ddots & \ddots & \ddots  & \vdots & \vdots & \vdots
+\\
+ q_{j1} \mathbf{I}_{M \times M} &  \cdots &  q_{j,j-1}  \mathbf{I}_{M \times M} & {L}^{B_j,j} + q_{jj} \mathbf{I}_{M \times M} &  q_{j,j+1} \mathbf{I}_{M \times M} & \cdots &  q_{jN} \mathbf{I}_{M \times M} \\
+\vdots & \vdots& \vdots &  \ddots & \ddots & \ddots  & \vdots \\ 
+\vdots & \vdots  & \vdots& \vdots &  \ddots & \ddots &  q_{N-1,N} \mathbf{I}_{M \times M} \\
+ q_{N1} \mathbf{I}_{M \times M} &  q_{N2} \mathbf{I}_{M \times M} & \cdots &  \cdots & \cdots &  q_{N,N-1} \mathbf{I}_{M \times M} & {L}^{B_N,N} +  q_{NN} \mathbf{I}_{M \times M}
+\end{psmallmatrix}
+v
+=
+\pi 
+\end{align}
+where $L^{B_j,j}$ is a $M$ by $M$ matrix after Gaussian eliminations that get rid of non-zero elements of $L^{j}$ in its first and last columns.
+
 \newpage
 
 \appendix
 
-\section{Special Matrices and Notation}\label{sec:specialmatrices}
+\section{Special Matrices and Notation}\label{sec:special-matrices}
 In the code and algebra, a number of the matrices for discretization have special structure.
 \paragraph{Toeplitz Matrices}
 First, a Toeplitz matrix is one in which every descending diagonal is constant.  See \url{https://en.wikipedia.org/wiki/Toeplitz_matrix} for more examples and theory. To create, you need to specify the lower off-diagonals (ordered by rows) and the upper off-diagonals (ordered by columns).  They are square only if the number of rows and columns passed in is identical.\footnote{This notation is intended to match Matlab's and Julia's notation.  See \url{https://www.mathworks.com/help/matlab/ref/toeplitz.html} and \url{https://github.com/JuliaMatrices/ToeplitzMatrices.jl}.  Note that with this interface design, if $vr_1 \neq vr_1$ there is an error.  }   As an example, to construct
@@ -1087,8 +2550,8 @@ B_{-1} &\equiv \begin{bmatrix} B_{21} & B_{32} & B_{43} & B_{54} \end{bmatrix}\i
 B_{0} &\equiv \begin{bmatrix} B_{11} & B_{22} & B_{33} & B_{44} & B_{55} \end{bmatrix}\in\R^5\\
 B_{+1} &\equiv \begin{bmatrix} B_{12} & B_{23} & B_{34} & B_{45} & B_{56} \end{bmatrix}\in\R^5\\
 B_{+2} &\equiv \begin{bmatrix} B_{13} & B_{24} & B_{35} & B_{46} \end{bmatrix}\in\R^4\\
-\intertext{The $\band_{\ell,u}(\cdot)$ function is used to define a banded matrix given diagonals where the $\ell$ is number of bands below the diagonal and $u$ is the number of bands above the diagonal.  The function then takes a list of the diagonals in order (i.e. lower ones, diagonal bands, then upper band)}
-\band_{1,1}(B_{-1}, B_{0}, B_{+1}) &= \begin{bmatrix}
+\intertext{The $\band^{n,m}_{\ell,u}(\cdot)$ function is used to define a banded matrix given diagonals where the $\ell$ is number of bands below the diagonal and $u$ is the number of bands above the diagonal.  The function then takes a list of the diagonals in order (i.e. lower bands, the diagonal band, then upper bands)}
+\band^{5,6}_{1,1}(B_{-1}, B_{0}, B_{+1}) &= \begin{bmatrix}
  B_{11} & B_{12} & 0      & \cdots & \cdots & 0 \\
  B_{21} & B_{22} & B_{23} & \ddots & \ddots & \vdots \\
   0     & B_{32} & B_{33} & B_{34} & \ddots & \vdots \\
@@ -1096,17 +2559,25 @@ B_{+2} &\equiv \begin{bmatrix} B_{13} & B_{24} & B_{35} & B_{46} \end{bmatrix}\i
  \vdots & \ddots & \ddots & B_{54} & B_{55} & B_{56}
 \end{bmatrix}\in \R^{5\times 6}\\
 \intertext{And other with a variation on the columns with no sub-diagonals and two super-diagonals}
-\band_{0,2}(B_{0}, B_{+1}, B_{+2}) &= \begin{bmatrix}
+\band_{0,2}^{5,6}(B_{0}, B_{+1}, B_{+2}) &= \begin{bmatrix}
  B_{11} & B_{12} & B_{13} & 0      & \cdots & 0 \\
  0 & B_{22} & B_{23} & B_{24} &0 & \vdots \\
   \vdots      & 0 & B_{33} & B_{34} & B_{35} & 0 \\
  \vdots & \ddots & 0 & B_{44} & B_{45} & B_{46} \\
  \vdots & \ddots & \ddots & 0 & B_{55} & B_{56}
 \end{bmatrix}\in \R^{5\times 6}
+\intertext{The reason that the $(n,m)$ and $(l,u)$ are both needed is the possibility of additional zeros.  For example, simply adding another column }
+\band_{0,2}^{5,7}(B_{0}, B_{+1}, B_{+2}) &= \begin{bmatrix}
+ B_{11} & B_{12} & B_{13} & 0      & \cdots & 0  & 0 \\
+ 0 & B_{22} & B_{23} & B_{24} &0 & \vdots & \vdots \\
+  \vdots      & 0 & B_{33} & B_{34} & B_{35} & 0 & 0 \\
+ \vdots & \ddots & 0 & B_{44} & B_{45} & B_{46} & 0\\
+ \vdots & \ddots & \ddots & 0 & B_{55} & B_{56} & 0
+\end{bmatrix}\in \R^{5\times 7}
 \end{align}
-Note that a Topelitz matrix where many of the diagonals are $0$ can be written as a banded matrix
+Note that a Topelitz matrix where many of the diagonals are $0$ can be written as a banded matrix, albeit by dropping the extra structure
 \begin{align}
-\band_{1,2}\left(f \mathbf{1}_3, a \mathbf{1}_4, b \mathbf{1}_4, c \mathbf{1}_3\right)
+\band_{1,2}^{4,5}\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_4, c\times \mathbf{1}_3\right)
    &= \toep(\begin{bmatrix}a & f & 0 & 0 \end{bmatrix},\begin{bmatrix}a & b & c & 0 & 0 \end{bmatrix}) \\
    &= \begin{bmatrix}
 	a & b & c & 0 & 0 \\
@@ -1117,8 +2588,84 @@ Note that a Topelitz matrix where many of the diagonals are $0$ can be written a
 \end{align}
 
 \paragraph{Tridiagonal Matrices}
-A final set of matrices are sparse, tridiagonal matrices.  This is a particular type of square banded matrix with a single off-diagonal in each direction.  As always, the extra structure leads to specialized operations
-\textbf{TODO: START HERE AND CONNECT TO BOTH}
+A final set of matrices are sparse, tridiagonal matrices.  This is a particular type of square banded matrix with a single off-diagonal in each direction.  As always, the extra structure leads to specialized operations.  For example,
+\begin{align}
+B_{-1} &\equiv \begin{bmatrix} B_{21} & B_{32} & B_{43} & B_{54} \end{bmatrix}\in\R^4\\
+B_{0} &\equiv \begin{bmatrix} B_{11} & B_{22} & B_{33} & B_{44} & B_{55} \end{bmatrix}\in\R^5\\
+B_{+1} &\equiv \begin{bmatrix} B_{12} & B_{23} & B_{34} & B_{45} \end{bmatrix}\in\R^4\\
+\intertext{Note in the above that we redefined the $B_{+1}$ vector since otherwise the matrix would not be square.  Collecting,}
+\tridiag(B_{-1}, B_0, B_{+1})&=
+\begin{bmatrix}
+ B_{11} & B_{12} & 0      & \cdots & 0 \\
+ B_{21} & B_{22} & B_{23} & \ddots & \vdots \\
+  0     & B_{32} & B_{33} & B_{34} & \vdots \\
+ \vdots & \ddots & B_{43} & B_{44} & B_{45}\\
+ \vdots & \ddots & \ddots & B_{54} & B_{55}
+\end{bmatrix}\in \R^{5\times 5}\\
+\intertext{Which is a banded square matrix}
+&= \band_{1,1}^{5,5}(B_{-1}, B_{0}, B_{+1})
+\end{align}
+  If the diagonals and off-diagonals are all constant, then it is also a Toeplitz matrix,
+
+\begin{align}
+\tridiag\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_3\right) &= \begin{bmatrix}
+	a & b & 0 & 0 \\
+	f & a & b & 0 \\
+	0 & f & a & b \\
+	0 & 0 & f & a
+	\end{bmatrix} \in \R^{4 \times 4}\\
+	&= \toep(\begin{bmatrix}a & f & 0 & 0 \end{bmatrix},\begin{bmatrix}a & b & 0 & 0 \end{bmatrix})\\
+	&=\band_{1,1}^{4,4}\left(f\times \mathbf{1}_3, a\times \mathbf{1}_4, b\times \mathbf{1}_3 \right)
+\end{align}
+
+
+
+
+\section{Boundary extrapolation under mixed boundary conditions}
+Consider solving $v$ on an irregular extended grid $\overline{x} = \set{x_i}_{i=0}^{M+1}$ with the corresponding interior grid $x = \set{x_i}_{i=1}^M $ such that mixed boundary conditions \eqref{eq:mixed-BC1-irregular-grid} and \eqref{eq:mixed-BC2-irregular-grid} are applied. As described in Section \ref{subsec:applying-bc}, differential operators with boundary conditions $B$ applied, $L^B$, can be used to solve the system $L^B v = f$ in \eqref{eq:system-on-interior} to find $v$ on the interior grid without stacking up the boundary conditions manually. Note that the resulting interior solution $v$ does not contain the value of $v$ on the boundary, $\overline{v}_0 = v(x_0)$ and $\overline{v}_{M+1} = v(x_{M+1})$. 
+
+First, we consider the case when the drift is positive on the lower bound and negative on the upper bound. To retrieve $\overline{v}_0 $ and $\overline{v}_{M+1}$ to construct $\overline{v}$ from $v$, first note that the mixed boundary conditions can be discretized as follows:
+\begin{align}
+\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_0 &= 0 \label{eq:mixed-discretized-lb} \\
+\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M+1} &= 0 \label{eq:mixed-discretized-ub}
+\end{align}
+as shown in \ref{subsubsec-irregular-grids-mixed-boundary-conditions}, using forward difference and backward difference scheme for the lower bound and upper bound respecitvely. Rearranging \eqref{eq:mixed-discretized-lb} and \eqref{eq:mixed-discretized-ub} gives
+\begin{align}
+\overline{v}_0 &= \frac{1}{1-\underline{\xi} \Delta_{0,+} } \overline{v}_1 \\
+\overline{v}_{M+1} &= \frac{1}{1+\overline{\xi} \Delta_{M+1,-} } \overline{v}_M
+\end{align}
+Note that $\overline{v}_1 = v_1$ and $\overline{v}_M = v_M$ as the resulting solutions on the interior nodes are identical. Also, by the definition, we have $\Delta_{0,+} = x_1 - x_0 = \Delta_{1,-}$ and $\Delta_{M+1,-} = x_{M+1} - x_M = \Delta_{M, +}$, which yields the following boundary extrapolation scheme
+\begin{align}
+\overline{v}_0 &= \frac{1}{1-\underline{\xi} \Delta_{1,-} } {v}_1 \\
+\overline{v}_{M+1} &= \frac{1}{1+\overline{\xi} \Delta_{M,+} } {v}_M
+\end{align}
+to construct
+\begin{align}
+\overline{v} &= \begin{bmatrix}
+\overline{v}_0 \\
+v  \\
+\overline{v}_{M+1}
+\end{bmatrix} \\ &=
+\begin{bmatrix}
+\dfrac{1}{1-\underline{\xi} \Delta_{1,-} } {v}_1 \\
+v  \\
+\dfrac{1}{1+\overline{\xi} \Delta_{M,+} } {v}_M
+\end{bmatrix} 
+\end{align}
+from $v$.
+
+Now suppose that the drift is negative on the lower bound and is positive on the upper bound. Recall from \eqref{eq:mixed-BC1-irregular-grid-negative} and \eqref{eq:mixed-BC2-irregular-grid-positive} that the corresponding discretized boundary conditions are:
+
+\begin{align}
+\frac{\overline{v}_1 - \overline{v}_0}{\Delta_{0,+}} + \underline{\xi} \overline{v}_1 &= 0 \\
+\frac{\overline{v}_{M+1} - \overline{v}_M}{\Delta_{M+1,-}} + \overline{\xi} \overline{v}_{M} &= 0 
+\end{align}
+
+Rearrangement with the fact that $\Delta_{0,+} = \Delta_{1,-}$ and $\Delta_{M+1,-} = \Delta_{M,+}$ gives the following boundary extrapolation scheme:
+\begin{align}
+\overline{v}_0 &= (1+\underline{\xi} \Delta_{1,-} ) {v}_1 \\
+\overline{v}_{M+1} &= (1-\overline{\xi} \Delta_{M,+} ) {v}_M
+\end{align}
 
 \section{Derivation by substitution}
 One can also derive the formula for $L_{1-}^B, L_{1+}^B, L_2^B$ in \eqref{eq:L-1-regular}, \eqref{eq:L-1-plus-regular}, \eqref{eq:L-2-regular} by substitution. For simplicity, here we focus on the case when we have regular grids, i.e., $x_{i+1} - x_i = \Delta$ for some $\Delta > 0$ for all $i = 0, ..., M$.

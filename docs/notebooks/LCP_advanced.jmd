@@ -9,15 +9,13 @@ This notebook is a computational appendix to the [earlier notebook](../generated
 As before, we run some setup code
 
 ```julia
-# install if required,
-# ] add SimpleDifferentialOperators Plots Suppressor BenchmarkTools
+using Pkg 
+pkg"add InstantiateFromURL"
+
+using InstantiateFromURL 
+activate_github_path("QuantEcon/SimpleDifferentialOperators.jl", path = "docs/examples", activate = true)
 
 using SimpleDifferentialOperators
-
-
-# use TOML for other packages 
-using Pkg 
-pkg"activate ."
 using Plots, LinearAlgebra, Suppressor, BenchmarkTools
 ```
 

@@ -1,88 +1,11 @@
 """
-    ExtensionDifferentialOperator(x̄, method::DifferenceMethod)
+    DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::DiscretizationMethod)
 
-Returns a discretized differential operator of `length(x̄)` by `length(x̄) + 2` matrix
-whose first and last columns are applied to the ghost nodes just before `x̄[1]` and `x̄[end]` respectively
-under no boundary condition using finite difference method specified by `method`.
-
-# Examples
-```jldoctest; setup = :(using SimpleDifferentialOperators)
-julia> x̄ = 0:5
-0:5
-
-julia> ExtensionDifferentialOperator(x̄, BackwardFirstDifference())
-4×6 SparseArrays.SparseMatrixCSC{Float64,Int64} with 11 stored entries:
-  [1, 1]  =  -1.0
-  [1, 2]  =  1.0
-  [2, 2]  =  -1.0
-  [1, 3]  =  0.0
-  [2, 3]  =  1.0
-  [3, 3]  =  -1.0
-  [2, 4]  =  0.0
-  [3, 4]  =  1.0
-  [4, 4]  =  -1.0
-  [3, 5]  =  0.0
-  [4, 5]  =  1.0
-
-julia> ExtensionDifferentialOperator(x̄, ForwardFirstDifference())
-4×6 SparseArrays.SparseMatrixCSC{Float64,Int64} with 11 stored entries:
-  [1, 2]  =  -1.0
-  [2, 2]  =  0.0
-  [1, 3]  =  1.0
-  [2, 3]  =  -1.0
-  [3, 3]  =  0.0
-  [2, 4]  =  1.0
-  [3, 4]  =  -1.0
-  [4, 4]  =  0.0
-  [3, 5]  =  1.0
-  [4, 5]  =  -1.0
-  [4, 6]  =  1.0
-
-julia> ExtensionDifferentialOperator(x̄, CentralSecondDifference())
-4×6 SparseArrays.SparseMatrixCSC{Float64,Int64} with 12 stored entries:
-  [1, 1]  =  1.0
-  [1, 2]  =  -2.0
-  [2, 2]  =  1.0
-  [1, 3]  =  1.0
-  [2, 3]  =  -2.0
-  [3, 3]  =  1.0
-  [2, 4]  =  1.0
-  [3, 4]  =  -2.0
-  [4, 4]  =  1.0
-  [3, 5]  =  1.0
-  [4, 5]  =  -2.0
-  [4, 6]  =  1.0
-```
-"""
-function ExtensionDifferentialOperator(x̄, method::DifferenceMethod)
-    T = eltype(x̄)
-    d = diff(x̄)
-    Δ_1 = d[1]
-    Δ_M = d[end]
-    M = length(x̄) - 2
-
-    # get basis operator on interior nodes
-    L_basis = get_basis_operator(x̄, method)
-
-    # add columns for ghost nodes next to boundaries
-    col_lb = zeros(T, M)
-    col_ub = zeros(T, M)
-    col_lb[1] = typeof(method) <: BackwardFirstDifference ? -(one(T) / Δ_1) : zero(T)
-    col_lb[1] = typeof(method) <: CentralSecondDifference ? (one(T) / (Δ_1*Δ_1)) : col_lb[1]
-    col_ub[end] = typeof(method) <: ForwardFirstDifference ? (one(T) / Δ_M) : zero(T)
-    col_ub[end] = typeof(method) <: CentralSecondDifference ? (one(T) / (Δ_M*Δ_M)) : col_ub[end]
-
-    L = sparse([col_lb L_basis col_ub])
-end
-
-"""
-    DifferentialOperator(x̄, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)
-
-Returns a discretized differential operator of `length(x̄)` by `length(x̄)` matrix
-under reflecting boundary conditions from `bc` using finite difference method specified by `method`.
+Returns a discretized differential operator of 
+`length(interiornodes(x̄))` by `length(interiornodes(x̄))` matrix
+under mixed boundary conditions from `bc` using a discretization method specified by `method`.
 
 # Examples
-
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
 julia> x̄ = 0:5
 0:5
@@ -107,93 +30,193 @@ julia> DifferentialOperator(x̄, (Reflecting(), Reflecting()), CentralSecondDiff
   1.0  -2.0   1.0    ⋅
    ⋅    1.0  -2.0   1.0
    ⋅     ⋅    1.0  -1.0
-```
-"""
-function DifferentialOperator(x̄, bc::Tuple{Reflecting, Reflecting}, method::DifferenceMethod)
-    T = eltype(x̄)
-    Δ_1m = x̄[2] - x̄[1]
-    Δ_1p = x̄[3] - x̄[2]
-    Δ_Mm = x̄[end-1] - x̄[end-2]
-    Δ_Mp = x̄[end] - x̄[end-1]
 
-    # get basis operator on interior nodes
-    L = get_basis_operator(x̄, method)
-    
-    Ξ_1 = -2*(1/(Δ_1m*Δ_1p)-1/((Δ_1p+Δ_1m)*(Δ_1m)))
-    Ξ_M = -2*(1/(Δ_Mm*Δ_Mp)-1/((Δ_Mp+Δ_Mm)*(Δ_Mp))) 
-   
-    # apply boundary conditions
-    L[1,1] = typeof(method) <: BackwardFirstDifference ? zero(T) : L[1,1]
-    L[1,1] = typeof(method) <: CentralSecondDifference ? Ξ_1 : L[1,1]
-    L[end,end] = typeof(method) <: ForwardFirstDifference ? zero(T) : L[end,end]
-    L[end,end] = typeof(method) <: CentralSecondDifference ? Ξ_M : L[end,end]
-
-    return L
-end
-
-"""
-    DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)
-
-Returns a discretized differential operator of `length(x̄)` by `length(x̄)` matrix
-under mixed boundary conditions from `bc` using finite difference method specified by `method`.
-
-# Examples
-```jldoctest; setup = :(using SimpleDifferentialOperators)
 julia> x̄ = 0:5
 0:5
 
-julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), BackwardFirstDifference())
+julia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), BackwardFirstDifference())
 4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
- -1.0   0.0    ⋅    ⋅
- -1.0   1.0   0.0   ⋅
-   ⋅   -1.0   1.0  0.0
-   ⋅     ⋅   -1.0  1.0
+ Inf     0.0    ⋅    ⋅
+  -1.0   1.0   0.0   ⋅
+    ⋅   -1.0   1.0  0.0
+    ⋅     ⋅   -1.0  1.0
 
-julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), ForwardFirstDifference())
+julia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), ForwardFirstDifference())
 4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
  -1.0   1.0    ⋅     ⋅
   0.0  -1.0   1.0    ⋅
    ⋅    0.0  -1.0   1.0
-   ⋅     ⋅    0.0  -1.0
+   ⋅     ⋅    0.0  -0.5
 
-julia> DifferentialOperator(x̄, (Mixed(1.0), Mixed(1.0)), CentralSecondDifference())
+julia> DifferentialOperator(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)), CentralSecondDifference())
 4×4 LinearAlgebra.Tridiagonal{Float64,Array{Float64,1}}:
- 0.0   1.0    ⋅     ⋅
- 1.0  -2.0   1.0    ⋅
-  ⋅    1.0  -2.0   1.0
-  ⋅     ⋅    1.0  -2.0
+ -Inf     1.0    ⋅     ⋅
+    1.0  -2.0   1.0    ⋅
+     ⋅    1.0  -2.0   1.0
+     ⋅     ⋅    1.0  -1.5
 ```
 """
-function DifferentialOperator(x̄, bc::Tuple{Mixed, Mixed}, method::DifferenceMethod)
-    T = eltype(x̄)
+function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::BackwardFirstDifference)
+    # reflecting bcs are special cases of mixed bcs with ξ = 0
+    if (typeof(bc[1]) <: Reflecting)
+        return DifferentialOperator(x̄, (Mixed(ξ = 0), bc[2]), method)
+    end
+    if (typeof(bc[2]) <: Reflecting)
+        return DifferentialOperator(x̄, (bc[1], Mixed(ξ = 0)), method)
+    end
+
+    # setup for operator
+    M = length(x̄) - 2
     d = diff(x̄)
-    ξ_lb = bc[1].ξ
-    ξ_ub = bc[2].ξ
+    Δ₋⁻¹ = 1 ./ d[1:end-1] # (1 ./ Δ₋)
+    T = eltype(Δ₋⁻¹)
+
+    # construct the operator
+    L = Tridiagonal(-Δ₋⁻¹[2:M], Δ₋⁻¹, zeros(T, M-1)) 
+
+    # setup for boundary conditions
+    Δ_1m = x̄[2] - x̄[1]
+
+    # apply boundary conditions
+    # (under homogeneous absorbing bc on lb, the first column in invariant)
+    if (typeof(bc[1]) <: Mixed) 
+        ξ_lb = bc[1].ξ
+        L[1,1] += (bc[1].direction == :backward) ? (-1/Δ_1m - ξ_lb) : 1/(-1+ξ_lb*Δ_1m)/Δ_1m
+    end
+    # apply absorbing boundary condition on lb further if it's applied withint boundary
+    if (typeof(bc[1]) <: Absorbing && bc[1].loc > 0)
+        L[1:(min(M, bc[1].loc)),:] .= zero(T)
+        L[diagind(L)[1:(min(M, bc[1].loc))]] .= 1.0
+    end
+
+    return L
+end
+
+function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::ForwardFirstDifference)
+    # reflecting bcs are special cases of mixed bcs with ξ = 0
+    if (typeof(bc[1]) <: Reflecting)
+        return DifferentialOperator(x̄, (Mixed(ξ = 0), bc[2]), method)
+    end
+    if (typeof(bc[2]) <: Reflecting)
+        return DifferentialOperator(x̄, (bc[1], Mixed(ξ = 0)), method)
+    end
+
+    # setup for operator
+    M = length(x̄) - 2
+    d = diff(x̄)
+    Δ₊⁻¹ = 1 ./ d[2:end] # (1 ./ Δ₊), extracting elements on the interior
+    T = eltype(Δ₊⁻¹)
+
+    # construct the operator
+    L = Tridiagonal(zeros(T, M-1), -Δ₊⁻¹, Δ₊⁻¹[1:M-1]) 
+    
+    # setup for boundary conditions
+    Δ_Mp = x̄[end] - x̄[end-1]
+
+    # apply boundary conditions
+    # (under homogeneous absorbing bc on ub, the last column in invariant)
+    if (typeof(bc[2]) <: Mixed) 
+        ξ_ub = bc[2].ξ
+        L[end,end] += (bc[2].direction == :forward) ? (1/Δ_Mp - ξ_ub) : 1/(1+ξ_ub*Δ_Mp)/Δ_Mp
+    end
+    
+    # apply absorbing boundary condition on lb further if it's applied withint boundary
+    if (typeof(bc[1]) <: Absorbing && bc[1].loc > 0)
+        L[1:(min(M, bc[1].loc)),:] .= zero(T)
+        L[diagind(L)[1:(min(M, bc[1].loc))]] .= 1.0
+    end
+
+    return L
+end
+
+function DifferentialOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::CentralSecondDifference)
+    # reflecting bcs are special cases of mixed bcs with ξ = 0
+    if (typeof(bc[1]) <: Reflecting)
+        return DifferentialOperator(x̄, (Mixed(ξ = 0), bc[2]), method)
+    end
+    if (typeof(bc[2]) <: Reflecting)
+        return DifferentialOperator(x̄, (bc[1], Mixed(ξ = 0)), method)
+    end
+
+    # setup for operators
+    M = length(x̄) - 2
+    d = diff(x̄)
+    Δ₋⁻¹ = 1 ./ d[1:end-1] # 1 ./ Δ₋
+    Δ₊⁻¹ = 1 ./ d[2:end] # 1 ./ Δ₊
+    Δ⁻¹ = 1 ./ (d[1:end-1] + d[2:end]) # 1 ./ (Δ₋ + Δ₊)
+    T = eltype(Δ⁻¹)
+
+    # construct the operator
+    L = 2*Tridiagonal((Δ⁻¹.*Δ₋⁻¹)[2:M], -Δ₋⁻¹ .* Δ₊⁻¹, (Δ⁻¹.*Δ₊⁻¹)[1:M-1])
+
+    # setup for boundary conditions
     Δ_1p = x̄[3] - x̄[2]
     Δ_1m = x̄[2] - x̄[1]
     Δ_Mp = x̄[end] - x̄[end-1]
     Δ_Mm = x̄[end-1] - x̄[end-2]
 
-    # get extended operator with reflecting barrier conditions first
-    L = get_basis_operator(x̄, method)
- 
-    Ξ_1 = -2*(1/(Δ_1m*Δ_1p)+1/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m)))
-    Ξ_M = -2*(1/(Δ_Mm*Δ_Mp)-1/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp)))
-   
     # apply boundary conditions
-    L[1,1] = typeof(method) <: BackwardFirstDifference ? (1+1/(-1+ξ_lb*Δ_1m))/Δ_1m : L[1,1]
-    L[1,1] = typeof(method) <: CentralSecondDifference ? Ξ_1 : L[1,1]
-    L[end,end] = typeof(method) <: ForwardFirstDifference ? (-1+1/(1+ξ_ub*Δ_Mp))/Δ_Mp : L[end,end]
-    L[end,end] = typeof(method) <: CentralSecondDifference ? Ξ_M : L[end,end]
+    # (under homogeneous absorbing bc on lb, the first column in invariant)
+    if (typeof(bc[1]) <: Mixed) 
+        ξ_lb = bc[1].ξ
+        Ξ_1p = L[1,1] - 2/((-1+ξ_lb*Δ_1m)*(Δ_1p+Δ_1m)*(Δ_1m))
+        Ξ_1m = 2*(-1/(Δ_1p*Δ_1m) + (1+ξ_lb*Δ_1m)/(Δ_1p+Δ_1m)/Δ_1m)
+        L[1,1] = (bc[1].direction == :backward) ? Ξ_1m : Ξ_1p
+    end
+    # (under homogeneous absorbing bc on ub, the last column in invariant)
+    if (typeof(bc[2]) <: Mixed) 
+        ξ_ub = bc[2].ξ
+        Ξ_Mm = L[end,end] + 2/((1+ξ_ub*Δ_Mp)*(Δ_Mp+Δ_Mm)*(Δ_Mp))
+        Ξ_Mp = 2*(-1/(Δ_Mp*Δ_Mm) - (-1+ξ_ub*Δ_Mp)/(Δ_Mp+Δ_Mm)/Δ_Mp)    
+        L[end,end] = (bc[2].direction == :forward) ? Ξ_Mp : Ξ_Mm
+    end
+
+    # apply absorbing boundary condition on lb further if it's applied withint boundary
+    if (typeof(bc[1]) <: Absorbing && bc[1].loc > 0)
+        L[1:(min(M, bc[1].loc)),:] .= zero(T)
+        L[diagind(L)[1:(min(M, bc[1].loc))]] .= 1.0
+    end
+    
+    return L
+end
+
+function JumpProcessOperator(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition}, method::JumpProcess)
+    T = eltype(x̄)
+    M = length(x̄) - 2
+    jumps = method.jumps
+    destinations = Array(1:M) + jumps
+
+    # under reflecting or mixed boundary conditions, 
+    # we assume that there is no destination on the boundary nodes 
+    if ((typeof(bc[1]) <: Reflecting || typeof(bc[1]) <: Mixed) && any(destinations .<= 0))
+        throw(ErrorException("Under reflecting/mixed boundary conditions on lower boundary, the lower boundary node cannot be destination."))
+    end
+    if ((typeof(bc[2]) <: Reflecting || typeof(bc[2]) <: Mixed) && any(destinations .>= (M+1))) 
+        throw(ErrorException("Under reflecting/mixed boundary conditions on upper boundary, the upper boundary node cannot be destination."))
+    end
+
+    # construct L
+    L = BandedMatrix((0=>-ones(M), 1=>zeros(M-1)), (M,M), 
+                    (max(abs(minimum(jumps)), 0), max(abs(maximum(jumps)), 1)))
+
+    # apply destination for each row
+    for i in 1:length(jumps)
+        # add destination if it is not on/out of the boundary
+        if !(destinations[i] <= 0 || destinations[i] >= M+1)
+            L[i,destinations[i]] += 1
+        end
+    end
 
     return L
 end
+
 
 # Convenience calls
 """
     L₁₋bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
 
-Returns a discretized first-order differential operator of `length(x̄)` by `length(x̄)` matrix
+Returns a discretized first-order differential operator of 
+`length(interiornodes(x̄))` by `length(interiornodes(x̄))` matrix
 using backward difference under boundary conditions specified by `bc`.
 
 The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper.
@@ -216,7 +239,8 @@ L₁₋bc(x̄, bc) = DifferentialOperator(x̄, bc, BackwardFirstDifference())
 """
     L₁₊bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
 
-Returns a discretized first-order differential operator of `length(x̄)` by `length(x̄)` matrix
+Returns a discretized first-order differential operator of 
+`length(interiornodes(x̄))` by `length(interiornodes(x̄))` matrix
 using forward difference under boundary conditions specified by `bc`.
 
 The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper.
@@ -239,7 +263,8 @@ L₁₊bc(x̄, bc) = DifferentialOperator(x̄, bc, ForwardFirstDifference())
 """
     L₂bc(x̄, bc::Tuple{BoundaryCondition, BoundaryCondition})
 
-Returns a discretized second-order differential operator of `length(x̄)` by `length(x̄)` matrix
+Returns a discretized second-order differential operator of 
+`length(interiornodes(x̄))` by `length(interiornodes(x̄))` matrix
 using central difference under boundary conditions specified by `bc`.
 
 The first element of `bc` is applied to the lower bound, and second element of `bc` to the upper.
@@ -258,13 +283,35 @@ julia> L₂bc(x̄, (Reflecting(), Reflecting()))
 """
 L₂bc(x̄, bc) = DifferentialOperator(x̄, bc, CentralSecondDifference())
 
+
+"""
+    Lₙbc(x̄, method, (Absorbing(), Absorbing()))
+
+Returns a discretized jump process operator of
+`length(interiornodes(x̄))` by `length(interiornodes(x̄))` matrix
+specified by `method` under boundary conditions specified by `bc`.
+
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x̄ = 0:5
+0:5 
+
+julia> Lₙbc(x̄, (Absorbing(), Absorbing()), JumpProcess(x̄, -1.0))
+4×4 BandedMatrices.BandedMatrix{Float64,Array{Float64,2},Base.OneTo{Int64}}:
+ 0.0   0.0    ⋅     ⋅
+ 1.0  -1.0   0.0    ⋅
+  ⋅    1.0  -1.0   0.0
+  ⋅     ⋅    1.0  -1.0
+```
+"""
+Lₙbc(x̄, bc, method)  = JumpProcessOperator(x̄, bc, method)
+
 """
     L₁₋(x̄)
 
-Returns a discretized first-order differential operator of `length(x̄)` by `length(x̄) + 2` matrix
+Returns a discretized first-order differential operator of 
+`length(interiornodes(x̄))` by `length(x̄)` matrix
 using backward difference under no boundary condition.
-
-The first and last columns are applied to the ghost nodes just before `x̄[1]` and `x̄[end]` respectively.
 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
@@ -281,10 +328,9 @@ L₁₋(x̄) = ExtensionDifferentialOperator(x̄, BackwardFirstDifference())
 """
     L₁₊(x̄)
 
-Returns a discretized first-order differential operator of `length(x̄)` by `length(x̄) + 2` matrix using
-forward difference under no boundary condition.
-
-The first and last columns are applied to the ghost nodes just before `x̄[1]` and `x̄[end]` respectively.
+Returns a discretized first-order differential operator of
+`length(interiornodes(x̄))` by `length(x̄)` matrix
+using forward difference under no boundary condition.
 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
@@ -304,10 +350,9 @@ L₁₊(x̄) = ExtensionDifferentialOperator(x̄, ForwardFirstDifference())
 """
     L₂(x̄)
 
-Returns a discretized second-order differential operator of `length(x̄)` by `length(x̄) + 2` matrix
+Returns a discretized second-order differential operator of
+`length(interiornodes(x̄))` by `length(x̄)` matrix
 using central difference under no boundary condition.
-
-The first and last columns are applied to the ghost nodes just before `x̄[1]` and `x̄[end]` respectively.
 
 # Examples
 ```jldoctest; setup = :(using SimpleDifferentialOperators)
@@ -323,6 +368,28 @@ julia> Array(L₂(x̄))
 ```
 """
 L₂(x̄)  = ExtensionDifferentialOperator(x̄, CentralSecondDifference())
+
+"""
+    Lₙ(x̄, method)
+
+Returns a discretized jump process operator of
+`length(interiornodes(x̄))` by `length(x̄)` matrix
+specified by `method`
+
+# Examples
+```jldoctest; setup = :(using SimpleDifferentialOperators)
+julia> x̄ = 0:5
+0:5 
+
+julia> Lₙ(x̄, JumpProcess(x̄, -1.0))
+4×6 BandedMatrices.BandedMatrix{Float64,Array{Float64,2},Base.OneTo{Int64}}:
+ 0.0  0.0    ⋅     ⋅     ⋅    ⋅
+  ⋅   1.0  -1.0    ⋅     ⋅    ⋅
+  ⋅    ⋅    1.0  -1.0    ⋅    ⋅
+  ⋅    ⋅     ⋅    1.0  -1.0   ⋅
+```
+"""
+Lₙ(x̄, method)  = ExtensionDifferentialOperator(x̄, method)
 
 """
     interiornodes(x̄)
@@ -365,7 +432,7 @@ julia> x̄ = [1.0; 1.5; 1.7]
  1.5
  1.7
 
-julia> interiornodes(x̄, (Mixed(1.0), Mixed(1.0)))
+julia> interiornodes(x̄, (Mixed(ξ = 1.0), Mixed(ξ = 1.0)))
 1-element Array{Float64,1}:
  1.5
 ```

@@ -1,0 +1,245 @@
+# Discretizing Kolmogorov Forward Equations 
+## Kolmogorov Forward Equations (KFE)
+The KFE equation is
+$$
+\partial_t v(x,t) = -\mu \partial_{x} v(x,t) + \frac{\sigma^2}{2} \partial_{xx} v(x,t)
+$$
+for $x \in (x_{\min}, x_{\max})$. The corresponding reflecting barrier conditions are
+$$
+\begin{align}
+-\mu v(x_{\min}, t) +\frac{\sigma^2}{2} \partial_{x} v(x_{\min}, t) &= 0 \\
+-\mu v(x_{\max}, t) +\frac{\sigma^2}{2} \partial_{x} v(x_{\max}, t) &= 0
+\end{align}
+$$
+
+For notational brevity, we fix $t$ and omit $t$ on $v$ unless it is needed for clarity. Let $\tilde L$ be a differential operator such that $\tilde L v(x)$ represents $\partial_t v(x,t)$, i.e., $\tilde L v (x) = -\mu v'(x) + (\sigma^2/2) v''(x) $. 
+
+Discretize the domain by $\{x_i \}_{i=0}^{M+1}$ with $x_0 = x_{\min}$ and $x_{M+1} = x_{\max}$ uniformly with the grid size of $\Delta$. Let $v_i$ represent $v(x_i)$ accordingly for all $i = 0, ..., M+1$.
+
+```julia
+using Pkg 
+pkg"add InstantiateFromURL"
+
+using InstantiateFromURL 
+activate_github_path("QuantEcon/SimpleDifferentialOperators.jl", path = "docs/examples", activate = true)
+
+
+using SimpleDifferentialOperators, Test
+μ = -1.0 # constant negative drift
+σ = 1.
+M = 3 # size of grid (interior points)
+@assert μ <= 0 # make sure we are using negative drifts
+x̄ = range(0.0, 1.0, length = (M+2))
+Δ = step(x̄)
+x = interiornodes(x̄); # i.e., x̄[2:end-1]
+```
+
+The corresponding discretized operator $L$ can be constructed as follows:
+
+```julia
+# construct the discretized operator L
+L = Array(-μ*L₁₊(x̄) + σ^2 / 2 * L₂(x̄))
+```
+
+Under upwind scheme with the current negative drift term $\mu \leq 0$, the discretized boundary conditions are
+$$
+\begin{align}
+-\mu v_1 +\frac{\sigma^2}{2} \frac{v_1 - v_0}{\Delta} &= 0 \\
+-\mu v_{M+1} +\frac{\sigma^2}{2} \frac{v_{M+1} - v_M}{\Delta} &= 0
+\end{align}
+$$
+
+Note that $-\mu$ appears on the second column, not the first column for the lower bound as the drift is negative. The corresponding boundary condition matrices are
+
+$$
+B =
+\begin{bmatrix}
+-\frac{\sigma^{2}}{2 \Delta} & {-\mu+\frac{\sigma^{2}}{2 \Delta}} & {0} & {\ldots} & {0} & {0} & {0}\\
+{0} & {0} & {0} & {\ldots} & {0} & {-\frac{\sigma^{2}}{2 \Delta}} & {-\mu+\frac{\sigma^{2}}{2 \Delta}}
+\end{bmatrix}_{2 \times(M+2)}
+$$
+
+and
+
+$$
+b = 
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix}
+$$
+
+```julia
+# construct boundary condition matrices
+B = transpose([[- σ^2/(2*Δ); -μ + σ^2/(2*Δ); zeros(M)] [zeros(M); -σ^2/(2*Δ); -μ+σ^2/(2*Δ)]])
+b = [0; 0];
+```
+
+such that the discretized solution $\overline{v}$ satisfies the following system:
+
+$$
+\begin{bmatrix}
+L \\
+B
+\end{bmatrix} 
+\overline{v}
+= 
+\begin{bmatrix}
+v_t \\
+b
+\end{bmatrix} 
+$$
+
+where $\overline{v}$ is an $(M+2)$-vector whose elements are $\{v_i\}_{i=0}^{M+1}$ and $v_t$ is an $M$-vector whose $i$th element is $\partial_t v(x_i,t)$.
+
+```julia
+# display the full system on the left side
+[L; B]
+```
+
+
+It is also worth mentioning that for $\mu \geq 0$, the discretized boundary conditions are 
+$$
+\begin{align}
+-\mu v_0 +\frac{\sigma^2}{2} \frac{v_1 - v_0}{\Delta} &= 0 \\
+-\mu v_{M} +\frac{\sigma^2}{2} \frac{v_{M+1} - v_M}{\Delta} &= 0
+\end{align}
+$$
+
+and the corresponding boundary condition matrix $B$ would have been
+
+$$
+B =
+\begin{bmatrix}
+-\mu-\frac{\sigma^{2}}{2 \Delta} & {\frac{\sigma^{2}}{2 \Delta}} & {0} & {\ldots} & {0} & {0} & {0}\\
+{0} & {0} & {0} & {\ldots} & {0} & {-\mu-\frac{\sigma^{2}}{2 \Delta}} & {\frac{\sigma^{2}}{2 \Delta}}
+\end{bmatrix}_{2 \times(M+2)}
+$$
+
+Now perform Gaussian elimination once -- substract the first row of $L$ by a multiple of the first row of $B$ to make the first column of the resulting matrix have zeros only:
+
+```julia
+# copy L from the original system
+L_KFE = copy(L)
+
+# Gaussian elimination on the first row 
+L_KFE[1,:] -= (L[1,1] / B[1,1])*B[1,:]
+[L_KFE; B]
+```
+
+Likewise, perform another Gaussian elimination by substracting the last row of the resulting $L$ by a multiple of the second row of $B$ to make the last column of the resulting matrix have zeros only:
+
+```julia
+# Gaussian elimination on the last row
+L_KFE[end,:] -= (L[end,end] / B[end,end])*B[end,:]
+[L_KFE; B]
+```
+
+Note that the most left and right columns corresponding to $L$ are all zeros. Extracting the interior yields
+```julia
+# extract the interior, as the first and last columns are all zeros
+L_KFE = L_KFE[:,2:end-1] 
+```
+
+And the corresponding eigenvalues are:
+
+```julia
+using LinearAlgebra
+LinearAlgebra.eigvals(L_KFE)
+```
+
+### Constructing with operators with `SimpleDifferentialOperators.jl`
+Or, using `SimpleDifferentialOperators.jl`, this can be defined using mixed boundary conditions as well; note that multiplying both sides by $2/\sigma^2$ on the boundary condition equations above, we have the following equivalent equations:
+$$
+\begin{align}
+-\frac{2\mu}{\sigma^2} v(x_{\min}, t) +\partial_{x} v(x_{\min}, t) &= 0 \\
+-\frac{2\mu}{\sigma^2} v(x_{\max}, t) +\partial_{x} v(x_{\max}, t) &= 0
+\end{align}
+$$
+which gives mixed boundary conditions with $\overline{\xi} = \underline{\xi} = -\frac{2\mu}{\sigma^2}$:
+
+```julia
+# ξ values for mixed boundary conditions
+ξ_lb = ξ_ub = -2μ/σ^2
+
+# define the corresponding mixed boundary conditions
+# note that the direction on the lower bound is backward (default is forward)
+bc = (Mixed(ξ = ξ_lb, direction = :backward), Mixed(ξ = ξ_ub))
+
+# use SimpleDifferentialOperators.jl to construct the operator on the interior
+L_KFE_SDO = Array(-μ*L₁₊bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))
+```
+
+which returns an identical operator as `L_KFE` we just have constructed.
+
+```julia
+# confirm it returns an identical operator
+@test L_KFE ≈ L_KFE_SDO
+```
+
+### Alternative: ignoring upwind scheme for boundary conditions
+As mentioned above, $-\mu$ appears on the second column, not the first column for the lower bound. Suppose that it were not the case, i.e., $B$ is constructed as
+
+$$
+B =
+\begin{bmatrix}
+-\mu-\frac{\sigma^{2}}{2 \Delta} & {\frac{\sigma^{2}}{2 \Delta}} & {0} & {\ldots} & {0} & {0} & {0}\\
+{0} & {0} & {0} & {\ldots} & {0} & {-\frac{\sigma^{2}}{2 \Delta}} & {-\mu+\frac{\sigma^{2}}{2 \Delta}}
+\end{bmatrix}_{2 \times(M+2)}
+$$
+
+Then the corresponding discretized operator `L_KFE_try` is:
+
+```julia
+# construct boundary condition matrix
+B = transpose([[-μ- σ^2/(2*Δ); σ^2/(2*Δ); zeros(M)] [zeros(M); -σ^2/(2*Δ); -μ+σ^2/(2*Δ)]])
+
+# copy L from the original system
+L_KFE_try = copy(L)
+
+# Gaussian elimination on the first row 
+L_KFE_try[1,:] -= (L[1,1] / B[1,1])*B[1,:]
+
+# Gaussian elimination on the last row
+L_KFE_try[end,:] -= (L[end,end] / B[end,end])*B[end,:]
+
+# extract the interior, as the first and last columns are all zeros
+L_KFE_try = L_KFE_try[:,2:end-1]
+
+L_KFE_try
+```
+
+The eigenvalues for `L_KFE_try` are:
+
+```julia
+LinearAlgebra.eigvals(L_KFE_try)
+```
+
+## Infinitesimal generator for Brownian motions
+The infinitesimal generator for Brownian motions is defined as $\tilde L$ such that
+$$
+\tilde{L}_B v = \mu v'(x) + \frac{\sigma^2}{2} v''(x)
+$$
+for $x \in (x_{\min}, x_{\max})$. Assume that reflecting barrier conditions are applied on both lower bound and upper bound, i.e.,
+$$
+\begin{align}
+v'(x_{\min}) &= 0 \\
+v'(x_{\max}) &= 0 \\
+\end{align}
+$$
+
+Using `SimpleDifferentialOperators.jl`, one can construct a discretized operator $L_B$ for $\tilde{L}_B$ under the reflecting boundary conditions:
+
+```julia
+# define boundary conditions
+bc = (Reflecting(), Reflecting())
+# define discretized operator
+L_B = Array(μ*L₁₋bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))
+```
+
+### Duality of $L$
+Note that the operator for the KFE $\tilde{L}$ is the adjoint operator of the infinitesimal generator $\tilde{L}_B$, and the correct discretization scheme for $L$ is, analogously, done by taking the transpose of the discretized operator for $L_B$ (See [Gabaix et al., 2016](https://doi.org/10.3982/ECTA13569) and [Achdou et al., 2017](https://ideas.repec.org/p/nbr/nberwo/23732.html)). 
+In fact, the transpose of $L_B$ is identical with $L$:
+
+```julia
+@test L_KFE ≈ transpose(L_B)
+```

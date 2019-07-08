@@ -3,6 +3,13 @@ Notebooks
 
 We prepared a gallery of notebooks to showcase the applicability of the package to different economic problems.
 
-* [Optimal Stopping Problems](../generated/LCP_simple.html). You can download the notebook [here](../generated/LCP_simple.ipynb).
+* Kolmogorov Forward Equations: [View](https://nbviewer.jupyter.org/urls/github.com/QuantEcon/SimpleDifferentialOperators.jl/releases/download/TAG_GOES_HERE/KFE.ipynb) and [download](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/releases/download/TAG_GOES_HERE/KFE.ipynb)
 
-* [Computational Appendix: Optimal Stopping Problems](../generated/LCP_advanced.html). You can download the notebook [here](../generated/LCP_advanced.ipynb). This notebook presents solution to the problem in Julia, using a number of solvers and modeling tools.
+* Optimal Stopping Problems: [View](https://nbviewer.jupyter.org/urls/github.com/QuantEcon/SimpleDifferentialOperators.jl/releases/download/TAG_GOES_HERE/LCP_simple.ipynb) and [download](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/releases/download/TAG_GOES_HERE/LCP_simple.ipynb)
+
+
+* Optimal Stopping Problems with Jump Diffusion: [View](https://nbviewer.jupyter.org/urls/github.com/QuantEcon/SimpleDifferentialOperators.jl/releases/download/TAG_GOES_HERE/LCP_jump_diffusion.ipynb) and [download](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/releases/download/TAG_GOES_HERE/LCP_jump_diffusion.ipynb)
+
+* Computational Appendix for Optimal Stopping Problems: [View](https://nbviewer.jupyter.org/urls/github.com/QuantEcon/SimpleDifferentialOperators.jl/releases/download/TAG_GOES_HERE/LCP_advanced.ipynb) and [download](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/releases/download/TAG_GOES_HERE/LCP_advanced.ipynb)
+
+

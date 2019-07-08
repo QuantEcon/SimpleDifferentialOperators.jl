@@ -36,16 +36,18 @@ using Test, LinearAlgebra, DualNumbers
 end
 
 @testset "Consistency" begin
+    regular_grids = [range(0.0, 1.0, length = 5), range(-1.0, 1.0, length = 5)]
+    irregular_grids = [[-1.0; 0.0; 2.0; 5.0; 9.0], [0.1; 0.3; 0.9; 1.9; 2.5; 9.0]]
     # Check consistency
-    for N in 3:10 # repeat with different node numbers
+    for x̄ in [regular_grids; irregular_grids]
         # setup
         f(x) = x^2
         μ = -0.1 # constant negative drift
         σ = 0.1
         ρ = 0.05
-        N = 3
-        x̄ = range(0.0, 1.0, length = N + 2)
-        x = x̄[2:end-1]
+        
+        x = interiornodes(x̄)
+        M = length(x)
         bc = (Reflecting(), Reflecting()) # specify BC (reflecting barrier)
 
         # operators with reflecting boundary conditions
@@ -55,13 +57,13 @@ end
 
         # operators without boundary conditions, adding extra two rows for boundary conditions
         L̄ = μ*L₁₋(x̄) + σ^2 / 2 * L₂(x̄)
-        B = transpose([[-1; 1; zeros(N)] [zeros(N); -1; 1]])
-        L = [([zeros(N) Diagonal(ones(N,N)) zeros(N)] * ρ - L̄); B]
+        B = transpose([[-1; 1; zeros(M)] [zeros(M); -1; 1]])
+        L = [([zeros(M) Diagonal(ones(M,M)) zeros(M)] * ρ - L̄); B]
 
         ## solve the value function including the boundary conditions
         v̄ = L \ [f.(x); 0.0; 0.0]
-        v_by_extended_operator = v̄[2:end-1] # extract the interior
 
-        @test v ≈ v_by_extended_operator
+        # currently broken on regular grids
+        @test v ≈ v̄[2:end-1]
     end
 end

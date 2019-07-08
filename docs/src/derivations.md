@@ -1,6 +1,6 @@
 Derivations
 ==========
-Detailed derivation, including formula for irregular grids, can be found [here](../generated/discretized-differential-operator-derivation.pdf).
+Detailed derivation, including formula for irregular grids, can be found [here](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/releases/download/TAG_GOES_HERE/discretized-differential-operator-derivation.pdf).
 
 Setup
 ----------
