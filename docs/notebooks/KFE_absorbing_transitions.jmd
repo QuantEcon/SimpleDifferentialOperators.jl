@@ -1,3 +1,4 @@
+
 # Transition Dynamics of KFE with Absorbing Barrier
 This notebook looks at the transition dynamics, where the main application is thinking of firms with some productivity existing a distribution.  The following can be used directly, or come from a change of variables where the lower boundary is growing and "sweeping up" firms.  See the "Detailed Derivations" below.
 The summary of equations (derived below in "Detailed Derivations") is:
@@ -31,6 +32,7 @@ This notebook tries to analyze the economic implications of that absorbing bound
 The key will be to look at how the distribution changes, and what "exit rate" crossing the lower boundary look like for different boundary conditions and parameter combinations
 
 ## Setup and Installation
+
 ```julia
 # using Pkg
 # pkg"add InstantiateFromURL"
@@ -46,7 +48,7 @@ using SimpleDifferentialOperators, Plots, LinearAlgebra, DifferentialEquations
 μ = -0.05
 σ = 0.1
 t_max = -1/μ
-M = 3 # size of grid (interior points)
+M = 100 # size of grid (interior points)
 x̄ = range(0, 1.0, length = (M+2))
 
 # initial distribution
@@ -107,7 +109,7 @@ solution = solve(ode);
 μ = -0.05
 σ = 0.0
 t_max = -1/μ
-M = 3 # size of grid (interior points)
+M = 100 # size of grid (interior points)
 x̄ = range(0, 1.0, length = (M+2))
 
 # initial distribution
