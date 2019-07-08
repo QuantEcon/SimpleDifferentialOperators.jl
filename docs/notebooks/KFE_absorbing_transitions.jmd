@@ -36,24 +36,107 @@ The key will be to look at how the distribution changes, and what "exit rate" cr
 # pkg"add InstantiateFromURL"
 # using InstantiateFromURL
 # activate_github_path("QuantEcon/SimpleDifferentialOperators.jl", path = "docs/examples", activate = true)
-using SimpleDifferentialOperators, Plots, LinearAlgebra
+using SimpleDifferentialOperators, Plots, LinearAlgebra, DifferentialEquations
 ```
 
-## General Setup
-```julia
-# Function to manually create the operators for sigma = 0 and sigma > 0 by fudging the extensions
-# I say function because we may try different variations of the parameters in different cell blocks.
-```
+## General Setup ($\sigma > 0$)
 
-
-## Model with No Brownian Motion
 ```julia
+# parameters
 μ = -0.05
+σ = 0.1
+t_max = -1/μ
+M = 3 # size of grid (interior points)
+x̄ = range(0, 1.0, length = (M+2))
+
+# initial distribution
+f_0 = fill(1/M, M)
+
+# μ must be a negative number
 @assert μ <= 0
-# TODO:Create the setup with sigma = 0,
 ```
 
+### Absorbing on bottom ($f(t, 0) = 0$)
 
+```julia
+# ξ values for mixed boundary conditions
+ξ_ub = -2μ/σ^2
+
+# define the corresponding mixed boundary conditions
+bc = (Absorbing(), Mixed(ξ = ξ_ub))
+
+# use SimpleDifferentialOperators.jl to construct the operator on the interior
+L_KFE = Array(-μ*L₁₊bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))
+
+# define a kernel using the discretized operator
+df(f,p,t) = L_KFE * f
+
+# define the corresponding system of ODE
+ode = ODEProblem(df,f_0,(0.0,t_max)) 
+
+# solve the system
+solution = solve(ode);
+```
+
+### Reflecting on the bottom ($\partial_x f(t, 0) = 0$)
+
+```julia
+# ξ values for mixed boundary conditions
+ξ_ub = -2μ/σ^2
+
+# define the corresponding mixed boundary conditions
+bc = (Reflectingt_max(), Mixed(ξ = ξ_ub))
+
+# use SimpleDifferentialOperators.jl to construct the operator on the interior
+L_KFE = Array(-μ*L₁₊bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))
+
+# define a kernel using the discretized operator
+df(f,p,t) = L_KFE * f
+
+# define the corresponding system of ODE
+ode = ODEProblem(df,f_0,(0.0,t_max)) 
+
+# solve the system
+solution = solve(ode);
+```
+
+## Model with No Brownian Motion ($\sigma = 0$)
+
+```julia
+# parameters
+μ = -0.05
+σ = 0.0
+t_max = -1/μ
+M = 3 # size of grid (interior points)
+x̄ = range(0, 1.0, length = (M+2))
+
+# initial distribution
+f_0 = fill(1/M, M)
+
+# μ must be a negative number
+@assert μ <= 0
+```
+
+```julia
+# ξ values for mixed boundary conditions
+ξ_ub = -2μ/σ^2
+
+# define the boundary conditions
+# this basically just takes the interior of the extension operator
+bc = (Absorbing(), Absorbing())
+
+# use SimpleDifferentialOperators.jl to construct the operator on the interior
+L_KFE = Array(-μ*L₁₊bc(x̄, bc))
+
+# define a kernel using the discretized operator
+df(f,p,t) = L_KFE * f
+
+# define the corresponding system of ODE
+ode = ODEProblem(df,f_0,(0.0,t_max)) 
+
+# solve the system
+solution = solve(ode);
+```
 
 # Detailed Derivations (including Change of Variables from Increasing Boundary)
 Define the (potentially) stochastic process for $Z_t$ as
