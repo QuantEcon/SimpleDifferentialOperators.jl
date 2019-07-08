@@ -1,0 +1,100 @@
+# Transition Dynamics of KFE with Absorbing Barrier
+This notebook looks at the transition dynamics, where the main application is thinking of firms with some productivity existing a distribution.  The following can be used directly, or come from a change of variables where the lower boundary is growing and "sweeping up" firms.  See the "Detailed Derivations" below.
+The summary of equations (derived below in "Detailed Derivations") is:
+
+- Let $\mu \leq 0$ be the drift towards an absorbing barrier at $x = 0$, and $\sigma \geq 0$ be the volatility of the Brownian Motion.  Assume that if $\sigma = 0$ then $\mu < 0$, so that for all parameter combinations there is "death".
+- The initial condition is
+$$
+f(0,1) = 1, \text{ for } x \in [0,1]
+$$
+- The evolution follows the KFE
+$$
+\partial_t f(t,x) = -\mu \partial_x f(t,x) + \frac{\sigma^2}{2}\partial_{xx} f(t,x)
+$$
+- Because there is no birth term, we would expect that in the limit $f(t,x) = 0$ for all $x$.  This is chosen to simplify the analysis of the underlying economics.
+- The boundary condition at the top are:
+    - For $\sigma > 0$ (derived from the "no net flux" equation at the upper boundary) is
+    $$
+    0 = - \frac{2 \mu}{\sigma^2} f(t,1) + \partial_x f(t,1)
+    $$
+    - In the case of $\sigma = 0$ with $\mu < 0$, the equivalent boundary condition is that there are no new firms added into the domain, i.e. $f(t,1) = 0$  Notice that the above nests that equation if you multiply by $\sigma$.
+- The exit rate is the flux crossing the lower boundary
+$$
+S(t) = - \mu f(t,0) - \frac{\sigma^2}{2}\partial_{x} f(t,0)
+$$
+- The final boundary condition, at $x = 0$ is the main topic of interest here.  A few notes:
+    - If $\sigma = 0$, then there should not be a boundary condition as it is a 1st order PDE.  The upper boundary $f(t,1) = 0$ is the boundary condition required.
+    - Usually, economists have said that an absorbing barrier should have $f(t,0) = 0$ as the boundary condition.
+
+This notebook tries to analyze the economic implications of that absorbing boundary condition, and questions whether it is really what we want to use in many cases.
+
+The key will be to look at how the distribution changes, and what "exit rate" crossing the lower boundary look like for different boundary conditions and parameter combinations
+
+## Setup and Installation
+```julia
+# using Pkg
+# pkg"add InstantiateFromURL"
+# using InstantiateFromURL
+# activate_github_path("QuantEcon/SimpleDifferentialOperators.jl", path = "docs/examples", activate = true)
+using SimpleDifferentialOperators, Plots, LinearAlgebra
+```
+
+## General Setup
+```julia
+μ = -0.05
+σ = 0.01
+@assert μ <= 0
+bc_reflecting_1 = Mixed(ξ = -2μ/σ^2, direction = :backward)  # use with σ > 0,
+bc_no_entry = Absorbing()  # use with σ = 0
+```
+
+
+## Model with No Brownian Motion
+```julia
+μ = -0.05
+# TODO:Create the setup with sigma = 0,
+```
+
+
+
+# Detailed Derivations (including Change of Variables from Increasing Boundary)
+Define the (potentially) stochastic process for $Z_t$ as
+$$
+d Z_t = \sigma d W_t
+$$
+where $\sigma \geq 0$ is the volatility, and $W_t$ is standard Brownian motion.  There is an absorbing barrier at the bottom, and a "reflecting barrier" (or something equivalent if $\sigma = 0$) at the top.
+
+The scenario to consider is:
+- $Z_t$ as a firm's productivity
+- The measure at time $t$ of productivity is $\tilde{f}(t,z)$.  No new firms are ever born, but they may die do to exit.
+- The initial condition in the economy is that firms $Z_t$ are distributed uniformly on $[0,1]$.  i.e. $\tilde{f}(0,z) = 1$ for $z \in [0,1]$
+- In the background, there is some sort of process for fixed costs driving optimal exit of the firms.  Without solving the details, assume that the exist threshold of firms follows $M(t) = -\mu t$ for $\mu \leq 0$  i.e. it starts at $0$ and grows, perhaps due to aggregate growth increasing marginal costs.
+- To keep things simple, assume that the reflecting barrier at the top, $\bar{Z}(t) = 1 - \mu t$, also changes at $\mu$ - which keeps the domain of fixed width $1$.
+A few notes:
+- This is *not* conservative so if $\sigma > 0$ or if $\sigma = 0$ and $\mu > 0$ then all firms eventually exit.  The purpose of removing the entry side is simply to remove the seutp.
+- This growth of the top barrier is just makes the discretization easier, and I don't think it is important. You could solve the setup with alternative approaches with a fixed boundary where the domain compresses over time.
+- The flow of firms crossing the exit threshold $M(t)$ is the death rate, and is calculated by the flux
+
+## Change of Variables
+Define $x = z + \mu t$, which ensures that for all $\mu$, the domain of $x$ is always $[0,1]$.  With this change of variables, the stochastic process is
+$$
+d X_t = \mu dt + \sigma d W_t
+$$
+and the absorbing barrier is at $x = 0$, and the reflecting barrier is at $x = 1$ for all $t$.  We could have started with this directly if we wanted to:  firms lose relative productivity at speed $mu < 0$ and fall towards the exit barrier at $x = 0$.  The measure of firms with the change of variables is denoted $f(t,x)$ where
+- $f(0,x) = 1$ for $x \in [0,1]$
+- The domain of $f(t,\cdot)$ is $[0,1]$ for all $t$.
+
+
+## Flux
+Since the boundary here is not moving, we can calculate the death rate from the flux across the boundary.  Similarly, we can derive the boundary condition for a reflecting boundary using the flux.  See "Stochastic Methods" by Gardiner (2009) and also note https://cims.nyu.edu/~holmes/teaching/asa19/handout_Lecture10_2019.pdf
+
+To aid in mapping to the notation used in the natural science, define the *probability current* for the $X_t$ stochastic process, intended for the KFE, as
+$$
+J(t,x) = \mu f(t,x) - \frac{\sigma^2}{2}\partial_x f(t,x)
+$$
+Then, following the notation from Gardiner and other sources, the KFE on the interior can be written as
+\begin{align}
+\partial_t f(t,x) &= - \partial_x J(t,x)\\
+&= - \mu \partial_x f(t,x) + \frac{\sigma^2}{2}\partial_{xx} f(t,x)
+\end{align}
+Note that this coincides with the standard KFE economists tend to jump to.  If there was birth, we would add in further terms, but it is removed to keep things simple as they don't impact the analysis here.
