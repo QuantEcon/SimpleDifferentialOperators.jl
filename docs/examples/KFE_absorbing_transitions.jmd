@@ -44,8 +44,9 @@ using SimpleDifferentialOperators, Plots, LinearAlgebra
 μ = -0.05
 σ = 0.01
 @assert μ <= 0
-bc_reflecting_1 = Mixed(ξ = -2μ/σ^2, direction = :backward)  # use with σ > 0,
-bc_no_entry = Absorbing()  # use with σ = 0
+bc_right_reflecting = Mixed(ξ = -2μ/σ^2, direction = :backward)  # use with σ > 0,
+bc_right_no_entry = Absorbing()  # i.e., f(1) = 0, use with σ = 0
+bc_left_no_entry = Reflecting()  # i.e.,
 ```
 
 
