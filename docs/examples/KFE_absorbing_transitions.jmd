@@ -41,18 +41,15 @@ using SimpleDifferentialOperators, Plots, LinearAlgebra
 
 ## General Setup
 ```julia
-μ = -0.05
-σ = 0.01
-@assert μ <= 0
-bc_right_reflecting = Mixed(ξ = -2μ/σ^2, direction = :backward)  # use with σ > 0,
-bc_right_no_entry = Absorbing()  # i.e., f(1) = 0, use with σ = 0
-bc_left_no_entry = Reflecting()  # i.e.,
+# Function to manually create the operators for sigma = 0 and sigma > 0 by fudging the extensions
+# I say function because we may try different variations of the parameters in different cell blocks.
 ```
 
 
 ## Model with No Brownian Motion
 ```julia
 μ = -0.05
+@assert μ <= 0
 # TODO:Create the setup with sigma = 0,
 ```
 
