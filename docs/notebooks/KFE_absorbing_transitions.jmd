@@ -56,6 +56,9 @@ f_0 = fill(1/M, M)
 
 # μ must be a negative number
 @assert μ <= 0
+
+# flux formula
+S(f, t) = -μ * f(t)[1] - (σ^2 / 2) * df(f(t), nothing, t)[1]
 ```
 
 ### Absorbing on bottom ($f(t, 0) = 0$)
@@ -80,6 +83,14 @@ ode = ODEProblem(df,f_0,(0.0,t_max))
 solution = solve(ode);
 ```
 
+```julia
+# plot flux
+S(t) = S(solution, t)
+plot(0:0.01:t_max, S,
+     title="Flux (absorbing on the bottom, with \\sigma > 0)",
+     xaxis="t",yaxis="S(t)",label="S(t)")
+```
+
 ### Reflecting on the bottom ($\partial_x f(t, 0) = 0$)
 
 ```julia
@@ -87,7 +98,7 @@ solution = solve(ode);
 ξ_ub = -2μ/σ^2
 
 # define the corresponding mixed boundary conditions
-bc = (Reflectingt_max(), Mixed(ξ = ξ_ub))
+bc = (Reflecting(), Mixed(ξ = ξ_ub))
 
 # use SimpleDifferentialOperators.jl to construct the operator on the interior
 L_KFE = Array(-μ*L₁₊bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))
@@ -100,6 +111,14 @@ ode = ODEProblem(df,f_0,(0.0,t_max))
 
 # solve the system
 solution = solve(ode);
+```
+
+```julia
+# plot flux
+S(t) = S(solution, t)
+plot(0:0.01:t_max, S,
+     title="Flux (reflecting on the bottom, with \\sigma > 0)",
+     xaxis="t",yaxis="S(t)",label=["S(t)"])
 ```
 
 ## Model with No Brownian Motion ($\sigma = 0$)
@@ -138,6 +157,14 @@ ode = ODEProblem(df,f_0,(0.0,t_max))
 
 # solve the system
 solution = solve(ode);
+```
+
+```julia
+# plot flux
+S(t) = S(solution, t)
+plot(0:0.01:t_max, S,
+     title="Flux (\\sigma = 0)",
+     xaxis="t",yaxis="S(t)",label=["S(t)"])
 ```
 
 # Detailed Derivations (including Change of Variables from Increasing Boundary)
