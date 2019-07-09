@@ -38,7 +38,8 @@ The key will be to look at how the distribution changes, and what "exit rate" cr
 # pkg"add InstantiateFromURL"
 # using InstantiateFromURL
 # activate_github_path("QuantEcon/SimpleDifferentialOperators.jl", path = "docs/examples", activate = true)
-using SimpleDifferentialOperators, Plots, LinearAlgebra, DifferentialEquations
+using SimpleDifferentialOperators, Plots, LinearAlgebra, DifferentialEquations, Printf
+gr(fmt = :png)
 ```
 
 ## General Setup ($\sigma > 0$)
@@ -100,6 +101,18 @@ plot(0:0.01:t_max, S,
      xaxis="t",yaxis="S(t)",ylims=(-0.1,0.1),label="S(t)")
 ```
 
+```julia
+# animation for distributions
+ts = range(0, t_max, length = 100)
+x = interiornodes(x̄)
+show_every = 5
+@gif for t in ts
+    plot(x, solution(t), 
+        title="f(x, t) (f(t,0) = 0), t = $(@sprintf("%.2f", t))",
+        ylims = (0.0, maximum(solution(0.0))))
+end every show_every
+```
+
 ### Reflecting on the bottom ($\partial_x f(t, 0) = 0$)
 
 ```julia
@@ -128,6 +141,18 @@ S(t) = S(t, solution, x̄, bc)
 plot(0:0.01:t_max, S,
      title="Flux (f_x(t, 0) = 0)",
      xaxis="t",yaxis="S(t)",label=["S(t)"])
+```
+
+```julia
+# animation for distributions
+ts = range(0, t_max, length = 100)
+x = interiornodes(x̄)
+show_every = 5
+@gif for t in ts
+    plot(x, solution(t), 
+        title="f(x, t) (f_x(t, 0) = 0), t = $(@sprintf("%.2f", t))",
+        ylims = (0.0, maximum(solution(0.0))))
+end every show_every
 ```
 
 # Detailed Derivations (including Change of Variables from Increasing Boundary)
