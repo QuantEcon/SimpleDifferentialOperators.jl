@@ -105,7 +105,7 @@ plot(0:0.01:t_max, S,
 # animation for distributions
 ts = range(0, t_max, length = 100)
 x = interiornodes(x̄)
-show_every = 5
+show_every = 2
 @gif for t in ts
     plot(x, solution(t), 
         title="f(x, t) (f(t,0) = 0), t = $(@sprintf("%.2f", t))",
@@ -147,7 +147,7 @@ plot(0:0.01:t_max, S,
 # animation for distributions
 ts = range(0, t_max, length = 100)
 x = interiornodes(x̄)
-show_every = 5
+show_every = 2
 @gif for t in ts
     plot(x, solution(t), 
         title="f(x, t) (f_x(t, 0) = 0), t = $(@sprintf("%.2f", t))",
