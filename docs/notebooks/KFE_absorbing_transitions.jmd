@@ -66,7 +66,7 @@ function S(t, f_interior, x̄, bc)
     ∂ₓf0 = (f[2] - f[1]) / (x̄[2] - x̄[1])
     
     # S(t)
-    return (-μ * f[1] - (σ^2 / 2) * ∂ₓf0)
+    return max(0, (-μ * f[2] + (σ^2 / 2) * ∂ₓf0))
 end
 ```
 
