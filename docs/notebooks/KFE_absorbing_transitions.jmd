@@ -77,12 +77,29 @@ end
 # ξ values for mixed boundary conditions
 ξ_ub = -2μ/σ^2
 
-# define the corresponding mixed boundary conditions
+# use SimpleDifferentialOperators.jl to construct the operator on extended stencil
+L_KFE = Array(-μ*L₁₊(x̄) + σ^2 / 2 * L₂(x̄))
+
+# absorbing on the lb
+B_lb = [1; zeros(M+1)]
+# mixed on the ub
+Δ_Mp = x̄[end] - x̄[end-1]
+B_ub = [zeros(M); (-1); 1+ξ_ub*Δ_Mp] 
+
+# apply boundary conditions by Gaussian elimination
+L_KFE[1,:] -= B_lb.*(L_KFE[1,1]/B_lb[1])
+L_KFE[end,:] -= B_ub.*(L_KFE[end,end]/B_ub[end])
+
+# extract the operator on interior nodes
+L_KFE = L_KFE[:,2:(end-1)]
+
+# note that one can use L₁₊bc and L₂bc to construct identical operators:
 bc = (Absorbing(), Mixed(ξ = ξ_ub))
+L_KFE_by_bc = Array(-μ*L₁₊bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))
+@assert L_KFE ≈ L_KFE_by_bc
+```
 
-# use SimpleDifferentialOperators.jl to construct the operator on the interior
-L_KFE = Array(-μ*L₁₊bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))
-
+```julia
 # define a kernel using the discretized operator
 df(f,p,t) = L_KFE * f
 
@@ -119,12 +136,30 @@ end every show_every
 # ξ values for mixed boundary conditions
 ξ_ub = -2μ/σ^2
 
-# define the corresponding mixed boundary conditions
+# use SimpleDifferentialOperators.jl to construct the operator on extended stencil
+L_KFE = Array(-μ*L₁₊(x̄) + σ^2 / 2 * L₂(x̄))
+
+# absorbing on the lb
+Δ_1m = x̄[2] - x̄[1]
+B_lb = [(-1/Δ_1m); (1/Δ_1m); zeros(M)]
+# mixed on the ub
+Δ_Mp = x̄[end] - x̄[end-1]
+B_ub = [zeros(M); (-1); 1+ξ_ub*Δ_Mp] 
+
+# apply boundary conditions by Gaussian elimination
+L_KFE[1,:] -= B_lb.*(L_KFE[1,1]/B_lb[1])
+L_KFE[end,:] -= B_ub.*(L_KFE[end,end]/B_ub[end])
+
+# extract the operator on interior nodes
+L_KFE = L_KFE[:,2:(end-1)]
+
+# note that one can use L₁₊bc and L₂bc to construct identical operators:
 bc = (Reflecting(), Mixed(ξ = ξ_ub))
+L_KFE_by_bc = Array(-μ*L₁₊bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))
+@assert L_KFE ≈ L_KFE_by_bc
+```
 
-# use SimpleDifferentialOperators.jl to construct the operator on the interior
-L_KFE = Array(-μ*L₁₊bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))
-
+```julia
 # define a kernel using the discretized operator
 df(f,p,t) = L_KFE * f
 
