@@ -159,9 +159,10 @@ end every show_every
 ## Directly Solving with a Moving Barrier
 Define the (potentially) stochastic process for $Z_t$ as
 $$
-d Z_t = \sigma d W_t
+d Z_t = \gamma dt + \sigma d W_t
 $$
 where:
+- The drift is $\gamma \leq 0$  The sign of $\gamma$ is not essential as long as care is taken with upwinding
 - The volatility is $\sigma > 0$
 - Brownian Motion: $W_t$
 The process will have an absorbing barrier at the bottom, and a reflecting barrier on the top.  The key is precisely defining those barriers.
@@ -175,17 +176,108 @@ A few notes:
 - This is *not* conservative so if $\sigma > 0$ then all firms eventually exit.  The purpose of avoiding the modeling of entry is to look at the exit flux in isolation.
 - The flow of firms crossing the exit threshold $M(t)$ is the death rate, and is calculated by the flux
 
-### The KFE and Boundary Conditions
-For $\sigma > 0$, the KFE on the interior is
+The boundary itself is moving forward such that $M(t) -\mu t$ for $\mu < 0$.  This is a sweeping fixed cost causing endogenous exit, etc.  Note that at time $t = -1/\mu$, $M(t) = 1$, and all firms must die.
+
+### The KFE
+For $\sigma > 0$, the KFE on the interior (i.e. $z \in (M(t), 1)$) is
 $$
-\partial_t p(t,z) &= \frac{\sigma^2}{2}\partial_{zz} p(t,z)
+\partial_t p(t,z) &= - \gamma \partial_z p(t,z) + \frac{\sigma^2}{2}\partial_{zz} p(t,z)
 $$
 
-The boundary condition, a reflecting barrier at $z = 1$ can be calculated by the flux at that boundary.  To go through the derivation formally,
-Define the pr
+### Upper Boundary Condition
+
+For one of the boundary conditions, a reflecting barrier at $z = 1$ can be calculated by a no-flux condition at that boundary.  Define the probability current as
+$$
+J(t,z) = \gamma p(t,z) - \frac{\sigma^2}{2}\partial_x p(t,z)
+$$
+
+Then the flux crossing the upper boundary, at $z = 1$, is $ \vec{n}\cdot J(t,1)$ where $\vec{n} = 1$ since it is going forwards in a single dimension.  The reflecting barrier condition is then that the net flux at the boundary is $0$, or
+$$
+\begin{align}
+0 &= \vec{n}\cdot J(t,1)\\
+&= \gamma p(t,1) - \frac{\sigma^2}{2}\partial_x p(t,1)
+\end{align}
+$$
+Use the discretized grid on $z$ as $\bar{z} \in R^{N+2}$ where the upper boundary is denoted $\bar{z}_{N+1} = 1$ and the lower one is denoted $\bar{z}_{0} = 0$.  Also let the density on that discretization be denoted $p_0(t)$ to $p_{N+1}(t)$
+
+See [SDO.jl Derivations](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/releases/download/v0.6.1/discretized-differential-operator-derivation.pdf) for more details on the upwinding of these sorts of mixed boundary conditions, but the key is that since $\gamma \leq 0$, use backwards differences.  Hence, the condition is discretized as
+$$
+0 = \gamma p_{N+1}(t) - \frac{\sigma^2}{2}\frac{p_{N+1}(t) - p_N(t)}{\Delta}
+$$
+(and if $\gamma > 0$, then the first term would switch to $\gamma p_{N}(t)$ since we would be using forward differences)
+
+### Lower Boundary
+
+The key here will be to consider different lower boundary conditions for the firm "death".  Instead of refering to them as "reflecting" and "absorbing", be precise on the exact formulation.
 
 
-### Backward Drift with a Change of Variables
+Since we want to maintain the $\bar{x}$ discretization, we will need to apply the "boundary conditions" interior to the operator.  First, note that any firms below $M(t)$ must be dead, so the density is zero.  That is, the boundary condition (in all variations permutations) has
+$$
+p(t,z) = 0 \text{ for all } x < M(t)
+$$
+The strict inequality there is important when being careful with the discretization.  But we are still missing a boundary condition exactly at $M(t)$
+
+**Option 1: No Advective Flux**
+This is the traditional "absorbing" barrier, and the name will be analyzed later
+$$
+p(t,M(t)) = 0
+$$
+
+To discretize this, we first discretize the $M(t) = -\mu t$ to find the index $\bar{n}$ such that $M(t) \approx \bar{z}_{}\bar{n}(t)}$.  We know that $\bar{n}(0) = 0$ and $\bar{n}(-1/\mu) = N+1$.  Then the boundary conditions are
+$$
+p_n(t) = 0 \text{ for } n \leq \bar{n}(t)
+$$
+
+**Option 2: No Diffusive Flux**
+This is the traditional "absorbing" barrier, and the name will be analyzed later
+$$
+\partial_z p(t,M(t)) = 0
+$$
+To discretize this, since $\mu + \gamma < 0$ the correct upwind direction should be backwards differences (i.e. falling backwards towards the boundary in relative terms)  and hence,
+$$
+0 = \frac{p_{\bar{n}(t) + 1}(t) - p_{\bar{n}(t)}(t)}{\Delta}
+$$
+This is in addition to the other boundaries
+$$
+p_n(t) = 0 \text{ for } n < \bar{n}(t)
+$$
+(note the strict inequality compared to the previous example)
+
+**Option 3: Linear Combination?**
+If these are arbitrary, so would a linear combination of the two.  That is for some $a_1$ and $a_2$,
+$$
+a_1 p(t, M(t)) + a_2 \partial_z p(t,M(t)) = 0
+$$
+
+Given the upwind direction (i.e., falling backwards in relative terms), the proper discretization of that is
+$$
+a_1 p_{\bar{n}(t) +1 }(t) + a_2 \frac{p_{\bar{n}(t) + 1}(t) - p_{\bar{n}(t)}(t)}{\Delta} = 0
+$$
+With the additional
+$$
+p_n(t) = 0 \text{ for } n < \bar{n}(t)
+$$
+
+### Calculating the Death Rate
+
+The death rate comes from the flux across the lower barrier.  With a stationary barrier, this is just the dot product of the probability current and the normal vector at the boundary.  Since this is moving forward at $-\mu$, I think it simply needs to be adjusted to tweak the drift.  i.e. the probability current relative to a point moving forward at $\mu$ is
+$$
+\tilde{J}(t,z) = (\gamma + \mu) p(t,z) - \frac{\sigma^2}{2}\partial_x p(t,z)
+$$
+Then the flux across that point (going backwards so $\vec{n} = -1$) is
+$$
+\begin{align}
+S(t) &= \vec{n} \cdot \tilde{J}(t,M(t))\\
+&= -  (\gamma + \mu) p(t,M(t)) + \frac{\sigma^2}{2}\partial_x p(t,M(t))
+\end{align}
+$$
+And using the backwards differences approximation described above for teh boundary values (because of the upwind drift direction),
+$$
+S(t)  = - (\gamma + \mu) p_{\bar{n}(t) +1 }(t) + \frac{\sigma^2}{2} \frac{p_{\bar{n}(t) + 1}(t) - p_{\bar{n}(t)}(t)}{\Delta}
+$$
+
+
+## Backward Drift with a Change of Variables
 When we do the COV, to keep things simple, assume that the reflecting barrier at the top
 - The top of the domain, $\bar{Z}(t) = 1 - \mu t$, also changes at rate $\mu$
 - This keeps which keeps the domain of fixed width $1$, which just makes the discretization easier
