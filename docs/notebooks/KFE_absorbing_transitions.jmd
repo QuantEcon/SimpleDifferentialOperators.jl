@@ -126,7 +126,8 @@ show_every = 2
 @gif for t in ts
     plot(x, solution(t),
         title="f(x, t) (f(t,0) = 0), t = $(@sprintf("%.2f", t))",
-        ylims = (0.0, maximum(solution(0.0))))
+        ylims = (0.0, maximum(solution(0.0))),
+         xaxis="x",yaxis="f(t,x)",label=["f(t,x)"])
 end every show_every
 ```
 
@@ -186,7 +187,8 @@ show_every = 2
 @gif for t in ts
     plot(x, solution(t),
         title="f(x, t) (f_x(t, 0) = 0), t = $(@sprintf("%.2f", t))",
-        ylims = (0.0, maximum(solution(0.0))))
+        ylims = (0.0, maximum(solution(0.0))),
+         xaxis="x",yaxis="f(t,x)",label=["f(t,x)"])
 end every show_every
 ```
 
