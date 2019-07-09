@@ -96,7 +96,6 @@ solution = solve(ode);
 # plot flux
 S(t) = S(t, solution, x̄, bc)
 plot(0:0.01:t_max, S,
-     title="Flux (absorbing on the bottom, with \\sigma > 0)",
      xaxis="t",yaxis="S(t)",ylims=(-0.1,0.1),label="S(t)")
 ```
 
@@ -126,7 +125,7 @@ solution = solve(ode);
 # plot flux
 S(t) = S(t, solution, x̄, bc)
 plot(0:0.01:t_max, S,
-     title="Flux (reflecting on the bottom, with \\sigma > 0)",
+     title="Flux (f_x(t, 0) = 0)",
      xaxis="t",yaxis="S(t)",label=["S(t)"])
 ```
 
