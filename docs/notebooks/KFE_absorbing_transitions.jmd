@@ -58,7 +58,16 @@ f_0 = fill(1/M, M)
 @assert μ <= 0
 
 # flux formula
-S(f, t) = -μ * f(t)[1] - (σ^2 / 2) * df(f(t), nothing, t)[1]
+function S(t, f_interior, x̄, bc)
+    # extrapolate the interior solution to boundary points (0 and 1) as well
+    f = extrapolatetoboundary(f_interior(t), x̄, bc)
+    
+    # ∂ₓf(t, 0)
+    ∂ₓf0 = (f[2] - f[1]) / (x̄[2] - x̄[1])
+    
+    # S(t)
+    return (-μ * f[1] - (σ^2 / 2) * ∂ₓf0)
+end
 ```
 
 ### Absorbing on bottom ($f(t, 0) = 0$)
@@ -85,7 +94,7 @@ solution = solve(ode);
 
 ```julia
 # plot flux
-S(t) = S(solution, t)
+S(t) = S(t, solution, x̄, bc)
 plot(0:0.01:t_max, S,
      title="Flux (absorbing on the bottom, with \\sigma > 0)",
      xaxis="t",yaxis="S(t)",label="S(t)")
@@ -115,7 +124,7 @@ solution = solve(ode);
 
 ```julia
 # plot flux
-S(t) = S(solution, t)
+S(t) = S(t, solution, x̄, bc)
 plot(0:0.01:t_max, S,
      title="Flux (reflecting on the bottom, with \\sigma > 0)",
      xaxis="t",yaxis="S(t)",label=["S(t)"])
@@ -161,7 +170,7 @@ solution = solve(ode);
 
 ```julia
 # plot flux
-S(t) = S(solution, t)
+S(t) = S(t, solution, x̄, bc)
 plot(0:0.01:t_max, S,
      title="Flux (\\sigma = 0)",
      xaxis="t",yaxis="S(t)",label=["S(t)"])
