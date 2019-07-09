@@ -97,7 +97,7 @@ solution = solve(ode);
 S(t) = S(t, solution, x̄, bc)
 plot(0:0.01:t_max, S,
      title="Flux (absorbing on the bottom, with \\sigma > 0)",
-     xaxis="t",yaxis="S(t)",label="S(t)")
+     xaxis="t",yaxis="S(t)",ylims=(-0.1,0.1),label="S(t)")
 ```
 
 ### Reflecting on the bottom ($\partial_x f(t, 0) = 0$)
