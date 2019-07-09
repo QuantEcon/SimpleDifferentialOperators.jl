@@ -84,7 +84,7 @@ L_KFE = Array(-μ*L₁₊(x̄) + σ^2 / 2 * L₂(x̄))
 B_lb = [1; zeros(M+1)]
 # mixed on the ub
 Δ_Mp = x̄[end] - x̄[end-1]
-B_ub = [zeros(M); (-1); 1+ξ_ub*Δ_Mp] 
+B_ub = [zeros(M); (-1/Δ_Mp); (1/Δ_Mp+ξ_ub)]
 
 # apply boundary conditions by Gaussian elimination
 L_KFE[1,:] -= B_lb.*(L_KFE[1,1]/B_lb[1])
@@ -144,7 +144,7 @@ L_KFE = Array(-μ*L₁₊(x̄) + σ^2 / 2 * L₂(x̄))
 B_lb = [(-1/Δ_1m); (1/Δ_1m); zeros(M)]
 # mixed on the ub
 Δ_Mp = x̄[end] - x̄[end-1]
-B_ub = [zeros(M); (-1); 1+ξ_ub*Δ_Mp] 
+B_ub = [zeros(M); (-1/Δ_Mp); (1/Δ_Mp+ξ_ub)] 
 
 # apply boundary conditions by Gaussian elimination
 L_KFE[1,:] -= B_lb.*(L_KFE[1,1]/B_lb[1])
