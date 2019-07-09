@@ -216,7 +216,7 @@ The boundary itself is moving forward such that $M(t) -\mu t$ for $\mu < 0$.  Th
 ### The KFE
 For $\sigma > 0$, the KFE on the interior (i.e. $z \in (M(t), 1)$) is
 $$
-\partial_t p(t,z) &= - \gamma \partial_z p(t,z) + \frac{\sigma^2}{2}\partial_{zz} p(t,z)
+\partial_t p(t,z) = - \gamma \partial_z p(t,z) + \frac{\sigma^2}{2}\partial_{zz} p(t,z)
 $$
 
 ### Upper Boundary Condition
@@ -258,7 +258,7 @@ $$
 p(t,M(t)) = 0
 $$
 
-To discretize this, we first discretize the $M(t) = -\mu t$ to find the index $\bar{n}$ such that $M(t) \approx \bar{z}_{}\bar{n}(t)}$.  We know that $\bar{n}(0) = 0$ and $\bar{n}(-1/\mu) = N+1$.  Then the boundary conditions are
+To discretize this, we first discretize the $M(t) = -\mu t$ to find the index $\bar{n}$ such that $M(t) \approx \bar{z}_{\bar{n}(t)}$.  We know that $\bar{n}(0) = 0$ and $\bar{n}(-1/\mu) = N+1$.  Then the boundary conditions are
 $$
 p_n(t) = 0 \text{ for } n \leq \bar{n}(t)
 $$
