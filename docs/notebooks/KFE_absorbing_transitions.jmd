@@ -192,6 +192,220 @@ show_every = 2
 end every show_every
 ```
 
+# Solving with moving barrier
+
+```julia
+# grid setup
+M = 100 # size of grid (interior points)
+z̄ = range(0, 1.0, length = (M+2))
+
+# initial distribution
+f_0 = fill(1/M, M)
+
+# returns the index of element in xs closest to x
+function findnearestindex(xs, x)
+    n = length(xs)
+    # using binary search algorithm O(log n), search the last element found
+    # i.e., xs[i_first] <= x < xs[min(i_first + 1, n)] and i_first >= 1
+    i_first = max(1, searchsortedlast(xs, x))
+    i_next = min(i_first + 1, n)
+    # suffices to compare xs[i_first] and xs[i_next]
+    return ((x - xs[i_first]) < (xs[i_next] - x)) ? i_first : i_next
+end
+```
+
+### Absorbing on bottom ($f(t, 0) = 0$)
+
+```julia
+# parameters
+γ = -0.01
+σ = 0.1
+t_max = max(-1/γ, 10.0)
+
+# flux formula
+function S(t, f_interior, z̄, bc)
+    # extrapolate the interior solution to boundary points (0 and 1) as well
+    f = extrapolatetoboundary(f_interior(t), z̄, bc)
+
+    # ∂ₓf(t, 0)
+    ∂ₓf0 = (f[2] - f[1]) / (x̄[2] - x̄[1])
+
+    # S(t)
+    return max(0, (-γ * f[2] + (σ^2 / 2) * ∂ₓf0))
+end
+
+# γ must be a negative number
+@assert γ <= 0
+
+# exit threshold
+z̲(t) = -γ * t
+
+# ξ values for mixed boundary conditions
+ξ_ub = -2γ/σ^2;
+```
+
+```julia
+# define a kernel using the discretized operator
+function df(f,p,t) 
+    # find threshold index
+    z̲_index = findnearestindex(z̄, z̲(t))
+
+    # use SimpleDifferentialOperators.jl to construct the operator on extended stencil
+    L_KFE = Array(-γ*L₁₊(z̄) + σ^2 / 2 * L₂(z̄))
+
+    # absorbing on the lb
+    B_lb = zeros(M+2)
+    B_lb[z̲_index] = 1.0
+    # mixed on the ub
+    Δ_Mp = z̄[end] - z̄[end-1]
+    B_ub = [zeros(M); (-1/Δ_Mp); (1/Δ_Mp+ξ_ub)]
+
+    # apply boundary conditions by Gaussian elimination
+    L_KFE[z̲_index,:] -= B_lb.*(L_KFE[z̲_index,z̲_index]/B_lb[z̲_index])
+    L_KFE[end,:] -= B_ub.*(L_KFE[end,end]/B_ub[end])
+
+    # equate the first (z̲_index-1) members zero
+    if (z̲_index > 1)
+        L_KFE[1:(z̲_index-1),:] .= 0.0
+    end
+
+    # extract the operator on interior nodes
+    L_KFE = L_KFE[:,2:(end-1)]
+    
+    return L_KFE * f
+end
+
+# define the corresponding system of ODE
+ode = ODEProblem(df,f_0,(0.0,t_max))
+
+# solve the system
+solution = solve(ode);
+```
+
+```julia
+# plot flux
+S(t) = S(t, solution, z̄, bc)
+plot(0:0.01:t_max, S,
+     title="Flux (f(t,0) = 0)",
+     xaxis="t",yaxis="S(t)",ylims=(-0.1,0.1),label="S(t)")
+```
+
+```julia
+# animation for distributions
+ts = range(0, t_max, length = 100)
+z = interiornodes(z̄)
+show_every = 2
+@gif for t in ts
+    plot(z, solution(t),
+        title="f(z, t) (f(t,0) = 0), t = $(@sprintf("%.2f", t))",
+        ylims = (0.0, maximum(solution(0.0))),
+         xaxis="z",yaxis="f(t,z)",label=["f(t,z)"])
+end every show_every
+```
+
+### Reflecting on the bottom ($\partial_x f(t, 0) = 0$)
+
+```julia
+# parameters
+γ = -0.01
+σ = 0.1
+t_max = max(-1/γ, 10.0)
+
+# flux formula
+function S(t, f_interior, z̄, bc)
+    # extrapolate the interior solution to boundary points (0 and 1) as well
+    f = extrapolatetoboundary(f_interior(t), z̄, bc)
+
+    # ∂ₓf(t, 0)
+    ∂ₓf0 = (f[2] - f[1]) / (x̄[2] - x̄[1])
+
+    # S(t)
+    return max(0, (-γ * f[2] + (σ^2 / 2) * ∂ₓf0))
+end
+
+# γ must be a negative number
+@assert γ <= 0
+
+# exit threshold
+z̲(t) = -γ * t
+
+# ξ values for mixed boundary conditions
+ξ_ub = -2γ/σ^2;
+```
+
+```julia
+# define a kernel using the discretized operator
+function df(f,p,t) 
+    # find threshold index
+    z̲_index = findnearestindex(z̄, z̲(t))
+
+    # use SimpleDifferentialOperators.jl to construct the operator on extended stencil
+    L_KFE = Array(-γ*L₁₊(z̄) + σ^2 / 2 * L₂(z̄))
+
+    # reflecting on the lb
+    B_lb = zeros(M+2)
+    Δ_m = z̄[(z̲_index+1)] - z̄[z̲_index]
+    B_lb[z̲_index+1] = 1/Δ_m
+    B_lb[z̲_index] = -1/Δ_m
+    
+    # mixed on the ub
+    Δ_Mp = z̄[end] - z̄[end-1]
+    B_ub = [zeros(M); (-1/Δ_Mp); (1/Δ_Mp+ξ_ub)]
+
+    # apply boundary conditions by Gaussian elimination
+    L_KFE[z̲_index,:] -= B_lb.*(L_KFE[z̲_index,z̲_index]/B_lb[z̲_index])
+    L_KFE[end,:] -= B_ub.*(L_KFE[end,end]/B_ub[end])
+
+    # equate the first (z̲_index-1) members zero
+    if (z̲_index > 1)
+        L_KFE[1:(z̲_index-1),:] .= 0.0
+    end
+
+    # extract the operator on interior nodes
+    L_KFE = L_KFE[:,2:(end-1)]
+    
+    return L_KFE * f
+end
+
+# define the corresponding system of ODE
+ode = ODEProblem(df,f_0,(0.0,t_max))
+
+# solve the system
+solution = solve(ode);
+```
+
+```julia
+# define a kernel using the discretized operator
+df(f,p,t) = L_KFE * f
+
+# define the corresponding system of ODE
+ode = ODEProblem(df,f_0,(0.0,t_max))
+
+# solve the system
+solution = solve(ode);
+```
+
+```julia
+# plot flux
+S(t) = S(t, solution, z̄, bc)
+plot(0:0.01:t_max, S,
+     title="Flux (f_x(t, 0) = 0)",
+     xaxis="t",yaxis="S(t)",label=["S(t)"])
+```
+
+```julia
+# animation for distributions
+ts = range(0, t_max, length = 100)
+z = interiornodes(z̄)
+show_every = 2
+@gif for t in ts
+    plot(z, solution(t),
+        title="f(z, t) (f_x(t, 0) = 0), t = $(@sprintf("%.2f", t))",
+        ylims = (0.0, maximum(solution(0.0))),
+         xaxis="z",yaxis="f(t,z)",label=["f(t,z)"])
+end every show_every
+```
+
 # Detailed Derivations (including Change of Variables and an Increasing Boundary)
 ## Directly Solving with a Moving Barrier
 Define the (potentially) stochastic process for $Z_t$ as
