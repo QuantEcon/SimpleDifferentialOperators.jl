@@ -261,12 +261,12 @@ function df(f,p,t)
     B_ub = [zeros(M); (-1/Δ_Mp); (1/Δ_Mp+ξ_ub)]
 
     # apply boundary conditions by Gaussian elimination
-    L_KFE[z̲_index,:] -= B_lb.*(L_KFE[z̲_index,z̲_index]/B_lb[z̲_index])
+    L_KFE[min(M, z̲_index),:] -= B_lb.*(L_KFE[min(M, z̲_index),z̲_index]/B_lb[z̲_index])
     L_KFE[end,:] -= B_ub.*(L_KFE[end,end]/B_ub[end])
 
     # equate the first (z̲_index-1) members zero
     if (z̲_index > 1)
-        L_KFE[1:(z̲_index-1),:] .= 0.0
+        L_KFE[1:min(M, (z̲_index-1)),:] .= 0.0
     end
 
     # extract the operator on interior nodes
@@ -353,12 +353,12 @@ function df(f,p,t)
     B_ub = [zeros(M); (-1/Δ_Mp); (1/Δ_Mp+ξ_ub)]
 
     # apply boundary conditions by Gaussian elimination
-    L_KFE[z̲_index,:] -= B_lb.*(L_KFE[z̲_index,z̲_index]/B_lb[z̲_index])
+    L_KFE[min(M, z̲_index),:] -= B_lb.*(L_KFE[min(M, z̲_index),z̲_index]/B_lb[z̲_index])
     L_KFE[end,:] -= B_ub.*(L_KFE[end,end]/B_ub[end])
 
     # equate the first (z̲_index-1) members zero
     if (z̲_index > 1)
-        L_KFE[1:(z̲_index-1),:] .= 0.0
+        L_KFE[1:min(M, (z̲_index-1)),:] .= 0.0
     end
 
     # extract the operator on interior nodes
