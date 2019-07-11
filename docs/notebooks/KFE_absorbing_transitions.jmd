@@ -299,6 +299,14 @@ plot(0:0.01:t_max, S,
 # animation for distributions
 ts = range(0, t_max, length = 100)
 z = interiornodes(z̄)
+function solution_relevant(t)
+    z̲_index = findnearestindex(z̄, z̲(t))
+    sol = solution(t)
+    if (z̲_index > 1)
+        sol[1:min(M, z̲_index-1)] .= 0.0
+    end
+    return sol
+end
 show_every = 2
 @gif for t in ts
     plot(z, solution(t),
