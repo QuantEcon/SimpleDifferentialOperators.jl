@@ -375,17 +375,6 @@ solution = solve(ode);
 ```
 
 ```julia
-# define a kernel using the discretized operator
-df(f,p,t) = L_KFE * f
-
-# define the corresponding system of ODE
-ode = ODEProblem(df,f_0,(0.0,t_max))
-
-# solve the system
-solution = solve(ode);
-```
-
-```julia
 # plot flux
 S(t) = S(t, solution, z̄, bc)
 plot(0:0.01:t_max, S,
