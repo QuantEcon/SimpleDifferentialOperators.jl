@@ -5,7 +5,7 @@ params = @with_kw (
     μ = -0.1, # constant negative drift
     σ = 0.1,
     ρ = 0.05,
-    M = 100, # size of grid (interior points)
+    M = 3, # size of grid (interior points)
     x̄ = range(0.0, 1.0, length = (M+2)),
     x = interiornodes(x̄) # i.e., x̄[2:end-1]
 )
