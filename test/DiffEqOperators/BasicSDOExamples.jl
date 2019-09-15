@@ -22,7 +22,7 @@ function SDO(π, params)
 
     # solve the value function
     v = L_bc \ π.(params.x);
-    return v
+    return (v = v, Lₓ = Lₓ, L₁₋bc = L₁₋bc(params.x̄, bc), L₂bc = L₂bc(params.x̄, bc))
 end
 
 # The DiffEq approach (as of the current implementation)
@@ -41,8 +41,15 @@ function DEO(π, params)
 
     # solve the value function
     v = L_bc \ π.(params.x);
-    return v
+    return (v = v, Lₓ = Lₓ, L₁₋bc = Array(L1*Q)[1], L₂bc = Array(L2*Q)[1] )
 end
 @testset "Constant Drifts" begin
-    @test DEO(π, p) ≈ SDO(π, p)
+    #testing results
+    @test DEO(π, p).v ≈ SDO(π, p).v
+    #testing L_x
+    @test DEO(π, p).Lₓ ≈ SDO(π, p).Lₓ
+    #testing L1-bc
+    @test DEO(π, p).L₁₋bc ≈ SDO(π, p).L₁₋bc
+    #testing L2bc
+    @test DEO(π, p).L₂bc ≈ SDO(π, p).L₂bc
 end
