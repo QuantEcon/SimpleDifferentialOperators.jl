@@ -14,8 +14,6 @@ p = params();
 π(x) = x^2
 # Below is a basic example from SDO:
 function SDO(π, params)
-    x = interiornodes(params.x̄) # i.e., x̄[2:end-1]
-
     # discretize L = ρ - μ D_x - σ^2 / 2 D_xx
     # subject to reflecting barriers at 0 and 1
     bc = (Reflecting(), Reflecting())
@@ -23,14 +21,13 @@ function SDO(π, params)
     L_bc = I * params.ρ - Lₓ
 
     # solve the value function
-    v = L_bc \ π.(x);
+    v = L_bc \ π.(params.x);
     return v
 end
 
 # The DiffEq approach (as of the current implementation)
 function DEO(π, params)
-    x = interiornodes(params.x̄)
-    dx = x[2] - x[1]
+    dx = params.x[2] - params.x[1]
     # discretize L = ρ - μ D_x - σ^2 / 2 D_xx
     # subject to reflecting barriers at 0 and 1
     L1 = UpwindDifference(1,1,dx,params.M,t->1.0)
@@ -43,7 +40,7 @@ function DEO(π, params)
     L_bc = I * params.ρ - Lₓ
 
     # solve the value function
-    v = L_bc \ π.(x);
+    v = L_bc \ π.(params.x);
     return v
 end
 @testset "Constant Drifts" begin
