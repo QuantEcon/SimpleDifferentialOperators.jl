@@ -6,7 +6,8 @@ params = @with_kw (
     ρ = 0.05,
     M = 3, # size of grid (interior points)
     x̄ = range(0.0, 1.0, length = (M+2)),
-    x = interiornodes(x̄) # i.e., x̄[2:end-1]
+    x = interiornodes(x̄), # i.e., x̄[2:end-1]
+    S = 3.0
 )
 p = params();
 # payoff function
@@ -116,4 +117,62 @@ end
     @test DEO_state_dependent_drift(π, μ, p).Lₓ ≈ SDO_state_dependent_drift(π, μ, p).Lₓ
     @test DEO_state_dependent_drift(π, μ, p).L₁ ≈ SDO_state_dependent_drift(π, μ, p).L₁
     @test DEO_state_dependent_drift(π, μ, p).L₂bc ≈ SDO_state_dependent_drift(π, μ, p).L₂bc
+end
+
+
+# payoff function
+π(x) = x^2
+
+
+# SimpleDifferentialOperators setup
+function SDO_absorbing_bc(π, params)
+    bc = (NonhomogeneousAbsorbing(params.S), Reflecting())
+    Lₓbc = params.μ*L₁₋bc(params.x̄, bc) + params.σ^2 / 2 * L₂bc(params.x̄ , bc)
+    L_bc = I * params.ρ - Lₓbc
+    # construct the RHS with affine boundary
+    π_star = π.(params.x) + Laffine(L_bc, π.(params.x), bc)
+    # solve the value function
+    v = L_bc \ π_star
+    return (v = v, L_bc = L_bc, Lₓbc = Lₓbc, L₁₋bc = L₁₋bc(params.x̄, bc), L₂bc = L₂bc(params.x̄, bc),
+        π_star = π_star, π = π.(params.x))
+end
+
+
+# DiffEqOperators Setup
+function DEO_absorbing_bc(π, params)
+    dx = params.x[2] - params.x[1]
+
+    L1 = UpwindDifference(1,1,dx,params.M,t->1.0)
+    L2 = CenteredDifference(2,2,dx,params.M)
+    # RobinBC(l::NTuple{3,T}, r::NTuple{3,T}, dx::T, order = 1)
+    # The variables in l are [αl, βl, γl], and correspond to a BC of the form αl*u(0) + βl*u'(0) = γl
+    # imposed on the lower index boundary. The variables in r are [αr, βr, γr],
+    # and correspond to an analagous boundary on the higher index end.
+    l = (1.0, 0.0, p.S)
+    r = (0.0, 1.0, 0.0)
+    Q = RobinBC(l, r, 0.1, 1)
+
+    Lₓbc = Array(params.µ*L1*Q)[1] + Array(params.σ^2/2*L2*Q)[1]
+    L_bc = I * params.ρ - Lₓbc
+
+    π_star = π.(params.x)
+    # I had to do it by handcode, I couldn't find something like Laffine in SDO.
+    π_star[1] -= params.S*(params.μ/dx - (params.σ^2/2 )/(dx^2) )
+
+    # solve the value function
+    v = L_bc \ π.(params.x);
+    return (v = v, L_bc = L_bc, Lₓbc = Lₓbc, L₁₋bc = Array(L1*Q)[1], L₂bc = Array(L2*Q)[1],
+        π_star = π_star, π = π.(params.x))
+end
+
+p = params(x̄ = range(0.0, 1.0, length = (p.M+2)))
+
+@testset "Absorbing BC" begin
+    @test DEO_absorbing_bc(π, p).v ≈ SDO_absorbing_bc(π, p).v
+    @test DEO_absorbing_bc(π, p).L_bc ≈ SDO_absorbing_bc(π, p).L_bc
+    @test DEO_absorbing_bc(π, p).Lₓbc ≈ SDO_absorbing_bc(π, p).Lₓbc
+    @test DEO_absorbing_bc(π, p).L₁₋bc ≈ SDO_absorbing_bc(π, p).L₁₋bc
+    @test DEO_absorbing_bc(π, p).L₂bc ≈ SDO_absorbing_bc(π, p).L₂bc
+    @test DEO_absorbing_bc(π, p).π_star ≈ SDO_absorbing_bc(π, p).π_star
+    @test DEO_absorbing_bc(π, p).π ≈ SDO_absorbing_bc(π, p).π
 end
