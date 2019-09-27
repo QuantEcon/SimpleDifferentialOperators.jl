@@ -1,4 +1,5 @@
 using LinearAlgebra, SimpleDifferentialOperators, DiffEqOperators, Test, Parameters
+using Arpack
 #parameters
 params = @with_kw (
     μ = -0.1, # constant negative drift
@@ -10,6 +11,10 @@ params = @with_kw (
     S = 3.0
 )
 p = params();
+
+#----------------------------------
+#Testing For Negative Drifts
+#----------------------------------
 # payoff function
 π(x) = x^2
 # SimpleDifferentialOperators setup
@@ -46,6 +51,9 @@ end
     @test DEO_negative_drift(π, p).L₂bc ≈ SDO_negative_drift(π, p).L₂bc
 end
 p = params(μ = 0.1);
+#----------------------------------
+#Testing For Positive Drifts
+#----------------------------------
 # SimpleDifferentialOperators setup
 function SDO_positive_drift(π, params)
     bc = (Reflecting(), Reflecting())
@@ -81,6 +89,10 @@ end
     @test DEO_positive_drift(π, p).L₂bc ≈ SDO_positive_drift(π, p).L₂bc
 end
 
+
+#----------------------------------
+#Testing For State Dependent Drifts
+#----------------------------------
 μ(x) = -x
 # SimpleDifferentialOperators setup
 function SDO_state_dependent_drift(π, μ, params)
@@ -120,10 +132,14 @@ end
 end
 
 
+
+#----------------------------------
+#Testing For Absorbing BC
+#----------------------------------
+
+
 # payoff function
 π(x) = x^2
-
-
 # SimpleDifferentialOperators setup
 function SDO_absorbing_bc(π, params)
     bc = (NonhomogeneousAbsorbing(params.S), Reflecting())
@@ -150,7 +166,7 @@ function DEO_absorbing_bc(π, params)
     # and correspond to an analagous boundary on the higher index end.
     l = (1.0, 0.0, p.S)
     r = (0.0, 1.0, 0.0)
-    Q = RobinBC(l, r, 0.1, 1)
+    Q = RobinBC(l, r, dx, 1)
 
     Lₓbc = Array(params.µ*L1*Q)[1] + Array(params.σ^2/2*L2*Q)[1]
     L_bc = I * params.ρ - Lₓbc
@@ -175,4 +191,51 @@ p = params(x̄ = range(0.0, 1.0, length = (p.M+2)))
     @test DEO_absorbing_bc(π, p).L₂bc ≈ SDO_absorbing_bc(π, p).L₂bc
     @test DEO_absorbing_bc(π, p).π_star ≈ SDO_absorbing_bc(π, p).π_star
     @test DEO_absorbing_bc(π, p).π ≈ SDO_absorbing_bc(π, p).π
+end
+
+
+
+#----------------------------------
+#Testing For Solving KFE
+#----------------------------------
+
+
+function SDO_Solve_KFE(params)
+    # ξ values for mixed boundary conditions
+    ξ_lb = ξ_ub = -2params.μ/params.σ^2
+    # define the corresponding mixed boundary conditions
+    # note that the direction on the lower bound is backward (default is forward)
+    # as the drift μ is negative.
+    bc = (Mixed(ξ = ξ_lb, direction = :backward), Mixed(ξ = ξ_ub))
+
+    # use SimpleDifferentialOperators.jl to construct the operator on the interior
+    L_KFE_with_drift = Array(-params.μ*L₁₊bc(params.x̄, bc) + params.σ^2 / 2 * L₂bc(params.x̄, bc))
+    L_KFE_without = params.σ^2 / 2 * L₂bc(params.x̄, bc)
+    return (L_KFE_with_drift = L_KFE_with_drift, L_KFE_without = L_KFE_without)
+end
+
+
+function DEO_Solve_KFE(params)
+    dx = params.x[2] - params.x[1]
+
+    L1 = UpwindDifference(1,1,dx,params.M,t->1.0)
+    L2 = CenteredDifference(2,2,dx,params.M)
+
+    ξ_lb = ξ_ub = -2params.μ/params.σ^2
+
+    l = (1.0, ξ_lb, 0.0)
+    r = (1.0, ξ_ub, 0.0)
+    Q = RobinBC(l, r, dx, 1)
+
+    # use SimpleDifferentialOperators.jl to construct the operator on the interior
+    L_KFE_with_drift = Array(-params.µ*L1*Q)[1] + Array(params.σ^2/2 *L2*Q)[1]
+    L_KFE_without = Array(params.σ^2/2*L2*Q)[1]
+    return (L_KFE_with_drift = L_KFE_with_drift, L_KFE_without = L_KFE_without)
+end
+
+
+p = params(x̄ = range(0.0, 1.0, length = (p.M+2)))
+@testset "Solving KFE" begin
+    @test DEO_Solve_KFE(p).L_KFE_with_drift ≈ SDO_Solve_KFE(p).L_KFE_with_drift
+    @test DEO_Solve_KFE(p).L_KFE_without ≈ SDO_Solve_KFE(p).L_KFE_without
 end
