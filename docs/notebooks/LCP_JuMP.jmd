@@ -1,0 +1,48 @@
+This is an implementation of [our optimal stopping example](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/releases/download/v0.6.1/LCP_simple.html) using the new JuMP/MathOptInterface complementarity API. 
+
+```julia
+using Pkg 
+pkg"add InstantiateFromURL"
+
+using InstantiateFromURL 
+activate_github_path("QuantEcon/SimpleDifferentialOperators.jl", path = "docs/examples", activate = true)
+```
+
+```julia
+using JuMP, KNITRO, MathOptInterface
+const Complements = MOI.Complements
+
+using SimpleDifferentialOperators
+using Plots, LinearAlgebra, Suppressor
+```
+
+```julia
+μ = -0.1
+σ = 0.1
+ρ = 0.05
+γ = 0.5
+ρ = 0.05
+S₀ = 20.0
+u(x) = x^γ  # (13)
+S(x) = S₀  # (15)
+@assert μ <= 0 # otherwise we need to swap the L₁₋bc operator
+```
+
+```julia
+M = 300
+x̄ = range(0.0, 5.0, length = (M+2))
+x = interiornodes(x̄)
+bc = (Reflecting(), Reflecting())  # assume x_t reflects at 0.0 and 5.0
+L = I * ρ - μ*L₁₋bc(x̄, bc) - σ^2 / 2 * L₂bc(x̄, bc)  # (2) and (14)
+
+q = -u.(x) + L*S.(x)  # (9)
+# w(z) = L*z + q; # (10)
+```
+
+```julia 
+L = Matrix(L)
+model = Model(with_optimizer(KNITRO.Optimizer))
+@variable(model, z[1:M] >= 0)
+@constraint(model, [L*z+q; z] in Complements(M))
+optimize!(model)
+```
