@@ -14,28 +14,26 @@ This is a package to return discretized differential operators subject to variou
 
 Consider constructing the corresponding infinitesimal generator for the following stochastic differential equation:
 <!-- d x_t = \mu d_t + \sigma d W_t -->
-![SDE](https://quicklatex.com/cache3/ea/ql_cff23b548c368d3e69b54d42c1f626ea_l3.png)
+![SDE](https://render.githubusercontent.com/render/math?math=%24dx_t%20%3D%20%5Cmu%20dt%20%2B%20%5Csigma%20dWt%24)
 
 with some constant `μ` and `σ >= 0`, and `W_t` Brownian Motion subject, with reflecting barriers at `x=0` and `x=1`, i.e., `v'(0) = v'(1) = 0`.
 
 If the payoff is in state `x` is `f(x)` and `ρ` is the discount rate, then the bellman equation for the expected present discounted value of payoffs fulfills
 
-![Bellman](https://quicklatex.com/cache3/c8/ql_924229b2e52b5323f8133279ce2e2ac8_l3.png)
 <!--  \rho v(x) = f(x) + \partial_x v(x) + \frac{\sigma^2}{2}\partial_{xx}v(x) -->
+![Bellman](https://render.githubusercontent.com/render/math?math=%24%5Crho%20v(x)%20%3D%20f(x)%20%2B%20%5Cpartial_x%20v(x)%20%2B%20%5Cfrac%7B%5Csigma%5E2%7D%7B2%7D%5Cpartial_%7Bxx%7Dv(x)%24)
 <!-- \partial_x v(0) = 0,\, \partial_x v(1) = 0 -->
-subject to ![BC](https://quicklatex.com/cache3/8e/ql_1183a672e909e5a76851d18016a9c68e_l3.png)
+subject to ![BC](https://render.githubusercontent.com/render/math?math=%24%5Cpartial_x%20v(0)%20%3D%200%2C%5C%2C%20%5Cpartial_x%20v(1)%20%3D%200%20%24)
 
 
 
 Written in operator form, define the differential operators
 <!-- \mathcal{L} \equiv \rho - \mu \partial_x - \frac{\sigma^2}{2}\partial_{xx} -->
-
-![Operator](https://quicklatex.com/cache3/bb/ql_b0c2d466a06eb9093cefcfe9bd14dcbb_l3.png)
+![Operator](https://render.githubusercontent.com/render/math?math=%5Cmathcal%7BL%7D%20%5Cequiv%20%5Crho%20-%20%5Cmu%20%5Cpartial_x%20-%20%5Cfrac%7B%5Csigma%5E2%7D%7B2%7D%5Cpartial_%7Bxx%7D)
 
 then the Bellman equation can be written as
-
-![Bellman with Operator](https://quicklatex.com/cache3/96/ql_1df64101bb60cb16eb8b0c759b0de496_l3.png)
-
+<!-- \mathcal{L} v(x) = f(x) -->
+![Bellman with Operator](https://render.githubusercontent.com/render/math?math=%24%5Cmathcal%7BL%7D%20v(x)%20%3D%20f(x)%24)
 
 This package provides components to discretize differential operators.  To implement directly,
 
