@@ -63,7 +63,7 @@ function jointoperator_bc(operators, Q::Array)
     Ls = BandedBlockBandedMatrix(Ls, M*ones(Int64, N), M*ones(Int64, N), (0,0), (1,1))
 
     # construct a kronecker product of Q times I_M
-    Qs = BandedBlockBandedMatrix(Kron(Q, Eye(M)), M*ones(Int64, N), M*ones(Int64, N), (0,0), (0,0))
+    Qs = BandedBlockBandedMatrix(Kron(Q, Eye(M)), M*ones(Int64, N), M*ones(Int64, N), (1,1), (0,0))
 
     return (Ls + Qs)
 end
