@@ -1,0 +1,574 @@
+
+# Transition Dynamics of KFE with Absorbing Barrier
+This notebook looks at the transition dynamics, where the main application is thinking of firms with some productivity existing a distribution.  The following can be used directly, or come from a change of variables where the lower boundary is growing and "sweeping up" firms.  See the "Detailed Derivations" below.
+The summary of equations (derived below in "Detailed Derivations") is:
+
+- Let $\mu \leq 0$ be the drift towards an absorbing barrier at $x = 0$, and $\sigma \geq 0$ be the volatility of the Brownian Motion.  Assume that if $\sigma = 0$ then $\mu < 0$, so that for all parameter combinations there is "death".
+- The initial condition is
+$$
+f(0,1) = 1, \text{ for } x \in [0,1]
+$$
+- The evolution follows the KFE
+$$
+\partial_t f(t,x) = -\mu \partial_x f(t,x) + \frac{\sigma^2}{2}\partial_{xx} f(t,x)
+$$
+- Because there is no birth term, we would expect that in the limit $f(t,x) = 0$ for all $x$.  This is chosen to simplify the analysis of the underlying economics.
+- The boundary condition at the top are:
+    - For $\sigma > 0$ (derived from the "no net flux" equation at the upper boundary) is
+    $$
+    0 = - \frac{2 \mu}{\sigma^2} f(t,1) + \partial_x f(t,1)
+    $$
+    - In the case of $\sigma = 0$ with $\mu < 0$, the equivalent boundary condition is that there are no new firms added into the domain, i.e. $f(t,1) = 0$  Notice that the above nests that equation if you multiply by $\sigma$.
+- The exit rate is the flux crossing the lower boundary
+$$
+S(t) = - \mu f(t,0) - \frac{\sigma^2}{2}\partial_{x} f(t,0)
+$$
+- The final boundary condition, at $x = 0$ is the main topic of interest here.  A few notes:
+    - If $\sigma = 0$, then there should not be a boundary condition as it is a 1st order PDE.  The upper boundary $f(t,1) = 0$ is the boundary condition required.
+    - Usually, economists have said that an absorbing barrier should have $f(t,0) = 0$ as the boundary condition.
+
+This notebook tries to analyze the economic implications of that absorbing boundary condition, and questions whether it is really what we want to use in many cases.
+
+The key will be to look at how the distribution changes, and what "exit rate" crossing the lower boundary look like for different boundary conditions and parameter combinations
+
+## Setup and Installation
+
+```julia
+# using Pkg
+# pkg"add InstantiateFromURL"
+# using InstantiateFromURL
+# activate_github_path("QuantEcon/SimpleDifferentialOperators.jl", path = "docs/examples", activate = true)
+using SimpleDifferentialOperators, Plots, LinearAlgebra, DifferentialEquations, Printf
+gr(fmt = :png)
+```
+
+## General Setup ($\sigma > 0$)
+
+```julia
+# parameters
+μ = -0.05
+σ = 0.1
+t_max = max(-1/μ, 10.0)
+M = 100 # size of grid (interior points)
+x̄ = range(0, 1.0, length = (M+2))
+
+# initial distribution
+f_0 = fill(1/M, M)
+
+# μ must be a negative number
+@assert μ <= 0
+
+# flux formula
+function S(t, f_interior, x̄, bc)
+    # extrapolate the interior solution to boundary points (0 and 1) as well
+    f = extrapolatetoboundary(f_interior(t), x̄, bc)
+
+    # ∂ₓf(t, 0)
+    ∂ₓf0 = (f[2] - f[1]) / (x̄[2] - x̄[1])
+
+    # S(t)
+    return max(0, (-μ * f[2] + (σ^2 / 2) * ∂ₓf0))
+end
+```
+
+### Absorbing on bottom ($f(t, 0) = 0$)
+
+```julia
+# ξ values for mixed boundary conditions
+ξ_ub = -2μ/σ^2
+
+# use SimpleDifferentialOperators.jl to construct the operator on extended stencil
+L_KFE = Array(-μ*L₁₊(x̄) + σ^2 / 2 * L₂(x̄))
+
+# absorbing on the lb
+B_lb = [1; zeros(M+1)]
+# mixed on the ub
+Δ_Mp = x̄[end] - x̄[end-1]
+B_ub = [zeros(M); (-1/Δ_Mp); (1/Δ_Mp+ξ_ub)]
+
+# apply boundary conditions by Gaussian elimination
+L_KFE[1,:] -= B_lb.*(L_KFE[1,1]/B_lb[1])
+L_KFE[end,:] -= B_ub.*(L_KFE[end,end]/B_ub[end])
+
+# extract the operator on interior nodes
+L_KFE = L_KFE[:,2:(end-1)]
+
+# note that one can use L₁₊bc and L₂bc to construct identical operators:
+bc = (Absorbing(), Mixed(ξ = ξ_ub))
+L_KFE_by_bc = Array(-μ*L₁₊bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))
+@assert L_KFE ≈ L_KFE_by_bc
+```
+
+```julia
+# define a kernel using the discretized operator
+df(f,p,t) = L_KFE * f
+
+# define the corresponding system of ODE
+ode = ODEProblem(df,f_0,(0.0,t_max))
+
+# solve the system
+solution = solve(ode);
+```
+
+```julia
+# plot flux
+S(t) = S(t, solution, x̄, bc)
+plot(0:0.01:t_max, S,
+     title="Flux (f(t,0) = 0)",
+     xaxis="t",yaxis="S(t)",ylims=(-0.1,0.1),label="S(t)")
+```
+
+```julia
+# animation for distributions
+ts = range(0, t_max, length = 100)
+x = interiornodes(x̄)
+show_every = 2
+@gif for t in ts
+    plot(x, solution(t),
+        title="f(x, t) (f(t,0) = 0), t = $(@sprintf("%.2f", t))",
+        ylims = (0.0, maximum(solution(0.0))),
+         xaxis="x",yaxis="f(t,x)",label=["f(t,x)"])
+end every show_every
+```
+
+### Reflecting on the bottom ($\partial_x f(t, 0) = 0$)
+
+```julia
+# ξ values for mixed boundary conditions
+ξ_ub = -2μ/σ^2
+
+# use SimpleDifferentialOperators.jl to construct the operator on extended stencil
+L_KFE = Array(-μ*L₁₊(x̄) + σ^2 / 2 * L₂(x̄))
+
+# absorbing on the lb
+Δ_1m = x̄[2] - x̄[1]
+B_lb = [(-1/Δ_1m); (1/Δ_1m); zeros(M)]
+# mixed on the ub
+Δ_Mp = x̄[end] - x̄[end-1]
+B_ub = [zeros(M); (-1/Δ_Mp); (1/Δ_Mp+ξ_ub)] 
+
+# apply boundary conditions by Gaussian elimination
+L_KFE[1,:] -= B_lb.*(L_KFE[1,1]/B_lb[1])
+L_KFE[end,:] -= B_ub.*(L_KFE[end,end]/B_ub[end])
+
+# extract the operator on interior nodes
+L_KFE = L_KFE[:,2:(end-1)]
+
+# note that one can use L₁₊bc and L₂bc to construct identical operators:
+bc = (Reflecting(), Mixed(ξ = ξ_ub))
+L_KFE_by_bc = Array(-μ*L₁₊bc(x̄, bc) + σ^2 / 2 * L₂bc(x̄, bc))
+@assert L_KFE ≈ L_KFE_by_bc
+```
+
+```julia
+# define a kernel using the discretized operator
+df(f,p,t) = L_KFE * f
+
+# define the corresponding system of ODE
+ode = ODEProblem(df,f_0,(0.0,t_max))
+
+# solve the system
+solution = solve(ode);
+```
+
+```julia
+# plot flux
+S(t) = S(t, solution, x̄, bc)
+plot(0:0.01:t_max, S,
+     title="Flux (f_x(t, 0) = 0)",
+     xaxis="t",yaxis="S(t)",label=["S(t)"])
+```
+
+```julia
+# animation for distributions
+ts = range(0, t_max, length = 100)
+x = interiornodes(x̄)
+show_every = 2
+@gif for t in ts
+    plot(x, solution(t),
+        title="f(x, t) (f_x(t, 0) = 0), t = $(@sprintf("%.2f", t))",
+        ylims = (0.0, maximum(solution(0.0))),
+         xaxis="x",yaxis="f(t,x)",label=["f(t,x)"])
+end every show_every
+```
+
+# Solving with moving barrier
+
+```julia
+# grid setup
+M = 100 # size of grid (interior points)
+z̄ = range(0, 1.0, length = (M+2))
+
+# initial distribution
+f_0 = fill(1/M, M)
+
+# returns the index of element in xs closest to x
+function findnearestindex(xs, x)
+    n = length(xs)
+    # using binary search algorithm O(log n), search the last element found
+    # i.e., xs[i_first] <= x < xs[min(i_first + 1, n)] and i_first >= 1
+    i_first = max(1, searchsortedlast(xs, x))
+    i_next = min(i_first + 1, n)
+    # suffices to compare xs[i_first] and xs[i_next]
+    return ((x - xs[i_first]) < (xs[i_next] - x)) ? i_first : i_next
+end
+```
+
+### Absorbing on bottom ($f(t, 0) = 0$)
+
+```julia
+# parameters
+γ = -0.01
+σ = 0.1
+t_max = max(-1/γ, 10.0)
+
+# flux formula
+function S(t, f_interior, z̄, bc)
+    # extrapolate the interior solution to boundary points (0 and 1) as well
+    f = extrapolatetoboundary(f_interior(t), z̄, bc)
+
+    # ∂ₓf(t, 0)
+    ∂ₓf0 = (f[2] - f[1]) / (x̄[2] - x̄[1])
+
+    # S(t)
+    return max(0, (-γ * f[2] + (σ^2 / 2) * ∂ₓf0))
+end
+
+# γ must be a negative number
+@assert γ <= 0
+
+# exit threshold
+z̲(t) = -γ * t
+
+# ξ values for mixed boundary conditions
+ξ_ub = -2γ/σ^2;
+```
+
+```julia
+# define a kernel using the discretized operator
+function df(f,p,t) 
+    # find threshold index
+    z̲_index = findnearestindex(z̄, z̲(t))
+    
+    # if the threshold is located above or at ub, return zero vector
+    if (z̲_index >= M)
+        return zeros(length(f))
+    end
+
+    # use SimpleDifferentialOperators.jl to construct the operator on extended stencil
+    L_KFE = Array(-γ*L₁₊(z̄) + σ^2 / 2 * L₂(z̄))
+
+    # absorbing on the lb
+    B_lb = zeros(M+2)
+    B_lb[z̲_index] = 1.0
+    # mixed on the ub
+    Δ_Mp = z̄[end] - z̄[end-1]
+    B_ub = [zeros(M); (-1/Δ_Mp); (1/Δ_Mp+ξ_ub)]
+
+    # apply boundary conditions by Gaussian elimination
+    L_KFE[z̲_index,:] -= B_lb.*(L_KFE[z̲_index,z̲_index]/B_lb[z̲_index])
+    L_KFE[end,:] -= B_ub.*(L_KFE[end,end]/B_ub[end])
+
+    # equate the first (z̲_index-1) members zero
+    if (z̲_index > 1)
+        L_KFE[1:(z̲_index-1),:] .= 0.0
+    end
+
+    # extract the operator on interior nodes
+    L_KFE = L_KFE[:,2:(end-1)]
+    
+    return L_KFE * f
+end
+
+# define the corresponding system of ODE
+ode = ODEProblem(df,f_0,(0.0,t_max))
+
+# solve the system
+solution = solve(ode);
+```
+
+```julia
+# plot flux
+S(t) = S(t, solution, z̄, bc)
+plot(0:0.01:t_max, S,
+     title="Flux (f(t,0) = 0)",
+     xaxis="t",yaxis="S(t)",ylims=(-0.1,0.1),label="S(t)")
+```
+
+```julia
+# animation for distributions
+ts = range(0, t_max, length = 100)
+z = interiornodes(z̄)
+function solution_relevant(t)
+    z̲_index = findnearestindex(z̄, z̲(t))
+    sol = solution(t)
+    if (z̲_index > 1)
+        sol[1:min(M, z̲_index-1)] .= 0.0
+    end
+    return sol
+end
+show_every = 2
+@gif for t in ts
+    plot(z, solution(t),
+        title="f(z, t) (f(t,0) = 0), t = $(@sprintf("%.2f", t))",
+        ylims = (0.0, maximum(solution(0.0))),
+         xaxis="z",yaxis="f(t,z)",label=["f(t,z)"])
+end every show_every
+```
+
+### Reflecting on the bottom ($\partial_x f(t, 0) = 0$)
+
+```julia
+# parameters
+γ = -0.01
+σ = 0.1
+t_max = max(-1/γ, 10.0)
+
+# flux formula
+function S(t, f_interior, z̄, bc)
+    # extrapolate the interior solution to boundary points (0 and 1) as well
+    f = extrapolatetoboundary(f_interior(t), z̄, bc)
+
+    # ∂ₓf(t, 0)
+    ∂ₓf0 = (f[2] - f[1]) / (x̄[2] - x̄[1])
+
+    # S(t)
+    return max(0, (-γ * f[2] + (σ^2 / 2) * ∂ₓf0))
+end
+
+# γ must be a negative number
+@assert γ <= 0
+
+# exit threshold
+z̲(t) = -γ * t
+
+# ξ values for mixed boundary conditions
+ξ_ub = -2γ/σ^2;
+```
+
+```julia
+# define a kernel using the discretized operator
+function df(f,p,t) 
+    # find threshold index
+    z̲_index = findnearestindex(z̄, z̲(t))
+    
+    if (z̲_index >= M)
+        return zeros(length(f))
+    end
+
+    # use SimpleDifferentialOperators.jl to construct the operator on extended stencil
+    L_KFE = Array(-γ*L₁₊(z̄) + σ^2 / 2 * L₂(z̄))
+
+    # reflecting on the lb
+    B_lb = zeros(M+2)
+    Δ_m = z̄[(z̲_index+1)] - z̄[z̲_index]
+    B_lb[z̲_index+1] = 1/Δ_m
+    B_lb[z̲_index] = -1/Δ_m
+    
+    # mixed on the ub
+    Δ_Mp = z̄[end] - z̄[end-1]
+    B_ub = [zeros(M); (-1/Δ_Mp); (1/Δ_Mp+ξ_ub)]
+
+    # apply boundary conditions by Gaussian elimination
+    L_KFE[z̲_index,:] -= B_lb.*(L_KFE[z̲_index,z̲_index]/B_lb[z̲_index])
+    L_KFE[end,:] -= B_ub.*(L_KFE[end,end]/B_ub[end])
+
+    # equate the first (z̲_index-1) members zero
+    if (z̲_index > 1)
+        L_KFE[1:(z̲_index-1),:] .= 0.0
+    end
+
+    # extract the operator on interior nodes
+    L_KFE = L_KFE[:,2:(end-1)]
+    
+    return L_KFE * f
+end
+
+# define the corresponding system of ODE
+ode = ODEProblem(df,f_0,(0.0,t_max))
+
+# solve the system
+solution = solve(ode);
+```
+
+```julia
+# plot flux
+S(t) = S(t, solution, z̄, bc)
+plot(0:0.01:t_max, S,
+     title="Flux (f_x(t, 0) = 0)",
+     xaxis="t",yaxis="S(t)",label=["S(t)"])
+```
+
+```julia
+# animation for distributions
+ts = range(0, t_max, length = 100)
+z = interiornodes(z̄)
+show_every = 2
+@gif for t in ts
+    plot(z, solution(t),
+        title="f(z, t) (f_x(t, 0) = 0), t = $(@sprintf("%.2f", t))",
+        ylims = (0.0, maximum(solution(0.0))),
+         xaxis="z",yaxis="f(t,z)",label=["f(t,z)"])
+end every show_every
+```
+
+# Detailed Derivations (including Change of Variables and an Increasing Boundary)
+## Directly Solving with a Moving Barrier
+Define the (potentially) stochastic process for $Z_t$ as
+$$
+d Z_t = \gamma dt + \sigma d W_t
+$$
+where:
+- The drift is $\gamma \leq 0$  The sign of $\gamma$ is not essential as long as care is taken with upwinding
+- The volatility is $\sigma > 0$
+- Brownian Motion: $W_t$
+The process will have an absorbing barrier at the bottom, and a reflecting barrier on the top.  The key is precisely defining those barriers.
+
+The scenario to consider is:
+- The firm's productivity is $Z_t$
+- The measure at time $t$ of productivity is $p(t,z)$.  No new firms are ever born, but they may die do to exit.
+- The initial condition in the economy is that firms $Z_t$ are distributed uniformly on $[0,1]$.  i.e. $p(0,z) = 1$ for $z \in [0,1]$
+- In the background, there is some sort of process for fixed costs driving optimal exit of the firms.  Without solving the details, assume that the exit threshold of firms follows $M(t) = -\mu t$ for $\mu \leq 0$  i.e. it starts at $0$ and grows, perhaps due to aggregate growth increasing marginal costs.
+A few notes:
+- This is *not* conservative so if $\sigma > 0$ then all firms eventually exit.  The purpose of avoiding the modeling of entry is to look at the exit flux in isolation.
+- The flow of firms crossing the exit threshold $M(t)$ is the death rate, and is calculated by the flux
+
+The boundary itself is moving forward such that $M(t) -\mu t$ for $\mu < 0$.  This is a sweeping fixed cost causing endogenous exit, etc.  Note that at time $t = -1/\mu$, $M(t) = 1$, and all firms must die.
+
+### The KFE
+For $\sigma > 0$, the KFE on the interior (i.e. $z \in (M(t), 1)$) is
+$$
+\partial_t p(t,z) = - \gamma \partial_z p(t,z) + \frac{\sigma^2}{2}\partial_{zz} p(t,z)
+$$
+
+### Upper Boundary Condition
+
+For one of the boundary conditions, a reflecting barrier at $z = 1$ can be calculated by a no-flux condition at that boundary.  Define the probability current as
+$$
+J(t,z) = \gamma p(t,z) - \frac{\sigma^2}{2}\partial_x p(t,z)
+$$
+
+Then the flux crossing the upper boundary, at $z = 1$, is $ \vec{n}\cdot J(t,1)$ where $\vec{n} = 1$ since it is going forwards in a single dimension.  The reflecting barrier condition is then that the net flux at the boundary is $0$, or
+$$
+\begin{align}
+0 &= \vec{n}\cdot J(t,1)\\
+&= \gamma p(t,1) - \frac{\sigma^2}{2}\partial_x p(t,1)
+\end{align}
+$$
+Use the discretized grid on $z$ as $\bar{z} \in R^{N+2}$ where the upper boundary is denoted $\bar{z}_{N+1} = 1$ and the lower one is denoted $\bar{z}_{0} = 0$.  Also let the density on that discretization be denoted $p_0(t)$ to $p_{N+1}(t)$
+
+See [SDO.jl Derivations](https://github.com/QuantEcon/SimpleDifferentialOperators.jl/releases/download/v0.6.1/discretized-differential-operator-derivation.pdf) for more details on the upwinding of these sorts of mixed boundary conditions, but the key is that since $\gamma \leq 0$, use backwards differences.  Hence, the condition is discretized as
+$$
+0 = \gamma p_{N+1}(t) - \frac{\sigma^2}{2}\frac{p_{N+1}(t) - p_N(t)}{\Delta}
+$$
+(and if $\gamma > 0$, then the first term would switch to $\gamma p_{N}(t)$ since we would be using forward differences)
+
+### Lower Boundary
+
+The key here will be to consider different lower boundary conditions for the firm "death".  Instead of refering to them as "reflecting" and "absorbing", be precise on the exact formulation.
+
+
+Since we want to maintain the $\bar{x}$ discretization, we will need to apply the "boundary conditions" interior to the operator.  First, note that any firms below $M(t)$ must be dead, so the density is zero.  That is, the boundary condition (in all variations permutations) has
+$$
+p(t,z) = 0 \text{ for all } x < M(t)
+$$
+The strict inequality there is important when being careful with the discretization.  But we are still missing a boundary condition exactly at $M(t)$
+
+**Option 1: No Advective Flux**
+This is the traditional "absorbing" barrier, and the name will be analyzed later
+$$
+p(t,M(t)) = 0
+$$
+
+To discretize this, we first discretize the $M(t) = -\mu t$ to find the index $\bar{n}$ such that $M(t) \approx \bar{z}_{\bar{n}(t)}$.  We know that $\bar{n}(0) = 0$ and $\bar{n}(-1/\mu) = N+1$.  Then the boundary conditions are
+$$
+p_n(t) = 0 \text{ for } n \leq \bar{n}(t)
+$$
+
+**Option 2: No Diffusive Flux**
+This is the traditional "absorbing" barrier, and the name will be analyzed later
+$$
+\partial_z p(t,M(t)) = 0
+$$
+To discretize this, since $\mu + \gamma < 0$ the correct upwind direction should be backwards differences (i.e. falling backwards towards the boundary in relative terms)  and hence,
+$$
+0 = \frac{p_{\bar{n}(t) + 1}(t) - p_{\bar{n}(t)}(t)}{\Delta}
+$$
+This is in addition to the other boundaries
+$$
+p_n(t) = 0 \text{ for } n < \bar{n}(t)
+$$
+(note the strict inequality compared to the previous example)
+
+**Option 3: Linear Combination?**
+If these are arbitrary, so would a linear combination of the two.  That is for some $a_1$ and $a_2$,
+$$
+a_1 p(t, M(t)) + a_2 \partial_z p(t,M(t)) = 0
+$$
+
+Given the upwind direction (i.e., falling backwards in relative terms), the proper discretization of that is
+$$
+a_1 p_{\bar{n}(t) +1 }(t) + a_2 \frac{p_{\bar{n}(t) + 1}(t) - p_{\bar{n}(t)}(t)}{\Delta} = 0
+$$
+With the additional
+$$
+p_n(t) = 0 \text{ for } n < \bar{n}(t)
+$$
+
+### Calculating the Death Rate
+
+The death rate comes from the flux across the lower barrier.  With a stationary barrier, this is just the dot product of the probability current and the normal vector at the boundary.  Since this is moving forward at $-\mu$, I think it simply needs to be adjusted to tweak the drift.  i.e. the probability current relative to a point moving forward at $\mu$ is
+$$
+\tilde{J}(t,z) = (\gamma + \mu) p(t,z) - \frac{\sigma^2}{2}\partial_x p(t,z)
+$$
+Then the flux across that point (going backwards so $\vec{n} = -1$) is
+$$
+\begin{align}
+S(t) &= \vec{n} \cdot \tilde{J}(t,M(t))\\
+&= -  (\gamma + \mu) p(t,M(t)) + \frac{\sigma^2}{2}\partial_x p(t,M(t))
+\end{align}
+$$
+And using the backwards differences approximation described above for teh boundary values (because of the upwind drift direction),
+$$
+S(t)  = - (\gamma + \mu) p_{\bar{n}(t) +1 }(t) + \frac{\sigma^2}{2} \frac{p_{\bar{n}(t) + 1}(t) - p_{\bar{n}(t)}(t)}{\Delta}
+$$
+
+
+## Backward Drift with a Change of Variables
+When we do the COV, to keep things simple, assume that the reflecting barrier at the top
+- The top of the domain, $\bar{Z}(t) = 1 - \mu t$, also changes at rate $\mu$
+- This keeps which keeps the domain of fixed width $1$, which just makes the discretization easier
+  - I don't think it is important. You could solve the setup with alternative approaches with a fixed boundary where the domain compresses over time.
+
+Define $x = z + \mu t$, which ensures that for all $\mu$, the domain of $x$ is always $[0,1]$.  With this change of variables, the stochastic process is
+$$
+d X_t = \mu dt + \sigma d W_t
+$$
+and the absorbing barrier is at $x = 0$, and the reflecting barrier is at $x = 1$ for all $t$.  We could have started with this directly if we wanted to:  firms lose relative productivity at speed $\mu < 0$ and fall towards the exit barrier at $x = 0$.  The density (not a pdf since we lack conservation) of firms with the change of variables is denoted $f(t,x)$ where
+- Initial condition $f(0,x) = 1$ for $x \in [0,1]$
+- The domain of $f(t,\cdot)$ is $[0,1]$ for all $t$.
+
+### Flux with the COV
+Since the boundary here is not moving, we can calculate the death rate from the flux across the boundary.  Similarly, we can derive the boundary condition for a reflecting boundary using the flux.  See "Stochastic Methods" by Gardiner (2009) and also note https://cims.nyu.edu/~holmes/teaching/asa19/handout_Lecture10_2019.pdf
+
+To aid in mapping to the notation used in the natural science, define the *probability current* for the $X_t$ stochastic process, intended for the KFE, as
+$$
+J(t,x) = \mu f(t,x) - \frac{\sigma^2}{2}\partial_x f(t,x)
+$$
+Then, following the notation from Gardiner and other sources, the KFE on the interior can be written as
+$$
+\begin{align}
+\partial_t f(t,x) &= - \partial_x J(t,x)\\
+&= - \mu \partial_x f(t,x) + \frac{\sigma^2}{2}\partial_{xx} f(t,x)
+\end{align}
+$$
+Note that this coincides with the standard KFE economists tend to jump to.  If there was birth, we would add in further terms, but it is removed to keep things simple as they don't impact the analysis here.
+
+The flux crossing the the $x = 0$ point is calculated as
+$$
+S(t) = \vec{n}\cdot J(t,0)
+$$
+where $\vec{n}$ is a normal vector towards the surface of the flux, $\vec{n} = -1$ in this case since it is backwards and one-dimensional. This leads to
+$$
+S(t) = -\mu f(t,x) + \frac{\sigma^2}{2}\partial_x f(t,x)
+$$
